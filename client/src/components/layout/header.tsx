@@ -18,12 +18,18 @@ export default function Header() {
     <header className="app-header">
       <div className="app-header-content">
         <div className="flex items-center gap-3">
-          <div className="h-10 overflow-hidden">
+          <div className="h-10 overflow-hidden" style={{ background: "transparent" }}>
             <img 
               src="/src/assets/avp-logo-original.png" 
               alt="Access Valet Parking" 
-              className="h-16 w-auto" 
-              style={{ marginTop: "-5px", objectFit: "cover", objectPosition: "center 40%" }}
+              className="h-16 w-auto invert" 
+              style={{ 
+                marginTop: "-5px", 
+                objectFit: "cover", 
+                objectPosition: "center 40%",
+                filter: "brightness(0) invert(1)",
+                mixBlendMode: "multiply"
+              }}
             />
           </div>
           <h1 className="app-title">Access Valet Parking</h1>
