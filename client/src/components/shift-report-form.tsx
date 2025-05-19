@@ -257,7 +257,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalCreditSales = Number(form.watch("totalCreditSales") || 0);
   const totalCashCollected = Number(form.watch("totalCashCollected") || 0);
   const companyCashTurnIn = Number(form.watch("companyCashTurnIn") || 0);
-  const totalTurnIn = totalCars * 11; // Total Turn-In is calculated as total cars * $11
+  
+  // Use different rates based on location - Bob's = $6, others = $11
+  const turnInRate = Number(form.watch("locationId")) === 2 ? 6 : 11;
+  const totalTurnIn = totalCars * turnInRate;
   
   // Get total receipt sales
   const totalReceiptSales = Number(form.watch("totalReceiptSales") || 0);
@@ -281,10 +284,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // Calculate cash cars (total cars - credit card transactions - receipt transactions)
   const cashCars = totalCars - creditTransactions - totalReceipts;
   
-  // Commission calculations
-  const creditCardCommission = creditTransactions * 4; // $4 per credit card transaction
-  const cashCommission = cashCars * 4; // $4 per cash car
-  const receiptCommission = totalReceipts * 4; // $4 commission per receipt
+  // Commission calculations - Bob's uses $9, others use $4
+  const commissionRate = form.watch("locationId") === 2 ? 9 : 4;
+  const creditCardCommission = creditTransactions * commissionRate; 
+  const cashCommission = cashCars * commissionRate;
+  const receiptCommission = totalReceipts * commissionRate;
   
   // Tips calculations based on specific formulas explained
   // For credit card tips: credit transactions * $15 = theoretical revenue
