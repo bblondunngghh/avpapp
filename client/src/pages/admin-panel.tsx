@@ -1069,33 +1069,77 @@ export default function AdminPanel() {
                 <>
                   {/* Performance Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    {locationStats.map(location => (
-                      <div key={location.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border">
-                        <h3 className="text-lg font-bold mb-2 text-blue-700">{location.name}</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <p className="text-sm text-gray-500">Total Cars</p>
-                            <p className="text-xl font-semibold">{location.totalCars}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Total Income</p>
-                            <p className="text-xl font-semibold">${location.totalIncome.toFixed(2)}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Reports</p>
-                            <p className="text-xl font-semibold">{location.reports}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Avg $ Per Car</p>
-                            <p className="text-xl font-semibold">
-                              ${location.totalCars > 0 
-                                ? (location.totalIncome / location.totalCars).toFixed(2) 
-                                : '0.00'}
-                            </p>
+                    {locationStats.map(location => {
+                      // Define color schemes for each location
+                      let colorScheme = {
+                        border: "border-blue-400",
+                        header: "text-blue-700",
+                        background: "bg-blue-50 dark:bg-blue-950/30"
+                      };
+                      
+                      // Different color for each location based on ID
+                      switch(location.id) {
+                        case 1: // Capital Grille
+                          colorScheme = {
+                            border: "border-blue-500",
+                            header: "text-blue-700",
+                            background: "bg-blue-50 dark:bg-blue-950/30"
+                          };
+                          break;
+                        case 2: // Bob's Steak
+                          colorScheme = {
+                            border: "border-green-500",
+                            header: "text-green-700",
+                            background: "bg-green-50 dark:bg-green-950/30"
+                          };
+                          break;
+                        case 3: // Truluck's
+                          colorScheme = {
+                            border: "border-red-500",
+                            header: "text-red-700",
+                            background: "bg-red-50 dark:bg-red-950/30"
+                          };
+                          break;
+                        case 4: // BOA Steakhouse
+                          colorScheme = {
+                            border: "border-purple-500",
+                            header: "text-purple-700",
+                            background: "bg-purple-50 dark:bg-purple-950/30"
+                          };
+                          break;
+                      }
+                      
+                      return (
+                        <div 
+                          key={location.id} 
+                          className={`p-4 rounded-lg shadow border-2 ${colorScheme.border} ${colorScheme.background}`}
+                        >
+                          <h3 className={`text-lg font-bold mb-2 ${colorScheme.header}`}>{location.name}</h3>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <p className="text-sm text-gray-500">Total Cars</p>
+                              <p className="text-xl font-semibold">{location.totalCars}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Total Income</p>
+                              <p className="text-xl font-semibold">${location.totalIncome.toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Reports</p>
+                              <p className="text-xl font-semibold">{location.reports}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Avg $ Per Car</p>
+                              <p className="text-xl font-semibold">
+                                ${location.totalCars > 0 
+                                  ? (location.totalIncome / location.totalCars).toFixed(2) 
+                                  : '0.00'}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                   
                   {/* Detailed Performance Table */}
@@ -1114,17 +1158,38 @@ export default function AdminPanel() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {locationStats.map(location => (
-                          <TableRow key={location.id}>
-                            <TableCell className="font-medium">{location.name}</TableCell>
-                            <TableCell className="text-right">{location.totalCars}</TableCell>
-                            <TableCell className="text-right">${location.cashSales.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${location.creditSales.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${location.receiptSales.toFixed(2)}</TableCell>
-                            <TableCell className="text-right font-semibold">${location.totalIncome.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">{location.reports}</TableCell>
-                          </TableRow>
-                        ))}
+                        {locationStats.map(location => {
+                          // Define color for text based on location ID
+                          let textColor = "text-blue-700";
+                          
+                          // Different color for each location based on ID
+                          switch(location.id) {
+                            case 1: // Capital Grille
+                              textColor = "text-blue-700";
+                              break;
+                            case 2: // Bob's Steak
+                              textColor = "text-green-700";
+                              break;
+                            case 3: // Truluck's
+                              textColor = "text-red-700";
+                              break;
+                            case 4: // BOA Steakhouse
+                              textColor = "text-purple-700";
+                              break;
+                          }
+                          
+                          return (
+                            <TableRow key={location.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
+                              <TableCell className={`font-medium ${textColor}`}>{location.name}</TableCell>
+                              <TableCell className="text-right">{location.totalCars}</TableCell>
+                              <TableCell className="text-right">${location.cashSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">${location.creditSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">${location.receiptSales.toFixed(2)}</TableCell>
+                              <TableCell className={`text-right font-semibold ${textColor}`}>${location.totalIncome.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">{location.reports}</TableCell>
+                            </TableRow>
+                          );
+                        })}
                         {/* Total Row */}
                         <TableRow className="bg-gray-50 dark:bg-gray-800 font-semibold">
                           <TableCell>TOTAL</TableCell>
