@@ -26,9 +26,12 @@
 }
 
 .company-logo {
-  height: 60px;
+  height: 80px;
   width: auto;
   margin-bottom: 0.75rem;
+  object-position: center 40%;
+  object-fit: cover;
+  overflow: hidden;
 }
 
 .form-title h1 {
