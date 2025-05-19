@@ -15,9 +15,8 @@ export const LOCATION_ID_MAP: Record<string, number> = {
 
 // Shift options
 export const SHIFT_OPTIONS = [
-  { value: "Morning", label: "Morning" },
-  { value: "Afternoon", label: "Afternoon" },
-  { value: "Evening", label: "Evening" }
+  { value: "Lunch", label: "Lunch" },
+  { value: "Dinner", label: "Dinner" }
 ];
 
 // Form-related constant

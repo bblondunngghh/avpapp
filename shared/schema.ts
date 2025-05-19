@@ -77,7 +77,6 @@ export const LOCATIONS = {
 
 // Shift constants
 export const SHIFTS = {
-  MORNING: "Morning",
-  AFTERNOON: "Afternoon", 
-  EVENING: "Evening"
+  LUNCH: "Lunch",
+  DINNER: "Dinner"
 };

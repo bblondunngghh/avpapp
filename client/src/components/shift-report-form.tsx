@@ -284,31 +284,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           
           <Card className="mb-6">
             <CardContent className="pt-6">
-              <h3 className="section-title">Vehicle Information</h3>
+              <h3 className="section-title">Vehicle & Revenue Information</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="totalCars"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Total Cars</FormLabel>
+                      <FormLabel>Total Number of Cars</FormLabel>
                       <FormControl>
                         <Input type="number" min="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="totalRevenue"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Total Revenue</FormLabel>
-                      <FormControl>
-                        <InputMoney {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -320,7 +306,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   name="complimentaryCars"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Complimentary Cars</FormLabel>
+                      <FormLabel>Comped/Validated Cars</FormLabel>
                       <FormControl>
                         <Input type="number" min="0" {...field} />
                       </FormControl>
@@ -329,20 +315,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   )}
                 />
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <h3 className="section-title">Payment Details</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <FormField
                   control={form.control}
                   name="cashPayments"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cash</FormLabel>
+                      <FormLabel>Cash Revenue</FormLabel>
                       <FormControl>
                         <InputMoney {...field} />
                       </FormControl>
@@ -356,7 +336,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   name="creditPayments"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Credit</FormLabel>
+                      <FormLabel>Credit Card Revenue</FormLabel>
                       <FormControl>
                         <InputMoney {...field} />
                       </FormControl>
@@ -364,6 +344,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </FormItem>
                   )}
                 />
+              </div>
+              
+              <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                <div className="flex justify-between items-center font-medium">
+                  <span>Total Revenue:</span>
+                  <span>${form.watch('cashPayments') + form.watch('creditPayments')}</span>
+                </div>
               </div>
             </CardContent>
           </Card>
