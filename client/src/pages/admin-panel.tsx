@@ -40,6 +40,17 @@ interface Employee {
   hours: number;
 }
 
+interface TicketDistribution {
+  id: number;
+  locationId: number;
+  allocatedTickets: number;
+  usedTickets: number;
+  batchNumber: string;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
 interface ShiftReport {
   id: number;
   locationId: number;
@@ -1252,6 +1263,281 @@ export default function AdminPanel() {
                     </Table>
                   </div>
                 </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="tickets">
+          <Card>
+            <CardHeader className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <CardTitle>Ticket Distribution Tracking</CardTitle>
+                  <CardDescription>
+                    Manage and track ticket allocations across locations
+                  </CardDescription>
+                </div>
+                <Dialog open={isAddDistributionOpen} onOpenChange={setIsAddDistributionOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      size="sm"
+                      className="flex items-center gap-1"
+                    >
+                      <PlusCircle className="h-4 w-4" />
+                      Allocate Tickets
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Allocate New Tickets</DialogTitle>
+                      <DialogDescription>
+                        Distribute tickets to a specific location and track their usage.
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="location">Location</Label>
+                        <select 
+                          id="location"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newDistribution.locationId}
+                          onChange={(e) => setNewDistribution({
+                            ...newDistribution,
+                            locationId: parseInt(e.target.value)
+                          })}
+                        >
+                          {LOCATIONS.map(location => (
+                            <option key={location.id} value={location.id}>
+                              {location.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="allocatedTickets">Number of Tickets</Label>
+                        <input 
+                          id="allocatedTickets"
+                          type="number"
+                          min="1"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newDistribution.allocatedTickets || ''}
+                          onChange={(e) => setNewDistribution({
+                            ...newDistribution,
+                            allocatedTickets: parseInt(e.target.value) || 0
+                          })}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="batchNumber">Batch Number/ID</Label>
+                        <input 
+                          id="batchNumber"
+                          type="text"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newDistribution.batchNumber}
+                          onChange={(e) => setNewDistribution({
+                            ...newDistribution,
+                            batchNumber: e.target.value
+                          })}
+                          placeholder="e.g., CG-2025-05-001"
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="notes">Notes (Optional)</Label>
+                        <textarea 
+                          id="notes"
+                          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
+                          value={newDistribution.notes}
+                          onChange={(e) => setNewDistribution({
+                            ...newDistribution,
+                            notes: e.target.value
+                          })}
+                          placeholder="Any additional information about this batch"
+                        />
+                      </div>
+                    </div>
+                    
+                    <DialogFooter>
+                      <Button 
+                        type="button" 
+                        variant="secondary"
+                        onClick={() => setIsAddDistributionOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="button"
+                        onClick={async () => {
+                          if (!newDistribution.batchNumber || newDistribution.allocatedTickets <= 0) {
+                            alert("Please fill in all required fields");
+                            return;
+                          }
+                          
+                          try {
+                            const response = await fetch('/api/ticket-distributions', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify(newDistribution),
+                            });
+                            
+                            if (response.ok) {
+                              // Reset form and close dialog
+                              setNewDistribution({
+                                locationId: 1,
+                                allocatedTickets: 0,
+                                batchNumber: '',
+                                notes: ''
+                              });
+                              setIsAddDistributionOpen(false);
+                              
+                              // Refresh the data
+                              const newData = await response.json();
+                              setTicketDistributions([...ticketDistributions, newData]);
+                            } else {
+                              alert("Error creating ticket distribution");
+                            }
+                          } catch (error) {
+                            console.error("Error:", error);
+                            alert("Failed to create ticket distribution");
+                          }
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardHeader>
+            
+            <CardContent>
+              {isLoadingDistributions ? (
+                <div className="text-center py-8">Loading ticket data...</div>
+              ) : ticketDistributions.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No ticket distributions found. Allocate tickets using the button above.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableCaption>Ticket distribution and usage tracking across all locations.</TableCaption>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Batch Number</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead className="text-right">Allocated</TableHead>
+                        <TableHead className="text-right">Used</TableHead>
+                        <TableHead className="text-right">Remaining</TableHead>
+                        <TableHead className="text-right">Usage %</TableHead>
+                        <TableHead className="text-right">Date Created</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {ticketDistributions.map((distribution) => {
+                        const location = LOCATIONS.find(loc => loc.id === distribution.locationId);
+                        const remaining = distribution.allocatedTickets - distribution.usedTickets;
+                        const usagePercent = distribution.allocatedTickets > 0 
+                          ? (distribution.usedTickets / distribution.allocatedTickets * 100).toFixed(1) 
+                          : '0.0';
+                        
+                        // Calculate color based on usage percentage
+                        let usageColor = "text-green-600";
+                        if (parseFloat(usagePercent) >= 90) {
+                          usageColor = "text-red-600 font-semibold";
+                        } else if (parseFloat(usagePercent) >= 75) {
+                          usageColor = "text-orange-500";
+                        } else if (parseFloat(usagePercent) >= 50) {
+                          usageColor = "text-yellow-600";
+                        }
+                        
+                        return (
+                          <TableRow key={distribution.id}>
+                            <TableCell className="font-medium">{distribution.batchNumber}</TableCell>
+                            <TableCell>{location?.name || 'Unknown'}</TableCell>
+                            <TableCell className="text-right">{distribution.allocatedTickets}</TableCell>
+                            <TableCell className="text-right">{distribution.usedTickets}</TableCell>
+                            <TableCell className="text-right font-medium">{remaining}</TableCell>
+                            <TableCell className={`text-right ${usageColor}`}>
+                              {usagePercent}%
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {new Date(distribution.createdAt).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell className="max-w-[200px] truncate">
+                              {distribution.notes || '-'}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="px-2 h-8"
+                                onClick={async () => {
+                                  // Prompt for the number of used tickets to update
+                                  const usedTicketsStr = prompt(
+                                    `Update used tickets for ${location?.name} (Batch: ${distribution.batchNumber}).\nCurrent used: ${distribution.usedTickets}\nEnter new total:`, 
+                                    distribution.usedTickets.toString()
+                                  );
+                                  
+                                  if (usedTicketsStr === null) return; // Cancel pressed
+                                  
+                                  const usedTickets = parseInt(usedTicketsStr);
+                                  if (isNaN(usedTickets) || usedTickets < 0) {
+                                    alert("Please enter a valid number of tickets.");
+                                    return;
+                                  }
+                                  
+                                  if (usedTickets > distribution.allocatedTickets) {
+                                    alert(`Used tickets cannot exceed the allocated amount (${distribution.allocatedTickets}).`);
+                                    return;
+                                  }
+                                  
+                                  try {
+                                    const response = await fetch(`/api/ticket-distributions/${distribution.id}`, {
+                                      method: 'PUT',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                      },
+                                      body: JSON.stringify({
+                                        ...distribution,
+                                        usedTickets
+                                      }),
+                                    });
+                                    
+                                    if (response.ok) {
+                                      // Update local state
+                                      const updatedDistribution = await response.json();
+                                      setTicketDistributions(
+                                        ticketDistributions.map(d => 
+                                          d.id === updatedDistribution.id ? updatedDistribution : d
+                                        )
+                                      );
+                                    } else {
+                                      alert("Error updating used tickets");
+                                    }
+                                  } catch (error) {
+                                    console.error("Error:", error);
+                                    alert("Failed to update used tickets");
+                                  }
+                                }}
+                              >
+                                <ArrowUpDown className="h-4 w-4" />
+                                <span className="sr-only">Update</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </CardContent>
           </Card>
