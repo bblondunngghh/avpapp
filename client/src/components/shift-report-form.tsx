@@ -641,7 +641,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 {form.watch("totalJobHours") > 0 ? (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-7 gap-2 font-medium text-sm pb-2 text-center">
+                    <div className="grid grid-cols-9 gap-2 font-medium text-sm pb-2 text-center">
                       <div className="text-left">Employee</div>
                       <div>Hours</div>
                       <div>% of Total</div>
@@ -649,6 +649,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <div>Tips</div>
                       <div>Money Owed</div>
                       <div>Total Earnings</div>
+                      <div>Taxes (22%)</div>
+                      <div>Cash Turn-In</div>
                     </div>
                     
                     {(form.watch('employees') || []).map((employee, index) => {
@@ -667,7 +669,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
                       
                       return (
-                        <div key={index} className="grid grid-cols-7 gap-2 items-center">
+                        <div key={index} className="grid grid-cols-9 gap-2 items-center">
                           <div>
                             <Select 
                               value={employee.name || ''}
@@ -737,6 +739,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           </div>
                           <div className="text-sm font-medium text-center text-blue-800">
                             ${(employeeCommission + employeeTips).toFixed(2)}
+                          </div>
+                          {/* Taxes (22% of total earnings) */}
+                          <div className="text-sm font-medium text-center text-red-700">
+                            ${((employeeCommission + employeeTips) * 0.22).toFixed(2)}
+                          </div>
+                          {/* Cash Turn-In (taxes minus money owed, if positive) */}
+                          <div className="text-sm font-medium text-center">
+                            ${Math.max(((employeeCommission + employeeTips) * 0.22) - employeeMoneyOwed, 0).toFixed(2)}
                           </div>
                         </div>
                       );
