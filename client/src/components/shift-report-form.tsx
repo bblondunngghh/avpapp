@@ -573,25 +573,38 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 )}
               />
               
-              <FormField
-                control={form.control}
-                name="companyCashTurnIn"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <div className="flex justify-between text-xs text-gray-600 mt-1">
-                      <span>Expected: ${expectedCompanyCashTurnIn > 0 ? expectedCompanyCashTurnIn.toFixed(2) : '0.00'}</span>
-                      {expectedCompanyCashTurnIn < 0 && (
-                        <span className="text-red-500">Money Owed: ${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
-                      )}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {expectedCompanyCashTurnIn > 0 ? (
+                <FormField
+                  control={form.control}
+                  name="companyCashTurnIn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
+                      <FormControl>
+                        <InputMoney className="paperform-input" {...field} />
+                      </FormControl>
+                      <div className="flex justify-between text-xs text-gray-600 mt-1">
+                        <span>Expected: ${expectedCompanyCashTurnIn.toFixed(2)}</span>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <div className="money-owed-display p-4 border rounded-md bg-blue-50">
+                  <h3 className="text-gray-700 font-medium text-sm mb-2">Company Cash Turn-In</h3>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">No cash turn-in required</span>
+                    <span className="text-red-500 font-medium">Money Owed: ${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
+                  </div>
+                  <input 
+                    type="hidden" 
+                    name="companyCashTurnIn" 
+                    value="0" 
+                    {...form.register("companyCashTurnIn", { valueAsNumber: true })}
+                  />
+                </div>
+              )}
             </div>
           </div>
           
