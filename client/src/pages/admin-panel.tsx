@@ -8,6 +8,15 @@ import {
   TabsList, 
   TabsTrigger 
 } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -20,7 +29,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown } from "lucide-react";
 import { LOCATIONS, EMPLOYEE_NAMES } from "@/lib/constants";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -48,6 +57,17 @@ interface ShiftReport {
   employees: Employee[];
   totalJobHours: number;
   createdAt: string;
+}
+
+interface TicketDistribution {
+  id: number;
+  locationId: number;
+  allocatedTickets: number;
+  usedTickets: number;
+  batchNumber: string;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string | null;
 }
 
 export default function AdminPanel() {
@@ -78,6 +98,16 @@ export default function AdminPanel() {
     totalIncome: number;
     reports: number;
   }[]>([]);
+  
+  // Ticket distribution state
+  const [ticketDistributions, setTicketDistributions] = useState<TicketDistribution[]>([]);
+  const [newDistribution, setNewDistribution] = useState({
+    locationId: 1,
+    allocatedTickets: 0,
+    batchNumber: '',
+    notes: ''
+  });
+  const [isAddDistributionOpen, setIsAddDistributionOpen] = useState(false);
 
   // Check if admin is authenticated
   useEffect(() => {
@@ -97,6 +127,12 @@ export default function AdminPanel() {
   // Fetch all shift reports
   const { data: reports = [], isLoading } = useQuery<ShiftReport[]>({
     queryKey: ["/api/shift-reports"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+  
+  // Fetch ticket distributions
+  const { data: distributionsData = [], isLoading: isLoadingDistributions } = useQuery<TicketDistribution[]>({
+    queryKey: ["/api/ticket-distributions"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
