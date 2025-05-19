@@ -190,6 +190,13 @@ export default function AdminPanel() {
       setTicketDistributions(distributionsData);
     }
   }, [distributionsData]);
+  
+  // Update employees state when API data changes
+  useEffect(() => {
+    if (employeeRecords && employeeRecords.length > 0) {
+      setEmployees(employeeRecords);
+    }
+  }, [employeeRecords]);
 
   // Calculate statistics whenever reports or date filters change
   useEffect(() => {
