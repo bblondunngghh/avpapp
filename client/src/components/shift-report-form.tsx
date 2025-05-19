@@ -646,8 +646,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       const employeeCommission = hoursPercent * totalCommission;
                       const employeeTips = hoursPercent * totalTips;
                       
-                      // Calculate money owed (if negative cashTurnIn)
-                      const employeeMoneyOwed = hoursPercent * moneyOwed;
+                      // Calculate money owed (if negative cashTurnIn) 
+                      const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
+                        hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
                       
                       return (
                         <div key={index} className="grid grid-cols-6 gap-2 items-center">
