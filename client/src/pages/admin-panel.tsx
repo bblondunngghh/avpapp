@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { 
   Table, 
   TableBody, 
@@ -57,8 +58,14 @@ export default function AdminPanel() {
     totalEarnings: number;
     totalCommission: number;
     totalTips: number;
+    totalMoneyOwed: number;
     reports: number;
+    locationId: number;
   }[]>([]);
+  
+  // Date filter state
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
   // Check if admin is authenticated
   useEffect(() => {
@@ -81,7 +88,7 @@ export default function AdminPanel() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  // Calculate employee statistics whenever reports change
+  // Calculate employee statistics whenever reports or date filters change
   useEffect(() => {
     if (reports && reports.length > 0) {
       const employeeMap = new Map<string, {
@@ -94,8 +101,30 @@ export default function AdminPanel() {
         reports: number;
         locationId: number;
       }>();
+      
+      // Filter reports by date range if filters are set
+      const filteredReports = reports.filter(report => {
+        const reportDate = new Date(report.date);
+        
+        // Apply start date filter if set
+        if (startDate && reportDate < startDate) {
+          return false;
+        }
+        
+        // Apply end date filter if set
+        if (endDate) {
+          // Set to end of day for the end date to include the entire day
+          const endOfDay = new Date(endDate);
+          endOfDay.setHours(23, 59, 59, 999);
+          if (reportDate > endOfDay) {
+            return false;
+          }
+        }
+        
+        return true;
+      });
 
-      reports.forEach(report => {
+      filteredReports.forEach(report => {
         const commissionRate = report.locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
         const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
         
@@ -176,7 +205,7 @@ export default function AdminPanel() {
       
       setEmployeeStats(employeeStatsArray);
     }
-  }, [reports]);
+  }, [reports, startDate, endDate]);
 
   // Handle logout
   const handleLogout = () => {
@@ -474,31 +503,72 @@ export default function AdminPanel() {
 
         <TabsContent value="employees">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <CardTitle>Employee Payroll Summary</CardTitle>
-                <CardDescription>
-                  View financial summary for all employees
-                </CardDescription>
+            <CardHeader className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <CardTitle>Employee Payroll Summary</CardTitle>
+                  <CardDescription>
+                    View financial summary for all employees
+                  </CardDescription>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={exportEmployeesToCSV}
+                    className="flex items-center gap-1"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Export CSV
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={exportEmployeesToPDF}
+                    className="flex items-center gap-1"
+                  >
+                    <Download className="h-4 w-4" />
+                    Export PDF
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
+              
+              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900">
+                <div className="space-y-2">
+                  <Label htmlFor="start-date">Start Date</Label>
+                  <div className="relative">
+                    <input
+                      id="start-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={startDate ? startDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="end-date">End Date</Label>
+                  <div className="relative">
+                    <input
+                      id="end-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={endDate ? endDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
                 <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={exportEmployeesToCSV}
-                  className="flex items-center gap-1"
+                  variant="secondary" 
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                  }}
                 >
-                  <FileDown className="h-4 w-4" />
-                  Export CSV
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={exportEmployeesToPDF}
-                  className="flex items-center gap-1"
-                >
-                  <Download className="h-4 w-4" />
-                  Export PDF
+                  Clear Filter
                 </Button>
               </div>
             </CardHeader>
