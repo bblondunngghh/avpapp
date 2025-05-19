@@ -268,11 +268,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const cashCarsTotal = cashCars * 15;
   const cashTips = Math.abs(totalCashCollected - cashCarsTotal);
   const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // 15% of receipt sales
-  const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // 10% of total tips
   
   // Totals
   const totalCommission = creditCardCommission + cashCommission + receiptCommission;
-  const totalTips = creditCardTips + cashTips + receiptTips - tipShare;
+  const totalTips = creditCardTips + cashTips + receiptTips;
   const totalCommissionAndTips = totalCommission + totalTips;
   const moneyOwed = totalCashCollected - companyCashTurnIn - totalCommissionAndTips;
   
@@ -552,10 +551,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <span>Receipt Tips:</span>
                     <span>${receiptTips.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-red-600">
-                    <span>Tip Share:</span>
-                    <span>-${tipShare.toFixed(2)}</span>
-                  </div>
                   <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
                     <span>Total Tips:</span>
                     <span>${totalTips.toFixed(2)}</span>
@@ -564,7 +559,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 <div className="text-xs text-gray-600 mt-2">
                   <div>• Cash: $15 per cash car - cash collected</div>
                   <div>• Credit: $15 per transaction - credit sales</div>
-                  <div>• Tip Share: 10% of total tips</div>
+                  <div>• Receipt: 15% of receipt sales</div>
                 </div>
               </div>
             </div>
