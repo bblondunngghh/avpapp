@@ -247,9 +247,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="form-card">
-            <h3 className="section-title">Date & Shift Information</h3>
+            <h3 className="section-title uppercase font-bold">COMPANY TURN-IN SECTION</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <FormField
                 control={form.control}
                 name="date"
@@ -276,7 +276,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     >
                       <FormControl>
                         <SelectTrigger className="paperform-input h-[46px]">
-                          <SelectValue placeholder="Select Shift" />
+                          <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -288,88 +288,68 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       </SelectContent>
                     </Select>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="mt-6">
-              <FormField
-                control={form.control}
-                name="manager"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Leader</FormLabel>
-                    <FormControl>
-                      <Input className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-          
-          <div className="form-card">
-            <h3 className="section-title">Company Turn-In Section</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="totalCars"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Number of Cars Parked</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <p className="text-xs text-red-500 mt-1">This question is required</p>
                   </FormItem>
                 )}
               />
               
               <FormField
                 control={form.control}
-                name="companyCashTurnIn"
+                name="manager"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Company Turn-In ($11 per car)</FormLabel>
-                    <FormControl>
-                      <InputMoney 
-                        className="paperform-input bg-gray-50"
-                        {...field} 
-                        readOnly 
-                        value={companyTurnIn}
-                      />
-                    </FormControl>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Leader</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="paperform-input h-[46px]">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="john">John Doe</SelectItem>
+                        <SelectItem value="jane">Jane Smith</SelectItem>
+                        <SelectItem value="bob">Bob Johnson</SelectItem>
+                        <SelectItem value="sarah">Sarah Williams</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
+                    <p className="text-xs text-red-500 mt-1">This question is required</p>
                   </FormItem>
                 )}
               />
             </div>
+          </div>
+          
+          <div className="form-card">
+            <FormField
+              control={form.control}
+              name="totalCars"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium text-base">Cars Parked</FormLabel>
+                  <div className="text-xs text-gray-500 mb-1">Capital Grille Turn-In Rate = $11.00</div>
+                  <FormControl>
+                    <Input type="number" min="0" className="paperform-input" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                  <p className="text-xs text-red-500 mt-1">This question is required</p>
+                </FormItem>
+              )}
+            />
             
-            <div className="calculation-box mt-6">
-              <div className="calculation-row">
-                <span className="calculation-label">Total Charge Per Car:</span>
-                <span className="calculation-value">$15.00</span>
-              </div>
-              <div className="calculation-row">
-                <span className="calculation-label">Employee Commission Per Car:</span>
-                <span className="calculation-value">$4.00</span>
-              </div>
-              <div className="calculation-row">
-                <span className="calculation-label">Company Turn-In Per Car:</span>
-                <span className="calculation-value">$11.00</span>
-              </div>
-              <div className="calculation-row font-bold mt-2 pt-2 border-t border-gray-300">
-                <span className="calculation-label">Total Company Turn-In (Cars × $11):</span>
-                <span className="calculation-value">${companyTurnIn.toFixed(2)}</span>
+            <div className="bg-white p-4 rounded-md border border-gray-200 mt-4">
+              <div className="flex justify-between items-center">
+                <div className="font-medium">Company Turn-In</div>
+                <div className="font-bold text-lg">${companyTurnIn.toFixed(2)}</div>
               </div>
             </div>
           </div>
           
           <div className="form-card">
-            <h3 className="section-title">Transactions and Sales</h3>
+            <h3 className="section-title uppercase font-bold">TRANSACTIONS AND SALES</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
