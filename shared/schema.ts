@@ -56,17 +56,43 @@ export const shiftReports = pgTable("shift_reports", {
   updatedAt: timestamp("updated_at"),
 });
 
-export const insertShiftReportSchema = createInsertSchema(shiftReports).omit({
-  id: true, 
-  createdAt: true,
-  updatedAt: true
-});
+// Create a custom schema for employees
+const employeeSchema = z.array(
+  z.object({
+    name: z.string(),
+    hours: z.number()
+  })
+);
 
-export const updateShiftReportSchema = createInsertSchema(shiftReports).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-});
+// Custom insert schema with proper employee handling
+export const insertShiftReportSchema = createInsertSchema(shiftReports)
+  .omit({
+    id: true, 
+    createdAt: true,
+    updatedAt: true,
+    employees: true // We'll handle this separately
+  })
+  .extend({
+    // Allow employees to be passed as an array
+    employees: z.union([z.string(), employeeSchema]).optional(),
+    // Make overShort optional with default 0
+    overShort: z.number().default(0)
+  });
+
+// Custom update schema with proper employee handling
+export const updateShiftReportSchema = createInsertSchema(shiftReports)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    employees: true // We'll handle this separately
+  })
+  .extend({
+    // Allow employees to be passed as an array
+    employees: z.union([z.string(), employeeSchema]).optional(),
+    // Make overShort optional with default 0
+    overShort: z.number().default(0)
+  });
 
 export type InsertShiftReport = z.infer<typeof insertShiftReportSchema>;
 export type UpdateShiftReport = z.infer<typeof updateShiftReportSchema>;
