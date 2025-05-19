@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock } from "lucide-react";
+import { Lock, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Define the admin password
@@ -68,7 +68,18 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh]">
+    <div className="flex flex-col items-center justify-center min-h-[80vh]">
+      <div className="flex w-full max-w-md justify-end mb-4">
+        <Button 
+          variant="outline"
+          size="sm"
+          onClick={() => navigate("/")}
+          className="bg-white hover:bg-gray-100 flex items-center gap-1"
+        >
+          <Home className="h-4 w-4" />
+          Return to Home
+        </Button>
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto bg-blue-100 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">

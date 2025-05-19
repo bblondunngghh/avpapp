@@ -19,7 +19,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home } from "lucide-react";
 import { LOCATIONS } from "@/lib/constants";
 
 // Define types for our data
@@ -168,10 +168,20 @@ export default function AdminPanel() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-blue-800">Admin Panel</h1>
-        <Button variant="outline" onClick={handleLogout}>
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/")}
+            className="flex items-center gap-1"
+          >
+            <Home className="h-4 w-4" />
+            Home
+          </Button>
+          <Button variant="outline" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="reports" className="w-full">
