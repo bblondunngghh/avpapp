@@ -317,11 +317,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         
         {form.watch('locationId') === 1 ? (
           <>
-            <div className="capital-grille-image">
+            <div className="restaurant-image">
               <img 
                 src="/src/assets/capital-grille.jpg" 
                 alt="The Capital Grille" 
-                className="rounded-md shadow-md" 
               />
             </div>
             
@@ -336,7 +335,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               <img 
                 src="/src/assets/bobs.jpg" 
                 alt="Bob's Steak and Chop House" 
-                className="rounded-md shadow-md" 
               />
             </div>
             
@@ -345,19 +343,32 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               301 LAVACA ST. AUSTIN, TX 78701
             </div>
           </>
-        ) : (
+        ) : form.watch('locationId') === 3 ? (
           <>
-            <div className="capital-grille-image">
+            <div className="restaurant-image">
               <img 
                 src="/src/assets/capital-grille.jpg" 
-                alt="The Capital Grille" 
-                className="rounded-md shadow-md" 
+                alt="Truluck's" 
               />
             </div>
             
             <div className="address">
-              THE CAPITAL GRILLE<br />
-              117 W 4TH ST. AUSTIN, TX 78701
+              TRULUCK'S<br />
+              400 COLORADO ST. AUSTIN, TX 78701
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="restaurant-image">
+              <img 
+                src="/src/assets/capital-grille.jpg" 
+                alt="BOA Steakhouse" 
+              />
+            </div>
+            
+            <div className="address">
+              BOA STEAKHOUSE<br />
+              101 SAN JACINTO BLVD. AUSTIN, TX 78701
             </div>
           </>
         )}
