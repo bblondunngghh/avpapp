@@ -245,256 +245,248 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <h3 className="section-title">Basic Information</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="shift"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Shift</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Shift" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {SHIFT_OPTIONS.map(option => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <FormField
-                  control={form.control}
-                  name="manager"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Shift Leader</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="totalCars"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Total Number of Cars</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                <div className="flex justify-between items-center font-medium">
-                  <span>Company Turn-in (Total Cars × $11):</span>
-                  <span>${companyTurnIn.toFixed(2)}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <h3 className="section-title">Vehicle & Revenue Information</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="complimentaryCars"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Comped/Validated Cars</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="creditTransactions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Number of Credit Card Transactions</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <FormField
-                  control={form.control}
-                  name="totalCreditSales"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Total Credit Card Sales</FormLabel>
-                      <FormControl>
-                        <InputMoney {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="totalReceipts"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Total Number of Receipts</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <FormField
-                  control={form.control}
-                  name="totalCashCollected"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Total Cash Collected</FormLabel>
-                      <FormControl>
-                        <InputMoney {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="companyCashTurnIn"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Company Cash Turn-in</FormLabel>
-                      <FormControl>
-                        <InputMoney 
-                          {...field} 
-                          readOnly 
-                          value={companyTurnIn} 
-                          className="bg-gray-50 dark:bg-gray-800"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="mt-4 space-y-2">
-                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                  <div className="flex justify-between items-center font-medium">
-                    <span>Total Turn-in:</span>
-                    <span>${totalTurnIn.toFixed(2)}</span>
-                  </div>
-                </div>
-                
-                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                  <div className="flex justify-between items-center font-medium">
-                    <span>Over/Short:</span>
-                    <span className={overShort < 0 ? "text-red-500" : overShort > 0 ? "text-green-500" : ""}>
-                      ${overShort.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <h3 className="section-title">Notes and Incidents</h3>
-              
+          <div className="form-card">
+            <h3 className="section-title">Basic Information</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem className="mb-4">
-                    <FormLabel>Shift Notes</FormLabel>
-                    <FormControl>
-                      <Textarea rows={3} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="incidents"
+                name="date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Incidents</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Date</FormLabel>
                     <FormControl>
-                      <Textarea rows={3} {...field} />
+                      <Input type="date" className="paperform-input" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </CardContent>
-          </Card>
+              
+              <FormField
+                control={form.control}
+                name="shift"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Shift</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="paperform-input h-[46px]">
+                          <SelectValue placeholder="Select Shift" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {SHIFT_OPTIONS.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <FormField
+                control={form.control}
+                name="manager"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Leader</FormLabel>
+                    <FormControl>
+                      <Input className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="totalCars"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Number of Cars</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="calculation-box mt-6">
+              <div className="calculation-row">
+                <span className="calculation-label">Company Turn-in (Total Cars × $11):</span>
+                <span className="calculation-value">${companyTurnIn.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
           
-          <div className="mt-6 flex justify-end space-x-4">
+          <div className="form-card">
+            <h3 className="section-title">Vehicle & Revenue Information</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="complimentaryCars"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Comped/Validated Cars</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="creditTransactions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Number of Credit Card Transactions</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <FormField
+                control={form.control}
+                name="totalCreditSales"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Credit Card Sales</FormLabel>
+                    <FormControl>
+                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="totalReceipts"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Number of Receipts</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <FormField
+                control={form.control}
+                name="totalCashCollected"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Cash Collected</FormLabel>
+                    <FormControl>
+                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="companyCashTurnIn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-in</FormLabel>
+                    <FormControl>
+                      <InputMoney 
+                        className="paperform-input bg-gray-50"
+                        {...field} 
+                        readOnly 
+                        value={companyTurnIn}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="calculation-box mt-6">
+              <div className="calculation-row">
+                <span className="calculation-label">Total Turn-in:</span>
+                <span className="calculation-value">${totalTurnIn.toFixed(2)}</span>
+              </div>
+              
+              <div className="calculation-row">
+                <span className="calculation-label">Over/Short:</span>
+                <span className={`calculation-value ${overShort < 0 ? "text-red-500" : overShort > 0 ? "text-green-500" : ""}`}>
+                  ${overShort.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="form-card">
+            <h3 className="section-title">Notes and Incidents</h3>
+            
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem className="mb-6">
+                  <FormLabel className="text-gray-700 font-medium text-sm">Shift Notes</FormLabel>
+                  <FormControl>
+                    <Textarea rows={3} className="paperform-input" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="incidents"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium text-sm">Incidents</FormLabel>
+                  <FormControl>
+                    <Textarea rows={3} className="paperform-input" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          
+          <div className="mt-8 flex justify-end space-x-4">
             <Button 
               type="button" 
               variant="outline" 
+              className="px-6 py-3 rounded-md"
               onClick={handleBack}
             >
               Cancel
             </Button>
             <Button 
               type="submit" 
+              className="submit-button"
               disabled={isSubmitting}
             >
               {reportId ? "Update Report" : "Submit Report"}

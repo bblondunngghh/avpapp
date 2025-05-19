@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Form Styling to match Paperform */
+.form-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.form-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-title h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: #333;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+/* Paperform-like inputs */
+.paperform-input {
+  @apply rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+}
+
+/* Cards */
+.form-card {
+  @apply rounded-lg shadow-sm border border-gray-200 p-6 mb-6 transition-all duration-200 hover:shadow-md;
+}
+
+/* Calculation section */
+.calculation-box {
+  @apply bg-gray-50 p-4 rounded-md border border-gray-200 my-4;
+}
+
+.calculation-row {
+  @apply flex justify-between items-center py-2;
+}
+
+.calculation-label {
+  @apply font-medium text-gray-700;
+}
+
+.calculation-value {
+  @apply font-semibold text-gray-900;
+}
+
+/* Submit button */
+.submit-button {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-all duration-200;
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 47.4% 11.2%;
