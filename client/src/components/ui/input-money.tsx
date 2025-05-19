@@ -9,18 +9,21 @@ export interface InputMoneyProps
 
 const InputMoney = React.forwardRef<HTMLInputElement, InputMoneyProps>(
   ({ className, error, ...props }, ref) => {
+    // Create a custom input layout with dollar sign
     return (
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <span className={cn("text-gray-500 font-medium", error && "text-destructive")}>$</span>
-        </div>
-        <Input 
-          type="number" 
-          className={cn("pl-9", className, error && "border-destructive")} 
-          ref={ref} 
+      <div className="relative flex items-center border rounded-md bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+        <span className="pl-3 pr-2 text-gray-500 font-medium">$</span>
+        <input
+          type="number"
+          className={cn(
+            "flex h-10 w-full rounded-md border-0 bg-background px-3 py-2 text-base focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            className,
+            error && "border-destructive"
+          )}
+          ref={ref}
           step="0.01"
           min="0"
-          {...props} 
+          {...props}
         />
       </div>
     );
