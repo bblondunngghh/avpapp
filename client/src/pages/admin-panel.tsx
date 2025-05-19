@@ -113,6 +113,8 @@ export default function AdminPanel() {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   
+  // Employee management state is defined below
+  
   // Location performance state
   const [locationStats, setLocationStats] = useState<{
     id: number;
