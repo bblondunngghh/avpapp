@@ -246,12 +246,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const employeeCommission = totalCars * 4; // $4 per car employee commission
   const creditTransactions = Number(form.watch("creditTransactions") || 0);
   const creditCardCommission = creditTransactions * 4; // $4 per credit card transaction
-  const cashCommission = totalCashCollected * 0.05; // 5% of cash collected
+  
+  // Calculate cash cars (total cars - credit card transactions)
+  const cashCars = totalCars - creditTransactions;
+  const cashCommission = cashCars * 4; // $4 per cash car
   const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // 5% of receipt sales
   
   // Tips calculations - based on actual business rules
-  const creditCardTips = (Number(form.watch("creditTransactions") || 0) * 15) - totalCreditSales; // $15 per transaction minus total credit sales
-  const cashTips = totalCashCollected * 0.15; // 15% of cash collected
+  const creditCardTips = (creditTransactions * 15) - totalCreditSales; // $15 per transaction minus total credit sales
+  const cashTips = (cashCars * 15) - totalCashCollected; // $15 per cash car minus total cash collected
   const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // 15% of receipt sales
   const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // 10% of total tips
   
@@ -509,7 +512,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <div className="font-medium">Total Cash Commission</div>
                   <div className="font-bold text-lg">${cashCommission.toFixed(2)}</div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">5% of total cash collected</div>
+                <div className="text-xs text-gray-500 mt-1">$4 per cash car (Total Cars - Credit Card Transactions)</div>
               </div>
               
               <div className="bg-white p-4 rounded-md border border-gray-200">
@@ -533,7 +536,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <div className="font-medium">Total Cash Tips</div>
                   <div className="font-bold text-lg">${cashTips.toFixed(2)}</div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">15% of total cash collected</div>
+                <div className="text-xs text-gray-500 mt-1">$15 per cash car minus total cash collected</div>
               </div>
               
               <div className="bg-white p-4 rounded-md border border-gray-200">
