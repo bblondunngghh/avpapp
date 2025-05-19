@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft } from "lucide-react";
 import { InputMoney } from "@/components/ui/input-money";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATIONS, LOCATION_ID_MAP } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -149,17 +149,53 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     }
   }, [reportData, form, reportId]);
   
+  // Fetch ticket distributions for updating usage
+  const { data: ticketDistributions = [] } = useQuery<any[]>({
+    queryKey: ["/api/ticket-distributions"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
   // Create mutation for submitting new reports
   const createMutation = useMutation({
     mutationFn: async (data: FormValues) => {
+      // First create the shift report
       const response = await apiRequest('POST', '/api/shift-reports', data);
-      return response.json();
+      const reportData = await response.json();
+      
+      // Update ticket usage based on totalCars in the report
+      const locationTickets = ticketDistributions
+        .filter(dist => dist.locationId === data.locationId)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      // If there are ticket distributions for this location
+      if (locationTickets.length > 0) {
+        const latestDistribution = locationTickets[0];
+        // Calculate new used tickets count
+        const newUsedTickets = Math.min(
+          latestDistribution.allocatedTickets,
+          latestDistribution.usedTickets + data.totalCars
+        );
+        
+        // Update the ticket distribution
+        await apiRequest('PUT', `/api/ticket-distributions/${latestDistribution.id}`, {
+          locationId: latestDistribution.locationId,
+          allocatedTickets: latestDistribution.allocatedTickets,
+          usedTickets: newUsedTickets,
+          batchNumber: latestDistribution.batchNumber,
+          notes: latestDistribution.notes
+        });
+        
+        // Invalidate ticket distributions query to refresh data
+        queryClient.invalidateQueries({ queryKey: ['/api/ticket-distributions'] });
+      }
+      
+      return reportData;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/shift-reports'] });
       toast({
         title: "Success!",
-        description: "Report has been submitted successfully.",
+        description: "Report has been submitted successfully and ticket usage has been updated.",
       });
       // Redirect to submission complete page with the report ID
       navigate(`/submission-complete/${data.id}`);
