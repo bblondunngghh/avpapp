@@ -297,6 +297,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new employee
   apiRouter.post('/employees', async (req, res) => {
     try {
+      console.log("POST /employees - Request Body:", req.body);
+      
       const validatedData = insertEmployeeSchema.parse(req.body);
       
       // Check if employee with this key already exists
@@ -306,12 +308,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const employee = await storage.createEmployee(validatedData);
-      res.status(201).json(employee);
-    } catch (error) {
+      console.log("Employee created:", employee);
+      res.status(200).json(employee);
+    } catch (error: any) {
+      console.error("Error creating employee:", error);
+      
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: 'Invalid employee data', errors: error.errors });
+        return res.status(400).json({ 
+          message: 'Invalid employee data', 
+          errors: error.errors 
+        });
       }
-      res.status(500).json({ message: 'Failed to create employee' });
+      
+      res.status(500).json({ 
+        message: error.message || 'Failed to create employee' 
+      });
     }
   });
   

@@ -404,21 +404,32 @@ export class DatabaseStorage implements IStorage {
   
   async createEmployee(employeeData: InsertEmployee): Promise<Employee> {
     try {
+      // Basic validation
+      if (!employeeData.key || !employeeData.fullName) {
+        throw new Error("Employee key and full name are required");
+      }
+
       // Set defaults for optional values
       const data = {
-        ...employeeData,
-        isActive: employeeData.isActive ?? true,
-        isShiftLeader: employeeData.isShiftLeader ?? false,
+        key: employeeData.key,
+        fullName: employeeData.fullName,
+        isActive: employeeData.isActive === undefined ? true : employeeData.isActive,
+        isShiftLeader: employeeData.isShiftLeader === undefined ? false : employeeData.isShiftLeader,
         hireDate: employeeData.hireDate ? new Date(employeeData.hireDate) : new Date(),
         phone: employeeData.phone || null,
         email: employeeData.email || null,
         notes: employeeData.notes || null
       };
       
+      // Insert and return new employee
       const [employee] = await db.insert(employees).values(data).returning();
       return employee;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating employee:", error);
+      // Make error message more user-friendly
+      if (error.message?.includes('duplicate key')) {
+        throw new Error("An employee with this key already exists");
+      }
       throw new Error(`Failed to create employee: ${error.message || "Unknown error"}`);
     }
   }

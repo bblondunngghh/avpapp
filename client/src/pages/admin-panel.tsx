@@ -1948,6 +1948,8 @@ export default function AdminPanel() {
                             return;
                           }
                           
+                          console.log("Submitting employee data:", newEmployee);
+                          
                           const response = await fetch('/api/employees', {
                             method: 'POST',
                             headers: {
@@ -1956,11 +1958,14 @@ export default function AdminPanel() {
                             body: JSON.stringify(newEmployee),
                           });
                           
+                          console.log("Response status:", response.status);
+                          
                           if (response.ok) {
                             const data = await response.json();
+                            console.log("Response data:", data);
                             
-                            // Update local state
-                            setEmployees([...employees, data]);
+                            // Refresh employee data from server
+                            refetchEmployees();
                             
                             // Close dialog
                             setIsAddEmployeeOpen(false);
@@ -1980,12 +1985,19 @@ export default function AdminPanel() {
                             // Show success message
                             alert(`Employee "${data.fullName}" has been added successfully.`);
                           } else {
-                            const error = await response.json();
-                            alert(`Error adding employee: ${error.message}`);
+                            const errorText = await response.text();
+                            console.log("Error response:", errorText);
+                            
+                            try {
+                              const errorJson = JSON.parse(errorText);
+                              alert(`Error adding employee: ${errorJson.message || "Unknown error"}`);
+                            } catch {
+                              alert(`Error adding employee. Please try again.`);
+                            }
                           }
                         } catch (error) {
                           console.error("Error:", error);
-                          alert("Failed to add employee");
+                          alert("Failed to add employee. Please check the console for details.");
                         }
                       }}
                     >
