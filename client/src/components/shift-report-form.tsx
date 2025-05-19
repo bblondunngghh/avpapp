@@ -108,10 +108,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // Handle totalCars changes
   useEffect(() => {
     const totalCars = form.getValues("totalCars") || 0;
-    const companyTurnIn = totalCars * 11;
+    const expectedTurnIn = totalCars * 11;
     
     // We just update the display value without triggering additional watch events
-    form.setValue("companyCashTurnIn", companyTurnIn, { 
+    form.setValue("companyCashTurnIn", expectedTurnIn, { 
       shouldDirty: false,
       shouldTouch: false,
       shouldValidate: false
@@ -236,11 +236,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   // Calculate derived values
   const totalCars = Number(form.watch("totalCars") || 0);
-  const companyTurnIn = totalCars * 11;
   const totalCreditSales = Number(form.watch("totalCreditSales") || 0);
   const totalCashCollected = Number(form.watch("totalCashCollected") || 0);
+  const companyCashTurnIn = Number(form.watch("companyCashTurnIn") || 0);
   const totalTurnIn = totalCars * 11; // Total Turn-In is calculated as total cars * $11
-  const overShort = totalCashCollected - companyTurnIn;
+  const overShort = totalCashCollected - companyCashTurnIn;
   
   // Commission calculations - based on actual business rules
   const employeeCommission = totalCars * 4; // $4 per car employee commission
@@ -262,7 +262,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalCommission = employeeCommission + creditCardCommission + cashCommission + receiptCommission;
   const totalTips = creditCardTips + cashTips + receiptTips - tipShare;
   const totalCommissionAndTips = totalCommission + totalTips;
-  const moneyOwed = totalCashCollected - companyTurnIn - totalTips; // Example calculation
+  const moneyOwed = totalCashCollected - companyCashTurnIn - totalTips; // Example calculation
   
   return (
     <div className="form-section">
@@ -384,8 +384,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             
             <div className="bg-white p-4 rounded-md border border-gray-200 mt-4">
               <div className="flex justify-between items-center">
-                <div className="font-medium">Company Turn-In</div>
-                <div className="font-bold text-lg">${companyTurnIn.toFixed(2)}</div>
+                <div className="font-medium">Expected Company Turn-In</div>
+                <div className="font-bold text-lg">${(totalCars * 11).toFixed(2)}</div>
               </div>
             </div>
           </div>
