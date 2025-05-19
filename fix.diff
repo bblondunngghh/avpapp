@@ -1,0 +1,20 @@
+@@ -452,12 +452,16 @@
+              <FormField
+                control={form.control}
+-                name="totalReceipts"
++                name="totalReceiptSales"
+                render={({ field }) => (
+                  <FormItem>
+-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Number of Receipts</FormLabel>
++                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipt Sales</FormLabel>
+                    <FormControl>
+-                      <Input type="number" min="0" className="paperform-input" {...field} />
++                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
++                    <div className="flex justify-between text-xs text-gray-600 mt-1">
++                      <span>Each receipt: $18</span>
++                      <span>Expected: ${(totalReceipts * 18).toFixed(2)}</span>
++                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
