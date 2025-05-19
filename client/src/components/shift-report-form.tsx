@@ -797,7 +797,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           <div className="font-medium text-sm text-center">Tips</div>
                           <div className="font-medium text-sm text-center">Money Owed</div>
                           <div className="font-medium text-sm text-center">Earnings</div>
-                          <div className="font-medium text-sm text-center">Cash Turn-In</div>
+                          <div className="font-medium text-sm text-center">22% Tax Due</div>
                         </div>
                         
                         {(form.watch('employees') || []).map((employee, index) => {
