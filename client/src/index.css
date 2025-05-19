@@ -6,8 +6,9 @@
 .form-section {
   max-width: 800px;
   margin: 0 auto;
-  padding: 1rem;
-  background-color: #dde5ed;
+  padding: 1.5rem;
+  background-color: #f0f4f8;
+  background-image: linear-gradient(135deg, #f0f4f8 0%, #edf2f7 100%);
   min-height: 100vh;
 }
 
@@ -86,44 +87,72 @@
 
 .section-title {
   font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
-  color: #333;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1e3a8a;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
 }
 
 /* Paperform-like inputs */
 .paperform-input {
-  @apply rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+  @apply rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-sm;
+  background-color: #f9fafb;
+}
+
+.paperform-input:focus {
+  @apply bg-white;
 }
 
 /* Cards */
 .form-card {
-  @apply rounded-lg shadow-sm border border-gray-200 p-6 mb-6 transition-all duration-200 hover:shadow-md;
+  @apply rounded-lg shadow-md border border-gray-200 p-6 mb-8 transition-all duration-300 hover:shadow-lg;
   background-color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
 }
 
 /* Calculation section */
 .calculation-box {
-  @apply bg-gray-50 p-4 rounded-md border border-gray-200 my-4;
+  @apply bg-gradient-to-r from-blue-50 to-blue-50/50 p-5 rounded-md border border-blue-100 my-4 shadow-sm;
 }
 
 .calculation-row {
-  @apply flex justify-between items-center py-2;
+  @apply flex justify-between items-center py-2 border-b border-blue-100/50 last:border-0;
 }
 
 .calculation-label {
-  @apply font-medium text-gray-700;
+  @apply font-medium text-gray-700 flex items-center;
 }
 
 .calculation-value {
-  @apply font-semibold text-gray-900;
+  @apply font-semibold text-gray-900 tracking-wide;
 }
 
 /* Submit button */
 .submit-button {
-  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-all duration-200;
+  @apply bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-md transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
 }
 
 :root {
