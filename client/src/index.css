@@ -328,3 +328,32 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Fix for employee hours distribution layout */
+.bg-blue-50 .grid-cols-9 {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 16px;
+}
+
+/* Employee name dropdown */
+.bg-blue-50 .grid-cols-9 > div:first-child {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Hours input */
+.bg-blue-50 .grid-cols-9 > div:nth-child(2) {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Payroll calculation values */
+.bg-blue-50 .grid-cols-9 > div:nth-child(n+3) {
+  display: inline-block;
+  width: auto;
+  margin-right: 16px;
+  margin-bottom: 8px;
+}
