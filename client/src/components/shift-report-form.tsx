@@ -832,26 +832,26 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               <SelectTrigger className="paperform-input w-full min-w-[180px]">
                                 <SelectValue placeholder="Select employee..." />
                               </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="antonio">Antonio Martinez</SelectItem>
-                                <SelectItem value="arturo">Arturo Sanchez</SelectItem>
-                                <SelectItem value="brandon">Brandon Blond</SelectItem>
-                                <SelectItem value="brett">Brett Willson</SelectItem>
-                                <SelectItem value="dave">Dave Roehm</SelectItem>
-                                <SelectItem value="devin">Devin Bean</SelectItem>
-                                <SelectItem value="dylan">Dylan McMullen</SelectItem>
-                                <SelectItem value="elijah">Elijah Aguilar</SelectItem>
-                                <SelectItem value="ethan">Ethan Walker</SelectItem>
-                                <SelectItem value="gabe">Gabe Ott</SelectItem>
-                                <SelectItem value="jacob">Jacob Weldon</SelectItem>
-                                <SelectItem value="joe">Joe Albright</SelectItem>
-                                <SelectItem value="jonathan">Jonathan Zaccheo</SelectItem>
-                                <SelectItem value="kevin">Kevin Hanrahan</SelectItem>
-                                <SelectItem value="melvin">Melvin Lobos</SelectItem>
-                                <SelectItem value="noe">Noe Coronado</SelectItem>
-                                <SelectItem value="riley">Riley McIntyre</SelectItem>
-                                <SelectItem value="ryan">Ryan Hocevar</SelectItem>
-                                <SelectItem value="zane">Zane Springer</SelectItem>
+                              <SelectContent className="text-xs">
+                                <SelectItem value="antonio" className="text-xs py-1">Antonio Martinez</SelectItem>
+                                <SelectItem value="arturo" className="text-xs py-1">Arturo Sanchez</SelectItem>
+                                <SelectItem value="brandon" className="text-xs py-1">Brandon Blond</SelectItem>
+                                <SelectItem value="brett" className="text-xs py-1">Brett Willson</SelectItem>
+                                <SelectItem value="dave" className="text-xs py-1">Dave Roehm</SelectItem>
+                                <SelectItem value="devin" className="text-xs py-1">Devin Bean</SelectItem>
+                                <SelectItem value="dylan" className="text-xs py-1">Dylan McMullen</SelectItem>
+                                <SelectItem value="elijah" className="text-xs py-1">Elijah Aguilar</SelectItem>
+                                <SelectItem value="ethan" className="text-xs py-1">Ethan Walker</SelectItem>
+                                <SelectItem value="gabe" className="text-xs py-1">Gabe Ott</SelectItem>
+                                <SelectItem value="jacob" className="text-xs py-1">Jacob Weldon</SelectItem>
+                                <SelectItem value="joe" className="text-xs py-1">Joe Albright</SelectItem>
+                                <SelectItem value="jonathan" className="text-xs py-1">Jonathan Zaccheo</SelectItem>
+                                <SelectItem value="kevin" className="text-xs py-1">Kevin Hanrahan</SelectItem>
+                                <SelectItem value="melvin" className="text-xs py-1">Melvin Lobos</SelectItem>
+                                <SelectItem value="noe" className="text-xs py-1">Noe Coronado</SelectItem>
+                                <SelectItem value="riley" className="text-xs py-1">Riley McIntyre</SelectItem>
+                                <SelectItem value="ryan" className="text-xs py-1">Ryan Hocevar</SelectItem>
+                                <SelectItem value="zane" className="text-xs py-1">Zane Springer</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
