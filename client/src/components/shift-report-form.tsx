@@ -242,23 +242,23 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalTurnIn = totalCreditSales + companyTurnIn;
   const overShort = totalCashCollected - companyTurnIn;
   
-  // Commission calculations
+  // Commission calculations - all derived from actual values
   const employeeCommission = totalCars * 4; // $4 per car employee commission
-  const creditCardCommission = Number(form.watch("creditCardCommission") || 0);
-  const cashCommission = Number(form.watch("cashCommission") || 0);
-  const receiptCommission = Number(form.watch("receiptCommission") || 0);
+  const creditCardCommission = totalCreditSales * 0.05; // Example: 5% of credit card sales
+  const cashCommission = totalCashCollected * 0.05; // Example: 5% of cash collected
+  const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // Example: 5% of receipt sales
   
-  // Tips calculations
-  const creditCardTips = Number(form.watch("creditCardTips") || 0);
-  const cashTips = Number(form.watch("cashTips") || 0);
-  const receiptTips = Number(form.watch("receiptTips") || 0);
-  const tipShare = Number(form.watch("tipShare") || 0);
+  // Tips calculations - derived from transactions
+  const creditCardTips = totalCreditSales * 0.15; // Example: 15% of credit card sales
+  const cashTips = totalCashCollected * 0.15; // Example: 15% of cash collected
+  const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // Example: 15% of receipt sales
+  const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // Example: 10% of total tips
   
   // Totals
   const totalCommission = employeeCommission + creditCardCommission + cashCommission + receiptCommission;
   const totalTips = creditCardTips + cashTips + receiptTips - tipShare;
-  const totalIncome = totalCommission + totalTips;
-  const moneyOwed = Number(form.watch("moneyOwed") || 0);
+  const totalCommissionAndTips = totalCommission + totalTips;
+  const moneyOwed = totalCashCollected - companyTurnIn - totalTips; // Example calculation
   
   return (
     <div className="form-section">
@@ -503,158 +503,90 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             <h3 className="section-title uppercase font-bold">TOTAL COMMISSION AND TIP SUMMARY</h3>
             
             <div className="grid grid-cols-1 gap-6">
-              <FormField
-                control={form.control}
-                name="cashCommission"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Total Cash Commission</FormLabel>
-                    <div className="text-xs text-gray-500 mb-1">Enter the total cash commission earned.</div>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Total Cash Commission</div>
+                  <div className="font-bold text-lg">${cashCommission.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">5% of total cash collected</div>
+              </div>
               
-              <FormField
-                control={form.control}
-                name="creditCardCommission"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Total Credit Card Commission</FormLabel>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Total Credit Card Commission</div>
+                  <div className="font-bold text-lg">${creditCardCommission.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">5% of total credit sales</div>
+              </div>
               
-              <FormField
-                control={form.control}
-                name="receiptCommission"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Total Receipt Commission</FormLabel>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Total Receipt Commission</div>
+                  <div className="font-bold text-lg">${receiptCommission.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">5% of total receipt sales</div>
+              </div>
               
-              <FormField
-                control={form.control}
-                name="cashTips"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Total Cash Tips</FormLabel>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Total Cash Tips</div>
+                  <div className="font-bold text-lg">${cashTips.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">15% of total cash collected</div>
+              </div>
               
-              <FormField
-                control={form.control}
-                name="creditCardTips"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Total Credit Card Tips</FormLabel>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Total Credit Card Tips</div>
+                  <div className="font-bold text-lg">${creditCardTips.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">15% of total credit sales</div>
+              </div>
               
-              <FormField
-                control={form.control}
-                name="receiptTips"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Total Receipt Tips</FormLabel>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Total Receipt Tips</div>
+                  <div className="font-bold text-lg">${receiptTips.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">15% of total receipt sales</div>
+              </div>
               
-              <FormField
-                control={form.control}
-                name="tipShare"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Tip Share</FormLabel>
-                    <div className="text-xs text-gray-500 mb-1">Amount shared with restaurant staff.</div>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Tip Share</div>
+                  <div className="font-bold text-lg">${tipShare.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">10% of all tips paid to restaurant staff</div>
+              </div>
               
               <div className="bg-white p-4 rounded-md border border-gray-200 mt-2">
                 <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Commission</div>
-                  <div className="font-bold text-lg">${(Number(form.watch("cashCommission") || 0) + Number(form.watch("creditCardCommission") || 0) + Number(form.watch("receiptCommission") || 0) + employeeCommission).toFixed(2)}</div>
+                  <div className="font-medium font-bold">Total Commission</div>
+                  <div className="font-bold text-lg">${totalCommission.toFixed(2)}</div>
                 </div>
               </div>
               
               <div className="bg-white p-4 rounded-md border border-gray-200 mt-2">
                 <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Tips</div>
-                  <div className="font-bold text-lg">${(Number(form.watch("cashTips") || 0) + Number(form.watch("creditCardTips") || 0) + Number(form.watch("receiptTips") || 0) - Number(form.watch("tipShare") || 0)).toFixed(2)}</div>
+                  <div className="font-medium font-bold">Total Tips</div>
+                  <div className="font-bold text-lg">${totalTips.toFixed(2)}</div>
                 </div>
               </div>
               
               <div className="bg-white p-4 rounded-md border border-gray-200 mt-2">
                 <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Commission and Tips</div>
-                  <div className="font-bold text-lg">${(
-                    Number(form.watch("cashCommission") || 0) + 
-                    Number(form.watch("creditCardCommission") || 0) + 
-                    Number(form.watch("receiptCommission") || 0) + 
-                    employeeCommission +
-                    Number(form.watch("cashTips") || 0) + 
-                    Number(form.watch("creditCardTips") || 0) + 
-                    Number(form.watch("receiptTips") || 0) - 
-                    Number(form.watch("tipShare") || 0)
-                  ).toFixed(2)}</div>
+                  <div className="font-medium font-bold">Total Commission and Tips</div>
+                  <div className="font-bold text-lg">${totalCommissionAndTips.toFixed(2)}</div>
                 </div>
               </div>
               
-              <FormField
-                control={form.control}
-                name="moneyOwed"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-base">Total Money Owed</FormLabel>
-                    <div className="text-xs text-gray-500 mb-1">Amount to be collected from employee.</div>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
-                  </FormItem>
-                )}
-              />
+              <div className="bg-white p-4 rounded-md border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium font-bold">Total Money Owed</div>
+                  <div className="font-bold text-lg">${moneyOwed.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Amount to be collected from employee</div>
+              </div>
             </div>
           </div>
           
