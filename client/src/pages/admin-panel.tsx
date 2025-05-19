@@ -796,7 +796,7 @@ export default function AdminPanel() {
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Reports
           </TabsTrigger>
-          <TabsTrigger value="employees" className="flex items-center">
+          <TabsTrigger value="payroll" className="flex items-center">
             <Users className="h-4 w-4 mr-2" />
             Employee Payroll
           </TabsTrigger>
@@ -807,6 +807,10 @@ export default function AdminPanel() {
           <TabsTrigger value="tickets" className="flex items-center">
             <Ticket className="h-4 w-4 mr-2" />
             Ticket Tracking
+          </TabsTrigger>
+          <TabsTrigger value="manage-employees" className="flex items-center">
+            <Users className="h-4 w-4 mr-2" />
+            Manage Employees
           </TabsTrigger>
         </TabsList>
         
@@ -1663,6 +1667,496 @@ export default function AdminPanel() {
                   </Table>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Employee Management Tab */}
+        <TabsContent value="manage-employees">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <CardTitle>Employee Management</CardTitle>
+                <CardDescription>
+                  Add, edit and manage employees for shift leader selection and payroll calculations
+                </CardDescription>
+              </div>
+              <Button 
+                onClick={() => {
+                  // Reset new employee form
+                  setNewEmployee({
+                    key: '',
+                    fullName: '',
+                    isActive: true,
+                    isShiftLeader: false,
+                    phone: '',
+                    email: '',
+                    hireDate: new Date().toISOString().split('T')[0],
+                    notes: ''
+                  });
+                  // Open dialog
+                  setIsAddEmployeeOpen(true);
+                }}
+                className="flex items-center gap-1"
+              >
+                <PlusCircle className="h-4 w-4" />
+                Add Employee
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {isLoadingEmployees ? (
+                <div className="text-center py-8">Loading employees...</div>
+              ) : employees.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No employees found. Add an employee to get started.
+                </div>
+              ) : (
+                <Table>
+                  <TableCaption>List of all employees</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Key</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Shift Leader</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Hire Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {employees.map(employee => (
+                      <TableRow key={employee.id}>
+                        <TableCell className="font-medium">{employee.fullName}</TableCell>
+                        <TableCell>{employee.key}</TableCell>
+                        <TableCell>
+                          {employee.isActive ? (
+                            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                              Inactive
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {employee.isShiftLeader ? (
+                            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                              Yes
+                            </span>
+                          ) : (
+                            <span>No</span>
+                          )}
+                        </TableCell>
+                        <TableCell>{employee.phone || '-'}</TableCell>
+                        <TableCell>{employee.email || '-'}</TableCell>
+                        <TableCell>{new Date(employee.hireDate).toLocaleDateString()}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="px-2 h-8"
+                              onClick={() => {
+                                // Set current employee data to form
+                                setNewEmployee({
+                                  key: employee.key,
+                                  fullName: employee.fullName,
+                                  isActive: employee.isActive,
+                                  isShiftLeader: employee.isShiftLeader,
+                                  phone: employee.phone || '',
+                                  email: employee.email || '',
+                                  hireDate: employee.hireDate.split('T')[0],
+                                  notes: employee.notes || ''
+                                });
+                                // Set editing ID
+                                setEditingEmployeeId(employee.id);
+                                // Open edit dialog
+                                setIsEditEmployeeOpen(true);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                            
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="px-2 h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                              onClick={async () => {
+                                if (confirm(`Are you sure you want to delete ${employee.fullName}?`)) {
+                                  try {
+                                    const response = await fetch(`/api/employees/${employee.id}`, {
+                                      method: 'DELETE',
+                                    });
+                                    
+                                    if (response.ok) {
+                                      // Remove from local state
+                                      setEmployees(
+                                        employees.filter(e => e.id !== employee.id)
+                                      );
+                                      
+                                      // Show success message
+                                      alert(`Employee "${employee.fullName}" has been deleted.`);
+                                    } else {
+                                      alert("Error deleting employee");
+                                    }
+                                  } catch (error) {
+                                    console.error("Error:", error);
+                                    alert("Failed to delete employee");
+                                  }
+                                }
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+              
+              {/* Add Employee Dialog */}
+              <Dialog open={isAddEmployeeOpen} onOpenChange={setIsAddEmployeeOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Employee</DialogTitle>
+                    <DialogDescription>
+                      Add a new employee to the system. They will appear in shift leader selection and payroll calculations.
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="key">Employee Key (lowercase)</Label>
+                        <input 
+                          id="key"
+                          type="text"
+                          placeholder="e.g., john"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.key}
+                          onChange={(e) => setNewEmployee({...newEmployee, key: e.target.value.toLowerCase()})}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="fullName">Full Name</Label>
+                        <input 
+                          id="fullName"
+                          type="text"
+                          placeholder="e.g., John Smith"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.fullName}
+                          onChange={(e) => setNewEmployee({...newEmployee, fullName: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label>Status</Label>
+                        <div className="flex items-center space-x-2">
+                          <input 
+                            type="checkbox"
+                            id="isActive"
+                            checked={newEmployee.isActive}
+                            onChange={(e) => setNewEmployee({...newEmployee, isActive: e.target.checked})}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <Label htmlFor="isActive" className="text-sm font-normal">Active</Label>
+                        </div>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label>Role</Label>
+                        <div className="flex items-center space-x-2">
+                          <input 
+                            type="checkbox"
+                            id="isShiftLeader"
+                            checked={newEmployee.isShiftLeader}
+                            onChange={(e) => setNewEmployee({...newEmployee, isShiftLeader: e.target.checked})}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <Label htmlFor="isShiftLeader" className="text-sm font-normal">Shift Leader</Label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="phone">Phone (optional)</Label>
+                        <input 
+                          id="phone"
+                          type="text"
+                          placeholder="e.g., 555-123-4567"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.phone}
+                          onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="email">Email (optional)</Label>
+                        <input 
+                          id="email"
+                          type="email"
+                          placeholder="e.g., john@example.com"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.email}
+                          onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="hireDate">Hire Date</Label>
+                      <input 
+                        id="hireDate"
+                        type="date"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={newEmployee.hireDate}
+                        onChange={(e) => setNewEmployee({...newEmployee, hireDate: e.target.value})}
+                      />
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="notes">Notes (optional)</Label>
+                      <textarea 
+                        id="notes"
+                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Any additional information about this employee"
+                        value={newEmployee.notes}
+                        onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  
+                  <DialogFooter>
+                    <Button 
+                      type="submit" 
+                      onClick={async () => {
+                        try {
+                          // Validate required fields
+                          if (!newEmployee.key || !newEmployee.fullName) {
+                            alert("Employee key and full name are required.");
+                            return;
+                          }
+                          
+                          const response = await fetch('/api/employees', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newEmployee),
+                          });
+                          
+                          if (response.ok) {
+                            const data = await response.json();
+                            
+                            // Update local state
+                            setEmployees([...employees, data]);
+                            
+                            // Close dialog
+                            setIsAddEmployeeOpen(false);
+                            
+                            // Reset form
+                            setNewEmployee({
+                              key: '',
+                              fullName: '',
+                              isActive: true,
+                              isShiftLeader: false,
+                              phone: '',
+                              email: '',
+                              hireDate: new Date().toISOString().split('T')[0],
+                              notes: ''
+                            });
+                            
+                            // Show success message
+                            alert(`Employee "${data.fullName}" has been added successfully.`);
+                          } else {
+                            const error = await response.json();
+                            alert(`Error adding employee: ${error.message}`);
+                          }
+                        } catch (error) {
+                          console.error("Error:", error);
+                          alert("Failed to add employee");
+                        }
+                      }}
+                    >
+                      Add Employee
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              
+              {/* Edit Employee Dialog */}
+              <Dialog open={isEditEmployeeOpen} onOpenChange={setIsEditEmployeeOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Employee</DialogTitle>
+                    <DialogDescription>
+                      Update employee information.
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-key">Employee Key (lowercase)</Label>
+                        <input 
+                          id="edit-key"
+                          type="text"
+                          placeholder="e.g., john"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.key}
+                          onChange={(e) => setNewEmployee({...newEmployee, key: e.target.value.toLowerCase()})}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-fullName">Full Name</Label>
+                        <input 
+                          id="edit-fullName"
+                          type="text"
+                          placeholder="e.g., John Smith"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.fullName}
+                          onChange={(e) => setNewEmployee({...newEmployee, fullName: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label>Status</Label>
+                        <div className="flex items-center space-x-2">
+                          <input 
+                            type="checkbox"
+                            id="edit-isActive"
+                            checked={newEmployee.isActive}
+                            onChange={(e) => setNewEmployee({...newEmployee, isActive: e.target.checked})}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <Label htmlFor="edit-isActive" className="text-sm font-normal">Active</Label>
+                        </div>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label>Role</Label>
+                        <div className="flex items-center space-x-2">
+                          <input 
+                            type="checkbox"
+                            id="edit-isShiftLeader"
+                            checked={newEmployee.isShiftLeader}
+                            onChange={(e) => setNewEmployee({...newEmployee, isShiftLeader: e.target.checked})}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <Label htmlFor="edit-isShiftLeader" className="text-sm font-normal">Shift Leader</Label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-phone">Phone (optional)</Label>
+                        <input 
+                          id="edit-phone"
+                          type="text"
+                          placeholder="e.g., 555-123-4567"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.phone}
+                          onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-email">Email (optional)</Label>
+                        <input 
+                          id="edit-email"
+                          type="email"
+                          placeholder="e.g., john@example.com"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.email}
+                          onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="edit-hireDate">Hire Date</Label>
+                      <input 
+                        id="edit-hireDate"
+                        type="date"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={newEmployee.hireDate}
+                        onChange={(e) => setNewEmployee({...newEmployee, hireDate: e.target.value})}
+                      />
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="edit-notes">Notes (optional)</Label>
+                      <textarea 
+                        id="edit-notes"
+                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Any additional information about this employee"
+                        value={newEmployee.notes}
+                        onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  
+                  <DialogFooter>
+                    <Button 
+                      type="submit" 
+                      onClick={async () => {
+                        try {
+                          // Validate required fields
+                          if (!newEmployee.key || !newEmployee.fullName) {
+                            alert("Employee key and full name are required.");
+                            return;
+                          }
+                          
+                          const response = await fetch(`/api/employees/${editingEmployeeId}`, {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newEmployee),
+                          });
+                          
+                          if (response.ok) {
+                            const data = await response.json();
+                            
+                            // Update local state
+                            setEmployees(employees.map(emp => emp.id === data.id ? data : emp));
+                            
+                            // Close dialog
+                            setIsEditEmployeeOpen(false);
+                            
+                            // Reset editing ID
+                            setEditingEmployeeId(null);
+                            
+                            // Show success message
+                            alert(`Employee "${data.fullName}" has been updated successfully.`);
+                          } else {
+                            const error = await response.json();
+                            alert(`Error updating employee: ${error.message}`);
+                          }
+                        } catch (error) {
+                          console.error("Error:", error);
+                          alert("Failed to update employee");
+                        }
+                      }}
+                    >
+                      Update Employee
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </TabsContent>
