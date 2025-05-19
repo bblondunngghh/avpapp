@@ -167,95 +167,160 @@ export class MemStorage implements IStorage {
 // Database storage implementation
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user || undefined;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      throw new Error("Failed to fetch user");
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.username, username));
+      return user || undefined;
+    } catch (error) {
+      console.error("Error fetching user by username:", error);
+      throw new Error("Failed to fetch user by username");
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(insertUser)
-      .returning();
-    return user;
+    try {
+      const [user] = await db
+        .insert(users)
+        .values(insertUser)
+        .returning();
+      return user;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw new Error("Failed to create user");
+    }
   }
   
   async getLocations(): Promise<Location[]> {
-    return await db.select().from(locations);
+    try {
+      return await db.select().from(locations);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      throw new Error("Failed to fetch locations");
+    }
   }
   
   async getLocation(id: number): Promise<Location | undefined> {
-    const [location] = await db.select().from(locations).where(eq(locations.id, id));
-    return location || undefined;
+    try {
+      const [location] = await db.select().from(locations).where(eq(locations.id, id));
+      return location || undefined;
+    } catch (error) {
+      console.error("Error fetching location:", error);
+      throw new Error("Failed to fetch location");
+    }
   }
   
   async getLocationByName(name: string): Promise<Location | undefined> {
-    const [location] = await db.select().from(locations).where(eq(locations.name, name));
-    return location || undefined;
+    try {
+      const [location] = await db.select().from(locations).where(eq(locations.name, name));
+      return location || undefined;
+    } catch (error) {
+      console.error("Error fetching location by name:", error);
+      throw new Error("Failed to fetch location by name");
+    }
   }
   
   async createLocation(insertLocation: InsertLocation): Promise<Location> {
-    const [location] = await db
-      .insert(locations)
-      .values(insertLocation)
-      .returning();
-    return location;
+    try {
+      const [location] = await db
+        .insert(locations)
+        .values(insertLocation)
+        .returning();
+      return location;
+    } catch (error) {
+      console.error("Error creating location:", error);
+      throw new Error("Failed to create location");
+    }
   }
   
   async getShiftReports(): Promise<ShiftReport[]> {
-    return await db.select().from(shiftReports).orderBy(desc(shiftReports.createdAt));
+    try {
+      return await db.select().from(shiftReports).orderBy(desc(shiftReports.createdAt));
+    } catch (error) {
+      console.error("Error fetching shift reports:", error);
+      throw new Error("Failed to fetch shift reports");
+    }
   }
   
   async getShiftReport(id: number): Promise<ShiftReport | undefined> {
-    const [report] = await db.select().from(shiftReports).where(eq(shiftReports.id, id));
-    return report || undefined;
+    try {
+      const [report] = await db.select().from(shiftReports).where(eq(shiftReports.id, id));
+      return report || undefined;
+    } catch (error) {
+      console.error("Error fetching shift report:", error);
+      throw new Error("Failed to fetch shift report");
+    }
   }
   
   async getShiftReportsByLocation(locationId: number): Promise<ShiftReport[]> {
-    return await db
-      .select()
-      .from(shiftReports)
-      .where(eq(shiftReports.locationId, locationId))
-      .orderBy(desc(shiftReports.createdAt));
+    try {
+      return await db
+        .select()
+        .from(shiftReports)
+        .where(eq(shiftReports.locationId, locationId))
+        .orderBy(desc(shiftReports.createdAt));
+    } catch (error) {
+      console.error("Error fetching shift reports by location:", error);
+      throw new Error("Failed to fetch shift reports by location");
+    }
   }
   
   async createShiftReport(insertReport: InsertShiftReport): Promise<ShiftReport> {
-    const [report] = await db
-      .insert(shiftReports)
-      .values({
-        ...insertReport,
-        notes: insertReport.notes || null,
-        incidents: insertReport.incidents || null,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      })
-      .returning();
-    return report;
+    try {
+      const [report] = await db
+        .insert(shiftReports)
+        .values({
+          ...insertReport,
+          notes: insertReport.notes || null,
+          incidents: insertReport.incidents || null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return report;
+    } catch (error) {
+      console.error("Error creating shift report:", error);
+      throw new Error("Failed to create shift report");
+    }
   }
   
   async updateShiftReport(id: number, updateReport: UpdateShiftReport): Promise<ShiftReport | undefined> {
-    const [report] = await db
-      .update(shiftReports)
-      .set({
-        ...updateReport,
-        notes: updateReport.notes || null,
-        incidents: updateReport.incidents || null,
-        updatedAt: new Date()
-      })
-      .where(eq(shiftReports.id, id))
-      .returning();
-    return report || undefined;
+    try {
+      const [report] = await db
+        .update(shiftReports)
+        .set({
+          ...updateReport,
+          notes: updateReport.notes || null,
+          incidents: updateReport.incidents || null,
+          updatedAt: new Date()
+        })
+        .where(eq(shiftReports.id, id))
+        .returning();
+      return report || undefined;
+    } catch (error) {
+      console.error("Error updating shift report:", error);
+      throw new Error("Failed to update shift report");
+    }
   }
   
   async deleteShiftReport(id: number): Promise<boolean> {
-    const result = await db
-      .delete(shiftReports)
-      .where(eq(shiftReports.id, id));
-    return true; // If deletion completes without error, return true
+    try {
+      await db
+        .delete(shiftReports)
+        .where(eq(shiftReports.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting shift report:", error);
+      throw new Error("Failed to delete shift report");
+    }
   }
 }
 
