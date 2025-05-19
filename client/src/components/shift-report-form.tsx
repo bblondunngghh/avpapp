@@ -444,6 +444,20 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               
               <FormField
                 control={form.control}
+                name="totalReceipts"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipts</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
                 name="totalReceiptSales"
                 render={({ field }) => (
                   <FormItem>
@@ -455,20 +469,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <span>Calculated at $18.00 per receipt</span>
                       <span>Expected: ${(totalReceipts * 18).toFixed(2)}</span>
                     </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="totalReceipts"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipts</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" className="paperform-input" {...field} />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
