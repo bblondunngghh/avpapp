@@ -43,7 +43,6 @@ const formSchema = z.object({
   creditCardTips: z.coerce.number().min(0, "Cannot be negative").default(0),
   cashTips: z.coerce.number().min(0, "Cannot be negative").default(0),
   receiptTips: z.coerce.number().min(0, "Cannot be negative").default(0),
-  tipShare: z.coerce.number().min(0, "Cannot be negative").default(0),
   moneyOwed: z.coerce.number().default(0),
   notes: z.string().optional(),
   incidents: z.string().optional(),
@@ -97,7 +96,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       creditCardTips: 0,
       cashTips: 0,
       receiptTips: 0,
-      tipShare: 0,
       moneyOwed: 0,
       notes: "",
       incidents: "",
@@ -108,10 +106,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   useEffect(() => {
     form.setValue("locationId", locationId);
   }, [locationId, form]);
-
-  // Handle totalCars changes
-  // We'll no longer automatically set companyCashTurnIn when totalCars changes
-  // This allows the user to manually enter the actual cash turn-in amount
   
   // Fetch report data if editing
   const { data: reportData, isLoading: isLoadingReport } = useQuery({
@@ -267,7 +261,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // If actual sales > theoretical revenue, the difference is also tips (shortfall)
   const creditCardTransactionsTotal = creditTransactions * 15;
   const creditCardTips = Math.abs(totalCreditSales - creditCardTransactionsTotal);
-                        
+                      
   // For cash tips: cash cars * $15 = theoretical cash revenue
   // If theoretical cash > actual cash collected, the difference is tips (excess)
   // If actual cash > theoretical cash, the difference is also tips (shortfall)
@@ -451,13 +445,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               
               <FormField
                 control={form.control}
-                name="totalReceipts"
+                name="totalReceiptSales"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Number of Receipts</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipt Sales</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" className="paperform-input" {...field} />
+                      <InputMoney className="paperform-input" {...field} />
                     </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Each receipt: $18.00</span>
+                      <span>Expected: ${(totalReceipts * 18).toFixed(2)}</span>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -484,38 +482,61 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="companyCashTurnIn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-in</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
                     <FormControl>
                       <InputMoney 
-                        className="paperform-input"
-                        {...field}
+                        className={`paperform-input ${!isMatched ? 'border-red-500 focus-within:border-red-500' : 'border-green-500 focus-within:border-green-500'}`} 
+                        {...field} 
                       />
                     </FormControl>
+                    {!isMatched && (
+                      <div className="text-xs text-red-600 mt-1">
+                        Expected Turn-In: ${expectedCompanyCashTurnIn.toFixed(2)}
+                      </div>
+                    )}
+                    {isMatched && (
+                      <div className="text-xs text-green-600 mt-1">
+                        ✓ Turn-In balanced correctly
+                      </div>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
             
-            <div className="calculation-box mt-6">
-              <div className="calculation-row">
-                <span className="calculation-label">Total Turn-in:</span>
-                <span className="calculation-value">${totalTurnIn.toFixed(2)}</span>
-              </div>
-              
-              <div className="calculation-row">
-                <span className="calculation-label">Over/Short:</span>
-                <span className={`calculation-value font-bold ${isMatched ? "text-green-600" : "text-red-600"}`}>
-                  ${overShort.toFixed(2)}
-                </span>
+            <div className="mt-6">
+              <div className="border-t border-gray-300 pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Total Credit Sales:</span>
+                    <span>${totalCreditSales.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Company Cash Turn-In:</span>
+                    <span>${companyCashTurnIn.toFixed(2)}</span>
+                  </div>
+                </div>
+                
+                <div className="mt-4 flex justify-between bg-blue-50 p-3 rounded-md">
+                  <span className="font-bold text-blue-800">Total Turn-In:</span>
+                  <span className="font-bold text-blue-800">${(totalCreditSales + companyCashTurnIn).toFixed(2)}</span>
+                </div>
+                
+                {!isMatched && (
+                  <div className="mt-3 flex justify-between bg-red-50 p-3 rounded-md">
+                    <span className="font-bold text-red-700">Expected Company Cash Turn-In:</span>
+                    <span className="font-bold text-red-700">${expectedCompanyCashTurnIn.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">TOTAL COMMISSION AND TIP SUMMARY</h3>
+            <h3 className="section-title uppercase font-bold">COMMISSION AND TIPS</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gray-50 p-3 rounded-md">
                 <div className="text-sm font-medium mb-2">Commission Breakdown</div>
                 <div className="space-y-2">
@@ -539,7 +560,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 <div className="text-xs text-gray-600 mt-2">
                   <div>• Cash: $4 per cash car</div>
                   <div>• Credit: $4 per card transaction</div>
-                  <div>• Receipt: 5% of receipt sales</div>
+                  <div>• Receipt: $4 per receipt</div>
                 </div>
               </div>
               
@@ -566,7 +587,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 <div className="text-xs text-gray-600 mt-2">
                   <div>• Cash: $15 per cash car - cash collected</div>
                   <div>• Credit: $15 per transaction - credit sales</div>
-                  <div>• Receipt: 15% of receipt sales</div>
+                  <div>• Receipt: $3 per receipt</div>
                 </div>
               </div>
             </div>
@@ -578,64 +599,71 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               </div>
             </div>
             
-            <div className="mt-4 bg-gray-100 p-4 rounded-md border border-gray-300">
+            <div className={`mt-4 p-4 rounded-md border ${moneyOwed === 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
               <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-base font-bold">Total Money Owed</div>
-                  <div className="text-xs text-gray-600">Amount to be collected from employee</div>
+                <div className={`text-base font-bold ${moneyOwed === 0 ? 'text-green-800' : 'text-red-800'}`}>
+                  {moneyOwed === 0 ? 'Accounts Balanced' : 'Money Owed/Excess'}
                 </div>
-                <div className="text-xl font-bold">${moneyOwed.toFixed(2)}</div>
+                <div className={`text-xl font-bold ${moneyOwed === 0 ? 'text-green-800' : 'text-red-800'}`}>
+                  ${Math.abs(moneyOwed).toFixed(2)}
+                </div>
               </div>
+              {moneyOwed !== 0 && (
+                <div className="text-xs text-red-700 mt-2">
+                  {moneyOwed > 0 ? 'Money owed to company' : 'Excess cash to be returned'}
+                </div>
+              )}
             </div>
           </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">NOTES AND INCIDENTS</h3>
+            <h3 className="section-title uppercase font-bold">NOTES & INCIDENTS</h3>
             
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem className="mb-6">
-                  <FormLabel className="text-gray-700 font-medium text-sm">Shift Notes</FormLabel>
-                  <FormControl>
-                    <Textarea rows={3} className="paperform-input" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="incidents"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700 font-medium text-sm">Incidents</FormLabel>
-                  <FormControl>
-                    <Textarea rows={3} className="paperform-input" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Notes</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Enter any general notes about the shift..." 
+                        className="paperform-input min-h-[120px]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="incidents"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Incidents</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Document any incidents that occurred during the shift..." 
+                        className="paperform-input min-h-[120px]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           
-          <div className="mt-8 flex justify-end space-x-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="px-6 py-3 rounded-md"
-              onClick={handleBack}
-            >
+          <div className="flex justify-end mt-8 mb-10">
+            <Button type="button" variant="outline" onClick={handleBack} className="mr-4">
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              className="submit-button"
-              disabled={isSubmitting}
-            >
-              {reportId ? "Update Report" : "Submit Report"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : (reportId ? 'Update Report' : 'Submit Report')}
             </Button>
           </div>
         </form>
