@@ -19,8 +19,10 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown } from "lucide-react";
 import { LOCATIONS, EMPLOYEE_NAMES } from "@/lib/constants";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Define types for our data
 interface Employee {
@@ -181,6 +183,167 @@ export default function AdminPanel() {
     localStorage.removeItem("admin_authenticated");
     localStorage.removeItem("admin_auth_time");
     navigate("/admin-login");
+  };
+  
+  // Function to export shift reports to CSV
+  const exportReportsToCSV = () => {
+    if (!reports.length) return;
+    
+    // CSV header
+    let csvContent = "ID,Date,Location,Shift,Leader,Cars,Turn-In,Employees,Submitted\n";
+    
+    // Add each row of data
+    reports.forEach(report => {
+      const date = new Date(report.date).toLocaleDateString();
+      const submittedDate = new Date(report.createdAt).toLocaleDateString();
+      const locationName = getLocationName(report.locationId);
+      const turnInRate = report.locationId === 2 ? 6 : 11;
+      const expectedTurnIn = report.totalCars * turnInRate;
+      const leaderName = EMPLOYEE_NAMES[report.manager] || report.manager;
+      const employeeCount = typeof report.employees === 'string' 
+        ? JSON.parse(report.employees).length 
+        : Array.isArray(report.employees) 
+          ? report.employees.length 
+          : 0;
+      
+      // Format the CSV row
+      csvContent += `${report.id},"${date}","${locationName}","${report.shift}","${leaderName}",${report.totalCars},${expectedTurnIn.toFixed(2)},${employeeCount},"${submittedDate}"\n`;
+    });
+    
+    // Create a download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'shift-reports.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  // Function to export employee data to CSV
+  const exportEmployeesToCSV = () => {
+    if (!employeeStats.length) return;
+    
+    // CSV header
+    let csvContent = "Employee,Total Hours,Location,Commission,Tips,Money Owed,Total Earnings,Est. Taxes (22%)\n";
+    
+    // Add each row of data
+    employeeStats.forEach(employee => {
+      const employeeName = EMPLOYEE_NAMES[employee.name] || employee.name;
+      const locationName = LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-';
+      const taxes = (employee.totalEarnings * 0.22).toFixed(2);
+      
+      // Format the CSV row
+      csvContent += `"${employeeName}",${employee.totalHours.toFixed(1)},"${locationName}",${employee.totalCommission.toFixed(2)},${employee.totalTips.toFixed(2)},${employee.totalMoneyOwed.toFixed(2)},${employee.totalEarnings.toFixed(2)},${taxes}\n`;
+    });
+    
+    // Create a download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'employee-payroll.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  // Function to export shift reports to PDF
+  const exportReportsToPDF = () => {
+    if (!reports.length) return;
+    
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.text("Access Valet Parking - Shift Reports", 14, 22);
+    doc.setFontSize(11);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 30);
+    
+    // Prepare table data
+    const tableColumn = ["ID", "Date", "Location", "Shift", "Leader", "Cars", "Turn-In", "Employees"];
+    const tableRows = reports.map(report => {
+      const date = new Date(report.date).toLocaleDateString();
+      const locationName = getLocationName(report.locationId);
+      const turnInRate = report.locationId === 2 ? 6 : 11;
+      const expectedTurnIn = report.totalCars * turnInRate;
+      const leaderName = EMPLOYEE_NAMES[report.manager] || report.manager;
+      const employeeCount = typeof report.employees === 'string' 
+        ? JSON.parse(report.employees).length 
+        : Array.isArray(report.employees) 
+          ? report.employees.length 
+          : 0;
+      
+      return [
+        report.id,
+        date,
+        locationName,
+        report.shift,
+        leaderName,
+        report.totalCars,
+        `$${expectedTurnIn.toFixed(2)}`,
+        employeeCount
+      ];
+    });
+    
+    // Generate table
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 40,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [0, 101, 189] }
+    });
+    
+    // Save PDF
+    doc.save("shift-reports.pdf");
+  };
+  
+  // Function to export employee data to PDF
+  const exportEmployeesToPDF = () => {
+    if (!employeeStats.length) return;
+    
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.text("Access Valet Parking - Employee Payroll", 14, 22);
+    doc.setFontSize(11);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 30);
+    
+    // Prepare table data
+    const tableColumn = ["Employee", "Hours", "Location", "Commission", "Tips", "Money Owed", "Total Earnings", "Est. Taxes (22%)"];
+    const tableRows = employeeStats.map(employee => {
+      const employeeName = EMPLOYEE_NAMES[employee.name] || employee.name;
+      const locationName = LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-';
+      const taxes = (employee.totalEarnings * 0.22).toFixed(2);
+      
+      return [
+        employeeName,
+        employee.totalHours.toFixed(1),
+        locationName,
+        `$${employee.totalCommission.toFixed(2)}`,
+        `$${employee.totalTips.toFixed(2)}`,
+        `$${employee.totalMoneyOwed.toFixed(2)}`,
+        `$${employee.totalEarnings.toFixed(2)}`,
+        `$${taxes}`
+      ];
+    });
+    
+    // Generate table
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 40,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [0, 101, 189] }
+    });
+    
+    // Save PDF
+    doc.save("employee-payroll.pdf");
   };
 
   // Get location name by ID
