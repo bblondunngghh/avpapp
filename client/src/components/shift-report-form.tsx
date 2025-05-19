@@ -234,7 +234,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="form-card">
-            <h3 className="section-title">Basic Information</h3>
+            <h3 className="section-title">Date & Shift Information</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -280,7 +280,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="mt-6">
               <FormField
                 control={form.control}
                 name="manager"
@@ -294,15 +294,40 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </FormItem>
                 )}
               />
-              
+            </div>
+          </div>
+          
+          <div className="form-card">
+            <h3 className="section-title">Company Turn-In Section</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="totalCars"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Number of Cars</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Number of Cars Parked</FormLabel>
                     <FormControl>
                       <Input type="number" min="0" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="companyCashTurnIn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Company Turn-In ($11 per car)</FormLabel>
+                    <FormControl>
+                      <InputMoney 
+                        className="paperform-input bg-gray-50"
+                        {...field} 
+                        readOnly 
+                        value={companyTurnIn}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -312,7 +337,19 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             
             <div className="calculation-box mt-6">
               <div className="calculation-row">
-                <span className="calculation-label">Company Turn-in (Total Cars × $11):</span>
+                <span className="calculation-label">Total Charge Per Car:</span>
+                <span className="calculation-value">$15.00</span>
+              </div>
+              <div className="calculation-row">
+                <span className="calculation-label">Employee Commission Per Car:</span>
+                <span className="calculation-value">$4.00</span>
+              </div>
+              <div className="calculation-row">
+                <span className="calculation-label">Company Turn-In Per Car:</span>
+                <span className="calculation-value">$11.00</span>
+              </div>
+              <div className="calculation-row font-bold mt-2 pt-2 border-t border-gray-300">
+                <span className="calculation-label">Total Company Turn-In (Cars × $11):</span>
                 <span className="calculation-value">${companyTurnIn.toFixed(2)}</span>
               </div>
             </div>
