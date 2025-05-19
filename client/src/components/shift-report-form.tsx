@@ -315,18 +315,52 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         </Button>
         <h1>ACCESS VALET PARKING SHIFT REPORT</h1>
         
-        <div className="capital-grille-image">
-          <img 
-            src="/src/assets/capital-grille.jpg" 
-            alt="The Capital Grille" 
-            className="rounded-md shadow-md" 
-          />
-        </div>
-        
-        <div className="address">
-          THE CAPITAL GRILLE<br />
-          117 W 4TH ST. AUSTIN, TX 78701
-        </div>
+        {form.watch('locationId') === 1 ? (
+          <>
+            <div className="capital-grille-image">
+              <img 
+                src="/src/assets/capital-grille.jpg" 
+                alt="The Capital Grille" 
+                className="rounded-md shadow-md" 
+              />
+            </div>
+            
+            <div className="address">
+              THE CAPITAL GRILLE<br />
+              117 W 4TH ST. AUSTIN, TX 78701
+            </div>
+          </>
+        ) : form.watch('locationId') === 2 ? (
+          <>
+            <div className="restaurant-image">
+              <img 
+                src="/src/assets/bobs.jpg" 
+                alt="Bob's Steak and Chop House" 
+                className="rounded-md shadow-md" 
+              />
+            </div>
+            
+            <div className="address">
+              BOB'S STEAK AND CHOP HOUSE<br />
+              301 LAVACA ST. AUSTIN, TX 78701
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="capital-grille-image">
+              <img 
+                src="/src/assets/capital-grille.jpg" 
+                alt="The Capital Grille" 
+                className="rounded-md shadow-md" 
+              />
+            </div>
+            
+            <div className="address">
+              THE CAPITAL GRILLE<br />
+              117 W 4TH ST. AUSTIN, TX 78701
+            </div>
+          </>
+        )}
       </div>
       
       <Form {...form}>

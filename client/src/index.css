@@ -29,14 +29,16 @@
   margin-bottom: 0.5rem;
 }
 
-.capital-grille-image {
+.capital-grille-image,
+.restaurant-image {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
   width: 100%;
 }
 
-.capital-grille-image img {
+.capital-grille-image img,
+.restaurant-image img {
   width: 100%;
   max-width: 500px;
   height: auto;
@@ -45,7 +47,8 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.capital-grille-image img:hover {
+.capital-grille-image img:hover,
+.restaurant-image img:hover {
   transform: scale(1.02);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
