@@ -253,7 +253,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // Commission calculations
   const creditCardCommission = creditTransactions * 4; // $4 per credit card transaction
   const cashCommission = cashCars * 4; // $4 per cash car
-  const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // 5% of receipt sales
+  // Receipt calculations: $4 commission per receipt
+  const totalReceipts = Number(form.watch("totalReceipts") || 0);
+  const receiptCommission = totalReceipts * 4; // $4 commission per receipt
   
   // Tips calculations based on specific formulas explained
   // For credit card tips: credit transactions * $15 = theoretical revenue
@@ -267,7 +269,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // If actual cash > theoretical cash, the difference is also tips (shortfall)
   const cashCarsTotal = cashCars * 15;
   const cashTips = Math.abs(totalCashCollected - cashCarsTotal);
-  const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // 15% of receipt sales
+  // Receipt tips: $3 per receipt
+  const receiptTips = totalReceipts * 3; // $3 tip per receipt
   
   // Totals
   const totalCommission = creditCardCommission + cashCommission + receiptCommission;
