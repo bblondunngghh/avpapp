@@ -22,11 +22,11 @@ export default function Reports() {
   });
   
   // Filter reports
-  const filteredReports = reports ? reports.filter(report => {
+  const filteredReports = reports ? reports.filter((report: any) => {
     let matchesLocation = true;
     let matchesDate = true;
     
-    if (locationFilter) {
+    if (locationFilter && locationFilter !== "all") {
       matchesLocation = report.locationId === parseInt(locationFilter);
     }
     
@@ -70,7 +70,7 @@ export default function Reports() {
                   <SelectValue placeholder="All Locations" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Locations</SelectItem>
+                  <SelectItem value="all">All Locations</SelectItem>
                   {LOCATIONS.map(location => (
                     <SelectItem key={location.id} value={location.id.toString()}>
                       {location.name}
