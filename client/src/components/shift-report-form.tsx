@@ -242,17 +242,18 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalTurnIn = totalCreditSales + companyTurnIn;
   const overShort = totalCashCollected - companyTurnIn;
   
-  // Commission calculations - all derived from actual values
+  // Commission calculations - based on actual business rules
   const employeeCommission = totalCars * 4; // $4 per car employee commission
-  const creditCardCommission = totalCreditSales * 0.05; // Example: 5% of credit card sales
-  const cashCommission = totalCashCollected * 0.05; // Example: 5% of cash collected
-  const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // Example: 5% of receipt sales
+  const creditTransactions = Number(form.watch("creditTransactions") || 0);
+  const creditCardCommission = creditTransactions * 4; // $4 per credit card transaction
+  const cashCommission = totalCashCollected * 0.05; // 5% of cash collected
+  const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // 5% of receipt sales
   
-  // Tips calculations - derived from transactions
-  const creditCardTips = totalCreditSales * 0.15; // Example: 15% of credit card sales
-  const cashTips = totalCashCollected * 0.15; // Example: 15% of cash collected
-  const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // Example: 15% of receipt sales
-  const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // Example: 10% of total tips
+  // Tips calculations - based on actual business rules
+  const creditCardTips = (Number(form.watch("creditTransactions") || 0) * 15) - totalCreditSales; // $15 per transaction minus total credit sales
+  const cashTips = totalCashCollected * 0.15; // 15% of cash collected
+  const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // 15% of receipt sales
+  const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // 10% of total tips
   
   // Totals
   const totalCommission = employeeCommission + creditCardCommission + cashCommission + receiptCommission;
@@ -516,7 +517,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <div className="font-medium">Total Credit Card Commission</div>
                   <div className="font-bold text-lg">${creditCardCommission.toFixed(2)}</div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">5% of total credit sales</div>
+                <div className="text-xs text-gray-500 mt-1">$4 per credit card transaction</div>
               </div>
               
               <div className="bg-white p-4 rounded-md border border-gray-200">
@@ -540,7 +541,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <div className="font-medium">Total Credit Card Tips</div>
                   <div className="font-bold text-lg">${creditCardTips.toFixed(2)}</div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">15% of total credit sales</div>
+                <div className="text-xs text-gray-500 mt-1">$15 per transaction minus total credit sales</div>
               </div>
               
               <div className="bg-white p-4 rounded-md border border-gray-200">
