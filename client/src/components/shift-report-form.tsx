@@ -534,7 +534,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Credit Card Sales</FormLabel>
                     <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
+                      <InputMoney 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
                       <span>Expected: ${(creditTransactions * 15).toFixed(2)}</span>
@@ -575,7 +583,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Receipt Sales</FormLabel>
                     <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
+                      <InputMoney 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
                       <span>Calculated at $18.00 per receipt</span>
@@ -593,7 +609,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Cash Collected</FormLabel>
                     <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
+                      <InputMoney 
+                        className="paperform-input" 
+                        {...field} 
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
                       <span>Expected: ${(cashCars * 15).toFixed(2)}</span>
