@@ -119,6 +119,22 @@ export default function AdminPanel() {
     batchNumber: '',
     notes: ''
   });
+  
+  // Employee management state
+  const [employees, setEmployees] = useState<EmployeeData[]>([]);
+  const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
+  const [isEditEmployeeOpen, setIsEditEmployeeOpen] = useState(false);
+  const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
+  const [newEmployee, setNewEmployee] = useState({
+    key: '',
+    fullName: '',
+    isActive: true,
+    isShiftLeader: false,
+    phone: '',
+    email: '',
+    hireDate: new Date().toISOString().split('T')[0],
+    notes: ''
+  });
 
   // Check if admin is authenticated
   useEffect(() => {
