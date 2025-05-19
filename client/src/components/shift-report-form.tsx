@@ -851,12 +851,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               min="0" 
                               step="0.5" 
                               className="paperform-input text-center"
-                              value={employee.hours || 0}
+                              value={employee.hours === 0 ? '' : employee.hours}
                               onChange={(e) => {
                                 const newEmployees = [...(form.watch('employees') || [])];
+                                const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                                 newEmployees[index] = { 
                                   ...newEmployees[index], 
-                                  hours: parseFloat(e.target.value) || 0 
+                                  hours: value
                                 };
                                 form.setValue('employees', newEmployees);
                                 
