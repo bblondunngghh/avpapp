@@ -20,7 +20,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart } from "lucide-react";
 import { LOCATIONS, EMPLOYEE_NAMES } from "@/lib/constants";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -66,6 +66,18 @@ export default function AdminPanel() {
   // Date filter state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  
+  // Location performance state
+  const [locationStats, setLocationStats] = useState<{
+    id: number;
+    name: string;
+    totalCars: number;
+    cashSales: number;
+    creditSales: number;
+    receiptSales: number;
+    totalIncome: number;
+    reports: number;
+  }[]>([]);
 
   // Check if admin is authenticated
   useEffect(() => {
@@ -88,9 +100,10 @@ export default function AdminPanel() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  // Calculate employee statistics whenever reports or date filters change
+  // Calculate statistics whenever reports or date filters change
   useEffect(() => {
     if (reports && reports.length > 0) {
+      // Employee statistics
       const employeeMap = new Map<string, {
         name: string;
         totalHours: number;
@@ -101,6 +114,32 @@ export default function AdminPanel() {
         reports: number;
         locationId: number;
       }>();
+      
+      // Location statistics
+      const locationMap = new Map<number, {
+        id: number;
+        name: string;
+        totalCars: number;
+        cashSales: number;
+        creditSales: number;
+        receiptSales: number;
+        totalIncome: number;
+        reports: number;
+      }>();
+      
+      // Initialize location stats
+      LOCATIONS.forEach(location => {
+        locationMap.set(location.id, {
+          id: location.id,
+          name: location.name,
+          totalCars: 0,
+          cashSales: 0,
+          creditSales: 0,
+          receiptSales: 0,
+          totalIncome: 0,
+          reports: 0
+        });
+      });
       
       // Filter reports by date range if filters are set
       const filteredReports = reports.filter(report => {
@@ -127,6 +166,29 @@ export default function AdminPanel() {
       filteredReports.forEach(report => {
         const commissionRate = report.locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
         const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+        
+        // Update location statistics
+        const locationId = report.locationId;
+        const existingLocationStats = locationMap.get(locationId);
+        
+        if (existingLocationStats) {
+          // Calculate sales values
+          const cashSales = report.totalCashCollected;
+          const creditSales = report.totalCreditSales;
+          const receiptSales = report.totalReceipts * 18; // $18 per receipt
+          const totalIncome = cashSales + creditSales + receiptSales;
+          
+          // Update location stats
+          locationMap.set(locationId, {
+            ...existingLocationStats,
+            totalCars: existingLocationStats.totalCars + report.totalCars,
+            cashSales: existingLocationStats.cashSales + cashSales,
+            creditSales: existingLocationStats.creditSales + creditSales,
+            receiptSales: existingLocationStats.receiptSales + receiptSales,
+            totalIncome: existingLocationStats.totalIncome + totalIncome,
+            reports: existingLocationStats.reports + 1
+          });
+        }
         
         // Commission calculations
         const creditCardCommission = report.creditTransactions * commissionRate;
@@ -199,11 +261,15 @@ export default function AdminPanel() {
         });
       });
 
-      // Convert map to array and sort by total earnings
+      // Convert maps to arrays and sort
       const employeeStatsArray = Array.from(employeeMap.values())
         .sort((a, b) => b.totalEarnings - a.totalEarnings);
       
+      const locationStatsArray = Array.from(locationMap.values())
+        .sort((a, b) => b.totalCars - a.totalCars);
+      
       setEmployeeStats(employeeStatsArray);
+      setLocationStats(locationStatsArray);
     }
   }, [reports, startDate, endDate]);
 
@@ -635,6 +701,10 @@ export default function AdminPanel() {
           <TabsTrigger value="employees" className="flex items-center">
             <Users className="h-4 w-4 mr-2" />
             Employee Payroll
+          </TabsTrigger>
+          <TabsTrigger value="locations" className="flex items-center">
+            <MapPin className="h-4 w-4 mr-2" />
+            Locations
           </TabsTrigger>
         </TabsList>
         
