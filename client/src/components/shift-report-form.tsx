@@ -591,17 +591,18 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   )}
                 />
               ) : (
-                <div className="money-owed-display p-4 border rounded-md bg-blue-50">
-                  <h3 className="text-gray-700 font-medium text-sm mb-2">Company Cash Turn-In</h3>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">No cash turn-in required</span>
-                    <span className="text-red-500 font-medium">Money Owed: ${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
+                <div className="money-owed-display p-3 border rounded-md bg-blue-50">
+                  <h3 className="text-gray-700 font-medium text-sm mb-1">Company Cash Turn-In</h3>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">No cash turn-in required</span>
+                    <span className="text-red-500">Money Owed: ${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
                   </div>
+                  {/* Hidden input to ensure form submission has the value */}
                   <input 
                     type="hidden" 
-                    name="companyCashTurnIn" 
-                    value="0" 
-                    {...form.register("companyCashTurnIn", { valueAsNumber: true })}
+                    {...form.register("companyCashTurnIn")}
+                    onChange={() => {}}
+                    value="0"
                   />
                 </div>
               )}
