@@ -255,9 +255,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // 5% of receipt sales
   
   // Tips calculations - based on actual business rules
-  // We use Math.max to ensure tips are never negative
-  const creditCardTips = Math.max(0, (creditTransactions * 15) - totalCreditSales); // $15 per transaction minus total credit sales
-  const cashTips = Math.max(0, (cashCars * 15) - totalCashCollected); // $15 per cash car minus total cash collected
+  // Ensure minimum tips of $10 for credit card and cash
+  const calculatedCreditCardTips = (creditTransactions * 15) - totalCreditSales; // $15 per transaction minus total credit sales
+  const calculatedCashTips = (cashCars * 15) - totalCashCollected; // $15 per cash car minus total cash collected
+  
+  // Use a minimum of $10 for tips
+  const creditCardTips = creditTransactions > 0 ? Math.max(10, calculatedCreditCardTips) : 0;
+  const cashTips = cashCars > 0 ? Math.max(10, calculatedCashTips) : 0;
+  
   const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // 15% of receipt sales
   const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // 10% of total tips
   
@@ -265,7 +270,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalCommission = employeeCommission + creditCardCommission + cashCommission + receiptCommission;
   const totalTips = creditCardTips + cashTips + receiptTips - tipShare;
   const totalCommissionAndTips = totalCommission + totalTips;
-  const moneyOwed = totalCashCollected - companyCashTurnIn - totalTips; // Example calculation
+  const moneyOwed = totalCashCollected - companyCashTurnIn - totalCommissionAndTips; // Money owed to employee
   
   return (
     <div className="form-section">
