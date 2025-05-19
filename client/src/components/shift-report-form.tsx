@@ -215,10 +215,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   }
   
   // Calculate derived values
-  const totalCars = form.watch("totalCars") || 0;
+  const totalCars = Number(form.watch("totalCars") || 0);
   const companyTurnIn = totalCars * 11;
-  const totalCreditSales = form.watch("totalCreditSales") || 0;
-  const totalCashCollected = form.watch("totalCashCollected") || 0;
+  const totalCreditSales = Number(form.watch("totalCreditSales") || 0);
+  const totalCashCollected = Number(form.watch("totalCashCollected") || 0);
   const totalTurnIn = totalCreditSales + companyTurnIn;
   const overShort = totalCashCollected - companyTurnIn;
   
