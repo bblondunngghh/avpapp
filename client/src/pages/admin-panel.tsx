@@ -40,6 +40,21 @@ interface Employee {
   hours: number;
 }
 
+interface EmployeeRecord {
+  id: number;
+  key: string;
+  fullName: string;
+  isActive: boolean;
+  isShiftLeader: boolean;
+  phone: string | null;
+  email: string | null;
+  hireDate: string;
+  terminationDate: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
 interface TicketDistribution {
   id: number;
   locationId: number;
@@ -121,7 +136,7 @@ export default function AdminPanel() {
   });
   
   // Employee management state
-  const [employees, setEmployees] = useState<EmployeeData[]>([]);
+  const [employees, setEmployees] = useState<EmployeeRecord[]>([]);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isEditEmployeeOpen, setIsEditEmployeeOpen] = useState(false);
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
@@ -160,6 +175,12 @@ export default function AdminPanel() {
   // Fetch ticket distributions
   const { data: distributionsData = [], isLoading: isLoadingDistributions } = useQuery<TicketDistribution[]>({
     queryKey: ["/api/ticket-distributions"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+  
+  // Fetch employees data
+  const { data: employeeRecords = [], isLoading: isLoadingEmployees, refetch: refetchEmployees } = useQuery<EmployeeRecord[]>({
+    queryKey: ["/api/employees"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
   
