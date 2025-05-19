@@ -753,6 +753,10 @@ export default function AdminPanel() {
             <MapPin className="h-4 w-4 mr-2" />
             Locations
           </TabsTrigger>
+          <TabsTrigger value="tickets" className="flex items-center">
+            <Ticket className="h-4 w-4 mr-2" />
+            Ticket Tracking
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="reports">
