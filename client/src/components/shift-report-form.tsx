@@ -413,20 +413,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               <FormField
                 control={form.control}
-                name="complimentaryCars"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Complimentary Cars</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
                 name="creditTransactions"
                 render={({ field }) => (
                   <FormItem>
