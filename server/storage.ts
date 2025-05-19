@@ -4,6 +4,8 @@ import {
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
   LOCATIONS
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 // Extend interface with CRUD methods
 export interface IStorage {
@@ -162,4 +164,100 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database storage implementation
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+  
+  async getLocations(): Promise<Location[]> {
+    return await db.select().from(locations);
+  }
+  
+  async getLocation(id: number): Promise<Location | undefined> {
+    const [location] = await db.select().from(locations).where(eq(locations.id, id));
+    return location || undefined;
+  }
+  
+  async getLocationByName(name: string): Promise<Location | undefined> {
+    const [location] = await db.select().from(locations).where(eq(locations.name, name));
+    return location || undefined;
+  }
+  
+  async createLocation(insertLocation: InsertLocation): Promise<Location> {
+    const [location] = await db
+      .insert(locations)
+      .values(insertLocation)
+      .returning();
+    return location;
+  }
+  
+  async getShiftReports(): Promise<ShiftReport[]> {
+    return await db.select().from(shiftReports).orderBy(desc(shiftReports.createdAt));
+  }
+  
+  async getShiftReport(id: number): Promise<ShiftReport | undefined> {
+    const [report] = await db.select().from(shiftReports).where(eq(shiftReports.id, id));
+    return report || undefined;
+  }
+  
+  async getShiftReportsByLocation(locationId: number): Promise<ShiftReport[]> {
+    return await db
+      .select()
+      .from(shiftReports)
+      .where(eq(shiftReports.locationId, locationId))
+      .orderBy(desc(shiftReports.createdAt));
+  }
+  
+  async createShiftReport(insertReport: InsertShiftReport): Promise<ShiftReport> {
+    const [report] = await db
+      .insert(shiftReports)
+      .values({
+        ...insertReport,
+        notes: insertReport.notes || null,
+        incidents: insertReport.incidents || null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return report;
+  }
+  
+  async updateShiftReport(id: number, updateReport: UpdateShiftReport): Promise<ShiftReport | undefined> {
+    const [report] = await db
+      .update(shiftReports)
+      .set({
+        ...updateReport,
+        notes: updateReport.notes || null,
+        incidents: updateReport.incidents || null,
+        updatedAt: new Date()
+      })
+      .where(eq(shiftReports.id, id))
+      .returning();
+    return report || undefined;
+  }
+  
+  async deleteShiftReport(id: number): Promise<boolean> {
+    const result = await db
+      .delete(shiftReports)
+      .where(eq(shiftReports.id, id));
+    return true; // If deletion completes without error, return true
+  }
+}
+
+// Use the Database Storage
+export const storage = new DatabaseStorage();
