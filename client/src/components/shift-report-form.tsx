@@ -313,21 +313,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         <Button variant="ghost" onClick={handleBack} className="mr-2 p-0 h-8 w-8 self-start">
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        <div className="company-logo-container">
-          <div className="overflow-hidden" style={{ height: "80px" }}>
-            <img 
-              src="/src/assets/avp-logo-original.png" 
-              alt="Access Valet Parking" 
-              style={{ 
-                height: "130px", 
-                width: "auto", 
-                marginTop: "-15px", 
-                objectFit: "cover", 
-                objectPosition: "center 40%" 
-              }} 
-            />
-          </div>
-        </div>
+
         <h1>Access Valet Parking Shift Report</h1>
         
         {form.watch('locationId') === 1 ? (
