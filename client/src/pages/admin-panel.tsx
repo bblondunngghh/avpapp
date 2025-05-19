@@ -88,6 +88,7 @@ export default function AdminPanel() {
         totalEarnings: number;
         totalCommission: number;
         totalTips: number;
+        totalMoneyOwed: number;
         reports: number;
       }>();
 
@@ -130,6 +131,11 @@ export default function AdminPanel() {
           const totalHours = Number(report.totalJobHours || 0);
           const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
           
+          // Calculate money owed (if negative cashTurnIn) 
+          const expectedCompanyCashTurnIn = report.totalTurnIn - report.totalCreditSales - (report.totalReceiptSales || 0);
+          const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
+            hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
+
           // Calculate employee's portion of commission and tips
           const employeeCommission = hoursPercent * totalCommission;
           const employeeTips = hoursPercent * totalTips;
@@ -142,6 +148,7 @@ export default function AdminPanel() {
             totalEarnings: 0,
             totalCommission: 0,
             totalTips: 0,
+            totalMoneyOwed: 0,
             reports: 0
           };
           
@@ -152,6 +159,7 @@ export default function AdminPanel() {
             totalEarnings: existingStats.totalEarnings + employeeTotalEarnings,
             totalCommission: existingStats.totalCommission + employeeCommission,
             totalTips: existingStats.totalTips + employeeTips,
+            totalMoneyOwed: existingStats.totalMoneyOwed + employeeMoneyOwed,
             reports: existingStats.reports + 1
           });
         });
@@ -293,9 +301,10 @@ export default function AdminPanel() {
                       <TableRow>
                         <TableHead>Employee</TableHead>
                         <TableHead className="text-right">Total Hours</TableHead>
-                        <TableHead className="text-right">Reports</TableHead>
+                        <TableHead className="text-right">Account</TableHead>
                         <TableHead className="text-right">Commission</TableHead>
                         <TableHead className="text-right">Tips</TableHead>
+                        <TableHead className="text-right">Money Owed</TableHead>
                         <TableHead className="text-right">Total Earnings</TableHead>
                         <TableHead className="text-right">Est. Taxes (22%)</TableHead>
                       </TableRow>
@@ -307,9 +316,12 @@ export default function AdminPanel() {
                             {EMPLOYEE_NAMES[employee.name] || employee.name}
                           </TableCell>
                           <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
-                          <TableCell className="text-right">{employee.reports}</TableCell>
+                          <TableCell className="text-right">{employee.name}</TableCell>
                           <TableCell className="text-right">${employee.totalCommission.toFixed(2)}</TableCell>
                           <TableCell className="text-right">${employee.totalTips.toFixed(2)}</TableCell>
+                          <TableCell className="text-right text-blue-700">
+                            ${employee.totalMoneyOwed.toFixed(2)}
+                          </TableCell>
                           <TableCell className="text-right font-medium text-blue-800">
                             ${employee.totalEarnings.toFixed(2)}
                           </TableCell>
