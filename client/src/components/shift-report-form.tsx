@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+// @ts-ignore
+import { ShiftReport } from "@shared/schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -118,7 +120,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   // Fetch report data if editing
   const { data: reportData, isLoading: isLoadingReport } = useQuery({
-    queryKey: reportId ? [`/api/shift-reports/${reportId}`] : null,
+    queryKey: reportId ? [`/api/shift-reports/${reportId}`] : [''],
     enabled: !!reportId,
   });
   
@@ -126,12 +128,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   useEffect(() => {
     if (reportData && reportId) {
       // Set the location ID from the report data
-      if (reportData.locationId) {
-        setLocationId(reportData.locationId);
+      const data = reportData as any;
+      if (data.locationId) {
+        setLocationId(data.locationId);
       }
       
       // Set all other form values
-      Object.entries(reportData).forEach(([key, value]) => {
+      Object.entries(data).forEach(([key, value]) => {
         // @ts-ignore
         if (key in form.getValues()) {
           // @ts-ignore
@@ -353,7 +356,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       </SelectContent>
                     </Select>
                     <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
                   </FormItem>
                 )}
               />
@@ -381,7 +383,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       </SelectContent>
                     </Select>
                     <FormMessage />
-                    <p className="text-xs text-red-500 mt-1">This question is required</p>
                   </FormItem>
                 )}
               />
@@ -407,15 +408,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">TRANSACTIONS AND SALES</h3>
+            <h3 className="section-title uppercase font-bold">SHIFT DETAILS</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               <FormField
                 control={form.control}
-                name="creditTransactions"
+                name="complimentaryCars"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Number of Credit Card Transactions</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Complimentary Cars</FormLabel>
                     <FormControl>
                       <Input type="number" min="0" className="paperform-input" {...field} />
                     </FormControl>
@@ -426,10 +427,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               
               <FormField
                 control={form.control}
-                name="totalReceipts"
+                name="creditTransactions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Number of Receipts</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Credit Card Transactions</FormLabel>
                     <FormControl>
                       <Input type="number" min="0" className="paperform-input" {...field} />
                     </FormControl>
@@ -437,9 +438,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </FormItem>
                 )}
               />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              
               <FormField
                 control={form.control}
                 name="totalCreditSales"
@@ -448,6 +447,23 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Credit Card Sales</FormLabel>
                     <FormControl>
                       <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Expected: ${(creditTransactions * 15).toFixed(2)}</span>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="totalReceipts"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipts</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" className="paperform-input" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -464,16 +480,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <InputMoney className="paperform-input" {...field} />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
-                      <span>Each receipt: $18.00</span>
+                      <span>Calculated at $18.00 per receipt</span>
                       <span>Expected: ${(totalReceipts * 18).toFixed(2)}</span>
                     </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              
               <FormField
                 control={form.control}
                 name="totalCashCollected"
@@ -483,149 +497,92 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormControl>
                       <InputMoney className="paperform-input" {...field} />
                     </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Expected: ${(cashCars * 15).toFixed(2)}</span>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={form.control}
-                name="companyCashTurnIn"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
-                    <FormControl>
-                      <InputMoney 
-                        className={`paperform-input ${!isMatched ? 'border-red-500 focus-within:border-red-500' : 'border-green-500 focus-within:border-green-500'}`} 
-                        {...field} 
-                      />
-                    </FormControl>
-                    {!isMatched && (
-                      <div className="text-xs text-red-600 mt-1">
-                        {expectedCompanyCashTurnIn < 0 
-                          ? `Money Owed: $${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}` 
-                          : `Expected Turn-In: $${expectedCompanyCashTurnIn.toFixed(2)}`}
-                      </div>
-                    )}
-                    {isMatched && (
-                      <div className="text-xs text-green-600 mt-1">
-                        ✓ Turn-In balanced correctly
-                      </div>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="mt-6">
-              <div className="border-t border-gray-300 pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Total Credit Sales:</span>
-                    <span>${totalCreditSales.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Company Cash Turn-In:</span>
-                    <span>${companyCashTurnIn.toFixed(2)}</span>
-                  </div>
-                </div>
-                
-                <div className="mt-4 flex justify-between bg-blue-50 p-3 rounded-md">
-                  <span className="font-bold text-blue-800">Total Turn-In:</span>
-                  <span className="font-bold text-blue-800">${(totalCars * 11).toFixed(2)}</span>
-                </div>
-                
-                {!isMatched && (
-                  <div className="mt-3 flex justify-between bg-red-50 p-3 rounded-md">
-                    <span className="font-bold text-red-700">
-                      {expectedCompanyCashTurnIn < 0 ? 'Money Owed:' : 'Expected Company Cash Turn-In:'}
-                    </span>
-                    <span className="font-bold text-red-700">${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">COMMISSION AND TIPS</h3>
+            <h3 className="section-title uppercase font-bold">FINANCIAL SUMMARY</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gray-50 p-3 rounded-md">
-                <div className="text-sm font-medium mb-2">Commission Breakdown</div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Cash Commission:</span>
-                    <span>${cashCommission.toFixed(2)}</span>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                  <div className="text-sm font-medium mb-2">Commission Breakdown</div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Cash Commission:</span>
+                      <span>${cashCommission.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Credit Card Commission:</span>
+                      <span>${creditCardCommission.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Receipt Commission:</span>
+                      <span>${receiptCommission.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                      <span>Total Commission:</span>
+                      <span>${totalCommission.toFixed(2)}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Credit Card Commission:</span>
-                    <span>${creditCardCommission.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Receipt Commission:</span>
-                    <span>${receiptCommission.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
-                    <span>Total Commission:</span>
-                    <span>${totalCommission.toFixed(2)}</span>
+                  <div className="text-xs text-gray-600 mt-2">
+                    <div>• Cash: $4 per cash car</div>
+                    <div>• Credit: $4 per card transaction</div>
+                    <div>• Receipt: $4 per receipt</div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-600 mt-2">
-                  <div>• Cash: $4 per cash car</div>
-                  <div>• Credit: $4 per card transaction</div>
-                  <div>• Receipt: $4 per receipt</div>
+                
+                <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                  <div className="text-sm font-medium mb-2">Tips Breakdown</div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Cash Tips:</span>
+                      <span>${cashTips.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Credit Card Tips:</span>
+                      <span>${creditCardTips.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Receipt Tips:</span>
+                      <span>${receiptTips.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                      <span>Total Tips:</span>
+                      <span>${totalTips.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 mt-2">
+                    <div>• Cash: $15 per cash car - cash collected</div>
+                    <div>• Credit: $15 per transaction - credit sales</div>
+                    <div>• Receipt: $3 per receipt</div>
+                  </div>
                 </div>
               </div>
               
-              <div className="bg-gray-50 p-3 rounded-md">
-                <div className="text-sm font-medium mb-2">Tips Breakdown</div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Cash Tips:</span>
-                    <span>${cashTips.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Credit Card Tips:</span>
-                    <span>${creditCardTips.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Receipt Tips:</span>
-                    <span>${receiptTips.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
-                    <span>Total Tips:</span>
-                    <span>${totalTips.toFixed(2)}</span>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-600 mt-2">
-                  <div>• Cash: $15 per cash car - cash collected</div>
-                  <div>• Credit: $15 per transaction - credit sales</div>
-                  <div>• Receipt: $3 per receipt</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-4 bg-blue-50 p-4 rounded-md border border-blue-200">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between bg-blue-100 p-4 rounded-md border border-blue-200">
                 <div className="text-base font-bold text-blue-800">Total Commission and Tips</div>
                 <div className="text-xl font-bold text-blue-800">${totalCommissionAndTips.toFixed(2)}</div>
               </div>
-            </div>
-            
-            <div className={`mt-4 p-4 rounded-md border ${moneyOwed === 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-              <div className="flex justify-between items-center">
-                <div className={`text-base font-bold ${moneyOwed === 0 ? 'text-green-800' : 'text-red-800'}`}>
-                  {moneyOwed === 0 ? 'Accounts Balanced' : 'Money Owed/Excess'}
+              
+              <div className="flex justify-between bg-gray-100 p-4 rounded-md border border-gray-200">
+                <div className="text-base font-bold">
+                  {moneyOwed === 0 ? "Company Cash Turn-In" : "Money Owed"}
                 </div>
                 <div className={`text-xl font-bold ${moneyOwed === 0 ? 'text-green-800' : 'text-red-800'}`}>
-                  ${Math.abs(moneyOwed).toFixed(2)}
+                  ${moneyOwed === 0 ? companyCashTurnIn.toFixed(2) : moneyOwed.toFixed(2)}
                 </div>
               </div>
               {moneyOwed !== 0 && (
-                <div className="text-xs text-red-700 mt-2">
-                  {moneyOwed > 0 ? 'Money owed to company' : 'Excess cash to be returned'}
+                <div className="text-sm text-red-600 italic">
+                  * Money Owed represents the negative cash turn-in amount that needs to be made up
                 </div>
               )}
             </div>
@@ -642,141 +599,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Job Hours</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" step="0.5" className="paperform-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
-                <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
-                
-                {Number(form.watch("totalJobHours") || 0) > 0 && (
-                  <>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-6 gap-2 font-medium text-sm pb-2">
-                        <div>Employee</div>
-                        <div>Hours</div>
-                        <div>% of Total</div>
-                        <div>Commission</div>
-                        <div>Tips</div>
-                        <div>Money Owed</div>
-                      </div>
-                      
-                      {form.watch('employees')?.map((employee, index) => {
-                        const totalHours = Number(form.watch("totalJobHours") || 0);
-                        const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
-                        const hourPercentage = (hoursPercent * 100).toFixed(1);
-                        
-                        // Calculate individual amounts based on hourly percentage
-                        const totalCommission = cashCommission + creditCardCommission + receiptCommission;
-                        const totalTips = cashTips + creditCardTips + receiptTips;
-                        const employeeCommission = hoursPercent * totalCommission;
-                        const employeeTips = hoursPercent * totalTips;
-                        
-                        // Calculate money owed (if cashTurnIn is negative)
-                        const moneyOwedValue = moneyOwed > 0 ? hoursPercent * moneyOwed : 0;
-                        
-                        return (
-                          <div key={index} className="grid grid-cols-6 gap-2 items-center">
-                            <div>
-                              <Input 
-                                placeholder="Name" 
-                                className="paperform-input"
-                                value={employee.name}
-                                onChange={(e) => {
-                                  const newEmployees = [...form.watch('employees')];
-                                  newEmployees[index].name = e.target.value;
-                                  form.setValue('employees', newEmployees);
-                                }}
-                              />
-                            </div>
-                            <div>
-                              <Input 
-                                type="number" 
-                                min="0" 
-                                step="0.5" 
-                                className="paperform-input"
-                                value={employee.hours}
-                                onChange={(e) => {
-                                  const newEmployees = [...form.watch('employees')];
-                                  newEmployees[index].hours = parseFloat(e.target.value) || 0;
-                                  form.setValue('employees', newEmployees);
-                                }}
-                              />
-                            </div>
-                            <div className="text-sm">
-                              {hourPercentage}%
-                            </div>
-                            <div className="text-sm font-medium">
-                              ${employeeCommission.toFixed(2)}
-                            </div>
-                            <div className="text-sm font-medium">
-                              ${employeeTips.toFixed(2)}
-                            </div>
-                            <div className="text-sm font-medium">
-                              ${moneyOwedValue.toFixed(2)}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
-                    
-                    <div className="mt-4 flex justify-between">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const newEmployees = [...form.watch('employees'), { name: '', hours: 0 }];
-                          form.setValue('employees', newEmployees);
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        step="0.5" 
+                        className="paperform-input" 
+                        {...field} 
+                        onChange={(e) => {
+                          field.onChange(parseFloat(e.target.value) || 0);
                         }}
-                      >
-                        Add Employee
-                      </Button>
-                      
-                      {form.watch('employees').length > 0 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const newEmployees = [...form.watch('employees')];
-                            newEmployees.pop();
-                            form.setValue('employees', newEmployees);
-                          }}
-                        >
-                          Remove Last
-                        </Button>
-                      )}
-                    </div>
-                  </>
-                )}
-                
-                {Number(form.watch("totalJobHours") || 0) === 0 && (
-                  <div className="text-sm text-gray-600">
-                    Enter Total Job Hours above to begin distributing commission and tips to employees.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-            
-          <div className="form-card">
-            <h3 className="section-title uppercase font-bold">EMPLOYEE PAYROLL</h3>
-            
-            <div className="space-y-6">
-              <FormField
-                control={form.control}
-                name="totalJobHours"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Job Hours</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" step="0.5" className="paperform-input" {...field} />
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -797,7 +629,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <div>Money Owed</div>
                     </div>
                     
-                    {form.watch('employees')?.map((employee, index) => {
+                    {(form.watch('employees') || []).map((employee, index) => {
                       const totalHours = Number(form.watch("totalJobHours") || 0);
                       const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
                       const hourPercentage = (hoursPercent * 100).toFixed(1);
@@ -908,13 +740,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Notes</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Notes</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Enter any general notes about the shift..." 
-                        className="paperform-input min-h-[120px]" 
-                        {...field} 
-                      />
+                      <Textarea className="paperform-input h-32" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -928,11 +756,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Incidents</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Document any incidents that occurred during the shift..." 
-                        className="paperform-input min-h-[120px]" 
-                        {...field} 
-                      />
+                      <Textarea className="paperform-input h-32" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -941,12 +765,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
           </div>
           
-          <div className="flex justify-end mt-8 mb-10">
-            <Button type="button" variant="outline" onClick={handleBack} className="mr-4">
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : (reportId ? 'Update Report' : 'Submit Report')}
+          <div className="py-8 flex justify-center">
+            <Button type="submit" disabled={isSubmitting} className="w-full max-w-md py-6 text-lg">
+              {isSubmitting ? "Submitting..." : reportId ? "Update Report" : "Submit Report"}
             </Button>
           </div>
         </form>
