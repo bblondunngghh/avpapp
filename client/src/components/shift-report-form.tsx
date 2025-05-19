@@ -239,7 +239,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const companyTurnIn = totalCars * 11;
   const totalCreditSales = Number(form.watch("totalCreditSales") || 0);
   const totalCashCollected = Number(form.watch("totalCashCollected") || 0);
-  const totalTurnIn = totalCreditSales + companyTurnIn;
+  const totalTurnIn = totalCars * 11; // Total Turn-In is calculated as total cars * $11
   const overShort = totalCashCollected - companyTurnIn;
   
   // Commission calculations - based on actual business rules
