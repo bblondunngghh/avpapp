@@ -476,7 +476,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Cars Parked</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" className="paperform-input" {...field} />
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
                       <span>{form.watch("locationId") === 2 ? "Bob's Steak & Chop House" : "Capital Grille"} Rate: ${form.watch("locationId") === 2 ? "6.00" : "11.00"} per car</span>
@@ -500,7 +510,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Credit Card Transactions</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" className="paperform-input" {...field} />
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -531,7 +551,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Receipts</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" className="paperform-input" {...field} />
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -707,8 +737,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         step="0.5" 
                         className="paperform-input" 
                         {...field} 
+                        value={field.value === 0 ? '' : field.value}
                         onChange={(e) => {
-                          field.onChange(parseFloat(e.target.value) || 0);
+                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                          field.onChange(value);
                         }}
                       />
                     </FormControl>
