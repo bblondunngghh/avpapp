@@ -111,3 +111,33 @@ export const SHIFTS = {
   LUNCH: "Lunch",
   DINNER: "Dinner"
 };
+
+// Ticket distribution schema
+export const ticketDistributions = pgTable("ticket_distributions", {
+  id: serial("id").primaryKey(),
+  locationId: integer("location_id").notNull(),
+  allocatedTickets: integer("allocated_tickets").notNull(),
+  usedTickets: integer("used_tickets").notNull().default(0),
+  batchNumber: text("batch_number").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const insertTicketDistributionSchema = createInsertSchema(ticketDistributions)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    usedTickets: true
+  });
+
+export const updateTicketDistributionSchema = createInsertSchema(ticketDistributions)
+  .omit({
+    id: true,
+    createdAt: true
+  });
+
+export type InsertTicketDistribution = z.infer<typeof insertTicketDistributionSchema>;
+export type UpdateTicketDistribution = z.infer<typeof updateTicketDistributionSchema>;
+export type TicketDistribution = typeof ticketDistributions.$inferSelect;

@@ -27,15 +27,25 @@ export interface IStorage {
   createShiftReport(report: InsertShiftReport): Promise<ShiftReport>;
   updateShiftReport(id: number, report: UpdateShiftReport): Promise<ShiftReport | undefined>;
   deleteShiftReport(id: number): Promise<boolean>;
+  
+  // Ticket distribution methods
+  getTicketDistributions(): Promise<TicketDistribution[]>;
+  getTicketDistribution(id: number): Promise<TicketDistribution | undefined>;
+  getTicketDistributionsByLocation(locationId: number): Promise<TicketDistribution[]>;
+  createTicketDistribution(distribution: InsertTicketDistribution): Promise<TicketDistribution>;
+  updateTicketDistribution(id: number, distribution: UpdateTicketDistribution): Promise<TicketDistribution | undefined>;
+  deleteTicketDistribution(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private locations: Map<number, Location>;
   private shiftReports: Map<number, ShiftReport>;
+  private ticketDistributions: Map<number, TicketDistribution>;
   private userCurrentId: number;
   private locationCurrentId: number;
   private shiftReportCurrentId: number;
+  private ticketDistributionCurrentId: number;
 
   constructor() {
     this.users = new Map();
