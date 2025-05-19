@@ -788,31 +788,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 {form.watch("totalJobHours") > 0 ? (
                   <div className="space-y-4 overflow-x-auto">
-                    <div className="grid grid-cols-9 gap-4 font-medium text-sm border-b border-blue-200 pb-2">
-                      <div className="col-span-2 text-left">Employee</div>
-                      <div className="col-span-1 text-center">Hours</div>
-                      <div className="col-span-1 text-center">%</div>
-                      <div className="col-span-1 text-center">Commission</div>
-                      <div className="col-span-1 text-center">Tips</div>
-                      <div className="col-span-1 text-center">Money Owed</div>
-                      <div className="col-span-1 text-center">Earnings</div>
-                      <div className="col-span-1 text-center">Turn-In</div>
-                    </div>
-                    
-                    {(form.watch('employees') || []).map((employee, index) => {
-                      const totalHours = Number(form.watch("totalJobHours") || 0);
-                      const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
-                      const hourPercentage = (hoursPercent * 100).toFixed(1);
-                      
-                      // Calculate individual amounts based on hourly percentage
-                      const totalCommission = cashCommission + creditCardCommission + receiptCommission;
-                      const totalTips = cashTips + creditCardTips + receiptTips;
-                      const employeeCommission = hoursPercent * totalCommission;
-                      const employeeTips = hoursPercent * totalTips;
-                      
-                      // Calculate money owed (if negative cashTurnIn) 
-                      const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
-                        hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
+                    <div className="flex flex-col space-y-4">
+                      <div className="grid grid-cols-9 gap-4 font-medium text-sm border-b border-blue-200 pb-2">
+                        <div className="col-span-2 text-left">Employee</div>
+                        <div className="col-span-1 text-center">Hours</div>
+                        <div className="col-span-1 text-center">%</div>
+                        <div className="col-span-1 text-center">Commission</div>
+                        <div className="col-span-1 text-center">Tips</div>
+                        <div className="col-span-1 text-center">Money Owed</div>
+                        <div className="col-span-1 text-center">Earnings</div>
+                        <div className="col-span-1 text-center">Turn-In</div>
+                      </div>
                       
                       return (
                         <div key={index} className="grid grid-cols-9 gap-3 items-center">
