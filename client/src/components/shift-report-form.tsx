@@ -247,15 +247,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   // Commission calculations based on actual business formulas
   const creditTransactions = Number(form.watch("creditTransactions") || 0);
+  const totalReceipts = Number(form.watch("totalReceipts") || 0);
   
-  // Calculate cash cars (total cars - credit card transactions)
-  const cashCars = totalCars - creditTransactions;
+  // Calculate cash cars (total cars - credit card transactions - receipt transactions)
+  const cashCars = totalCars - creditTransactions - totalReceipts;
   
   // Commission calculations
   const creditCardCommission = creditTransactions * 4; // $4 per credit card transaction
   const cashCommission = cashCars * 4; // $4 per cash car
-  // Receipt calculations: $4 commission per receipt
-  const totalReceipts = Number(form.watch("totalReceipts") || 0);
   const receiptCommission = totalReceipts * 4; // $4 commission per receipt
   
   // Tips calculations based on specific formulas explained
@@ -270,7 +269,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // If actual cash > theoretical cash, the difference is also tips (shortfall)
   const cashCarsTotal = cashCars * 15;
   const cashTips = Math.abs(totalCashCollected - cashCarsTotal);
-  // Receipt tips: $3 per receipt
   const receiptTips = totalReceipts * 3; // $3 tip per receipt
   
   // Totals
