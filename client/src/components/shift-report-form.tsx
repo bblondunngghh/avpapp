@@ -458,6 +458,23 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               
               <FormField
                 control={form.control}
+                name="totalCashCollected"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Cash Collected</FormLabel>
+                    <FormControl>
+                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Expected: ${(cashCars * 15).toFixed(2)}</span>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
                 name="totalReceipts"
                 render={({ field }) => (
                   <FormItem>
@@ -482,23 +499,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
                       <span>Calculated at $18.00 per receipt</span>
                       <span>Expected: ${(totalReceipts * 18).toFixed(2)}</span>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="totalCashCollected"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Cash Collected</FormLabel>
-                    <FormControl>
-                      <InputMoney className="paperform-input" {...field} />
-                    </FormControl>
-                    <div className="flex justify-between text-xs text-gray-600 mt-1">
-                      <span>Expected: ${(cashCars * 15).toFixed(2)}</span>
                     </div>
                     <FormMessage />
                   </FormItem>
