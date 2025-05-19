@@ -277,7 +277,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalCommission = creditCardCommission + cashCommission + receiptCommission;
   const totalTips = creditCardTips + cashTips + receiptTips;
   const totalCommissionAndTips = totalCommission + totalTips;
-  const moneyOwed = totalCashCollected - companyCashTurnIn - totalCommissionAndTips;
+  // Money owed should be based on the expected company cash turn-in value
+  const moneyOwed = expectedCompanyCashTurnIn < 0 ? Math.abs(expectedCompanyCashTurnIn) : 0;
   
   return (
     <div className="form-section">
