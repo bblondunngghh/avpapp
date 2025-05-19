@@ -152,7 +152,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // Fetch ticket distributions for updating usage
   const { data: ticketDistributions = [] } = useQuery<any[]>({
     queryKey: ["/api/ticket-distributions"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: async () => {
+      const response = await fetch('/api/ticket-distributions');
+      if (!response.ok) {
+        if (response.status === 401) return null;
+        throw new Error('Failed to fetch ticket distributions');
+      }
+      return response.json();
+    },
   });
 
   // Create mutation for submitting new reports
