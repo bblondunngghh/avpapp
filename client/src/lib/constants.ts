@@ -19,6 +19,29 @@ export const SHIFT_OPTIONS = [
   { value: "Dinner", label: "Dinner" }
 ];
 
+// Employee name mapping
+export const EMPLOYEE_NAMES: Record<string, string> = {
+  "antonio": "Antonio Martinez",
+  "arturo": "Arturo Sanchez",
+  "brandon": "Brandon Blond",
+  "brett": "Brett Willson",
+  "dave": "Dave Roehm",
+  "devin": "Devin Bean",
+  "dylan": "Dylan McMullen",
+  "elijah": "Elijah Aguilar",
+  "ethan": "Ethan Walker",
+  "gabe": "Gabe Ott",
+  "jacob": "Jacob Weldon",
+  "joe": "Joe Albright",
+  "jonathan": "Jonathan Zaccheo",
+  "kevin": "Kevin Hanrahan",
+  "melvin": "Melvin Lobos",
+  "noe": "Noe Coronado",
+  "riley": "Riley McIntyre",
+  "ryan": "Ryan Hocevar",
+  "zane": "Zane Springer"
+};
+
 // Form-related constant
 export const DEFAULT_FORM_VALUES = {
   date: "",

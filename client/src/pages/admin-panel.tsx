@@ -20,7 +20,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { LogOut, FileSpreadsheet, Users, Home } from "lucide-react";
-import { LOCATIONS } from "@/lib/constants";
+import { LOCATIONS, EMPLOYEE_NAMES } from "@/lib/constants";
 
 // Define types for our data
 interface Employee {
@@ -303,7 +303,9 @@ export default function AdminPanel() {
                     <TableBody>
                       {employeeStats.map((employee) => (
                         <TableRow key={employee.name}>
-                          <TableCell className="font-medium">{employee.name}</TableCell>
+                          <TableCell className="font-medium">
+                            {EMPLOYEE_NAMES[employee.name] || employee.name}
+                          </TableCell>
                           <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
                           <TableCell className="text-right">{employee.reports}</TableCell>
                           <TableCell className="text-right">${employee.totalCommission.toFixed(2)}</TableCell>
