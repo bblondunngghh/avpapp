@@ -773,7 +773,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <Input 
                         type="number" 
                         min="0" 
-                        step="0.5" 
+                        step="0.01" 
                         className="paperform-input" 
                         {...field} 
                         value={field.value === 0 ? '' : field.value}
@@ -869,7 +869,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 <Input 
                                   type="number" 
                                   min="0" 
-                                  step="0.5" 
+                                  step="0.01" 
                                   className="paperform-input text-center w-16 mx-auto"
                                   value={employee.hours === 0 ? '' : employee.hours}
                                   onChange={(e) => {
