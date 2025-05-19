@@ -494,7 +494,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </FormControl>
                     {!isMatched && (
                       <div className="text-xs text-red-600 mt-1">
-                        Expected Turn-In: ${expectedCompanyCashTurnIn.toFixed(2)}
+                        {expectedCompanyCashTurnIn < 0 
+                          ? `Money Owed: $${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}` 
+                          : `Expected Turn-In: $${expectedCompanyCashTurnIn.toFixed(2)}`}
                       </div>
                     )}
                     {isMatched && (
@@ -528,8 +530,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 {!isMatched && (
                   <div className="mt-3 flex justify-between bg-red-50 p-3 rounded-md">
-                    <span className="font-bold text-red-700">Expected Company Cash Turn-In:</span>
-                    <span className="font-bold text-red-700">${expectedCompanyCashTurnIn.toFixed(2)}</span>
+                    <span className="font-bold text-red-700">
+                      {expectedCompanyCashTurnIn < 0 ? 'Money Owed:' : 'Expected Company Cash Turn-In:'}
+                    </span>
+                    <span className="font-bold text-red-700">${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
                   </div>
                 )}
               </div>
