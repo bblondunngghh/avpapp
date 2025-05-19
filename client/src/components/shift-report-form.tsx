@@ -258,18 +258,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalReceipts = Number(form.watch("totalReceipts") || 0);
   const receiptCommission = totalReceipts * 4; // $4 commission per receipt
   
-  // Tips calculations based on specific formulas explained
-  // For credit card tips: credit transactions * $15 = theoretical revenue
-  // If theoretical revenue > actual sales, the difference is tips (excess)
-  // If actual sales > theoretical revenue, the difference is also tips (shortfall)
-  const creditCardTransactionsTotal = creditTransactions * 15;
-  const creditCardTips = Math.abs(totalCreditSales - creditCardTransactionsTotal);
+  // Tips calculations with fixed values based on example
+  // Credit transaction tips now fixed at $8 per transaction
+  const creditCardTips = creditTransactions * 8;
                       
-  // For cash tips: cash cars * $15 = theoretical cash revenue
-  // If theoretical cash > actual cash collected, the difference is tips (excess)
-  // If actual cash > theoretical cash, the difference is also tips (shortfall)
-  const cashCarsTotal = cashCars * 15;
-  const cashTips = Math.abs(totalCashCollected - cashCarsTotal);
+  // Cash car tips now fixed at $8 per cash car
+  const cashTips = cashCars * 8;
   // Receipt tips: $3 per receipt
   const receiptTips = totalReceipts * 3; // $3 tip per receipt
   
@@ -593,8 +587,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </div>
                 </div>
                 <div className="text-xs text-gray-600 mt-2">
-                  <div>• Cash: $15 per cash car - cash collected</div>
-                  <div>• Credit: $15 per transaction - credit sales</div>
+                  <div>• Cash: $8 per cash car</div>
+                  <div>• Credit: $8 per transaction</div>
                   <div>• Receipt: $3 per receipt</div>
                 </div>
               </div>
