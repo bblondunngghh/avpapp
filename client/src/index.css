@@ -76,7 +76,7 @@
   left: 0;
   width: 60px;
   height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  background: linear-gradient(90deg, #1a56db, #3b82f6);
 }
 
 /* Paperform-like inputs */
@@ -104,7 +104,7 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+  background: linear-gradient(to bottom, #1a56db, #3b82f6);
 }
 
 /* Calculation section */
@@ -126,7 +126,7 @@
 
 /* Submit button */
 .submit-button {
-  @apply bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-md transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
+  @apply bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-md transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
 }
 
 :root {
@@ -140,9 +140,9 @@
   --card-foreground: 222.2 47.4% 11.2%;
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --primary: 210 100% 20%; /* #003366 */
+  --primary: 217 91% 45%; /* #1a56db - Vibrant blue */
   --primary-foreground: 210 40% 98%;
-  --secondary: 210 100% 40%; /* #0066CC */
+  --secondary: 212 96% 62%; /* #3b82f6 - Lighter vibrant blue */
   --secondary-foreground: 222.2 47.4% 11.2%;
   --accent: 50 100% 50%; /* #FFD700 */
   --accent-foreground: 222.2 47.4% 11.2%;
@@ -152,21 +152,21 @@
   --radius: 0.5rem;
   
   /* Chart colors */
-  --chart-1: 210 100% 40%;
+  --chart-1: 217 91% 45%;
   --chart-2: 50 100% 50%;
   --chart-3: 340 100% 55%;
   --chart-4: 150 60% 50%;
   --chart-5: 270 60% 55%;
   
   /* Sidebar colors */
-  --sidebar-background: 210 100% 20%;
+  --sidebar-background: 217 91% 45%;
   --sidebar-foreground: 210 40% 98%;
   --sidebar-primary: 210 40% 98%;
-  --sidebar-primary-foreground: 210 100% 20%;
+  --sidebar-primary-foreground: 217 91% 45%;
   --sidebar-accent: 50 100% 50%;
-  --sidebar-accent-foreground: 210 100% 20%;
-  --sidebar-border: 210 100% 35%;
-  --sidebar-ring: 210 100% 35%;
+  --sidebar-accent-foreground: 217 91% 45%;
+  --sidebar-border: 212 96% 62%;
+  --sidebar-ring: 212 96% 62%;
 }
 
 .dark {
