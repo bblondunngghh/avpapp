@@ -626,13 +626,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 {form.watch("totalJobHours") > 0 ? (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-6 gap-2 font-medium text-sm pb-2 text-center">
+                    <div className="grid grid-cols-7 gap-2 font-medium text-sm pb-2 text-center">
                       <div className="text-left">Employee</div>
                       <div>Hours</div>
                       <div>% of Total</div>
                       <div>Commission</div>
                       <div>Tips</div>
                       <div>Money Owed</div>
+                      <div>Total Earnings</div>
                     </div>
                     
                     {(form.watch('employees') || []).map((employee, index) => {
@@ -651,7 +652,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
                       
                       return (
-                        <div key={index} className="grid grid-cols-6 gap-2 items-center">
+                        <div key={index} className="grid grid-cols-7 gap-2 items-center">
                           <div>
                             <Input 
                               placeholder="Name" 
@@ -695,6 +696,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           </div>
                           <div className="text-sm font-medium text-center">
                             ${employeeMoneyOwed.toFixed(2)}
+                          </div>
+                          <div className="text-sm font-medium text-center text-blue-800">
+                            ${(employeeCommission + employeeTips).toFixed(2)}
                           </div>
                         </div>
                       );
