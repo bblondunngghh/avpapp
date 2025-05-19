@@ -17,12 +17,14 @@
   align-items: center;
   margin-bottom: 1.5rem;
   text-align: center;
+  max-width: 100%; /* Constrain to container width */
 }
 
 .company-logo-container {
   margin-bottom: 0.5rem;
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .company-logo {
@@ -35,11 +37,13 @@
 }
 
 .form-title h1 {
-  font-size: 1.5rem;
+  font-size: 1.25rem; /* Slightly smaller for better fit */
   font-weight: 700;
   color: #000;
   letter-spacing: 1px;
   margin-bottom: 0.5rem;
+  width: 100%;
+  max-width: 700px; /* Match form card width */
 }
 
 .capital-grille-image,
@@ -48,13 +52,14 @@
   justify-content: center;
   margin-bottom: 1rem;
   width: 100%;
+  max-width: 700px; /* Match form card width */
 }
 
 .capital-grille-image img,
 .restaurant-image img {
   width: 100%;
-  max-width: 400px;
-  height: 180px;
+  max-width: 700px; /* Match form card width */
+  height: 160px; /* Slightly reduced height */
   object-fit: cover;
   object-position: center;
   border-radius: 8px;
@@ -65,7 +70,7 @@
 
 .capital-grille-image img:hover,
 .restaurant-image img:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -79,7 +84,7 @@
   padding: 0.5rem;
   border-radius: 0.25rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 700px; /* Match form card width */
   margin-left: auto;
   margin-right: auto;
   border: 1px solid rgba(0, 0, 0, 0.05);
