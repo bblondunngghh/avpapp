@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft } from "lucide-react";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest } from "@/lib/queryClient";
@@ -54,6 +55,9 @@ const formSchema = z.object({
   })).default([]),
   notes: z.string().optional(),
   incidents: z.string().optional(),
+  confirmationCheck: z.boolean().refine(val => val === true, {
+    message: "You must confirm that the information is correct",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -110,6 +114,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       employees: [],
       notes: "",
       incidents: "",
+      confirmationCheck: false,
     }
   });
   
@@ -977,6 +982,28 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </FormItem>
                 )}
               />
+              
+              <div className="mt-6 border-t border-gray-200 pt-4">
+                <FormField
+                  control={form.control}
+                  name="confirmationCheck"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 bg-blue-50">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-sm font-medium">
+                          By checking this box, I confirm the numbers above to be correct to the best of my knowledge.
+                        </FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </div>
           
