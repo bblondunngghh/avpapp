@@ -159,7 +159,10 @@ export default function Reports() {
               date={report.date}
               shift={report.shift}
               totalCars={report.totalCars}
-              totalRevenue={report.totalRevenue}
+              totalCreditSales={report.totalCreditSales || 0}
+              totalCashCollected={report.totalCashCollected || 0}
+              companyCashTurnIn={report.companyCashTurnIn || 0}
+              totalTurnIn={report.totalTurnIn || 0}
               createdAt={report.createdAt}
             />
           ))}

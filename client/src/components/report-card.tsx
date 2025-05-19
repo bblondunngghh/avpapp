@@ -15,11 +15,14 @@ interface ReportCardProps {
   date: string;
   shift: string;
   totalCars: number;
-  totalRevenue: number;
+  totalCreditSales: number;
+  totalCashCollected: number;
+  companyCashTurnIn: number;
+  totalTurnIn: number;
   createdAt: string;
 }
 
-export default function ReportCard({ id, locationId, date, shift, totalCars, totalRevenue, createdAt }: ReportCardProps) {
+export default function ReportCard({ id, locationId, date, shift, totalCars, totalCreditSales, totalCashCollected, companyCashTurnIn, totalTurnIn, createdAt }: ReportCardProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -96,8 +99,16 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
                 <span>{totalCars}</span>
               </div>
               <div className="text-sm">
-                <span className="font-medium">Revenue: </span>
-                <span>{formatCurrency(totalRevenue)}</span>
+                <span className="font-medium">Cash: </span>
+                <span>{formatCurrency(totalCashCollected)}</span>
+              </div>
+              <div className="text-sm">
+                <span className="font-medium">Credit: </span>
+                <span>{formatCurrency(totalCreditSales)}</span>
+              </div>
+              <div className="text-sm">
+                <span className="font-medium">Total: </span>
+                <span>{formatCurrency(totalTurnIn)}</span>
               </div>
             </div>
           </div>
