@@ -829,7 +829,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 form.setValue('employees', newEmployees);
                               }}
                             >
-                              <SelectTrigger className="paperform-input">
+                              <SelectTrigger className="paperform-input w-full min-w-[180px]">
                                 <SelectValue placeholder="Select employee..." />
                               </SelectTrigger>
                               <SelectContent>
