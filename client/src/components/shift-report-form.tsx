@@ -202,9 +202,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const onSubmit = (values: FormValues) => {
     setIsSubmitting(true);
     
+    // Make sure employees array is properly included
+    const employees = (values.employees || []).map(employee => ({
+      name: employee.name || '',
+      hours: employee.hours || 0
+    }));
+    
     // Ensure all required fields are included
     const formData = {
       ...values,
+      // Include employees data
+      employees,
       // Add these fields if they're not already included
       complimentaryCars: values.complimentaryCars || 0,
       creditTransactions: values.creditTransactions || 0,
