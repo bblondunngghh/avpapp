@@ -652,7 +652,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
                 <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
                 
-                {totalJobHours > 0 && (
+                {Number(form.watch("totalJobHours") || 0) > 0 && (
                   <>
                     <div className="space-y-4">
                       <div className="grid grid-cols-4 gap-4 font-medium text-sm pb-2">
@@ -691,10 +691,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                             />
                           </div>
                           <div className="text-sm">
-                            {((employee.hours / totalJobHours) * 100).toFixed(1)}%
+                            {((employee.hours / Number(form.watch("totalJobHours") || 0)) * 100).toFixed(1)}%
                           </div>
                           <div className="text-sm font-medium">
-                            ${((employee.hours / totalJobHours) * totalCommissionAndTips).toFixed(2)}
+                            ${((employee.hours / Number(form.watch("totalJobHours") || 0)) * totalCommissionAndTips).toFixed(2)}
                           </div>
                         </div>
                       ))}
@@ -731,7 +731,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </>
                 )}
                 
-                {totalJobHours === 0 && (
+                {Number(form.watch("totalJobHours") || 0) === 0 && (
                   <div className="text-sm text-gray-600">
                     Enter Total Job Hours above to begin distributing commission and tips to employees.
                   </div>
