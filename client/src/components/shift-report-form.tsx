@@ -221,6 +221,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalCashCollected = Number(form.watch("totalCashCollected") || 0);
   const totalTurnIn = totalCreditSales + companyTurnIn;
   const overShort = totalCashCollected - companyTurnIn;
+  const employeeCommission = totalCars * 4; // $4 per car employee commission
+  const tipShare = 0; // This would be calculated based on your tip sharing formula
   
   return (
     <div className="form-section">
@@ -462,7 +464,83 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="form-card">
-            <h3 className="section-title">Notes and Incidents</h3>
+            <h3 className="section-title uppercase font-bold">TOTAL COMMISSION AND TIP SUMMARY</h3>
+            
+            <div className="grid grid-cols-1 gap-6">
+              <FormField
+                control={form.control}
+                name="employeeCommission"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-base">Employee Commission</FormLabel>
+                    <div className="text-xs text-gray-500 mb-1">$4.00 per car commission.</div>
+                    <FormControl>
+                      <InputMoney 
+                        className="paperform-input bg-gray-50"
+                        {...field}
+                        readOnly
+                        value={employeeCommission}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="cashTips"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-base">Cash Tips</FormLabel>
+                    <FormControl>
+                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="creditCardTips"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-base">Credit Card Tips</FormLabel>
+                    <FormControl>
+                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="tipShare"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-base">Tip Share</FormLabel>
+                    <div className="text-xs text-gray-500 mb-1">Amount shared with restaurant staff.</div>
+                    <FormControl>
+                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="bg-white p-4 rounded-md border border-gray-200 mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">Total Income</div>
+                  <div className="font-bold text-lg">${(employeeCommission + Number(form.watch("cashTips") || 0) + Number(form.watch("creditCardTips") || 0) - Number(form.watch("tipShare") || 0)).toFixed(2)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="form-card">
+            <h3 className="section-title uppercase font-bold">NOTES AND INCIDENTS</h3>
             
             <FormField
               control={form.control}
