@@ -526,7 +526,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 <div className="mt-4 flex justify-between bg-blue-50 p-3 rounded-md">
                   <span className="font-bold text-blue-800">Total Turn-In:</span>
-                  <span className="font-bold text-blue-800">${(totalCreditSales + companyCashTurnIn).toFixed(2)}</span>
+                  <span className="font-bold text-blue-800">${(totalCars * 11).toFixed(2)}</span>
                 </div>
                 
                 {!isMatched && (
