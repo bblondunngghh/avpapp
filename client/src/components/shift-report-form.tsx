@@ -23,13 +23,16 @@ const formSchema = z.object({
   locationId: z.number(),
   date: z.string().nonempty("Date is required"),
   shift: z.string().nonempty("Shift is required"),
-  manager: z.string().nonempty("Manager name is required"),
-  attendants: z.coerce.number().min(1, "At least 1 attendant is required"),
+  manager: z.string().nonempty("Shift Leader name is required"),
   totalCars: z.coerce.number().min(0, "Cannot be negative"),
-  totalRevenue: z.coerce.number().min(0, "Cannot be negative"),
   complimentaryCars: z.coerce.number().min(0, "Cannot be negative"),
-  cashPayments: z.coerce.number().min(0, "Cannot be negative"),
-  creditPayments: z.coerce.number().min(0, "Cannot be negative"),
+  creditTransactions: z.coerce.number().min(0, "Cannot be negative"),
+  totalCreditSales: z.coerce.number().min(0, "Cannot be negative"),
+  totalReceipts: z.coerce.number().min(0, "Cannot be negative"),
+  totalCashCollected: z.coerce.number().min(0, "Cannot be negative"),
+  companyCashTurnIn: z.coerce.number().min(0, "Cannot be negative"),
+  totalTurnIn: z.coerce.number(),
+  overShort: z.coerce.number(),
   notes: z.string().optional(),
   incidents: z.string().optional(),
 });
@@ -63,12 +66,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       date: format(new Date(), 'yyyy-MM-dd'),
       shift: "",
       manager: "",
-      attendants: 1,
       totalCars: 0,
-      totalRevenue: 0,
       complimentaryCars: 0,
-      cashPayments: 0,
-      creditPayments: 0,
+      creditTransactions: 0,
+      totalCreditSales: 0,
+      totalReceipts: 0,
+      totalCashCollected: 0,
+      companyCashTurnIn: 0,
+      totalTurnIn: 0,
+      overShort: 0,
       notes: "",
       incidents: "",
     }
@@ -78,6 +84,31 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   useEffect(() => {
     form.setValue("locationId", locationId);
   }, [locationId, form]);
+
+  // Calculate company turn-in when totalCars changes
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "totalCars") {
+        const totalCars = value.totalCars as number || 0;
+        // Company turn-in is $11 per car
+        const companyTurnIn = totalCars * 11;
+        form.setValue("companyCashTurnIn", companyTurnIn);
+      }
+
+      // Calculate total turn-in and over/short
+      const totalCreditSales = value.totalCreditSales as number || 0;
+      const companyCashTurnIn = value.companyCashTurnIn as number || 0;
+      
+      const totalTurnIn = totalCreditSales + companyCashTurnIn;
+      form.setValue("totalTurnIn", totalTurnIn);
+      
+      const totalCashCollected = value.totalCashCollected as number || 0;
+      const overShort = totalCashCollected - companyCashTurnIn;
+      form.setValue("overShort", overShort);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form]);
   
   // Fetch report data if editing
   const { data: reportData, isLoading: isLoadingReport } = useQuery({
@@ -89,12 +120,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   useEffect(() => {
     if (reportData && reportId) {
       // Set the location ID from the report data
-      setLocationId(reportData.locationId);
+      if (reportData.locationId) {
+        setLocationId(reportData.locationId);
+      }
       
       // Set all other form values
       Object.entries(reportData).forEach(([key, value]) => {
+        // @ts-ignore
         if (key in form.getValues()) {
-          form.setValue(key as any, value);
+          // @ts-ignore
+          form.setValue(key, value);
         }
       });
     }
@@ -191,6 +226,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     );
   }
   
+  // Calculate derived values
+  const totalCars = form.watch("totalCars") || 0;
+  const companyTurnIn = totalCars * 11;
+  const totalCreditSales = form.watch("totalCreditSales") || 0;
+  const totalCashCollected = form.watch("totalCashCollected") || 0;
+  const totalTurnIn = totalCreditSales + companyTurnIn;
+  const overShort = totalCashCollected - companyTurnIn;
+  
   return (
     <div className="form-section">
       <div className="form-title">
@@ -256,7 +299,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   name="manager"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Manager</FormLabel>
+                      <FormLabel>Shift Leader</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -265,28 +308,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   )}
                 />
                 
-                <FormField
-                  control={form.control}
-                  name="attendants"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Number of Attendants</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="1" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <h3 className="section-title">Vehicle & Revenue Information</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="totalCars"
@@ -300,7 +321,22 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </FormItem>
                   )}
                 />
-                
+              </div>
+              
+              <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                <div className="flex justify-between items-center font-medium">
+                  <span>Company Turn-in (Total Cars × $11):</span>
+                  <span>${companyTurnIn.toFixed(2)}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <h3 className="section-title">Vehicle & Revenue Information</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="complimentaryCars"
@@ -314,15 +350,29 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </FormItem>
                   )}
                 />
+                
+                <FormField
+                  control={form.control}
+                  name="creditTransactions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of Credit Card Transactions</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <FormField
                   control={form.control}
-                  name="cashPayments"
+                  name="totalCreditSales"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cash Revenue</FormLabel>
+                      <FormLabel>Total Credit Card Sales</FormLabel>
                       <FormControl>
                         <InputMoney {...field} />
                       </FormControl>
@@ -333,12 +383,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 <FormField
                   control={form.control}
-                  name="creditPayments"
+                  name="totalReceipts"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Credit Card Revenue</FormLabel>
+                      <FormLabel>Total Number of Receipts</FormLabel>
                       <FormControl>
-                        <InputMoney {...field} />
+                        <Input type="number" min="0" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -346,10 +396,56 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 />
               </div>
               
-              <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                <div className="flex justify-between items-center font-medium">
-                  <span>Total Revenue:</span>
-                  <span>${form.watch('cashPayments') + form.watch('creditPayments')}</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <FormField
+                  control={form.control}
+                  name="totalCashCollected"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Total Cash Collected</FormLabel>
+                      <FormControl>
+                        <InputMoney {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="companyCashTurnIn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company Cash Turn-in</FormLabel>
+                      <FormControl>
+                        <InputMoney 
+                          {...field} 
+                          readOnly 
+                          value={companyTurnIn} 
+                          className="bg-gray-50 dark:bg-gray-800"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="mt-4 space-y-2">
+                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <div className="flex justify-between items-center font-medium">
+                    <span>Total Turn-in:</span>
+                    <span>${totalTurnIn.toFixed(2)}</span>
+                  </div>
+                </div>
+                
+                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <div className="flex justify-between items-center font-medium">
+                    <span>Over/Short:</span>
+                    <span className={overShort < 0 ? "text-red-500" : overShort > 0 ? "text-green-500" : ""}>
+                      ${overShort.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </CardContent>

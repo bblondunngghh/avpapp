@@ -37,14 +37,17 @@ export const shiftReports = pgTable("shift_reports", {
   id: serial("id").primaryKey(),
   locationId: integer("location_id").notNull(),
   date: text("date").notNull(), // YYYY-MM-DD format
-  shift: text("shift").notNull(), // Morning, Afternoon, Evening
-  manager: text("manager").notNull(),
-  attendants: integer("attendants").notNull(),
+  shift: text("shift").notNull(), // Lunch, Dinner
+  manager: text("manager").notNull(), // Now called "Shift Leader" in the UI
   totalCars: integer("total_cars").notNull(),
-  totalRevenue: doublePrecision("total_revenue").notNull(),
   complimentaryCars: integer("complimentary_cars").notNull(),
-  cashPayments: doublePrecision("cash_payments").notNull(),
-  creditPayments: doublePrecision("credit_payments").notNull(),
+  creditTransactions: integer("credit_transactions").notNull(),
+  totalCreditSales: doublePrecision("total_credit_sales").notNull(),
+  totalReceipts: integer("total_receipts").notNull(),
+  totalCashCollected: doublePrecision("total_cash_collected").notNull(),
+  companyCashTurnIn: doublePrecision("company_cash_turn_in").notNull(), // Company turn-in (totalCars * $11)
+  totalTurnIn: doublePrecision("total_turn_in").notNull(), // totalCreditSales + companyCashTurnIn
+  overShort: doublePrecision("over_short").notNull(), // totalCashCollected - companyCashTurnIn
   notes: text("notes"),
   incidents: text("incidents"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
