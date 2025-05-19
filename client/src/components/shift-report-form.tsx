@@ -237,14 +237,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // If credit card sales exceed total turn-in, company cash turn-in would be negative (which means money owed)
   const expectedCompanyCashTurnIn = totalTurnIn - totalCreditSales;
   
+  // Check if company cash turn-in matches the expected value (within a small tolerance)
+  const isMatched = Math.abs(expectedCompanyCashTurnIn - companyCashTurnIn) < 0.01;
+  
   // Over/Short is the difference between expected company cash turn-in and actual company cash turn-in
   // It should be 0 when they match, otherwise it shows the expected value
-  const overShort = Math.abs(expectedCompanyCashTurnIn - companyCashTurnIn) < 0.01 
-    ? 0 
-    : expectedCompanyCashTurnIn;
-    
-  // Determine the color of the Over/Short value
-  const isOverShortMatched = Math.abs(expectedCompanyCashTurnIn - companyCashTurnIn) < 0.01;
+  const overShort = isMatched ? 0 : expectedCompanyCashTurnIn;
   
   // Commission calculations - based on actual business rules
   const employeeCommission = totalCars * 4; // $4 per car employee commission
@@ -498,7 +496,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               
               <div className="calculation-row">
                 <span className="calculation-label">Over/Short:</span>
-                <span className={`calculation-value font-bold ${isOverShortMatched ? "text-green-600" : "text-red-600"}`}>
+                <span className={`calculation-value font-bold ${isMatched ? "text-green-600" : "text-red-600"}`}>
                   ${overShort.toFixed(2)}
                 </span>
               </div>
