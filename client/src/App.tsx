@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import ReportForm from "@/pages/report-form";
 import Reports from "@/pages/reports";
+import SubmissionComplete from "@/pages/submission-complete";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 
@@ -25,6 +26,9 @@ function Router() {
           </Route>
           <Route path="/edit-report/:id">
             {(params: {id: string}) => <ReportForm reportId={parseInt(params.id)} />}
+          </Route>
+          <Route path="/submission-complete/:reportId?">
+            {(params: {reportId?: string}) => <SubmissionComplete />}
           </Route>
           <Route component={NotFound} />
         </Switch>

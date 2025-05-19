@@ -150,13 +150,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       const response = await apiRequest('POST', '/api/shift-reports', data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/shift-reports'] });
       toast({
         title: "Success!",
         description: "Report has been submitted successfully.",
       });
-      navigate('/');
+      // Redirect to submission complete page with the report ID
+      navigate(`/submission-complete/${data.id}`);
     },
     onError: (error) => {
       toast({
@@ -176,13 +177,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       const response = await apiRequest('PUT', `/api/shift-reports/${reportId}`, data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/shift-reports'] });
       toast({
         title: "Success!",
         description: "Report has been updated successfully.",
       });
-      navigate('/');
+      // Redirect to submission complete page with the report ID
+      navigate(`/submission-complete/${data.id}`);
     },
     onError: (error) => {
       toast({
