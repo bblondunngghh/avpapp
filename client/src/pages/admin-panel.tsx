@@ -112,13 +112,13 @@ export default function AdminPanel() {
   
   // Ticket distribution state
   const [ticketDistributions, setTicketDistributions] = useState<TicketDistribution[]>([]);
+  const [isAddDistributionOpen, setIsAddDistributionOpen] = useState(false);
   const [newDistribution, setNewDistribution] = useState({
     locationId: 1,
     allocatedTickets: 0,
     batchNumber: '',
     notes: ''
   });
-  const [isAddDistributionOpen, setIsAddDistributionOpen] = useState(false);
 
   // Check if admin is authenticated
   useEffect(() => {
