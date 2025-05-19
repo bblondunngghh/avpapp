@@ -479,8 +479,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <Input type="number" min="0" className="paperform-input" {...field} />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
-                      <span>Capital Grille Rate: $11.00 per car</span>
-                      <span>Expected Turn-In: ${(totalCars * 11).toFixed(2)}</span>
+                      <span>{form.watch("locationId") === 2 ? "Bob's Steak & Chop House" : "Capital Grille"} Rate: ${form.watch("locationId") === 2 ? "6.00" : "11.00"} per car</span>
+                      <span>Expected Turn-In: ${(totalCars * (form.watch("locationId") === 2 ? 6 : 11)).toFixed(2)}</span>
                     </div>
                     <FormMessage />
                   </FormItem>
