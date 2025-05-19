@@ -15,6 +15,9 @@
   position: relative;
   margin-bottom: 2rem;
   width: 100%;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .form-header-container {
@@ -23,6 +26,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 700px;
 }
 
 .form-header-content {
@@ -30,6 +34,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 700px;
 }
 
 .report-title {
@@ -131,6 +136,10 @@
   background-color: white;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .form-card::before {
