@@ -313,70 +313,72 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   return (
     <div className="form-section">
-      <div className="form-title">
-        <Button variant="ghost" onClick={handleBack} className="mr-2 p-0 h-8 w-8 self-start">
+      <div className="form-outer-container">
+        <Button variant="ghost" onClick={handleBack} className="p-0 h-8 w-8 self-start absolute left-4 top-4">
           <ChevronLeft className="h-5 w-5" />
         </Button>
-
-        <h1>Access Valet Parking Shift Report</h1>
         
-        {form.watch('locationId') === 1 ? (
-          <>
-            <div className="restaurant-image">
-              <img 
-                src="/src/assets/capital-grille.jpg" 
-                alt="The Capital Grille" 
-              />
+        <div className="form-header-container">
+          <h1 className="report-title">Access Valet Parking Shift Report</h1>
+          
+          {form.watch('locationId') === 1 ? (
+            <div className="form-header-content">
+              <div className="restaurant-image">
+                <img 
+                  src="/src/assets/capital-grille.jpg" 
+                  alt="The Capital Grille" 
+                />
+              </div>
+              
+              <div className="address">
+                The Capital Grille<br />
+                117 W 4th St. Austin, TX 78701
+              </div>
             </div>
-            
-            <div className="address">
-              The Capital Grille<br />
-              117 W 4th St. Austin, TX 78701
+          ) : form.watch('locationId') === 2 ? (
+            <div className="form-header-content">
+              <div className="restaurant-image">
+                <img 
+                  src="/src/assets/bobs.jpg" 
+                  alt="Bob's Steak and Chop House" 
+                />
+              </div>
+              
+              <div className="address">
+                Bob's Steak and Chop House<br />
+                301 Lavaca St. Austin, TX 78701
+              </div>
             </div>
-          </>
-        ) : form.watch('locationId') === 2 ? (
-          <>
-            <div className="restaurant-image">
-              <img 
-                src="/src/assets/bobs.jpg" 
-                alt="Bob's Steak and Chop House" 
-              />
+          ) : form.watch('locationId') === 3 ? (
+            <div className="form-header-content">
+              <div className="restaurant-image">
+                <img 
+                  src="/src/assets/trulucks.jpg" 
+                  alt="Truluck's" 
+                />
+              </div>
+              
+              <div className="address">
+                Truluck's<br />
+                400 Colorado St. Austin, TX 78701
+              </div>
             </div>
-            
-            <div className="address">
-              Bob's Steak and Chop House<br />
-              301 Lavaca St. Austin, TX 78701
+          ) : (
+            <div className="form-header-content">
+              <div className="restaurant-image">
+                <img 
+                  src="/src/assets/boa.jpg" 
+                  alt="BOA Steakhouse" 
+                />
+              </div>
+              
+              <div className="address">
+                BOA Steakhouse<br />
+                300 W 6th St. Austin, TX 78701
+              </div>
             </div>
-          </>
-        ) : form.watch('locationId') === 3 ? (
-          <>
-            <div className="restaurant-image">
-              <img 
-                src="/src/assets/trulucks.jpg" 
-                alt="Truluck's" 
-              />
-            </div>
-            
-            <div className="address">
-              Truluck's<br />
-              400 Colorado St. Austin, TX 78701
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="restaurant-image">
-              <img 
-                src="/src/assets/boa.jpg" 
-                alt="BOA Steakhouse" 
-              />
-            </div>
-            
-            <div className="address">
-              BOA Steakhouse<br />
-              300 W 6th St. Austin, TX 78701
-            </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
       
       <Form {...form}>

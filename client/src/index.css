@@ -11,13 +11,34 @@
   min-height: 100vh;
 }
 
-.form-title {
+.form-outer-container {
+  position: relative;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.form-header-container {
+  width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+}
+
+.form-header-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.report-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
   text-align: center;
-  max-width: 100%; /* Constrain to container width */
 }
 
 .company-logo-container {
@@ -36,30 +57,16 @@
   overflow: hidden;
 }
 
-.form-title h1 {
-  font-size: 1.25rem; /* Slightly smaller for better fit */
-  font-weight: 700;
-  color: #000;
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem;
-  width: 100%;
-  max-width: 700px; /* Match form card width */
-}
-
-.capital-grille-image,
 .restaurant-image {
+  width: 100%;
+  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
-  margin-bottom: 1rem;
-  width: 100%;
-  max-width: 700px; /* Match form card width */
 }
 
-.capital-grille-image img,
 .restaurant-image img {
   width: 100%;
-  max-width: 700px; /* Match form card width */
-  height: 160px; /* Slightly reduced height */
+  height: 160px;
   object-fit: cover;
   object-position: center;
   border-radius: 8px;
@@ -68,7 +75,6 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.capital-grille-image img:hover,
 .restaurant-image img:hover {
   transform: scale(1.01);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
@@ -84,7 +90,6 @@
   padding: 0.5rem;
   border-radius: 0.25rem;
   width: 100%;
-  max-width: 700px; /* Match form card width */
   margin-left: auto;
   margin-right: auto;
   border: 1px solid rgba(0, 0, 0, 0.05);
