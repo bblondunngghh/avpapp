@@ -860,7 +860,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               type="number" 
                               min="0" 
                               step="0.5" 
-                              className="paperform-input text-center w-full min-w-[80px]"
+                              className="paperform-input text-center w-20"
                               value={employee.hours === 0 ? '' : employee.hours}
                               onChange={(e) => {
                                 const newEmployees = [...(form.watch('employees') || [])];
