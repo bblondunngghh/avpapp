@@ -63,16 +63,21 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.users = new Map();
+    this.employees = new Map();
     this.locations = new Map();
     this.shiftReports = new Map();
     this.ticketDistributions = new Map();
     this.userCurrentId = 1;
+    this.employeeCurrentId = 1;
     this.locationCurrentId = 1;
     this.shiftReportCurrentId = 1;
     this.ticketDistributionCurrentId = 1;
     
     // Initialize with default locations
     this.initializeLocations();
+    
+    // Initialize with employees from constants
+    this.initializeEmployees();
   }
 
   private initializeLocations() {
@@ -86,6 +91,96 @@ export class MemStorage implements IStorage {
     defaultLocations.forEach(loc => {
       this.createLocation(loc);
     });
+  }
+  
+  private initializeEmployees() {
+    // Import the employee name mapping from lib constants
+    const { EMPLOYEE_NAMES } = require("../client/src/lib/constants");
+    
+    // Convert the existing employee names to the new employee format
+    Object.entries(EMPLOYEE_NAMES).forEach(([key, fullName]) => {
+      // Set some employees as shift leaders
+      const isShiftLeader = ["brett", "dave", "riley", "jonathan"].includes(key);
+      
+      const employee: InsertEmployee = {
+        key,
+        fullName: fullName as string,
+        isActive: true,
+        isShiftLeader,
+        hireDate: new Date().toISOString()
+      };
+      
+      this.createEmployee(employee);
+    });
+  }
+  
+  // Employee methods
+  async getEmployees(): Promise<Employee[]> {
+    return Array.from(this.employees.values());
+  }
+  
+  async getEmployee(id: number): Promise<Employee | undefined> {
+    return this.employees.get(id);
+  }
+  
+  async getEmployeeByKey(key: string): Promise<Employee | undefined> {
+    return Array.from(this.employees.values()).find(emp => emp.key === key);
+  }
+  
+  async getActiveEmployees(): Promise<Employee[]> {
+    return Array.from(this.employees.values()).filter(emp => emp.isActive);
+  }
+  
+  async getShiftLeaders(): Promise<Employee[]> {
+    return Array.from(this.employees.values()).filter(emp => emp.isShiftLeader && emp.isActive);
+  }
+  
+  async createEmployee(employee: InsertEmployee): Promise<Employee> {
+    const id = this.employeeCurrentId++;
+    const now = new Date();
+    
+    const newEmployee: Employee = {
+      id,
+      key: employee.key,
+      fullName: employee.fullName,
+      isActive: employee.isActive,
+      isShiftLeader: employee.isShiftLeader,
+      hireDate: employee.hireDate ? new Date(employee.hireDate) : now,
+      terminationDate: null,
+      phone: employee.phone || null,
+      email: employee.email || null,
+      notes: employee.notes || null,
+      createdAt: now,
+      updatedAt: null
+    };
+    
+    this.employees.set(id, newEmployee);
+    return newEmployee;
+  }
+  
+  async updateEmployee(id: number, employeeUpdate: UpdateEmployee): Promise<Employee | undefined> {
+    const employee = this.employees.get(id);
+    if (!employee) return undefined;
+    
+    const updatedEmployee: Employee = {
+      ...employee,
+      ...employeeUpdate,
+      updatedAt: new Date(),
+      hireDate: employeeUpdate.hireDate ? new Date(employeeUpdate.hireDate) : employee.hireDate,
+      terminationDate: employeeUpdate.terminationDate ? new Date(employeeUpdate.terminationDate) : employee.terminationDate,
+      phone: employeeUpdate.phone || null,
+      email: employeeUpdate.email || null,
+      notes: employeeUpdate.notes || null
+    };
+    
+    this.employees.set(id, updatedEmployee);
+    return updatedEmployee;
+  }
+  
+  async deleteEmployee(id: number): Promise<boolean> {
+    if (!this.employees.has(id)) return false;
+    this.employees.delete(id);
+    return true;
   }
 
   // User methods

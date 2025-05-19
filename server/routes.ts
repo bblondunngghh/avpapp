@@ -6,8 +6,11 @@ import {
   updateShiftReportSchema,
   insertTicketDistributionSchema,
   updateTicketDistributionSchema,
+  insertEmployeeSchema,
+  updateEmployeeSchema,
   ShiftReport,
-  TicketDistribution
+  TicketDistribution,
+  Employee
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -237,6 +240,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).end();
     } catch (error) {
       res.status(500).json({ message: 'Failed to delete ticket distribution' });
+    }
+  });
+  
+  // Employee routes
+  
+  // Get all employees
+  apiRouter.get('/employees', async (req, res) => {
+    try {
+      const employees = await storage.getEmployees();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch employees' });
+    }
+  });
+  
+  // Get active employees
+  apiRouter.get('/employees/active', async (req, res) => {
+    try {
+      const employees = await storage.getActiveEmployees();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch active employees' });
+    }
+  });
+  
+  // Get shift leaders
+  apiRouter.get('/employees/shift-leaders', async (req, res) => {
+    try {
+      const employees = await storage.getShiftLeaders();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch shift leaders' });
+    }
+  });
+  
+  // Get employee by ID
+  apiRouter.get('/employees/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid employee ID' });
+      }
+      
+      const employee = await storage.getEmployee(id);
+      if (!employee) {
+        return res.status(404).json({ message: 'Employee not found' });
+      }
+      
+      res.json(employee);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch employee' });
+    }
+  });
+  
+  // Create a new employee
+  apiRouter.post('/employees', async (req, res) => {
+    try {
+      const validatedData = insertEmployeeSchema.parse(req.body);
+      
+      // Check if employee with this key already exists
+      const existingEmployee = await storage.getEmployeeByKey(validatedData.key);
+      if (existingEmployee) {
+        return res.status(400).json({ message: 'Employee with this key already exists' });
+      }
+      
+      const employee = await storage.createEmployee(validatedData);
+      res.status(201).json(employee);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid employee data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to create employee' });
+    }
+  });
+  
+  // Update an employee
+  apiRouter.put('/employees/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid employee ID' });
+      }
+      
+      const validatedData = updateEmployeeSchema.parse(req.body);
+      
+      // Check if employee exists
+      const existingEmployee = await storage.getEmployee(id);
+      if (!existingEmployee) {
+        return res.status(404).json({ message: 'Employee not found' });
+      }
+      
+      // If key is being changed, check if the new key is already in use
+      if (validatedData.key && validatedData.key !== existingEmployee.key) {
+        const employeeWithSameKey = await storage.getEmployeeByKey(validatedData.key);
+        if (employeeWithSameKey && employeeWithSameKey.id !== id) {
+          return res.status(400).json({ message: 'Another employee with this key already exists' });
+        }
+      }
+      
+      const updatedEmployee = await storage.updateEmployee(id, validatedData);
+      res.json(updatedEmployee);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid employee data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to update employee' });
+    }
+  });
+  
+  // Delete an employee
+  apiRouter.delete('/employees/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid employee ID' });
+      }
+      
+      const success = await storage.deleteEmployee(id);
+      if (!success) {
+        return res.status(404).json({ message: 'Employee not found' });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete employee' });
     }
   });
 
