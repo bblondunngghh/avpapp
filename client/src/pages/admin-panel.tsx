@@ -385,11 +385,33 @@ export default function AdminPanel() {
         
         <TabsContent value="reports">
           <Card>
-            <CardHeader>
-              <CardTitle>Shift Reports</CardTitle>
-              <CardDescription>
-                View all shift reports across all locations
-              </CardDescription>
+            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <CardTitle>Shift Reports</CardTitle>
+                <CardDescription>
+                  View all shift reports across all locations
+                </CardDescription>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={exportReportsToCSV}
+                  className="flex items-center gap-1"
+                >
+                  <FileDown className="h-4 w-4" />
+                  Export CSV
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={exportReportsToPDF}
+                  className="flex items-center gap-1"
+                >
+                  <Download className="h-4 w-4" />
+                  Export PDF
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {isLoading ? (
@@ -452,11 +474,33 @@ export default function AdminPanel() {
 
         <TabsContent value="employees">
           <Card>
-            <CardHeader>
-              <CardTitle>Employee Payroll Summary</CardTitle>
-              <CardDescription>
-                View financial summary for all employees
-              </CardDescription>
+            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <CardTitle>Employee Payroll Summary</CardTitle>
+                <CardDescription>
+                  View financial summary for all employees
+                </CardDescription>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={exportEmployeesToCSV}
+                  className="flex items-center gap-1"
+                >
+                  <FileDown className="h-4 w-4" />
+                  Export CSV
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={exportEmployeesToPDF}
+                  className="flex items-center gap-1"
+                >
+                  <Download className="h-4 w-4" />
+                  Export PDF
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {isLoading ? (
