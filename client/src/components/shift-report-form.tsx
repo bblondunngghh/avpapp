@@ -356,15 +356,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="form-card">
-            <h3 className="section-title">Vehicle & Revenue Information</h3>
+            <h3 className="section-title">Transactions and Sales</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
-                name="complimentaryCars"
+                name="creditTransactions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Comped/Validated Cars</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Number of Credit Card Transactions</FormLabel>
                     <FormControl>
                       <Input type="number" min="0" className="paperform-input" {...field} />
                     </FormControl>
@@ -375,10 +375,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               
               <FormField
                 control={form.control}
-                name="creditTransactions"
+                name="totalReceipts"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Number of Credit Card Transactions</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Number of Receipts</FormLabel>
                     <FormControl>
                       <Input type="number" min="0" className="paperform-input" {...field} />
                     </FormControl>
