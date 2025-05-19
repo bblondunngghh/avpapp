@@ -265,10 +265,16 @@ export default function AdminPanel() {
                             <TableCell>{date.toLocaleDateString()}</TableCell>
                             <TableCell>{getLocationName(report.locationId)}</TableCell>
                             <TableCell>{report.shift}</TableCell>
-                            <TableCell>{report.shiftLeader}</TableCell>
+                            <TableCell>{EMPLOYEE_NAMES[report.manager] || report.manager}</TableCell>
                             <TableCell className="text-right">{report.totalCars}</TableCell>
                             <TableCell className="text-right">${expectedTurnIn.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">{report.employees?.length || 0}</TableCell>
+                            <TableCell className="text-right">
+                              {typeof report.employees === 'string' 
+                                ? JSON.parse(report.employees).length 
+                                : Array.isArray(report.employees) 
+                                  ? report.employees.length 
+                                  : 0}
+                            </TableCell>
                             <TableCell className="text-right">{submittedDate.toLocaleDateString()}</TableCell>
                           </TableRow>
                         );
