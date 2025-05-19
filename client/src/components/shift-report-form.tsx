@@ -506,90 +506,80 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           <div className="form-card">
             <h3 className="section-title uppercase font-bold">TOTAL COMMISSION AND TIP SUMMARY</h3>
             
-            <div className="grid grid-cols-1 gap-6">
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Cash Commission</div>
-                  <div className="font-bold text-lg">${cashCommission.toFixed(2)}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-3 rounded-md">
+                <div className="text-sm font-medium mb-2">Commission Breakdown</div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Cash Commission:</span>
+                    <span>${cashCommission.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Credit Card Commission:</span>
+                    <span>${creditCardCommission.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Receipt Commission:</span>
+                    <span>${receiptCommission.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                    <span>Total Commission:</span>
+                    <span>${totalCommission.toFixed(2)}</span>
+                  </div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">$4 per cash car (Total Cars - Credit Card Transactions)</div>
-              </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Credit Card Commission</div>
-                  <div className="font-bold text-lg">${creditCardCommission.toFixed(2)}</div>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">$4 per credit card transaction</div>
-              </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Receipt Commission</div>
-                  <div className="font-bold text-lg">${receiptCommission.toFixed(2)}</div>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">5% of total receipt sales</div>
-              </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Cash Tips</div>
-                  <div className="font-bold text-lg">${cashTips.toFixed(2)}</div>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">$15 per cash car minus total cash collected</div>
-              </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Credit Card Tips</div>
-                  <div className="font-bold text-lg">${creditCardTips.toFixed(2)}</div>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">$15 per transaction minus total credit sales</div>
-              </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Receipt Tips</div>
-                  <div className="font-bold text-lg">${receiptTips.toFixed(2)}</div>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">15% of total receipt sales</div>
-              </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Tip Share</div>
-                  <div className="font-bold text-lg">${tipShare.toFixed(2)}</div>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">10% of all tips paid to restaurant staff</div>
-              </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200 mt-2">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium font-bold">Total Commission</div>
-                  <div className="font-bold text-lg">${totalCommission.toFixed(2)}</div>
+                <div className="text-xs text-gray-600 mt-2">
+                  <div>• Cash: $4 per cash car</div>
+                  <div>• Credit: $4 per card transaction</div>
+                  <div>• Receipt: 5% of receipt sales</div>
                 </div>
               </div>
               
-              <div className="bg-white p-4 rounded-md border border-gray-200 mt-2">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium font-bold">Total Tips</div>
-                  <div className="font-bold text-lg">${totalTips.toFixed(2)}</div>
+              <div className="bg-gray-50 p-3 rounded-md">
+                <div className="text-sm font-medium mb-2">Tips Breakdown</div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Cash Tips:</span>
+                    <span>${cashTips.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Credit Card Tips:</span>
+                    <span>${creditCardTips.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Receipt Tips:</span>
+                    <span>${receiptTips.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-red-600">
+                    <span>Tip Share:</span>
+                    <span>-${tipShare.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                    <span>Total Tips:</span>
+                    <span>${totalTips.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  <div>• Cash: $15 per cash car - cash collected</div>
+                  <div>• Credit: $15 per transaction - credit sales</div>
+                  <div>• Tip Share: 10% of total tips</div>
                 </div>
               </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200 mt-2">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium font-bold">Total Commission and Tips</div>
-                  <div className="font-bold text-lg">${totalCommissionAndTips.toFixed(2)}</div>
-                </div>
+            </div>
+            
+            <div className="mt-4 bg-blue-50 p-4 rounded-md border border-blue-200">
+              <div className="flex justify-between items-center">
+                <div className="text-base font-bold text-blue-800">Total Commission and Tips</div>
+                <div className="text-xl font-bold text-blue-800">${totalCommissionAndTips.toFixed(2)}</div>
               </div>
-              
-              <div className="bg-white p-4 rounded-md border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium font-bold">Total Money Owed</div>
-                  <div className="font-bold text-lg">${moneyOwed.toFixed(2)}</div>
+            </div>
+            
+            <div className="mt-4 bg-gray-100 p-4 rounded-md border border-gray-300">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-base font-bold">Total Money Owed</div>
+                  <div className="text-xs text-gray-600">Amount to be collected from employee</div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">Amount to be collected from employee</div>
+                <div className="text-xl font-bold">${moneyOwed.toFixed(2)}</div>
               </div>
             </div>
           </div>
