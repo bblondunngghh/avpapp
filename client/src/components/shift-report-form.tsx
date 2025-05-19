@@ -315,12 +315,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         </Button>
         <h1>ACCESS VALET PARKING SHIFT REPORT</h1>
         
-        <div className="capital-grille-logo">
-          <div className="the">T H E</div>
-          <div className="capital">CAPITAL</div>
-          <div className="grille">
-            G<span className="grille-dot">•</span>R<span className="grille-dot">•</span>I<span className="grille-dot">•</span>L<span className="grille-dot">•</span>L<span className="grille-dot">•</span>E
-          </div>
+        <div className="capital-grille-image">
+          <img 
+            src="/src/assets/capital-grille.jpg" 
+            alt="The Capital Grille" 
+            className="rounded-md shadow-md" 
+          />
         </div>
         
         <div className="address">
