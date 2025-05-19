@@ -90,6 +90,7 @@ export default function AdminPanel() {
         totalTips: number;
         totalMoneyOwed: number;
         reports: number;
+        locationId: number;
       }>();
 
       reports.forEach(report => {
@@ -149,7 +150,8 @@ export default function AdminPanel() {
             totalCommission: 0,
             totalTips: 0,
             totalMoneyOwed: 0,
-            reports: 0
+            reports: 0,
+            locationId: report.locationId
           };
           
           // Update stats
@@ -160,7 +162,8 @@ export default function AdminPanel() {
             totalCommission: existingStats.totalCommission + employeeCommission,
             totalTips: existingStats.totalTips + employeeTips,
             totalMoneyOwed: existingStats.totalMoneyOwed + employeeMoneyOwed,
-            reports: existingStats.reports + 1
+            reports: existingStats.reports + 1,
+            locationId: report.locationId // Keep using the most recent location
           });
         });
       });
@@ -301,7 +304,7 @@ export default function AdminPanel() {
                       <TableRow>
                         <TableHead>Employee</TableHead>
                         <TableHead className="text-right">Total Hours</TableHead>
-                        <TableHead className="text-right">Account</TableHead>
+                        <TableHead className="text-right">Location</TableHead>
                         <TableHead className="text-right">Commission</TableHead>
                         <TableHead className="text-right">Tips</TableHead>
                         <TableHead className="text-right">Money Owed</TableHead>
@@ -316,7 +319,9 @@ export default function AdminPanel() {
                             {EMPLOYEE_NAMES[employee.name] || employee.name}
                           </TableCell>
                           <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
-                          <TableCell className="text-right">{employee.name}</TableCell>
+                          <TableCell className="text-right">
+                            {LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-'}
+                          </TableCell>
                           <TableCell className="text-right">${employee.totalCommission.toFixed(2)}</TableCell>
                           <TableCell className="text-right">${employee.totalTips.toFixed(2)}</TableCell>
                           <TableCell className="text-right text-blue-700">
