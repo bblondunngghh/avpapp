@@ -193,7 +193,7 @@ export default function AdminPanel() {
     }
   }, [distributionsData]);
   
-  // Update employees state when API data changes
+  // Set initial employees data
   useEffect(() => {
     if (employeeRecords && employeeRecords.length > 0) {
       setEmployees(employeeRecords);

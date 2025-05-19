@@ -382,8 +382,7 @@ export class DatabaseStorage implements IStorage {
     try {
       const activeEmployees = await db.select()
         .from(employees)
-        .where(eq(employees.isActive, true))
-        .orderBy(employees.fullName);
+        .where(eq(employees.isActive, true));
       return activeEmployees;
     } catch (error) {
       console.error("Error fetching active employees:", error);
@@ -393,12 +392,10 @@ export class DatabaseStorage implements IStorage {
   
   async getShiftLeaders(): Promise<Employee[]> {
     try {
-      const shiftLeaders = await db.select()
+      const results = await db.select()
         .from(employees)
-        .where(eq(employees.isActive, true))
-        .where(eq(employees.isShiftLeader, true))
-        .orderBy(employees.fullName);
-      return shiftLeaders;
+        .where(eq(employees.isShiftLeader, true));
+      return results;
     } catch (error) {
       console.error("Error fetching shift leaders:", error);
       return [];
