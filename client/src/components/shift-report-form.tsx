@@ -106,17 +106,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   }, [locationId, form]);
 
   // Handle totalCars changes
-  useEffect(() => {
-    const totalCars = form.getValues("totalCars") || 0;
-    const expectedTurnIn = totalCars * 11;
-    
-    // We just update the display value without triggering additional watch events
-    form.setValue("companyCashTurnIn", expectedTurnIn, { 
-      shouldDirty: false,
-      shouldTouch: false,
-      shouldValidate: false
-    });
-  }, [form.watch("totalCars")]);
+  // We'll no longer automatically set companyCashTurnIn when totalCars changes
+  // This allows the user to manually enter the actual cash turn-in amount
   
   // Fetch report data if editing
   const { data: reportData, isLoading: isLoadingReport } = useQuery({
