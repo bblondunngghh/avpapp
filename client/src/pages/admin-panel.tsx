@@ -109,8 +109,21 @@ export default function AdminPanel() {
         const receiptTips = report.totalReceipts * 3;
         const totalTips = creditCardTips + cashTips + receiptTips;
 
+        // Parse employee data from JSON string
+        let employees = [];
+        try {
+          if (report.employees && typeof report.employees === 'string') {
+            employees = JSON.parse(report.employees);
+          } else if (Array.isArray(report.employees)) {
+            employees = report.employees;
+          }
+        } catch (err) {
+          console.error("Failed to parse employee data:", err);
+          employees = [];
+        }
+
         // Process each employee
-        report.employees?.forEach(employee => {
+        employees.forEach(employee => {
           // Skip employees with no name
           if (!employee.name) return;
           
