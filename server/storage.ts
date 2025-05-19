@@ -336,6 +336,7 @@ export class MemStorage implements IStorage {
 
 // Database storage implementation
 export class DatabaseStorage implements IStorage {
+  // User methods
   async getUser(id: number): Promise<User | undefined> {
     try {
       const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -343,6 +344,122 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error fetching user:", error);
       throw new Error("Failed to fetch user");
+    }
+  }
+  
+  // Employee methods
+  async getEmployees(): Promise<Employee[]> {
+    try {
+      const employeesList = await db.select().from(employees).orderBy(employees.fullName);
+      return employeesList;
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      return []; // Return empty array instead of throwing
+    }
+  }
+  
+  async getEmployee(id: number): Promise<Employee | undefined> {
+    try {
+      const [employee] = await db.select().from(employees).where(eq(employees.id, id));
+      return employee || undefined;
+    } catch (error) {
+      console.error("Error fetching employee:", error);
+      return undefined;
+    }
+  }
+  
+  async getEmployeeByKey(key: string): Promise<Employee | undefined> {
+    try {
+      const [employee] = await db.select().from(employees).where(eq(employees.key, key));
+      return employee || undefined;
+    } catch (error) {
+      console.error("Error fetching employee by key:", error);
+      return undefined;
+    }
+  }
+  
+  async getActiveEmployees(): Promise<Employee[]> {
+    try {
+      const activeEmployees = await db.select()
+        .from(employees)
+        .where(eq(employees.isActive, true))
+        .orderBy(employees.fullName);
+      return activeEmployees;
+    } catch (error) {
+      console.error("Error fetching active employees:", error);
+      return [];
+    }
+  }
+  
+  async getShiftLeaders(): Promise<Employee[]> {
+    try {
+      const shiftLeaders = await db.select()
+        .from(employees)
+        .where(eq(employees.isActive, true))
+        .where(eq(employees.isShiftLeader, true))
+        .orderBy(employees.fullName);
+      return shiftLeaders;
+    } catch (error) {
+      console.error("Error fetching shift leaders:", error);
+      return [];
+    }
+  }
+  
+  async createEmployee(employeeData: InsertEmployee): Promise<Employee> {
+    try {
+      // Set defaults for optional values
+      const data = {
+        ...employeeData,
+        isActive: employeeData.isActive ?? true,
+        isShiftLeader: employeeData.isShiftLeader ?? false,
+        hireDate: employeeData.hireDate ? new Date(employeeData.hireDate) : new Date(),
+        phone: employeeData.phone || null,
+        email: employeeData.email || null,
+        notes: employeeData.notes || null
+      };
+      
+      const [employee] = await db.insert(employees).values(data).returning();
+      return employee;
+    } catch (error) {
+      console.error("Error creating employee:", error);
+      throw new Error(`Failed to create employee: ${error.message || "Unknown error"}`);
+    }
+  }
+  
+  async updateEmployee(id: number, employeeData: UpdateEmployee): Promise<Employee | undefined> {
+    try {
+      // Process dates and ensure proper formats
+      const updateData = {
+        ...employeeData,
+        isActive: employeeData.isActive ?? undefined,
+        isShiftLeader: employeeData.isShiftLeader ?? undefined,
+        hireDate: employeeData.hireDate ? new Date(employeeData.hireDate) : undefined,
+        terminationDate: employeeData.terminationDate ? new Date(employeeData.terminationDate) : null,
+        phone: employeeData.phone || null,
+        email: employeeData.email || null,
+        notes: employeeData.notes || null,
+        updatedAt: new Date()
+      };
+      
+      const [employee] = await db.update(employees)
+        .set(updateData)
+        .where(eq(employees.id, id))
+        .returning();
+      
+      return employee || undefined;
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      throw new Error(`Failed to update employee: ${error.message || "Unknown error"}`);
+    }
+  }
+  
+  async deleteEmployee(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(employees).where(eq(employees.id, id)).returning();
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      throw new Error(`Failed to delete employee: ${error.message || "Unknown error"}`);
     }
   }
 
