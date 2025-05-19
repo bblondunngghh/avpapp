@@ -803,6 +803,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   hours: parseFloat(e.target.value) || 0 
                                 };
                                 form.setValue('employees', newEmployees);
+                                
+                                // Calculate total employee hours
+                                const totalEmployeeHours = newEmployees.reduce(
+                                  (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
+                                  0
+                                );
+                                
+                                // Update total job hours to match employee hours distribution
+                                form.setValue('totalJobHours', totalEmployeeHours);
                               }}
                             />
                           </div>
