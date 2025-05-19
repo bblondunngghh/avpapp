@@ -517,7 +517,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             <h3 className="section-title uppercase font-bold">FINANCIAL SUMMARY</h3>
             
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
                   <div className="text-sm font-medium mb-2">Commission Breakdown</div>
                   <div className="space-y-2">
