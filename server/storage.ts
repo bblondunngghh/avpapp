@@ -1,5 +1,6 @@
 import { 
   users, type User, type InsertUser, 
+  employees, type Employee, type InsertEmployee, type UpdateEmployee,
   locations, type Location, type InsertLocation,
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
   ticketDistributions, type TicketDistribution, type InsertTicketDistribution, type UpdateTicketDistribution,
@@ -14,6 +15,16 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // Employee methods
+  getEmployees(): Promise<Employee[]>;
+  getEmployee(id: number): Promise<Employee | undefined>;
+  getEmployeeByKey(key: string): Promise<Employee | undefined>;
+  getActiveEmployees(): Promise<Employee[]>;
+  getShiftLeaders(): Promise<Employee[]>;
+  createEmployee(employee: InsertEmployee): Promise<Employee>;
+  updateEmployee(id: number, employee: UpdateEmployee): Promise<Employee | undefined>;
+  deleteEmployee(id: number): Promise<boolean>;
   
   // Location methods
   getLocations(): Promise<Location[]>;
@@ -40,10 +51,12 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
+  private employees: Map<number, Employee>;
   private locations: Map<number, Location>;
   private shiftReports: Map<number, ShiftReport>;
   private ticketDistributions: Map<number, TicketDistribution>;
   private userCurrentId: number;
+  private employeeCurrentId: number;
   private locationCurrentId: number;
   private shiftReportCurrentId: number;
   private ticketDistributionCurrentId: number;

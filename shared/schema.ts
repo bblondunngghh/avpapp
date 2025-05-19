@@ -17,6 +17,53 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
+// Employee schema
+export const employees = pgTable("employees", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(), // This is the key used in dropdown selections
+  fullName: text("full_name").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  isShiftLeader: boolean("is_shift_leader").default(false).notNull(),
+  phone: text("phone"),
+  email: text("email"),
+  hireDate: timestamp("hire_date").defaultNow().notNull(),
+  terminationDate: timestamp("termination_date"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const insertEmployeeSchema = createInsertSchema(employees)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    terminationDate: true
+  })
+  .extend({
+    hireDate: z.string().optional(),
+    phone: z.string().optional(),
+    email: z.string().optional(),
+    notes: z.string().optional(),
+  });
+
+export const updateEmployeeSchema = createInsertSchema(employees)
+  .omit({
+    id: true,
+    createdAt: true
+  })
+  .extend({
+    hireDate: z.string().optional(),
+    terminationDate: z.string().optional().nullable(),
+    phone: z.string().optional(),
+    email: z.string().optional(),
+    notes: z.string().optional(),
+  });
+
+export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
+export type UpdateEmployee = z.infer<typeof updateEmployeeSchema>;
+export type Employee = typeof employees.$inferSelect;
+
 // Locations schema for the different restaurant clients
 export const locations = pgTable("locations", {
   id: serial("id").primaryKey(),
