@@ -347,7 +347,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           <>
             <div className="restaurant-image">
               <img 
-                src="/src/assets/capital-grille.jpg" 
+                src="/src/assets/trulucks.jpg" 
                 alt="Truluck's" 
               />
             </div>
