@@ -4,7 +4,10 @@ import { storage } from "./storage";
 import { 
   insertShiftReportSchema, 
   updateShiftReportSchema,
-  ShiftReport 
+  insertTicketDistributionSchema,
+  updateTicketDistributionSchema,
+  ShiftReport,
+  TicketDistribution
 } from "@shared/schema";
 import { z } from "zod";
 

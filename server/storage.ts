@@ -2,6 +2,7 @@ import {
   users, type User, type InsertUser, 
   locations, type Location, type InsertLocation,
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
+  ticketDistributions, type TicketDistribution, type InsertTicketDistribution, type UpdateTicketDistribution,
   LOCATIONS
 } from "@shared/schema";
 import { db } from "./db";
@@ -51,9 +52,11 @@ export class MemStorage implements IStorage {
     this.users = new Map();
     this.locations = new Map();
     this.shiftReports = new Map();
+    this.ticketDistributions = new Map();
     this.userCurrentId = 1;
     this.locationCurrentId = 1;
     this.shiftReportCurrentId = 1;
+    this.ticketDistributionCurrentId = 1;
     
     // Initialize with default locations
     this.initializeLocations();
@@ -171,6 +174,55 @@ export class MemStorage implements IStorage {
   
   async deleteShiftReport(id: number): Promise<boolean> {
     return this.shiftReports.delete(id);
+  }
+  
+  // Ticket distribution methods
+  async getTicketDistributions(): Promise<TicketDistribution[]> {
+    return Array.from(this.ticketDistributions.values()).sort((a, b) => b.id - a.id);
+  }
+  
+  async getTicketDistribution(id: number): Promise<TicketDistribution | undefined> {
+    return this.ticketDistributions.get(id);
+  }
+  
+  async getTicketDistributionsByLocation(locationId: number): Promise<TicketDistribution[]> {
+    return Array.from(this.ticketDistributions.values())
+      .filter(distribution => distribution.locationId === locationId)
+      .sort((a, b) => b.id - a.id);
+  }
+  
+  async createTicketDistribution(insertDistribution: InsertTicketDistribution): Promise<TicketDistribution> {
+    const id = this.ticketDistributionCurrentId++;
+    const createdAt = new Date();
+    
+    const distribution: TicketDistribution = { 
+      id,
+      ...insertDistribution,
+      usedTickets: 0,
+      createdAt,
+      updatedAt: null
+    };
+    
+    this.ticketDistributions.set(id, distribution);
+    return distribution;
+  }
+  
+  async updateTicketDistribution(id: number, updateDistribution: UpdateTicketDistribution): Promise<TicketDistribution | undefined> {
+    const existingDistribution = this.ticketDistributions.get(id);
+    if (!existingDistribution) return undefined;
+    
+    const updatedDistribution: TicketDistribution = {
+      ...existingDistribution,
+      ...updateDistribution,
+      updatedAt: new Date()
+    };
+    
+    this.ticketDistributions.set(id, updatedDistribution);
+    return updatedDistribution;
+  }
+  
+  async deleteTicketDistribution(id: number): Promise<boolean> {
+    return this.ticketDistributions.delete(id);
   }
 }
 
@@ -342,6 +394,85 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error deleting shift report:", error);
       throw new Error("Failed to delete shift report");
+    }
+  }
+  
+  // Ticket distribution methods
+  async getTicketDistributions(): Promise<TicketDistribution[]> {
+    try {
+      return await db.select().from(ticketDistributions).orderBy(desc(ticketDistributions.id));
+    } catch (error) {
+      console.error("Error fetching ticket distributions:", error);
+      throw new Error("Failed to fetch ticket distributions");
+    }
+  }
+  
+  async getTicketDistribution(id: number): Promise<TicketDistribution | undefined> {
+    try {
+      const [distribution] = await db.select().from(ticketDistributions).where(eq(ticketDistributions.id, id));
+      return distribution;
+    } catch (error) {
+      console.error("Error fetching ticket distribution:", error);
+      throw new Error("Failed to fetch ticket distribution");
+    }
+  }
+  
+  async getTicketDistributionsByLocation(locationId: number): Promise<TicketDistribution[]> {
+    try {
+      return await db
+        .select()
+        .from(ticketDistributions)
+        .where(eq(ticketDistributions.locationId, locationId))
+        .orderBy(desc(ticketDistributions.id));
+    } catch (error) {
+      console.error("Error fetching ticket distributions by location:", error);
+      throw new Error("Failed to fetch ticket distributions by location");
+    }
+  }
+  
+  async createTicketDistribution(distribution: InsertTicketDistribution): Promise<TicketDistribution> {
+    try {
+      const [createdDistribution] = await db
+        .insert(ticketDistributions)
+        .values({
+          ...distribution,
+          usedTickets: 0,
+          createdAt: new Date()
+        })
+        .returning();
+      return createdDistribution;
+    } catch (error) {
+      console.error("Error creating ticket distribution:", error);
+      throw new Error("Failed to create ticket distribution");
+    }
+  }
+  
+  async updateTicketDistribution(id: number, distribution: UpdateTicketDistribution): Promise<TicketDistribution | undefined> {
+    try {
+      const [updatedDistribution] = await db
+        .update(ticketDistributions)
+        .set({
+          ...distribution,
+          updatedAt: new Date()
+        })
+        .where(eq(ticketDistributions.id, id))
+        .returning();
+      return updatedDistribution;
+    } catch (error) {
+      console.error("Error updating ticket distribution:", error);
+      throw new Error("Failed to update ticket distribution");
+    }
+  }
+  
+  async deleteTicketDistribution(id: number): Promise<boolean> {
+    try {
+      await db
+        .delete(ticketDistributions)
+        .where(eq(ticketDistributions.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting ticket distribution:", error);
+      throw new Error("Failed to delete ticket distribution");
     }
   }
 }
