@@ -476,10 +476,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-in</FormLabel>
                     <FormControl>
                       <InputMoney 
-                        className="paperform-input bg-gray-50"
-                        {...field} 
-                        readOnly 
-                        value={companyTurnIn}
+                        className="paperform-input"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
