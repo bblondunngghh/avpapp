@@ -1504,27 +1504,41 @@ export default function AdminPanel() {
                                   }
                                   
                                   try {
+                                    // Only send the necessary fields for the update
+                                    const updateData = {
+                                      locationId: distribution.locationId,
+                                      allocatedTickets: distribution.allocatedTickets,
+                                      usedTickets: usedTickets,
+                                      batchNumber: distribution.batchNumber,
+                                      notes: distribution.notes
+                                    };
+                                    
                                     const response = await fetch(`/api/ticket-distributions/${distribution.id}`, {
                                       method: 'PUT',
                                       headers: {
                                         'Content-Type': 'application/json',
                                       },
-                                      body: JSON.stringify({
-                                        ...distribution,
-                                        usedTickets
-                                      }),
+                                      body: JSON.stringify(updateData),
                                     });
                                     
                                     if (response.ok) {
                                       // Update local state
                                       const updatedDistribution = await response.json();
+                                      console.log("Updated distribution:", updatedDistribution);
+                                      
+                                      // Update the state with the new data
                                       setTicketDistributions(
                                         ticketDistributions.map(d => 
                                           d.id === updatedDistribution.id ? updatedDistribution : d
                                         )
                                       );
+                                      
+                                      // Show success message
+                                      alert(`Successfully updated used tickets to ${usedTickets}`);
                                     } else {
-                                      alert("Error updating used tickets");
+                                      const errorData = await response.json();
+                                      console.error("Error updating tickets:", errorData);
+                                      alert("Error updating used tickets: " + (errorData.message || "Unknown error"));
                                     }
                                   } catch (error) {
                                     console.error("Error:", error);
