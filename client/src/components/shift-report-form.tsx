@@ -313,7 +313,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         <Button variant="ghost" onClick={handleBack} className="mr-2 p-0 h-8 w-8 self-start">
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        <h1>ACCESS VALET PARKING SHIFT REPORT</h1>
+        <h1>Access Valet Parking Shift Report</h1>
         
         {form.watch('locationId') === 1 ? (
           <>
@@ -325,8 +325,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
             
             <div className="address">
-              THE CAPITAL GRILLE<br />
-              117 W 4TH ST. AUSTIN, TX 78701
+              The Capital Grille<br />
+              117 W 4th St. Austin, TX 78701
             </div>
           </>
         ) : form.watch('locationId') === 2 ? (
@@ -339,8 +339,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
             
             <div className="address">
-              BOB'S STEAK AND CHOP HOUSE<br />
-              301 LAVACA ST. AUSTIN, TX 78701
+              Bob's Steak and Chop House<br />
+              301 Lavaca St. Austin, TX 78701
             </div>
           </>
         ) : form.watch('locationId') === 3 ? (
@@ -353,8 +353,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
             
             <div className="address">
-              TRULUCK'S<br />
-              400 COLORADO ST. AUSTIN, TX 78701
+              Truluck's<br />
+              400 Colorado St. Austin, TX 78701
             </div>
           </>
         ) : (
@@ -367,8 +367,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
             
             <div className="address">
-              BOA STEAKHOUSE<br />
-              300 W 6TH ST. AUSTIN, TX 78701
+              BOA Steakhouse<br />
+              300 W 6th St. Austin, TX 78701
             </div>
           </>
         )}
