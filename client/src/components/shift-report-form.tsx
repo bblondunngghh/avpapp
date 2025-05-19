@@ -787,128 +787,128 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
                 
                 {form.watch("totalJobHours") > 0 ? (
-                  <div className="space-y-4 overflow-x-auto">
-                    <div className="grid grid-cols-9 gap-4 font-medium text-sm border-b border-blue-200 pb-2">
-                      <div className="col-span-2 text-left">Employee</div>
-                      <div className="col-span-1 text-center">Hours</div>
-                      <div className="col-span-1 text-center">%</div>
-                      <div className="col-span-1 text-center">Commission</div>
-                      <div className="col-span-1 text-center">Tips</div>
-                      <div className="col-span-1 text-center">Money Owed</div>
-                      <div className="col-span-1 text-center">Earnings</div>
-                      <div className="col-span-1 text-center">Turn-In</div>
+                  <div className="space-y-4">
+                    <div className="overflow-x-auto pb-2">
+                      <div className="min-w-[800px]">
+                        <div className="grid grid-cols-7 gap-3 pb-2 border-b border-blue-200 mb-2">
+                          <div className="font-medium text-sm text-left">Employee</div>
+                          <div className="font-medium text-sm text-center">Hours</div>
+                          <div className="font-medium text-sm text-center">Commission</div>
+                          <div className="font-medium text-sm text-center">Tips</div>
+                          <div className="font-medium text-sm text-center">Money Owed</div>
+                          <div className="font-medium text-sm text-center">Earnings</div>
+                          <div className="font-medium text-sm text-center">Cash Turn-In</div>
+                        </div>
+                        
+                        {(form.watch('employees') || []).map((employee, index) => {
+                          const totalHours = Number(form.watch("totalJobHours") || 0);
+                          const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
+                          const hourPercentage = (hoursPercent * 100).toFixed(1);
+                          
+                          // Calculate individual amounts based on hourly percentage
+                          const totalCommission = cashCommission + creditCardCommission + receiptCommission;
+                          const totalTips = cashTips + creditCardTips + receiptTips;
+                          const employeeCommission = hoursPercent * totalCommission;
+                          const employeeTips = hoursPercent * totalTips;
+                          
+                          // Calculate money owed (if negative cashTurnIn) 
+                          const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
+                            hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
+                            
+                          // Calculate total earnings and tax
+                          const totalEarnings = employeeCommission + employeeTips;
+                          const tax = totalEarnings * 0.22;
+                          const cashTurnIn = Math.max(0, tax - employeeMoneyOwed);
+                          
+                          return (
+                            <div key={index} className="grid grid-cols-7 gap-3 items-center py-2 border-b border-blue-50">
+                              <div>
+                                <Select 
+                                  value={employee.name || ''}
+                                  onValueChange={(value) => {
+                                    const newEmployees = [...(form.watch('employees') || [])];
+                                    newEmployees[index] = { 
+                                      ...newEmployees[index], 
+                                      name: value 
+                                    };
+                                    form.setValue('employees', newEmployees);
+                                  }}
+                                >
+                                  <SelectTrigger className="paperform-input w-full">
+                                    <SelectValue placeholder="Select employee..." />
+                                  </SelectTrigger>
+                                  <SelectContent className="text-xs">
+                                    <SelectItem value="antonio" className="text-xs py-1">Antonio Martinez</SelectItem>
+                                    <SelectItem value="arturo" className="text-xs py-1">Arturo Sanchez</SelectItem>
+                                    <SelectItem value="brandon" className="text-xs py-1">Brandon Blond</SelectItem>
+                                    <SelectItem value="brett" className="text-xs py-1">Brett Willson</SelectItem>
+                                    <SelectItem value="dave" className="text-xs py-1">Dave Roehm</SelectItem>
+                                    <SelectItem value="devin" className="text-xs py-1">Devin Bean</SelectItem>
+                                    <SelectItem value="dylan" className="text-xs py-1">Dylan McMullen</SelectItem>
+                                    <SelectItem value="elijah" className="text-xs py-1">Elijah Aguilar</SelectItem>
+                                    <SelectItem value="ethan" className="text-xs py-1">Ethan Walker</SelectItem>
+                                    <SelectItem value="gabe" className="text-xs py-1">Gabe Ott</SelectItem>
+                                    <SelectItem value="jacob" className="text-xs py-1">Jacob Weldon</SelectItem>
+                                    <SelectItem value="joe" className="text-xs py-1">Joe Albright</SelectItem>
+                                    <SelectItem value="jonathan" className="text-xs py-1">Jonathan Zaccheo</SelectItem>
+                                    <SelectItem value="kevin" className="text-xs py-1">Kevin Hanrahan</SelectItem>
+                                    <SelectItem value="melvin" className="text-xs py-1">Melvin Lobos</SelectItem>
+                                    <SelectItem value="noe" className="text-xs py-1">Noe Coronado</SelectItem>
+                                    <SelectItem value="riley" className="text-xs py-1">Riley McIntyre</SelectItem>
+                                    <SelectItem value="ryan" className="text-xs py-1">Ryan Hocevar</SelectItem>
+                                    <SelectItem value="zane" className="text-xs py-1">Zane Springer</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="text-center">
+                                <Input 
+                                  type="number" 
+                                  min="0" 
+                                  step="0.5" 
+                                  className="paperform-input text-center w-16 mx-auto"
+                                  value={employee.hours === 0 ? '' : employee.hours}
+                                  onChange={(e) => {
+                                    const newEmployees = [...(form.watch('employees') || [])];
+                                    const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                                    newEmployees[index] = { 
+                                      ...newEmployees[index], 
+                                      hours: value
+                                    };
+                                    form.setValue('employees', newEmployees);
+                                    
+                                    // Calculate total employee hours
+                                    const totalEmployeeHours = newEmployees.reduce(
+                                      (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
+                                      0
+                                    );
+                                    
+                                    // Update total job hours to match employee hours distribution
+                                    form.setValue('totalJobHours', totalEmployeeHours);
+                                  }}
+                                />
+                              </div>
+                              <div className="text-sm font-medium text-center">
+                                ${employeeCommission.toFixed(2)}
+                              </div>
+                              <div className="text-sm font-medium text-center">
+                                ${employeeTips.toFixed(2)}
+                              </div>
+                              <div className="text-sm font-medium text-center">
+                                ${employeeMoneyOwed.toFixed(2)}
+                              </div>
+                              <div className="text-sm font-medium text-center text-blue-800">
+                                ${totalEarnings.toFixed(2)}
+                              </div>
+                              <div className="text-sm font-medium text-center">
+                                ${cashTurnIn.toFixed(2)}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                     
-                    {(form.watch('employees') || []).map((employee, index) => {
-                      const totalHours = Number(form.watch("totalJobHours") || 0);
-                      const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
-                      const hourPercentage = (hoursPercent * 100).toFixed(1);
-                      
-                      // Calculate individual amounts based on hourly percentage
-                      const totalCommission = cashCommission + creditCardCommission + receiptCommission;
-                      const totalTips = cashTips + creditCardTips + receiptTips;
-                      const employeeCommission = hoursPercent * totalCommission;
-                      const employeeTips = hoursPercent * totalTips;
-                      
-                      // Calculate money owed (if negative cashTurnIn) 
-                      const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
-                        hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
-                      
-                      return (
-                        <div key={index} className="grid grid-cols-9 gap-3 items-center">
-                          <div className="col-span-2">
-                            <Select 
-                              value={employee.name || ''}
-                              onValueChange={(value) => {
-                                const newEmployees = [...(form.watch('employees') || [])];
-                                newEmployees[index] = { 
-                                  ...newEmployees[index], 
-                                  name: value 
-                                };
-                                form.setValue('employees', newEmployees);
-                              }}
-                            >
-                              <SelectTrigger className="paperform-input w-full min-w-[180px]">
-                                <SelectValue placeholder="Select employee..." />
-                              </SelectTrigger>
-                              <SelectContent className="text-xs">
-                                <SelectItem value="antonio" className="text-xs py-1">Antonio Martinez</SelectItem>
-                                <SelectItem value="arturo" className="text-xs py-1">Arturo Sanchez</SelectItem>
-                                <SelectItem value="brandon" className="text-xs py-1">Brandon Blond</SelectItem>
-                                <SelectItem value="brett" className="text-xs py-1">Brett Willson</SelectItem>
-                                <SelectItem value="dave" className="text-xs py-1">Dave Roehm</SelectItem>
-                                <SelectItem value="devin" className="text-xs py-1">Devin Bean</SelectItem>
-                                <SelectItem value="dylan" className="text-xs py-1">Dylan McMullen</SelectItem>
-                                <SelectItem value="elijah" className="text-xs py-1">Elijah Aguilar</SelectItem>
-                                <SelectItem value="ethan" className="text-xs py-1">Ethan Walker</SelectItem>
-                                <SelectItem value="gabe" className="text-xs py-1">Gabe Ott</SelectItem>
-                                <SelectItem value="jacob" className="text-xs py-1">Jacob Weldon</SelectItem>
-                                <SelectItem value="joe" className="text-xs py-1">Joe Albright</SelectItem>
-                                <SelectItem value="jonathan" className="text-xs py-1">Jonathan Zaccheo</SelectItem>
-                                <SelectItem value="kevin" className="text-xs py-1">Kevin Hanrahan</SelectItem>
-                                <SelectItem value="melvin" className="text-xs py-1">Melvin Lobos</SelectItem>
-                                <SelectItem value="noe" className="text-xs py-1">Noe Coronado</SelectItem>
-                                <SelectItem value="riley" className="text-xs py-1">Riley McIntyre</SelectItem>
-                                <SelectItem value="ryan" className="text-xs py-1">Ryan Hocevar</SelectItem>
-                                <SelectItem value="zane" className="text-xs py-1">Zane Springer</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="text-center">
-                            <Input 
-                              type="number" 
-                              min="0" 
-                              step="0.5" 
-                              className="paperform-input text-center w-20"
-                              value={employee.hours === 0 ? '' : employee.hours}
-                              onChange={(e) => {
-                                const newEmployees = [...(form.watch('employees') || [])];
-                                const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
-                                newEmployees[index] = { 
-                                  ...newEmployees[index], 
-                                  hours: value
-                                };
-                                form.setValue('employees', newEmployees);
-                                
-                                // Calculate total employee hours
-                                const totalEmployeeHours = newEmployees.reduce(
-                                  (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
-                                  0
-                                );
-                                
-                                // Update total job hours to match employee hours distribution
-                                form.setValue('totalJobHours', totalEmployeeHours);
-                              }}
-                            />
-                          </div>
-                          <div className="text-sm text-center">
-                            {hourPercentage}%
-                          </div>
-                          <div className="text-sm font-medium text-center">
-                            ${employeeCommission.toFixed(2)}
-                          </div>
-                          <div className="text-sm font-medium text-center">
-                            ${employeeTips.toFixed(2)}
-                          </div>
-                          <div className="text-sm font-medium text-center">
-                            ${employeeMoneyOwed.toFixed(2)}
-                          </div>
-                          <div className="text-sm font-medium text-center text-blue-800">
-                            ${(employeeCommission + employeeTips).toFixed(2)}
-                          </div>
-                          {/* Taxes (22% of total earnings) */}
-                          <div className="text-sm font-medium text-center text-red-700">
-                            ${((employeeCommission + employeeTips) * 0.22).toFixed(2)}
-                          </div>
-                          {/* Cash Turn-In (taxes minus money owed, if positive) */}
-                          <div className="text-sm font-medium text-center">
-                            ${Math.max(((employeeCommission + employeeTips) * 0.22) - employeeMoneyOwed, 0).toFixed(2)}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    
-                    <div className="mt-4 flex justify-between">
+                    <div className="flex justify-between gap-4 mt-4">
                       <Button
                         type="button"
                         variant="outline"
@@ -938,7 +938,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 py-4">
                     Enter Total Job Hours above to begin distributing commission and tips to employees.
                   </div>
                 )}
