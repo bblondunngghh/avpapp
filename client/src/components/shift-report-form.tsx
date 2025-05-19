@@ -490,6 +490,26 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </FormItem>
                 )}
               />
+              
+              <FormField
+                control={form.control}
+                name="companyCashTurnIn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
+                    <FormControl>
+                      <InputMoney className="paperform-input" {...field} />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Expected: ${expectedCompanyCashTurnIn > 0 ? expectedCompanyCashTurnIn.toFixed(2) : '0.00'}</span>
+                      {expectedCompanyCashTurnIn < 0 && (
+                        <span className="text-red-500">Money Owed: ${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
           
