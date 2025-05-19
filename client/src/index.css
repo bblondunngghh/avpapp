@@ -1,3 +1,6 @@
+/* Import Fjalla One font */
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -38,12 +41,14 @@
 }
 
 .report-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #000;
   letter-spacing: 1px;
   margin-bottom: 1rem;
   text-align: center;
+  font-family: 'Fjalla One', sans-serif;
+  text-transform: uppercase;
 }
 
 .company-logo-container {
