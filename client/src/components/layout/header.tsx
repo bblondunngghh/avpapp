@@ -23,9 +23,9 @@ export default function Header() {
         
         <div className="flex items-center gap-2">
           <Button 
-            variant="outline" 
+            variant="secondary" 
             size="sm" 
-            className="text-white border-white hover:bg-blue-700 hidden md:flex"
+            className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
             onClick={() => handleNavigation('/admin-login')}
           >
             Admin Login
