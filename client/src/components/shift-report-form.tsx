@@ -225,10 +225,23 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   return (
     <div className="form-section">
       <div className="form-title">
-        <Button variant="ghost" onClick={handleBack} className="mr-2 p-0 h-8 w-8">
+        <Button variant="ghost" onClick={handleBack} className="mr-2 p-0 h-8 w-8 self-start">
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        <h1>{locationName} - Shift Report</h1>
+        <h1>ACCESS VALET PARKING SHIFT REPORT</h1>
+        
+        <div className="capital-grille-logo">
+          <div className="the">T H E</div>
+          <div className="capital">CAPITAL</div>
+          <div className="grille">
+            G<span className="grille-dot">•</span>R<span className="grille-dot">•</span>I<span className="grille-dot">•</span>L<span className="grille-dot">•</span>L<span className="grille-dot">•</span>E
+          </div>
+        </div>
+        
+        <div className="address">
+          THE CAPITAL GRILLE<br />
+          117 W 4TH ST. AUSTIN, TX 78701
+        </div>
       </div>
       
       <Form {...form}>

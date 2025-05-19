@@ -7,20 +7,81 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem;
-  background-color: #f5f7fa;
+  background-color: #dde5ed;
   min-height: 100vh;
 }
 
 .form-title {
   display: flex;
+  flex-direction: column;
   align-items: center;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .form-title h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #333;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.capital-grille-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #000;
+  margin-bottom: 0.75rem;
+  width: 360px;
+}
+
+.capital-grille-logo .the {
+  background-color: white;
+  width: 100%;
+  text-align: center;
+  padding: 0.25rem 0;
+  font-size: 1.5rem;
+  letter-spacing: 1rem;
+  font-weight: 500;
+  border-bottom: 2px solid #000;
+}
+
+.capital-grille-logo .capital {
+  background-color: white;
+  width: 100%;
+  text-align: center;
+  padding: 0.5rem 0;
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: 0.25rem;
+  border-bottom: 2px solid #000;
+}
+
+.capital-grille-logo .grille {
+  background-color: white;
+  width: 100%;
+  text-align: center;
+  padding: 0.25rem 0;
+  font-size: 1.5rem;
+  letter-spacing: 1rem;
+  font-weight: 400;
+  color: #000;
+  display: flex;
+  justify-content: center;
+}
+
+.grille-dot {
+  color: #999;
+  margin: 0 0.5rem;
+}
+
+.address {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
 }
 
 .section-title {
