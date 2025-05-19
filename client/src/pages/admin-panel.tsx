@@ -146,6 +146,13 @@ export default function AdminPanel() {
     queryKey: ["/api/ticket-distributions"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  
+  // Update local state whenever API data changes
+  useEffect(() => {
+    if (distributionsData && distributionsData.length > 0) {
+      setTicketDistributions(distributionsData);
+    }
+  }, [distributionsData]);
 
   // Calculate statistics whenever reports or date filters change
   useEffect(() => {
