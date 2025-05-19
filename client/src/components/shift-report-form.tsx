@@ -44,6 +44,12 @@ const formSchema = z.object({
   cashTips: z.coerce.number().min(0, "Cannot be negative").default(0),
   receiptTips: z.coerce.number().min(0, "Cannot be negative").default(0),
   moneyOwed: z.coerce.number().default(0),
+  // Payroll fields
+  totalJobHours: z.coerce.number().min(0, "Cannot be negative").default(0),
+  employees: z.array(z.object({
+    name: z.string().nonempty("Employee name is required"),
+    hours: z.coerce.number().min(0, "Cannot be negative"),
+  })).default([]),
   notes: z.string().optional(),
   incidents: z.string().optional(),
 });
@@ -97,6 +103,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       cashTips: 0,
       receiptTips: 0,
       moneyOwed: 0,
+      // Payroll fields
+      totalJobHours: 0,
+      employees: [],
       notes: "",
       incidents: "",
     }
@@ -622,6 +631,115 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
           </div>
           
+          <div className="form-card">
+            <h3 className="section-title uppercase font-bold">EMPLOYEE PAYROLL</h3>
+            
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="totalJobHours"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Job Hours</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" step="0.5" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
+                
+                {totalJobHours > 0 && (
+                  <>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-4 gap-4 font-medium text-sm pb-2">
+                        <div>Employee</div>
+                        <div>Hours</div>
+                        <div>% of Total</div>
+                        <div>Share Amount</div>
+                      </div>
+                      
+                      {form.watch('employees')?.map((employee, index) => (
+                        <div key={index} className="grid grid-cols-4 gap-4 items-center">
+                          <div>
+                            <Input 
+                              placeholder="Name" 
+                              className="paperform-input"
+                              value={employee.name}
+                              onChange={(e) => {
+                                const newEmployees = [...form.watch('employees')];
+                                newEmployees[index].name = e.target.value;
+                                form.setValue('employees', newEmployees);
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <Input 
+                              type="number" 
+                              min="0" 
+                              step="0.5" 
+                              className="paperform-input"
+                              value={employee.hours}
+                              onChange={(e) => {
+                                const newEmployees = [...form.watch('employees')];
+                                newEmployees[index].hours = parseFloat(e.target.value);
+                                form.setValue('employees', newEmployees);
+                              }}
+                            />
+                          </div>
+                          <div className="text-sm">
+                            {((employee.hours / totalJobHours) * 100).toFixed(1)}%
+                          </div>
+                          <div className="text-sm font-medium">
+                            ${((employee.hours / totalJobHours) * totalCommissionAndTips).toFixed(2)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-4 flex justify-between">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const newEmployees = [...form.watch('employees'), { name: '', hours: 0 }];
+                          form.setValue('employees', newEmployees);
+                        }}
+                      >
+                        Add Employee
+                      </Button>
+                      
+                      {form.watch('employees').length > 0 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const newEmployees = [...form.watch('employees')];
+                            newEmployees.pop();
+                            form.setValue('employees', newEmployees);
+                          }}
+                        >
+                          Remove Last
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                )}
+                
+                {totalJobHours === 0 && (
+                  <div className="text-sm text-gray-600">
+                    Enter Total Job Hours above to begin distributing commission and tips to employees.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+            
           <div className="form-card">
             <h3 className="section-title uppercase font-bold">NOTES & INCIDENTS</h3>
             
