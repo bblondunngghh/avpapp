@@ -787,17 +787,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
                 
                 {form.watch("totalJobHours") > 0 ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-9 gap-3 font-medium text-sm pb-2 text-center">
-                      <div className="text-left col-span-2">Employee</div>
-                      <div>Hours</div>
-                      <div>% of Total</div>
-                      <div>Commission</div>
-                      <div>Tips</div>
-                      <div>Money Owed</div>
-                      <div>Total Earnings</div>
-                      <div>Taxes (22%)</div>
-                      <div>Cash Turn-In</div>
+                  <div className="space-y-4 overflow-x-auto">
+                    <div className="grid grid-cols-12 gap-2 font-medium text-sm border-b border-blue-200 pb-2">
+                      <div className="col-span-3 text-left">Employee</div>
+                      <div className="col-span-1 text-center">Hours</div>
+                      <div className="col-span-1 text-center">%</div>
+                      <div className="col-span-1 text-center">Commission</div>
+                      <div className="col-span-1 text-center">Tips</div>
+                      <div className="col-span-1 text-center">Money Owed</div>
+                      <div className="col-span-1 text-center">Earnings</div>
+                      <div className="col-span-1 text-center">Taxes</div>
+                      <div className="col-span-2 text-center">Cash Turn-In</div>
                     </div>
                     
                     {(form.watch('employees') || []).map((employee, index) => {
