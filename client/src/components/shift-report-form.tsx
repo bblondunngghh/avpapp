@@ -202,10 +202,25 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const onSubmit = (values: FormValues) => {
     setIsSubmitting(true);
     
+    // Ensure all required fields are included
+    const formData = {
+      ...values,
+      // Add these fields if they're not already included
+      complimentaryCars: values.complimentaryCars || 0,
+      creditTransactions: values.creditTransactions || 0,
+      totalCreditSales: values.totalCreditSales || 0,
+      totalReceipts: values.totalReceipts || 0,
+      totalReceiptSales: values.totalReceiptSales || 0,
+      totalCashCollected: values.totalCashCollected || 0,
+      companyCashTurnIn: values.companyCashTurnIn || 0,
+      totalTurnIn: values.totalTurnIn || (values.totalCars * 11),
+      overShort: values.overShort || 0
+    };
+    
     if (reportId) {
-      updateMutation.mutate(values);
+      updateMutation.mutate(formData);
     } else {
-      createMutation.mutate(values);
+      createMutation.mutate(formData);
     }
   };
   
