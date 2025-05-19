@@ -19,11 +19,22 @@
   text-align: center;
 }
 
+.company-logo-container {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.company-logo {
+  height: 60px;
+  width: auto;
+  margin-bottom: 0.75rem;
+}
+
 .form-title h1 {
   font-size: 1.5rem;
   font-weight: 700;
   color: #000;
-  text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 0.5rem;
 }
