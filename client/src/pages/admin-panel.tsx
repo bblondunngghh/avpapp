@@ -921,6 +921,240 @@ export default function AdminPanel() {
             </CardContent>
           </Card>
         </TabsContent>
+        
+        <TabsContent value="locations">
+          <Card>
+            <CardHeader className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <CardTitle>Location Performance</CardTitle>
+                  <CardDescription>
+                    View performance metrics for all locations
+                  </CardDescription>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      // CSV Export for location stats
+                      if (!locationStats.length) return;
+                      
+                      let csvContent = "Location,Total Cars,Cash Sales ($),Credit Sales ($),Receipt Sales ($),Total Income ($),Reports\n";
+                      
+                      locationStats.forEach(location => {
+                        csvContent += `"${location.name}",${location.totalCars},${location.cashSales.toFixed(2)},${location.creditSales.toFixed(2)},${location.receiptSales.toFixed(2)},${location.totalIncome.toFixed(2)},${location.reports}\n`;
+                      });
+                      
+                      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.setAttribute('href', url);
+                      link.setAttribute('download', 'location-performance.csv');
+                      link.style.visibility = 'hidden';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                    className="flex items-center gap-1"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Export CSV
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      // PDF Export for location stats
+                      if (!locationStats.length) return;
+                      
+                      const doc = new jsPDF();
+                      
+                      // Add title
+                      doc.setFontSize(18);
+                      doc.text("Access Valet Parking - Location Performance", 14, 22);
+                      doc.setFontSize(11);
+                      doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 30);
+                      
+                      // Prepare table data
+                      const tableColumn = ["Location", "Total Cars", "Cash Sales ($)", "Credit Sales ($)", "Receipt Sales ($)", "Total Income ($)", "Reports"];
+                      const tableRows = locationStats.map(location => [
+                        location.name,
+                        location.totalCars,
+                        `$${location.cashSales.toFixed(2)}`,
+                        `$${location.creditSales.toFixed(2)}`,
+                        `$${location.receiptSales.toFixed(2)}`,
+                        `$${location.totalIncome.toFixed(2)}`,
+                        location.reports
+                      ]);
+                      
+                      // Generate table
+                      autoTable(doc, {
+                        head: [tableColumn],
+                        body: tableRows,
+                        startY: 40,
+                        styles: { fontSize: 9 },
+                        headStyles: { fillColor: [0, 101, 189] }
+                      });
+                      
+                      // Date filter information
+                      if (startDate || endDate) {
+                        const filterText = [];
+                        if (startDate) filterText.push(`Start Date: ${startDate.toLocaleDateString()}`);
+                        if (endDate) filterText.push(`End Date: ${endDate.toLocaleDateString()}`);
+                        
+                        doc.setFontSize(9);
+                        doc.setTextColor(100, 100, 100);
+                        doc.text(`Filter: ${filterText.join(', ')}`, 14, doc.autoTable.previous.finalY + 10);
+                      }
+                      
+                      // Save PDF
+                      doc.save("location-performance.pdf");
+                    }}
+                    className="flex items-center gap-1"
+                  >
+                    <Download className="h-4 w-4" />
+                    Export PDF
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900">
+                <div className="space-y-2">
+                  <Label htmlFor="loc-start-date">Start Date</Label>
+                  <div className="relative">
+                    <input
+                      id="loc-start-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={startDate ? startDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="loc-end-date">End Date</Label>
+                  <div className="relative">
+                    <input
+                      id="loc-end-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={endDate ? endDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                  }}
+                >
+                  Clear Filter
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="text-center py-8">Loading location data...</div>
+              ) : locationStats.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No location data found. Create shift reports to see location performance.
+                </div>
+              ) : (
+                <>
+                  {/* Performance Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    {locationStats.map(location => (
+                      <div key={location.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border">
+                        <h3 className="text-lg font-bold mb-2 text-blue-700">{location.name}</h3>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <p className="text-sm text-gray-500">Total Cars</p>
+                            <p className="text-xl font-semibold">{location.totalCars}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Total Income</p>
+                            <p className="text-xl font-semibold">${location.totalIncome.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Reports</p>
+                            <p className="text-xl font-semibold">{location.reports}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Avg $ Per Car</p>
+                            <p className="text-xl font-semibold">
+                              ${location.totalCars > 0 
+                                ? (location.totalIncome / location.totalCars).toFixed(2) 
+                                : '0.00'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Detailed Performance Table */}
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableCaption>Detailed location performance breakdown</TableCaption>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Location</TableHead>
+                          <TableHead className="text-right">Total Cars</TableHead>
+                          <TableHead className="text-right">Cash Sales</TableHead>
+                          <TableHead className="text-right">Credit Sales</TableHead>
+                          <TableHead className="text-right">Receipt Sales</TableHead>
+                          <TableHead className="text-right">Total Income</TableHead>
+                          <TableHead className="text-right">Reports</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {locationStats.map(location => (
+                          <TableRow key={location.id}>
+                            <TableCell className="font-medium">{location.name}</TableCell>
+                            <TableCell className="text-right">{location.totalCars}</TableCell>
+                            <TableCell className="text-right">${location.cashSales.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${location.creditSales.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${location.receiptSales.toFixed(2)}</TableCell>
+                            <TableCell className="text-right font-semibold">${location.totalIncome.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">{location.reports}</TableCell>
+                          </TableRow>
+                        ))}
+                        {/* Total Row */}
+                        <TableRow className="bg-gray-50 dark:bg-gray-800 font-semibold">
+                          <TableCell>TOTAL</TableCell>
+                          <TableCell className="text-right">
+                            {locationStats.reduce((sum, loc) => sum + loc.totalCars, 0)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${locationStats.reduce((sum, loc) => sum + loc.cashSales, 0).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${locationStats.reduce((sum, loc) => sum + loc.creditSales, 0).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${locationStats.reduce((sum, loc) => sum + loc.receiptSales, 0).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${locationStats.reduce((sum, loc) => sum + loc.totalIncome, 0).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {locationStats.reduce((sum, loc) => sum + loc.reports, 0)}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
