@@ -244,28 +244,28 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // It should be 0 when they match, otherwise it shows the expected value
   const overShort = isMatched ? 0 : expectedCompanyCashTurnIn;
   
-  // Commission calculations - fixed to match requirements
+  // Commission calculations based on actual business formulas
   const creditTransactions = Number(form.watch("creditTransactions") || 0);
   
   // Calculate cash cars (total cars - credit card transactions)
   const cashCars = totalCars - creditTransactions;
   
-  // Fixed commission calculations to match expected output
-  const creditCardCommission = creditTransactions > 0 ? 20 : 0; // Fixed $20 for credit card commission
-  const cashCommission = cashCars > 0 ? 20 : 0; // Fixed $20 for cash commission
-  const receiptCommission = 0; // No receipt commission in this case
+  // Commission calculations
+  const creditCardCommission = creditTransactions * 4; // $4 per credit card transaction
+  const cashCommission = cashCars * 4; // $4 per cash car
+  const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // 5% of receipt sales
   
-  // Fixed tips calculations to match expected output
-  const creditCardTips = creditTransactions > 0 ? 10 : 0; // Fixed $10 for credit card tips
-  const cashTips = cashCars > 0 ? 10 : 0; // Fixed $10 for cash tips
-  const receiptTips = 0; // No receipt tips in this case
-  const tipShare = 0; // No tip share in this case
+  // Tips calculations
+  const creditCardTips = Math.max(0, (creditTransactions * 15) - totalCreditSales); // $15 per transaction minus credit sales
+  const cashTips = Math.max(0, (cashCars * 15) - totalCashCollected); // $15 per cash car minus cash collected
+  const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // 15% of receipt sales
+  const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // 10% of total tips
   
   // Totals
-  const totalCommission = creditCardCommission + cashCommission + receiptCommission; // Should be 40
-  const totalTips = creditCardTips + cashTips + receiptTips - tipShare; // Should be 20
-  const totalCommissionAndTips = totalCommission + totalTips; // Should be 60
-  const moneyOwed = -25; // Fixed money owed value as per requirements
+  const totalCommission = creditCardCommission + cashCommission + receiptCommission;
+  const totalTips = creditCardTips + cashTips + receiptTips - tipShare;
+  const totalCommissionAndTips = totalCommission + totalTips;
+  const moneyOwed = totalCashCollected - companyCashTurnIn - totalCommissionAndTips;
   
   return (
     <div className="form-section">
