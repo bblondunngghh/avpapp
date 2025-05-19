@@ -230,10 +230,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const companyCashTurnIn = Number(form.watch("companyCashTurnIn") || 0);
   const totalTurnIn = totalCars * 11; // Total Turn-In is calculated as total cars * $11
   
+  // Get total receipt sales
+  const totalReceiptSales = Number(form.watch("totalReceiptSales") || 0);
+  
   // Company Cash Turn-In calculation
-  // This is the difference between total turn-in and credit card sales
-  // If credit card sales exceed total turn-in, company cash turn-in would be negative (which means money owed)
-  const expectedCompanyCashTurnIn = totalTurnIn - totalCreditSales;
+  // This includes total turn-in minus both credit card sales and receipt sales
+  // If combined sales exceed total turn-in, company cash turn-in would be negative (which means money owed)
+  const expectedCompanyCashTurnIn = totalTurnIn - totalCreditSales - totalReceiptSales;
   
   // Check if company cash turn-in matches the expected value (within a small tolerance)
   const isMatched = Math.abs(expectedCompanyCashTurnIn - companyCashTurnIn) < 0.01;
