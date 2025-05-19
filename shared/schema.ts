@@ -48,6 +48,8 @@ export const shiftReports = pgTable("shift_reports", {
   companyCashTurnIn: doublePrecision("company_cash_turn_in").notNull(), // Company turn-in (totalCars * $11)
   totalTurnIn: doublePrecision("total_turn_in").notNull(), // totalCreditSales + companyCashTurnIn
   overShort: doublePrecision("over_short").notNull(), // totalCashCollected - companyCashTurnIn
+  totalJobHours: doublePrecision("total_job_hours").default(0), // Total hours for all employees
+  employees: text("employees").notNull().default('[]'), // Store as JSON string
   notes: text("notes"),
   incidents: text("incidents"),
   createdAt: timestamp("created_at").notNull().defaultNow(),

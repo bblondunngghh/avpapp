@@ -275,15 +275,21 @@ export class DatabaseStorage implements IStorage {
   
   async createShiftReport(insertReport: InsertShiftReport): Promise<ShiftReport> {
     try {
+      // Handle employee data - need to stringify it for storage
+      const processedReport = {
+        ...insertReport,
+        notes: insertReport.notes || null,
+        incidents: insertReport.incidents || null,
+        totalJobHours: insertReport.totalJobHours || 0,
+        // Convert employees array to JSON string if it exists
+        employees: insertReport.employees ? JSON.stringify(insertReport.employees) : '[]',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
       const [report] = await db
         .insert(shiftReports)
-        .values({
-          ...insertReport,
-          notes: insertReport.notes || null,
-          incidents: insertReport.incidents || null,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
+        .values(processedReport)
         .returning();
       return report;
     } catch (error) {
@@ -294,14 +300,20 @@ export class DatabaseStorage implements IStorage {
   
   async updateShiftReport(id: number, updateReport: UpdateShiftReport): Promise<ShiftReport | undefined> {
     try {
+      // Process the report data including employee information
+      const processedReport = {
+        ...updateReport,
+        notes: updateReport.notes || null,
+        incidents: updateReport.incidents || null,
+        totalJobHours: updateReport.totalJobHours || 0,
+        // Convert employees array to JSON string if it exists
+        employees: updateReport.employees ? JSON.stringify(updateReport.employees) : '[]',
+        updatedAt: new Date()
+      };
+      
       const [report] = await db
         .update(shiftReports)
-        .set({
-          ...updateReport,
-          notes: updateReport.notes || null,
-          incidents: updateReport.incidents || null,
-          updatedAt: new Date()
-        })
+        .set(processedReport)
         .where(eq(shiftReports.id, id))
         .returning();
       return report || undefined;
