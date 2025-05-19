@@ -85,30 +85,18 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     form.setValue("locationId", locationId);
   }, [locationId, form]);
 
-  // Calculate company turn-in when totalCars changes
+  // Handle totalCars changes
   useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === "totalCars") {
-        const totalCars = value.totalCars as number || 0;
-        // Company turn-in is $11 per car
-        const companyTurnIn = totalCars * 11;
-        form.setValue("companyCashTurnIn", companyTurnIn);
-      }
-
-      // Calculate total turn-in and over/short
-      const totalCreditSales = value.totalCreditSales as number || 0;
-      const companyCashTurnIn = value.companyCashTurnIn as number || 0;
-      
-      const totalTurnIn = totalCreditSales + companyCashTurnIn;
-      form.setValue("totalTurnIn", totalTurnIn);
-      
-      const totalCashCollected = value.totalCashCollected as number || 0;
-      const overShort = totalCashCollected - companyCashTurnIn;
-      form.setValue("overShort", overShort);
-    });
+    const totalCars = form.getValues("totalCars") || 0;
+    const companyTurnIn = totalCars * 11;
     
-    return () => subscription.unsubscribe();
-  }, [form]);
+    // We just update the display value without triggering additional watch events
+    form.setValue("companyCashTurnIn", companyTurnIn, { 
+      shouldDirty: false,
+      shouldTouch: false,
+      shouldValidate: false
+    });
+  }, [form.watch("totalCars")]);
   
   // Fetch report data if editing
   const { data: reportData, isLoading: isLoadingReport } = useQuery({

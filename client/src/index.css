@@ -7,6 +7,8 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem;
+  background-color: #f5f7fa;
+  min-height: 100vh;
 }
 
 .form-title {
@@ -38,6 +40,7 @@
 /* Cards */
 .form-card {
   @apply rounded-lg shadow-sm border border-gray-200 p-6 mb-6 transition-all duration-200 hover:shadow-md;
+  background-color: white;
 }
 
 /* Calculation section */
