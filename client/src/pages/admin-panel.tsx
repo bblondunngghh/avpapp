@@ -1486,76 +1486,131 @@ export default function AdminPanel() {
                               {distribution.notes || '-'}
                             </TableCell>
                             <TableCell className="text-right">
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                className="px-2 h-8"
-                                onClick={async () => {
-                                  // Prompt for the number of used tickets to update
-                                  const usedTicketsStr = prompt(
-                                    `Update used tickets for ${location?.name} (Batch: ${distribution.batchNumber}).\nCurrent used: ${distribution.usedTickets}\nEnter new total:`, 
-                                    distribution.usedTickets.toString()
-                                  );
-                                  
-                                  if (usedTicketsStr === null) return; // Cancel pressed
-                                  
-                                  const usedTickets = parseInt(usedTicketsStr);
-                                  if (isNaN(usedTickets) || usedTickets < 0) {
-                                    alert("Please enter a valid number of tickets.");
-                                    return;
-                                  }
-                                  
-                                  if (usedTickets > distribution.allocatedTickets) {
-                                    alert(`Used tickets cannot exceed the allocated amount (${distribution.allocatedTickets}).`);
-                                    return;
-                                  }
-                                  
-                                  try {
-                                    // Only send the necessary fields for the update
-                                    const updateData = {
-                                      locationId: distribution.locationId,
-                                      allocatedTickets: distribution.allocatedTickets,
-                                      usedTickets: usedTickets,
-                                      batchNumber: distribution.batchNumber,
-                                      notes: distribution.notes
-                                    };
+                              <div className="flex justify-end gap-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="px-2 h-8"
+                                  onClick={async () => {
+                                    // Prompt for the number of used tickets to update
+                                    const usedTicketsStr = prompt(
+                                      `Update used tickets for ${location?.name} (Batch: ${distribution.batchNumber}).\nCurrent used: ${distribution.usedTickets}\nEnter new total:`, 
+                                      distribution.usedTickets.toString()
+                                    );
                                     
-                                    const response = await fetch(`/api/ticket-distributions/${distribution.id}`, {
-                                      method: 'PUT',
-                                      headers: {
-                                        'Content-Type': 'application/json',
-                                      },
-                                      body: JSON.stringify(updateData),
-                                    });
+                                    if (usedTicketsStr === null) return; // Cancel pressed
                                     
-                                    if (response.ok) {
-                                      // Update local state
-                                      const updatedDistribution = await response.json();
-                                      console.log("Updated distribution:", updatedDistribution);
-                                      
-                                      // Update the state with the new data
-                                      setTicketDistributions(
-                                        ticketDistributions.map(d => 
-                                          d.id === updatedDistribution.id ? updatedDistribution : d
-                                        )
-                                      );
-                                      
-                                      // Show success message
-                                      alert(`Successfully updated used tickets to ${usedTickets}`);
-                                    } else {
-                                      const errorData = await response.json();
-                                      console.error("Error updating tickets:", errorData);
-                                      alert("Error updating used tickets: " + (errorData.message || "Unknown error"));
+                                    const usedTickets = parseInt(usedTicketsStr);
+                                    if (isNaN(usedTickets) || usedTickets < 0) {
+                                      alert("Please enter a valid number of tickets.");
+                                      return;
                                     }
-                                  } catch (error) {
-                                    console.error("Error:", error);
-                                    alert("Failed to update used tickets");
-                                  }
-                                }}
-                              >
-                                <ArrowUpDown className="h-4 w-4" />
-                                <span className="sr-only">Update</span>
-                              </Button>
+                                    
+                                    if (usedTickets > distribution.allocatedTickets) {
+                                      alert(`Used tickets cannot exceed the allocated amount (${distribution.allocatedTickets}).`);
+                                      return;
+                                    }
+                                    
+                                    try {
+                                      // Only send the necessary fields for the update
+                                      const updateData = {
+                                        locationId: distribution.locationId,
+                                        allocatedTickets: distribution.allocatedTickets,
+                                        usedTickets: usedTickets,
+                                        batchNumber: distribution.batchNumber,
+                                        notes: distribution.notes
+                                      };
+                                      
+                                      const response = await fetch(`/api/ticket-distributions/${distribution.id}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify(updateData),
+                                      });
+                                      
+                                      if (response.ok) {
+                                        // Update local state
+                                        const updatedDistribution = await response.json();
+                                        console.log("Updated distribution:", updatedDistribution);
+                                        
+                                        // Update the state with the new data
+                                        setTicketDistributions(
+                                          ticketDistributions.map(d => 
+                                            d.id === updatedDistribution.id ? updatedDistribution : d
+                                          )
+                                        );
+                                        
+                                        // Show success message
+                                        alert(`Successfully updated used tickets to ${usedTickets}`);
+                                      } else {
+                                        const errorData = await response.json();
+                                        console.error("Error updating tickets:", errorData);
+                                        alert("Error updating used tickets: " + (errorData.message || "Unknown error"));
+                                      }
+                                    } catch (error) {
+                                      console.error("Error:", error);
+                                      alert("Failed to update used tickets");
+                                    }
+                                  }}
+                                >
+                                  <ArrowUpDown className="h-4 w-4" />
+                                  <span className="sr-only">Update</span>
+                                </Button>
+                                
+                                {/* Delete button */}
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="px-2 h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  onClick={async () => {
+                                    if (confirm(`Are you sure you want to delete this ticket batch "${distribution.batchNumber}" for ${location?.name}?`)) {
+                                      try {
+                                        const response = await fetch(`/api/ticket-distributions/${distribution.id}`, {
+                                          method: 'DELETE',
+                                        });
+                                        
+                                        if (response.ok) {
+                                          // Remove from local state
+                                          setTicketDistributions(
+                                            ticketDistributions.filter(d => d.id !== distribution.id)
+                                          );
+                                          
+                                          // Show success message
+                                          toast({
+                                            title: "Success!",
+                                            description: `Ticket batch "${distribution.batchNumber}" has been deleted.`,
+                                          });
+                                        } else {
+                                          alert("Error deleting ticket batch");
+                                        }
+                                      } catch (error) {
+                                        console.error("Error:", error);
+                                        alert("Failed to delete ticket batch");
+                                      }
+                                    }
+                                  }}
+                                >
+                                  <svg 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    width="16" 
+                                    height="16" 
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    strokeWidth="2" 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round"
+                                  >
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                  </svg>
+                                  <span className="sr-only">Delete</span>
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
