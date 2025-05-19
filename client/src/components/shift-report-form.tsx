@@ -255,8 +255,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const receiptCommission = Number(form.watch("totalReceiptSales") || 0) * 0.05; // 5% of receipt sales
   
   // Tips calculations - based on actual business rules
-  const creditCardTips = (creditTransactions * 15) - totalCreditSales; // $15 per transaction minus total credit sales
-  const cashTips = (cashCars * 15) - totalCashCollected; // $15 per cash car minus total cash collected
+  // We use Math.max to ensure tips are never negative
+  const creditCardTips = Math.max(0, (creditTransactions * 15) - totalCreditSales); // $15 per transaction minus total credit sales
+  const cashTips = Math.max(0, (cashCars * 15) - totalCashCollected); // $15 per cash car minus total cash collected
   const receiptTips = Number(form.watch("totalReceiptSales") || 0) * 0.15; // 15% of receipt sales
   const tipShare = (creditCardTips + cashTips + receiptTips) * 0.10; // 10% of total tips
   
@@ -291,9 +292,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">COMPANY TURN-IN SECTION</h3>
+            <h3 className="section-title uppercase font-bold">SHIFT INFORMATION</h3>
             
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               <FormField
                 control={form.control}
                 name="date"
@@ -364,31 +365,24 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </FormItem>
                 )}
               />
-            </div>
-          </div>
-          
-          <div className="form-card">
-            <FormField
-              control={form.control}
-              name="totalCars"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700 font-medium text-base">Cars Parked</FormLabel>
-                  <div className="text-xs text-gray-500 mb-1">Capital Grille Turn-In Rate = $11.00</div>
-                  <FormControl>
-                    <Input type="number" min="0" className="paperform-input" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                  <p className="text-xs text-red-500 mt-1">This question is required</p>
-                </FormItem>
-              )}
-            />
-            
-            <div className="bg-white p-4 rounded-md border border-gray-200 mt-4">
-              <div className="flex justify-between items-center">
-                <div className="font-medium">Expected Company Turn-In</div>
-                <div className="font-bold text-lg">${(totalCars * 11).toFixed(2)}</div>
-              </div>
+              
+              <FormField
+                control={form.control}
+                name="totalCars"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Cars Parked</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" className="paperform-input" {...field} />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Capital Grille Rate: $11.00 per car</span>
+                      <span>Expected Turn-In: ${(totalCars * 11).toFixed(2)}</span>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
           
