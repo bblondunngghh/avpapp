@@ -22,6 +22,15 @@ export default function Header() {
         </div>
         
         <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="text-white border-white hover:bg-blue-700 hidden md:flex"
+            onClick={() => handleNavigation('/admin-login')}
+          >
+            Admin Login
+          </Button>
+          
           <ModeToggle />
           
           <Sheet open={open} onOpenChange={setOpen}>
@@ -52,6 +61,13 @@ export default function Header() {
                   onClick={() => handleNavigation('/new-report')}
                 >
                   New Report
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="justify-start" 
+                  onClick={() => handleNavigation('/admin-login')}
+                >
+                  Admin Login
                 </Button>
               </div>
             </SheetContent>
