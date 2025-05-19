@@ -256,7 +256,91 @@ export default function AdminPanel() {
     if (!employeeStats.length) return;
     
     // CSV header
-    let csvContent = "Employee,Total Hours,Location,Commission,Tips,Money Owed,Total Earnings,Est. Taxes (22%)\n";
+    let csvContent = "Employee,Total Hours,Location,Credit Card Commission,Credit Card Tips,Cash Commission,Cash Tips,Receipt Commission,Receipt Tips,Total Commission,Total Tips,Money Owed,Total Earnings,Est. Taxes (22%)\n";
+    
+    // Calculate commission and tips breakdown for each employee
+    const employeeDetailsMap = new Map();
+    
+    // Process all filtered reports to get detailed breakdown
+    const filteredReports = reports.filter(report => {
+      const reportDate = new Date(report.date);
+      
+      // Apply start date filter if set
+      if (startDate && reportDate < startDate) {
+        return false;
+      }
+      
+      // Apply end date filter if set
+      if (endDate) {
+        // Set to end of day for the end date to include the entire day
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (reportDate > endOfDay) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    // Calculate detailed breakdown for each employee
+    filteredReports.forEach(report => {
+      const commissionRate = report.locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
+      const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+      
+      // Commission calculations
+      const creditCardCommission = report.creditTransactions * commissionRate;
+      const cashCommission = cashCars * commissionRate;
+      const receiptCommission = report.totalReceipts * commissionRate;
+      
+      // Tips calculations
+      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
+      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+      const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
+      
+      // Process each employee in the report
+      const employees = typeof report.employees === 'string' 
+        ? JSON.parse(report.employees) 
+        : Array.isArray(report.employees) 
+          ? report.employees 
+          : [];
+      
+      if (employees.length > 0) {
+        const totalJobHours = employees.reduce((sum, emp) => sum + emp.hours, 0);
+        
+        employees.forEach(employee => {
+          const hoursPercent = totalJobHours > 0 ? employee.hours / totalJobHours : 0;
+          
+          // Calculate employee's share of each type of commission and tips
+          const empCreditCardCommission = hoursPercent * creditCardCommission;
+          const empCreditCardTips = hoursPercent * creditCardTips;
+          const empCashCommission = hoursPercent * cashCommission;
+          const empCashTips = hoursPercent * cashTips;
+          const empReceiptCommission = hoursPercent * receiptCommission;
+          const empReceiptTips = hoursPercent * receiptTips;
+          
+          // Get or create employee details
+          const details = employeeDetailsMap.get(employee.name) || {
+            creditCardCommission: 0,
+            creditCardTips: 0,
+            cashCommission: 0,
+            cashTips: 0,
+            receiptCommission: 0,
+            receiptTips: 0
+          };
+          
+          // Update employee details
+          employeeDetailsMap.set(employee.name, {
+            creditCardCommission: details.creditCardCommission + empCreditCardCommission,
+            creditCardTips: details.creditCardTips + empCreditCardTips,
+            cashCommission: details.cashCommission + empCashCommission,
+            cashTips: details.cashTips + empCashTips,
+            receiptCommission: details.receiptCommission + empReceiptCommission,
+            receiptTips: details.receiptTips + empReceiptTips
+          });
+        });
+      }
+    });
     
     // Add each row of data
     employeeStats.forEach(employee => {
@@ -264,8 +348,18 @@ export default function AdminPanel() {
       const locationName = LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-';
       const taxes = (employee.totalEarnings * 0.22).toFixed(2);
       
-      // Format the CSV row
-      csvContent += `"${employeeName}",${employee.totalHours.toFixed(1)},"${locationName}",${employee.totalCommission.toFixed(2)},${employee.totalTips.toFixed(2)},${employee.totalMoneyOwed.toFixed(2)},${employee.totalEarnings.toFixed(2)},${taxes}\n`;
+      // Get detailed breakdown for this employee
+      const details = employeeDetailsMap.get(employee.name) || {
+        creditCardCommission: 0,
+        creditCardTips: 0,
+        cashCommission: 0,
+        cashTips: 0,
+        receiptCommission: 0,
+        receiptTips: 0
+      };
+      
+      // Format the CSV row with detailed breakdown
+      csvContent += `"${employeeName}",${employee.totalHours.toFixed(1)},"${locationName}",${details.creditCardCommission.toFixed(2)},${details.creditCardTips.toFixed(2)},${details.cashCommission.toFixed(2)},${details.cashTips.toFixed(2)},${details.receiptCommission.toFixed(2)},${details.receiptTips.toFixed(2)},${employee.totalCommission.toFixed(2)},${employee.totalTips.toFixed(2)},${employee.totalMoneyOwed.toFixed(2)},${employee.totalEarnings.toFixed(2)},${taxes}\n`;
     });
     
     // Create a download link
@@ -343,17 +437,133 @@ export default function AdminPanel() {
     doc.setFontSize(11);
     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 30);
     
-    // Prepare table data
-    const tableColumn = ["Employee", "Hours", "Location", "Commission", "Tips", "Money Owed", "Total Earnings", "Est. Taxes (22%)"];
-    const tableRows = employeeStats.map(employee => {
+    // Calculate commission and tips breakdown for each employee
+    const employeeDetailsMap = new Map();
+    
+    // Process all filtered reports to get detailed breakdown
+    const filteredReports = reports.filter(report => {
+      const reportDate = new Date(report.date);
+      
+      // Apply start date filter if set
+      if (startDate && reportDate < startDate) {
+        return false;
+      }
+      
+      // Apply end date filter if set
+      if (endDate) {
+        // Set to end of day for the end date to include the entire day
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (reportDate > endOfDay) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    // Calculate detailed breakdown for each employee
+    filteredReports.forEach(report => {
+      const commissionRate = report.locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
+      const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+      
+      // Commission calculations
+      const creditCardCommission = report.creditTransactions * commissionRate;
+      const cashCommission = cashCars * commissionRate;
+      const receiptCommission = report.totalReceipts * commissionRate;
+      
+      // Tips calculations
+      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
+      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+      const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
+      
+      // Process each employee in the report
+      const employees = typeof report.employees === 'string' 
+        ? JSON.parse(report.employees) 
+        : Array.isArray(report.employees) 
+          ? report.employees 
+          : [];
+      
+      if (employees.length > 0) {
+        const totalJobHours = employees.reduce((sum, emp) => sum + emp.hours, 0);
+        
+        employees.forEach(employee => {
+          const hoursPercent = totalJobHours > 0 ? employee.hours / totalJobHours : 0;
+          
+          // Calculate employee's share of each type of commission and tips
+          const empCreditCardCommission = hoursPercent * creditCardCommission;
+          const empCreditCardTips = hoursPercent * creditCardTips;
+          const empCashCommission = hoursPercent * cashCommission;
+          const empCashTips = hoursPercent * cashTips;
+          const empReceiptCommission = hoursPercent * receiptCommission;
+          const empReceiptTips = hoursPercent * receiptTips;
+          
+          // Get or create employee details
+          const details = employeeDetailsMap.get(employee.name) || {
+            creditCardCommission: 0,
+            creditCardTips: 0,
+            cashCommission: 0,
+            cashTips: 0,
+            receiptCommission: 0,
+            receiptTips: 0
+          };
+          
+          // Update employee details
+          employeeDetailsMap.set(employee.name, {
+            creditCardCommission: details.creditCardCommission + empCreditCardCommission,
+            creditCardTips: details.creditCardTips + empCreditCardTips,
+            cashCommission: details.cashCommission + empCashCommission,
+            cashTips: details.cashTips + empCashTips,
+            receiptCommission: details.receiptCommission + empReceiptCommission,
+            receiptTips: details.receiptTips + empReceiptTips
+          });
+        });
+      }
+    });
+    
+    // Prepare table data - detailed breakdown
+    const detailedColumns = [
+      "Employee", 
+      "Hours", 
+      "Location", 
+      "CC Commission", 
+      "CC Tips", 
+      "Cash Commission", 
+      "Cash Tips", 
+      "Receipt Commission", 
+      "Receipt Tips",
+      "Total Commission", 
+      "Total Tips", 
+      "Money Owed", 
+      "Total Earnings", 
+      "Est. Taxes (22%)"
+    ];
+    
+    const detailedRows = employeeStats.map(employee => {
       const employeeName = EMPLOYEE_NAMES[employee.name] || employee.name;
       const locationName = LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-';
       const taxes = (employee.totalEarnings * 0.22).toFixed(2);
+      
+      // Get detailed breakdown for this employee
+      const details = employeeDetailsMap.get(employee.name) || {
+        creditCardCommission: 0,
+        creditCardTips: 0,
+        cashCommission: 0,
+        cashTips: 0,
+        receiptCommission: 0,
+        receiptTips: 0
+      };
       
       return [
         employeeName,
         employee.totalHours.toFixed(1),
         locationName,
+        `$${details.creditCardCommission.toFixed(2)}`,
+        `$${details.creditCardTips.toFixed(2)}`,
+        `$${details.cashCommission.toFixed(2)}`,
+        `$${details.cashTips.toFixed(2)}`,
+        `$${details.receiptCommission.toFixed(2)}`,
+        `$${details.receiptTips.toFixed(2)}`,
         `$${employee.totalCommission.toFixed(2)}`,
         `$${employee.totalTips.toFixed(2)}`,
         `$${employee.totalMoneyOwed.toFixed(2)}`,
@@ -362,14 +572,30 @@ export default function AdminPanel() {
       ];
     });
     
-    // Generate table
+    // Create detailed table for PDF
     autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
+      head: [detailedColumns],
+      body: detailedRows,
       startY: 40,
-      styles: { fontSize: 9 },
-      headStyles: { fillColor: [0, 101, 189] }
+      styles: { fontSize: 6 }, // Smaller font size to fit more columns
+      headStyles: { fillColor: [0, 101, 189] },
+      columnStyles: {
+        0: { cellWidth: 25 }, // Employee name column wider
+        2: { cellWidth: 25 }, // Location column wider
+      },
+      margin: { left: 10, right: 10 } // Smaller margins to fit all columns
     });
+    
+    // Date filter information - add filter details to the PDF
+    if (startDate || endDate) {
+      const filterText = [];
+      if (startDate) filterText.push(`Start Date: ${startDate.toLocaleDateString()}`);
+      if (endDate) filterText.push(`End Date: ${endDate.toLocaleDateString()}`);
+      
+      doc.setFontSize(9);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Filter: ${filterText.join(', ')}`, 14, doc.autoTable.previous.finalY + 10);
+    }
     
     // Save PDF
     doc.save("employee-payroll.pdf");
