@@ -788,8 +788,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 {form.watch("totalJobHours") > 0 ? (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-9 gap-2 font-medium text-sm pb-2 text-center">
-                      <div className="text-left md:col-span-2">Employee</div>
+                    <div className="grid grid-cols-9 gap-3 font-medium text-sm pb-2 text-center">
+                      <div className="text-left col-span-2">Employee</div>
                       <div>Hours</div>
                       <div>% of Total</div>
                       <div>Commission</div>
@@ -816,8 +816,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
                       
                       return (
-                        <div key={index} className="grid grid-cols-1 md:grid-cols-9 gap-2 items-center">
-                          <div className="md:col-span-2">
+                        <div key={index} className="grid grid-cols-9 gap-3 items-center">
+                          <div className="col-span-2">
                             <Select 
                               value={employee.name || ''}
                               onValueChange={(value) => {
