@@ -8,16 +8,21 @@ import Dashboard from "@/pages/dashboard";
 import ReportForm from "@/pages/report-form";
 import Reports from "@/pages/reports";
 import SubmissionComplete from "@/pages/submission-complete";
+import AdminLogin from "@/pages/admin-login";
+import AdminPanel from "@/pages/admin-panel";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 
 function Router() {
   const [location, setLocation] = useLocation();
   
+  // Determine if we're on an admin page to show/hide normal navigation
+  const isAdminPage = location.startsWith('/admin');
+  
   return (
     <div className="flex flex-col min-h-screen pb-16">
-      <Header />
-      <main className="container mx-auto px-4 py-4 flex-grow">
+      {!isAdminPage && <Header />}
+      <main className={`${isAdminPage ? '' : 'container mx-auto px-4 py-4'} flex-grow`}>
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/reports" component={Reports} />
@@ -30,10 +35,12 @@ function Router() {
           <Route path="/submission-complete/:reportId?">
             {(params: {reportId?: string}) => <SubmissionComplete />}
           </Route>
+          <Route path="/admin-login" component={AdminLogin} />
+          <Route path="/admin" component={AdminPanel} />
           <Route component={NotFound} />
         </Switch>
       </main>
-      <BottomNavigation />
+      {!isAdminPage && <BottomNavigation />}
     </div>
   );
 }
