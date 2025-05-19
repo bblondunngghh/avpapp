@@ -232,12 +232,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const companyCashTurnIn = Number(form.watch("companyCashTurnIn") || 0);
   const totalTurnIn = totalCars * 11; // Total Turn-In is calculated as total cars * $11
   
-  // Over/Short calculation
-  // If credit card sales exceed total turn in, that's money owed
-  // Otherwise, the difference is the company cash turn-in
-  const overShort = totalCreditSales > totalTurnIn 
-    ? totalCreditSales - totalTurnIn // Money owed
-    : totalCashCollected - companyCashTurnIn; // Cash turn-in difference
+  // Company Cash Turn-In calculation
+  // This is the difference between total turn-in and credit card sales
+  // If credit card sales exceed total turn-in, company cash turn-in would be negative (which means money owed)
+  const expectedCompanyCashTurnIn = totalTurnIn - totalCreditSales;
+  
+  // Over/Short is the difference between expected and actual company cash turn-in
+  const overShort = expectedCompanyCashTurnIn;
   
   // Commission calculations - based on actual business rules
   const employeeCommission = totalCars * 4; // $4 per car employee commission
