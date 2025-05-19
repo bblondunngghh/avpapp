@@ -1020,11 +1020,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 </>
               ) : (
                 <>
-                  <span className="mr-2">{reportId ? "Update Report" : "Submit Report"}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14" />
-                    <path d="M12 5v14" />
-                  </svg>
+                  <span>{reportId ? "Update Report" : "Submit Report"}</span>
+                  <span className="ml-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 2L11 13" />
+                      <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+                    </svg>
+                  </span>
                 </>
               )}
             </Button>
