@@ -368,7 +368,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             
             <div className="address">
               BOA STEAKHOUSE<br />
-              101 SAN JACINTO BLVD. AUSTIN, TX 78701
+              300 W 6TH ST. AUSTIN, TX 78701
             </div>
           </>
         )}
