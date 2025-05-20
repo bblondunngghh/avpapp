@@ -439,6 +439,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Health check endpoint to verify database connectivity
+  apiRouter.get('/health-check', async (req, res) => {
+    try {
+      // Minimal query to test database connection
+      await storage.getEmployees();
+      res.status(200).json({ status: 'connected' });
+    } catch (error) {
+      console.error('Database health check failed:', error);
+      res.status(503).json({ status: 'disconnected', error: 'Database connection unavailable' });
+    }
+  });
+
   // CSV Upload Routes
   apiRouter.post('/upload/employees', processEmployeeCSV);
   apiRouter.post('/upload/employee-payroll', processEmployeePayrollCSV);

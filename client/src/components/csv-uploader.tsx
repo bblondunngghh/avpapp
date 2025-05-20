@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, FileUp, AlertCircle, CheckCircle } from 'lucide-react';
+import { Loader2, FileUp, AlertCircle, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -359,7 +359,39 @@ export default function CSVUploader() {
 
               {pendingUploads.length > 0 && (
                 <div className="border border-amber-200 bg-amber-50 rounded-md p-4">
-                  <h3 className="font-medium text-amber-800 mb-2">Pending Uploads</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium text-amber-800">Pending Uploads</h3>
+                    <div className="flex items-center">
+                      <span className="text-xs mr-2">Database connection:</span>
+                      {connectionStatus === 'checking' && (
+                        <span className="text-xs flex items-center text-amber-600">
+                          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                          Checking...
+                        </span>
+                      )}
+                      {connectionStatus === 'connected' && (
+                        <span className="text-xs flex items-center text-green-600">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Connected
+                        </span>
+                      )}
+                      {connectionStatus === 'disconnected' && (
+                        <span className="text-xs flex items-center text-red-600">
+                          <XCircle className="h-3 w-3 mr-1" />
+                          Disconnected
+                        </span>
+                      )}
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-6 w-6 p-0 ml-1"
+                        onClick={checkDatabaseConnection}
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                        <span className="sr-only">Check connection</span>
+                      </Button>
+                    </div>
+                  </div>
                   <p className="text-sm text-amber-700 mb-3">
                     The following CSV files were saved when the database connection was unavailable:
                   </p>
@@ -372,16 +404,21 @@ export default function CSVUploader() {
                         </div>
                         <Button 
                           size="sm" 
-                          variant="outline"
-                          disabled={loading}
+                          variant={connectionStatus === 'connected' ? "outline" : "secondary"}
+                          disabled={loading || connectionStatus !== 'connected'}
                           onClick={() => processPendingUpload(upload.key, upload.type)}
                           className="text-xs"
                         >
-                          Retry Upload
+                          {connectionStatus === 'connected' ? 'Process Now' : 'Waiting for Connection'}
                         </Button>
                       </div>
                     ))}
                   </div>
+                  {connectionStatus === 'disconnected' && (
+                    <p className="text-xs text-amber-800 mt-2 italic">
+                      Files will be processed automatically when the database connection is restored.
+                    </p>
+                  )}
                 </div>
               )}
 
