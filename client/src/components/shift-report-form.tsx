@@ -274,7 +274,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalReceiptSales: values.totalReceiptSales || 0,
       totalCashCollected: values.totalCashCollected || 0,
       companyCashTurnIn: values.companyCashTurnIn || 0,
-      totalTurnIn: values.totalTurnIn || (values.totalCars * 11),
+      totalTurnIn: values.totalTurnIn || (values.totalCars * (
+        values.locationId === 2 ? 6 : 
+        values.locationId === 3 ? 8 : 
+        values.locationId === 4 ? 7 : 11
+      )),
       overShort: values.overShort || 0
     };
     
