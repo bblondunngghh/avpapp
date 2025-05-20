@@ -335,9 +335,9 @@ input[type="date"].paperform-input {
 /* Bottom navigation styles */
 .bottom-nav {
   @apply fixed inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10;
-  /* Move up from bottom to avoid iPhone swipe-up area */
-  bottom: env(safe-area-inset-bottom, 12px);
-  padding-bottom: env(safe-area-inset-bottom, 12px);
+  /* Position for iPhone - closer to bottom but still avoiding swipe-up */
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom, 8px);
 }
 
 .bottom-nav-item {
@@ -365,8 +365,10 @@ input[type="date"].paperform-input {
 
 /* App Header styles */
 .app-header {
-  @apply bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg sticky top-0 z-10 backdrop-blur-md;
+  @apply bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg sticky z-10 backdrop-blur-md;
   background-color: rgba(37, 99, 235, 0.95);
+  top: 0;
+  padding-top: env(safe-area-inset-top, 0);
 }
 
 .app-header-content {
