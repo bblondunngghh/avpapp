@@ -916,14 +916,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     };
                                     form.setValue('employees', newEmployees);
                                     
-                                    // Calculate total employee hours
-                                    const totalEmployeeHours = newEmployees.reduce(
-                                      (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
-                                      0
-                                    );
-                                    
-                                    // Update total job hours to match employee hours distribution
-                                    form.setValue('totalJobHours', totalEmployeeHours);
+                                    // We no longer update total job hours based on employee hours
+                                    // This allows manual control of the total hours field
                                   }}
                                 />
                               </div>
@@ -940,14 +934,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   newEmployees.splice(index, 1);
                                   form.setValue('employees', newEmployees);
                                   
-                                  // Calculate total employee hours
-                                  const totalEmployeeHours = newEmployees.reduce(
-                                    (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
-                                    0
-                                  );
-                                  
-                                  // Update total job hours
-                                  form.setValue('totalJobHours', totalEmployeeHours);
+                                  // We don't update the total job hours when an employee is removed
+                                  // This allows the total hours to remain unchanged
                                 }}
                               >
                                 <span className="sr-only">Remove</span>
