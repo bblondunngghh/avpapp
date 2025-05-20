@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, doublePrecision, numeric } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -29,6 +29,17 @@ export const employees = pgTable("employees", {
   hireDate: timestamp("hire_date").defaultNow().notNull(),
   terminationDate: timestamp("termination_date"),
   notes: text("notes"),
+  // Payroll data fields
+  hoursWorked: doublePrecision("hours_worked"),
+  creditCardCommission: doublePrecision("credit_card_commission"),
+  creditCardTips: doublePrecision("credit_card_tips"),
+  cashCommission: doublePrecision("cash_commission"),
+  cashTips: doublePrecision("cash_tips"),
+  receiptCommission: doublePrecision("receipt_commission"),
+  receiptTips: doublePrecision("receipt_tips"),
+  totalEarnings: doublePrecision("total_earnings"),
+  moneyOwed: doublePrecision("money_owed"),
+  taxesOwed: doublePrecision("taxes_owed"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at"),
 });
@@ -45,6 +56,17 @@ export const insertEmployeeSchema = createInsertSchema(employees)
     phone: z.string().optional(),
     email: z.string().optional(),
     notes: z.string().optional(),
+    // Payroll data fields
+    hoursWorked: z.number().optional(),
+    creditCardCommission: z.number().optional(),
+    creditCardTips: z.number().optional(),
+    cashCommission: z.number().optional(),
+    cashTips: z.number().optional(),
+    receiptCommission: z.number().optional(),
+    receiptTips: z.number().optional(),
+    totalEarnings: z.number().optional(),
+    moneyOwed: z.number().optional(),
+    taxesOwed: z.number().optional(),
   });
 
 export const updateEmployeeSchema = createInsertSchema(employees)
