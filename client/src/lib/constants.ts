@@ -53,5 +53,6 @@ export const DEFAULT_FORM_VALUES = {
   complimentaryCars: 0,
   cashPayments: 0,
   creditPayments: 0,
-  notes: ""
+  notes: "",
+  incidents: ""
 };

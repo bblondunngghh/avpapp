@@ -20,12 +20,6 @@ import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATIONS, LOCATION_ID_MAP } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
-// Define the employee type directly here
-interface Employee {
-  name: string;
-  hours: number;
-  cashPaid?: number;
-}
 
 // Create form schema
 const formSchema = z.object({
@@ -58,9 +52,9 @@ const formSchema = z.object({
   employees: z.array(z.object({
     name: z.string().nonempty("Employee name is required"),
     hours: z.coerce.number().min(0, "Cannot be negative"),
-    cashPaid: z.coerce.number().min(0, "Cannot be negative").optional()
   })).default([]),
   notes: z.string().optional(),
+  incidents: z.string().optional(),
   confirmationCheck: z.boolean().refine(val => val === true, {
     message: "You must confirm that the information is correct",
   }),
@@ -119,6 +113,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalJobHours: 0,
       employees: [],
       notes: "",
+      incidents: "",
       confirmationCheck: false,
     }
   });
@@ -435,899 +430,824 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               
               <div className="address">
                 BOA Steakhouse<br />
-                305 E 3rd St. Austin, TX 78701
+                300 W 6th St. Austin, TX 78701
               </div>
             </div>
           )}
         </div>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="form-content-container">
-            <div className="form-card">
-              <h3 className="section-title uppercase font-bold">BASIC INFORMATION</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Date</FormLabel>
-                        <FormControl>
-                          <Input type="date" className="paperform-input" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="manager"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Shift Leader</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="paperform-input">
-                              <SelectValue placeholder="Select Shift Leader" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Jordan Bainbridge">Jordan Bainbridge</SelectItem>
-                            <SelectItem value="Javier Sosa">Javier Sosa</SelectItem>
-                            <SelectItem value="Rami Ceballos">Rami Ceballos</SelectItem>
-                            <SelectItem value="Edgar Rodriguez">Edgar Rodriguez</SelectItem>
-                            <SelectItem value="Ryan Bonilla">Ryan Bonilla</SelectItem>
-                            <SelectItem value="Sergio Acosta">Sergio Acosta</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="locationId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Location</FormLabel>
-                        <Select 
-                          onValueChange={(value) => {
-                            field.onChange(parseInt(value));
-                            setLocationId(parseInt(value));
-                          }} 
-                          defaultValue={field.value.toString()}
-                          value={field.value.toString()}
-                        >
-                          <FormControl>
-                            <SelectTrigger 
-                              className={`paperform-input ${
-                                field.value === 1 ? 'bg-gradient-to-r from-amber-50 to-amber-100 border-amber-300' :
-                                field.value === 2 ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-300' :
-                                field.value === 3 ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-300' :
-                                'bg-gradient-to-r from-green-50 to-green-100 border-green-300'
-                              }`}
-                            >
-                              <SelectValue placeholder="Select Location" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {LOCATIONS.map((location) => (
-                              <SelectItem 
-                                key={location.id} 
-                                value={location.id.toString()}
-                                className={`
-                                  ${location.id === 1 ? 'text-amber-800' : 
-                                    location.id === 2 ? 'text-blue-800' : 
-                                    location.id === 3 ? 'text-red-800' : 
-                                    'text-green-800'
-                                  }
-                                `}
-                              >
-                                {location.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="shift"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Shift</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="paperform-input">
-                              <SelectValue placeholder="Select Shift" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {SHIFT_OPTIONS.map((shift) => (
-                              <SelectItem key={shift.value} value={shift.value}>
-                                {shift.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
+      </div>
+      
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="form-card">
+            <h3 className="section-title uppercase font-bold">SHIFT INFORMATION</h3>
             
-            <div className="form-card">
-              <h3 className="section-title uppercase font-bold">TRANSACTION DETAILS</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" className="paperform-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="totalCars"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Total Cars</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            className="paperform-input" 
-                            {...field} 
-                            onChange={(e) => {
-                              field.onChange(e.target.valueAsNumber || 0);
-                              // Update company cash turn-in if car count changes
-                              const currentCreditSales = form.getValues().totalCreditSales || 0;
-                              const currentReceiptSales = form.getValues().totalReceiptSales || 0;
-                              const newTotalCars = e.target.valueAsNumber || 0;
-                              const perCarRate = form.getValues().locationId === 2 ? 6 : 11;
-                              const newTotalTurnIn = newTotalCars * perCarRate;
-                              
-                              // Set the new totalTurnIn value
-                              form.setValue("totalTurnIn", newTotalTurnIn);
-                              
-                              // Calculate new company cash turn-in
-                              const newCompanyCashTurnIn = Math.max(0, newTotalTurnIn - currentCreditSales - currentReceiptSales);
-                              form.setValue("companyCashTurnIn", newCompanyCashTurnIn);
-                              
-                              // Calculate over/short
-                              const expectedCashTurnIn = newTotalTurnIn - currentCreditSales - currentReceiptSales;
-                              form.setValue("overShort", expectedCashTurnIn);
-                            }}
-                            min={0}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="complimentaryCars"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Complimentary Cars</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            className="paperform-input" 
-                            {...field}
-                            onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
-                            min={0}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="font-medium text-gray-700 mb-3">Credit Card Sales</h4>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="creditTransactions"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Credit Card Transactions</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              className="paperform-input" 
-                              {...field}
-                              onChange={(e) => {
-                                field.onChange(e.target.valueAsNumber || 0);
-                                
-                                // Recalculate credit card commission
-                                const commissionRate = form.getValues().locationId === 2 ? 9 : 4;
-                                const newCommission = (e.target.valueAsNumber || 0) * commissionRate;
-                                form.setValue("creditCardCommission", newCommission);
-                                
-                                // Recalculate credit card tips
-                                const newTransactions = e.target.valueAsNumber || 0;
-                                const expectedCreditSales = newTransactions * 15;
-                                const actualCreditSales = form.getValues().totalCreditSales || 0;
-                                const newTips = Math.abs(expectedCreditSales - actualCreditSales);
-                                form.setValue("creditCardTips", newTips);
-                              }}
-                              min={0}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="totalCreditSales"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Total Credit Card Sales</FormLabel>
-                          <FormControl>
-                            <InputMoney 
-                              {...field}
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value) || 0;
-                                field.onChange(value);
-                                
-                                // Update company cash turn-in and over/short when credit sales change
-                                const totalCars = form.getValues().totalCars || 0;
-                                const receiptSales = form.getValues().totalReceiptSales || 0;
-                                const perCarRate = form.getValues().locationId === 2 ? 6 : 11;
-                                const totalTurnIn = totalCars * perCarRate;
-                                
-                                // Calculate expected company cash turn-in
-                                const expectedCashTurnIn = totalTurnIn - value - receiptSales;
-                                
-                                // Set over/short value
-                                form.setValue("overShort", expectedCashTurnIn);
-                                
-                                // If expected cash turn-in is negative, it means money is owed to employees
-                                // Set company cash turn-in to 0 in this case
-                                if (expectedCashTurnIn < 0) {
-                                  form.setValue("companyCashTurnIn", 0);
-                                  form.setValue("moneyOwed", Math.abs(expectedCashTurnIn));
-                                } else {
-                                  // Otherwise, set the company cash turn-in to the expected value
-                                  form.setValue("companyCashTurnIn", expectedCashTurnIn);
-                                  form.setValue("moneyOwed", 0);
-                                }
-                                
-                                // Recalculate credit card tips
-                                const creditTransactions = form.getValues().creditTransactions || 0;
-                                const expectedCreditSales = creditTransactions * 15;
-                                const newTips = Math.abs(expectedCreditSales - value);
-                                form.setValue("creditCardTips", newTips);
-                              }}
-                              className="paperform-input" 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="font-medium text-gray-700 mb-3">Cash Sales</h4>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="totalCashCollected"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Total Cash Collected</FormLabel>
-                          <FormControl>
-                            <InputMoney 
-                              {...field} 
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value) || 0;
-                                field.onChange(value);
-                                
-                                // Recalculate cash tips
-                                const totalCars = form.getValues().totalCars || 0;
-                                const creditTransactions = form.getValues().creditTransactions || 0;
-                                const receiptTransactions = form.getValues().totalReceipts || 0;
-                                const cashCars = totalCars - creditTransactions - receiptTransactions;
-                                const expectedCashSales = cashCars * 15;
-                                const newTips = Math.abs(expectedCashSales - value);
-                                form.setValue("cashTips", newTips);
-                              }}
-                              className="paperform-input"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="companyCashTurnIn"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {expectedCompanyCashTurnIn >= 0 ? 
-                              "Company Cash Turn-In" : 
-                              "Money Owed"
-                            }
-                          </FormLabel>
-                          <FormControl>
-                            <InputMoney 
-                              {...field} 
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value) || 0;
-                                field.onChange(value);
-                              }}
-                              className={`paperform-input ${
-                                expectedCompanyCashTurnIn < 0 ? "bg-amber-50" : ""
-                              }`}
-                              readOnly={expectedCompanyCashTurnIn < 0}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="font-medium text-gray-700 mb-3">Receipt Sales</h4>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="totalReceipts"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Number of Receipts</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              className="paperform-input" 
-                              {...field}
-                              onChange={(e) => {
-                                field.onChange(e.target.valueAsNumber || 0);
-                                
-                                // Calculate receipt sales (receipts * $18)
-                                const newReceiptCount = e.target.valueAsNumber || 0;
-                                const newReceiptSales = newReceiptCount * 18;
-                                form.setValue("totalReceiptSales", newReceiptSales);
-                                
-                                // Recalculate receipt commission
-                                const commissionRate = form.getValues().locationId === 2 ? 9 : 4;
-                                const newCommission = newReceiptCount * commissionRate;
-                                form.setValue("receiptCommission", newCommission);
-                                
-                                // Recalculate receipt tips ($3 per receipt)
-                                const newTips = newReceiptCount * 3;
-                                form.setValue("receiptTips", newTips);
-                                
-                                // Update receipt company share (usually $11 per receipt at Capital Grille, $6 at Bob's)
-                                const perReceiptRate = form.getValues().locationId === 2 ? 6 : 11;
-                                const newReceiptCompany = newReceiptCount * perReceiptRate;
-                                form.setValue("totalReceiptCompany", newReceiptCompany);
-                                
-                                // Update company cash turn-in and over/short
-                                const totalCars = form.getValues().totalCars || 0;
-                                const creditSales = form.getValues().totalCreditSales || 0;
-                                const perCarRate = form.getValues().locationId === 2 ? 6 : 11;
-                                const totalTurnIn = totalCars * perCarRate;
-                                
-                                // Calculate expected company cash turn-in
-                                const expectedCashTurnIn = totalTurnIn - creditSales - newReceiptSales;
-                                
-                                // Set over/short value
-                                form.setValue("overShort", expectedCashTurnIn);
-                                
-                                // If expected cash turn-in is negative, it means money is owed to employees
-                                if (expectedCashTurnIn < 0) {
-                                  form.setValue("companyCashTurnIn", 0);
-                                  form.setValue("moneyOwed", Math.abs(expectedCashTurnIn));
-                                } else {
-                                  // Otherwise, set the company cash turn-in to the expected value
-                                  form.setValue("companyCashTurnIn", expectedCashTurnIn);
-                                  form.setValue("moneyOwed", 0);
-                                }
-                              }}
-                              min={0}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="totalReceiptSales"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Total Receipt Sales</FormLabel>
-                          <FormControl>
-                            <InputMoney 
-                              {...field} 
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value) || 0;
-                                field.onChange(value);
-                              }}
-                              className="paperform-input"
-                              readOnly
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="font-medium text-gray-700 mb-3">Financial Summary</h4>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                    <div className="bg-white p-4 rounded-md border border-gray-200 shadow-sm">
-                      <h5 className="text-sm font-medium text-gray-700 mb-2">Commission Breakdown</h5>
-                      
-                      <div className="space-y-1 text-sm">
-                        <div className="flex justify-between text-gray-600">
-                          <span>Credit Card Commission:</span>
-                          <span>${creditCardCommission.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-gray-600">
-                          <span>Cash Commission:</span>
-                          <span>${cashCommission.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-gray-600">
-                          <span>Receipt Commission:</span>
-                          <span>${receiptCommission.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between font-medium pt-1 border-t border-gray-100">
-                          <span>Total Commission:</span>
-                          <span>${totalCommission.toFixed(2)}</span>
-                        </div>
-                      </div>
+              <FormField
+                control={form.control}
+                name="shift"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Shift</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="paperform-input h-[46px]">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {SHIFT_OPTIONS.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="manager"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Leader</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="paperform-input h-[46px]">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="antonio">Antonio Martinez</SelectItem>
+                        <SelectItem value="arturo">Arturo Sanchez</SelectItem>
+                        <SelectItem value="brandon">Brandon Blond</SelectItem>
+                        <SelectItem value="brett">Brett Willson</SelectItem>
+                        <SelectItem value="dave">Dave Roehm</SelectItem>
+                        <SelectItem value="devin">Devin Bean</SelectItem>
+                        <SelectItem value="dylan">Dylan McMullen</SelectItem>
+                        <SelectItem value="elijah">Elijah Aguilar</SelectItem>
+                        <SelectItem value="ethan">Ethan Walker</SelectItem>
+                        <SelectItem value="gabe">Gabe Ott</SelectItem>
+                        <SelectItem value="jacob">Jacob Weldon</SelectItem>
+                        <SelectItem value="joe">Joe Albright</SelectItem>
+                        <SelectItem value="jonathan">Jonathan Zaccheo</SelectItem>
+                        <SelectItem value="kevin">Kevin Hanrahan</SelectItem>
+                        <SelectItem value="melvin">Melvin Lobos</SelectItem>
+                        <SelectItem value="noe">Noe Coronado</SelectItem>
+                        <SelectItem value="riley">Riley McIntyre</SelectItem>
+                        <SelectItem value="ryan">Ryan Hocevar</SelectItem>
+                        <SelectItem value="zane">Zane Springer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="totalCars"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Cars Parked</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>{form.watch("locationId") === 2 ? "Bob's Steak & Chop House" : "Capital Grille"} Rate: ${form.watch("locationId") === 2 ? "6.00" : "11.00"} per car</span>
+                      <span>Expected Turn-In: ${(totalCars * (form.watch("locationId") === 2 ? 6 : 11)).toFixed(2)}</span>
                     </div>
-                    
-                    <div className="bg-white p-4 rounded-md border border-gray-200 shadow-sm">
-                      <h5 className="text-sm font-medium text-gray-700 mb-2">Tips Breakdown</h5>
-                      
-                      <div className="space-y-1 text-sm">
-                        <div className="flex justify-between text-gray-600">
-                          <span>Credit Card Tips:</span>
-                          <span>${creditCardTips.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-gray-600">
-                          <span>Cash Tips:</span>
-                          <span>${cashTips.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-gray-600">
-                          <span>Receipt Tips:</span>
-                          <span>${receiptTips.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between font-medium pt-1 border-t border-gray-100">
-                          <span>Total Tips:</span>
-                          <span>${totalTips.toFixed(2)}</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white p-4 rounded-md border border-gray-200 shadow-sm md:col-span-2">
-                      <h5 className="text-sm font-medium text-gray-700 mb-2">Totals</h5>
-                      
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                        <div className="flex justify-between text-gray-600">
-                          <span>Total Cars:</span>
-                          <span>{totalCars}</span>
-                        </div>
-                        
-                        <div className="flex justify-between text-gray-600">
-                          <span>Credit Card Cars:</span>
-                          <span>{creditTransactions}</span>
-                        </div>
-                        
-                        <div className="flex justify-between text-gray-600">
-                          <span>Cash Cars:</span>
-                          <span>{cashCars}</span>
-                        </div>
-                        
-                        <div className="flex justify-between text-gray-600">
-                          <span>Receipt Cars:</span>
-                          <span>{totalReceipts}</span>
-                        </div>
-                        
-                        <div className="flex justify-between text-gray-600 pt-2 border-t border-gray-100 col-span-2">
-                          <span>Total Commission & Tips:</span>
-                          <span>${totalCommissionAndTips.toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="flex justify-between text-gray-600 col-span-2">
-                          <span>Required Company Turn-In:</span>
-                          <span>${totalTurnIn.toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="flex justify-between text-gray-600 col-span-2">
-                          {expectedCompanyCashTurnIn >= 0 ? (
-                            <>
-                              <span>Over/Short:</span>
-                              <span className={overShort !== 0 ? "text-orange-600" : "text-green-600"}>
-                                {overShort !== 0 ? `$${overShort.toFixed(2)}` : "Balanced"}
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="text-amber-600 font-medium">Money Owed:</span>
-                              <span className="text-amber-600 font-medium">${moneyOwed.toFixed(2)}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
+          </div>
+          
+          <div className="form-card">
+            <h3 className="section-title uppercase font-bold">SHIFT DETAILS</h3>
             
-            <div className="form-card">
-              <h3 className="section-title uppercase font-bold">EMPLOYEE PAYROLL</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <FormField
+                control={form.control}
+                name="creditTransactions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Credit Card Transactions</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               
-              <div className="space-y-5">
+              <FormField
+                control={form.control}
+                name="totalCreditSales"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Credit Card Sales</FormLabel>
+                    <FormControl>
+                      <InputMoney 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Expected: ${(creditTransactions * 15).toFixed(2)}</span>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="totalReceipts"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipts</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="totalReceiptSales"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipt Sales</FormLabel>
+                    <FormControl>
+                      <InputMoney 
+                        className="paperform-input" 
+                        {...field}
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Calculated at $18.00 per receipt</span>
+                      <span>Expected: ${(totalReceipts * 18).toFixed(2)}</span>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="totalCashCollected"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Cash Collected</FormLabel>
+                    <FormControl>
+                      <InputMoney 
+                        className="paperform-input" 
+                        {...field} 
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Expected: ${(cashCars * 15).toFixed(2)}</span>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              {expectedCompanyCashTurnIn > 0 ? (
                 <FormField
                   control={form.control}
-                  name="totalJobHours"
+                  name="companyCashTurnIn"
                   render={({ field }) => (
-                    <FormItem className="mb-6">
-                      <FormLabel>Total Job Hours</FormLabel>
+                    <FormItem>
+                      <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.01"
-                          min="0"
-                          className="paperform-input w-full md:w-48" 
-                          {...field}
-                          onChange={(e) => {
-                            // When total job hours change, update all employee hours proportionally
-                            const newTotal = e.target.valueAsNumber || 0;
-                            const oldTotal = field.value || 0;
-                            const employees = form.getValues().employees || [];
-                            
-                            if (oldTotal > 0 && employees.length > 0) {
-                              // Calculate ratio between old and new total
-                              const ratio = newTotal / oldTotal;
-                              
-                              // Update each employee's hours proportionally
-                              const updatedEmployees = employees.map(emp => ({
-                                ...emp,
-                                hours: Math.round((emp.hours * ratio) * 100) / 100
-                              }));
-                              
-                              form.setValue('employees', updatedEmployees);
-                            }
-                            
-                            field.onChange(newTotal);
-                          }}
-                        />
+                        <InputMoney className="paperform-input" {...field} />
                       </FormControl>
+                      <div className="flex justify-between text-xs text-gray-600 mt-1">
+                        <span>Expected: ${expectedCompanyCashTurnIn.toFixed(2)}</span>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+              ) : (
+                <div className="money-owed-display p-3 border rounded-md bg-blue-50">
+                  <h3 className="text-gray-700 font-medium text-sm mb-1">Company Cash Turn-In</h3>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">No cash turn-in required</span>
+                    <span className="text-red-500">Money Owed: ${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
+                  </div>
+                  {/* Hidden input to ensure form submission has the value */}
+                  <input 
+                    type="hidden" 
+                    {...form.register("companyCashTurnIn")}
+                    onChange={() => {}}
+                    value="0"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="form-card">
+            <h3 className="section-title uppercase font-bold">FINANCIAL SUMMARY</h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                  <div className="text-sm font-medium mb-2">Commission Breakdown</div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Cash Commission:</span>
+                      <span>${cashCommission.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Credit Card Commission:</span>
+                      <span>${creditCardCommission.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Receipt Commission:</span>
+                      <span>${receiptCommission.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                      <span>Total Commission:</span>
+                      <span>${totalCommission.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 mt-2">
+                    <div>• Cash: $4 per cash car</div>
+                    <div>• Credit: $4 per card transaction</div>
+                    <div>• Receipt: $4 per receipt</div>
+                  </div>
+                </div>
                 
-                {form.watch('totalJobHours') > 0 ? (
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <h4 className="text-sm text-gray-800 uppercase">Hours Distribution</h4>
-                      
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const employees = form.getValues().employees || [];
-                          form.setValue('employees', [
-                            ...employees, 
-                            { name: '', hours: 0 }
-                          ]);
+                <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                  <div className="text-sm font-medium mb-2">Tips Breakdown</div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Cash Tips:</span>
+                      <span>${cashTips.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Credit Card Tips:</span>
+                      <span>${creditCardTips.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Receipt Tips:</span>
+                      <span>${receiptTips.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                      <span>Total Tips:</span>
+                      <span>${totalTips.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 mt-2">
+                    <div>• Cash: $15 per cash car - cash collected</div>
+                    <div>• Credit: $15 per transaction - credit sales</div>
+                    <div>• Receipt: $3 per receipt</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-between bg-blue-100 p-4 rounded-md border border-blue-200">
+                <div className="text-base font-bold text-blue-800">Total Commission and Tips</div>
+                <div className="text-xl font-bold text-blue-800">${totalCommissionAndTips.toFixed(2)}</div>
+              </div>
+              
+              <div className="flex justify-between bg-gray-100 p-4 rounded-md border border-gray-200">
+                <div className="text-base font-bold">
+                  {moneyOwed === 0 ? "Company Cash Turn-In" : "Money Owed"}
+                </div>
+                <div className={`text-xl font-bold ${moneyOwed === 0 ? 'text-green-800' : 'text-red-800'}`}>
+                  ${moneyOwed === 0 ? companyCashTurnIn.toFixed(2) : moneyOwed.toFixed(2)}
+                </div>
+              </div>
+              {moneyOwed !== 0 && (
+                <div className="text-sm text-red-600 italic">
+                  * Money Owed represents the negative cash turn-in amount that needs to be made up
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="form-card">
+            <h3 className="section-title uppercase font-bold">EMPLOYEE PAYROLL</h3>
+            
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="totalJobHours"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Total Job Hours</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        step="0.01" 
+                        className="paperform-input" 
+                        {...field} 
+                        value={field.value === 0 ? '' : field.value}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                          field.onChange(value);
+                          // No auto-update of employee hours when total changes
                         }}
-                        className="h-8 text-xs border-gray-300"
-                      >
-                        <Plus className="h-3.5 w-3.5 mr-1" />
-                        Add Employee
-                      </Button>
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
+                
+                {form.watch("totalJobHours") > 0 ? (
+                  <div className="space-y-5">
+                    {/* Employee input section */}
+                    <div className="bg-white p-4 rounded-md border border-gray-200">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="text-sm font-medium">Employee Details</div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const currentEmployees = form.watch('employees') || [];
+                            form.setValue('employees', [...currentEmployees, { name: '', hours: 0 }]);
+                          }}
+                          className="text-xs h-8"
+                        >
+                          <Plus className="h-3.5 w-3.5 mr-1" /> Add Employee
+                        </Button>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {(form.watch('employees') || []).map((employee, index) => {
+                          const totalHours = Number(form.watch("totalJobHours") || 0);
+                          const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
+                          const hourPercentage = (hoursPercent * 100).toFixed(1);
+                          
+                          return (
+                            <div key={index} className="flex items-center gap-2 p-2 rounded bg-gray-50 border border-gray-100">
+                              <div className="flex-1">
+                                <Select 
+                                  value={employee.name || ''}
+                                  onValueChange={(value) => {
+                                    const newEmployees = [...(form.watch('employees') || [])];
+                                    newEmployees[index] = { 
+                                      ...newEmployees[index], 
+                                      name: value 
+                                    };
+                                    form.setValue('employees', newEmployees);
+                                  }}
+                                >
+                                  <SelectTrigger className="h-9 w-full text-sm">
+                                    <SelectValue placeholder="Select employee..." />
+                                  </SelectTrigger>
+                                  <SelectContent className="text-xs">
+                                    <SelectItem value="antonio" className="text-xs py-1">Antonio Martinez</SelectItem>
+                                    <SelectItem value="arturo" className="text-xs py-1">Arturo Sanchez</SelectItem>
+                                    <SelectItem value="brandon" className="text-xs py-1">Brandon Blond</SelectItem>
+                                    <SelectItem value="brett" className="text-xs py-1">Brett Willson</SelectItem>
+                                    <SelectItem value="dave" className="text-xs py-1">Dave Roehm</SelectItem>
+                                    <SelectItem value="devin" className="text-xs py-1">Devin Bean</SelectItem>
+                                    <SelectItem value="dylan" className="text-xs py-1">Dylan McMullen</SelectItem>
+                                    <SelectItem value="elijah" className="text-xs py-1">Elijah Aguilar</SelectItem>
+                                    <SelectItem value="ethan" className="text-xs py-1">Ethan Walker</SelectItem>
+                                    <SelectItem value="gabe" className="text-xs py-1">Gabe Ott</SelectItem>
+                                    <SelectItem value="jacob" className="text-xs py-1">Jacob Weldon</SelectItem>
+                                    <SelectItem value="joe" className="text-xs py-1">Joe Albright</SelectItem>
+                                    <SelectItem value="jonathan" className="text-xs py-1">Jonathan Zaccheo</SelectItem>
+                                    <SelectItem value="kevin" className="text-xs py-1">Kevin Hanrahan</SelectItem>
+                                    <SelectItem value="melvin" className="text-xs py-1">Melvin Lobos</SelectItem>
+                                    <SelectItem value="noe" className="text-xs py-1">Noe Coronado</SelectItem>
+                                    <SelectItem value="riley" className="text-xs py-1">Riley McIntyre</SelectItem>
+                                    <SelectItem value="ryan" className="text-xs py-1">Ryan Hocevar</SelectItem>
+                                    <SelectItem value="zane" className="text-xs py-1">Zane Springer</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="w-20">
+                                <Input 
+                                  type="number" 
+                                  min="0" 
+                                  step="0.01" 
+                                  className="h-9 text-center text-sm"
+                                  value={employee.hours === 0 ? '' : employee.hours}
+                                  onChange={(e) => {
+                                    const newEmployees = [...(form.watch('employees') || [])];
+                                    const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                                    newEmployees[index] = { 
+                                      ...newEmployees[index], 
+                                      hours: value
+                                    };
+                                    form.setValue('employees', newEmployees);
+                                    
+                                    // Calculate total employee hours and update the total job hours
+                                    const totalEmployeeHours = newEmployees.reduce(
+                                      (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
+                                      0
+                                    );
+                                    
+                                    // Update total job hours to match employee hours distribution
+                                    form.setValue('totalJobHours', totalEmployeeHours);
+                                  }}
+                                />
+                              </div>
+                              <div className="w-12 text-xs text-gray-500 text-center">
+                                {hourPercentage}%
+                              </div>
+                              <Button 
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-gray-400 hover:text-red-500"
+                                onClick={() => {
+                                  const newEmployees = [...(form.watch('employees') || [])];
+                                  newEmployees.splice(index, 1);
+                                  form.setValue('employees', newEmployees);
+                                  
+                                  // We don't update the total job hours when an employee is removed
+                                  // This allows the total hours to remain unchanged
+                                }}
+                              >
+                                <span className="sr-only">Remove</span>
+                                &times;
+                              </Button>
+                            </div>
+                          );
+                        })}
+                        
+                        {(form.watch('employees') || []).length === 0 && (
+                          <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
+                            Add employees to distribute hours
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
-                    <div className="border rounded-md border-gray-200 bg-gray-50/50 divide-y divide-gray-200">
-                      {form.watch('employees').map((employee, index) => {
-                        // Calculate values for this employee based on hours percentage
-                        const totalJobHrs = form.watch('totalJobHours') || 0;
-                        const employeeHoursPercent = employee.hours / totalJobHrs;
+                    {/* Employee earnings calculation breakdown */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                        <div className="text-sm font-medium mb-3">Total Payroll Summary</div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Total Commission:</span>
+                            <span>${(cashCommission + creditCardCommission + receiptCommission).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Total Tips:</span>
+                            <span>${(cashTips + creditCardTips + receiptTips).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm border-t border-gray-100 pt-2 mt-2 font-medium">
+                            <span>Total Earnings:</span>
+                            <span>${(cashCommission + creditCardCommission + receiptCommission + cashTips + creditCardTips + receiptTips).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Job Hours:</span>
+                            <span>{form.watch("totalJobHours") || 0}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Money Owed to Employees:</span>
+                            <span>${expectedCompanyCashTurnIn < 0 ? Math.abs(expectedCompanyCashTurnIn).toFixed(2) : '0.00'}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                        <div className="text-sm font-medium mb-3">Distribution Formula</div>
+                        <div className="space-y-1 text-xs text-gray-600">
+                          <div>• Commission is distributed based on percentage of total hours worked</div>
+                          <div>• Tips are distributed based on percentage of total hours worked</div>
+                          <div>• Money owed is distributed based on percentage of total hours worked</div>
+                          <div>• Tax calculation: 22% of total earnings (commission + tips)</div>
+                          <div>• Cash turn-in = Tax amount - Money owed (if positive)</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Employee individual breakdowns */}
+                    {(form.watch('employees') || []).length > 0 && (
+                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                        <div className="text-sm font-medium mb-3">Employee Earnings Breakdown</div>
                         
-                        // Commission calculations
-                        const commission = totalCommission;
-                        const empCommission = commission * employeeHoursPercent;
-                        
-                        // Tips calculations
-                        const tips = totalTips;
-                        const empTips = tips * employeeHoursPercent;
-                        
-                        // Total earnings
-                        const totalEarnings = empCommission + empTips;
-                        
-                        // Tax is 22% of total earnings
-                        const tax = totalEarnings * 0.22;
-                        
-                        // Money owed calculation
-                        const employeeMoneyOwed = Math.max(0, totalEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
-                        
-                        // Cash turn-in is the tax amount if there's no money owed to cover it
-                        const cashTurnIn = Math.max(0, tax - employeeMoneyOwed);
-                        
-                        return (
-                          <div key={index} className="p-4">
-                            <div className="flex justify-between items-start mb-4">
-                              <h5 className="text-sm font-medium">Employee {index + 1}</h5>
-                              
-                              {index > 0 && (
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => {
-                                    // Remove this employee
-                                    const employees = [...form.getValues().employees];
-                                    employees.splice(index, 1);
-                                    
-                                    // If there are other employees, redistribute the hours
-                                    if (employees.length > 0) {
-                                      const removedHours = employee.hours;
-                                      const totalOtherHours = employees.reduce((sum, emp) => sum + emp.hours, 0);
-                                      
-                                      // Redistribute proportionally
-                                      if (totalOtherHours > 0) {
-                                        employees.forEach((emp, i) => {
-                                          const ratio = emp.hours / totalOtherHours;
-                                          employees[i].hours = parseFloat((emp.hours + (removedHours * ratio)).toFixed(2));
-                                        });
-                                      }
-                                    }
-                                    
-                                    form.setValue('employees', employees);
-                                  }}
-                                  className="h-7 text-xs text-gray-500 hover:text-gray-800"
-                                >
-                                  Remove
-                                </Button>
-                              )}
-                            </div>
+                        <div className="space-y-4">
+                          {(form.watch('employees') || []).map((employee, index) => {
+                            if (!employee.name) return null;
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                              <FormField
-                                control={form.control}
-                                name={`employees.${index}.name`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-xs">Name</FormLabel>
-                                    <Select 
-                                      onValueChange={field.onChange} 
-                                      defaultValue={field.value}
-                                      value={field.value}
-                                    >
-                                      <FormControl>
-                                        <SelectTrigger className="paperform-input h-9 text-sm">
-                                          <SelectValue placeholder="Select Employee">{field.value || ""}</SelectValue>
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        <SelectItem value="Cristian Hurtado">Cristian Hurtado</SelectItem>
-                                        <SelectItem value="Oscar Vasquez">Oscar Vasquez</SelectItem>
-                                        <SelectItem value="Noah Garza">Noah Garza</SelectItem>
-                                        <SelectItem value="Emmanuel Acosta">Emmanuel Acosta</SelectItem>
-                                        <SelectItem value="Alexis Rangel">Alexis Rangel</SelectItem>
-                                        <SelectItem value="Aaron Veloz">Aaron Veloz</SelectItem>
-                                        <SelectItem value="Vince Lozano">Vince Lozano</SelectItem>
-                                        <SelectItem value="Jose Galvan">Jose Galvan</SelectItem>
-                                        <SelectItem value="Miguel Torres">Miguel Torres</SelectItem>
-                                        <SelectItem value="Mario Garza">Mario Garza</SelectItem>
-                                        <SelectItem value="Manuel Caudillo">Manuel Caudillo</SelectItem>
-                                        <SelectItem value="Cesar Olague">Cesar Olague</SelectItem>
-                                        <SelectItem value="Randy Bornes">Randy Bornes</SelectItem>
-                                        <SelectItem value="Roberto Acuna">Roberto Acuna</SelectItem>
-                                        <SelectItem value="Raul Acosta">Raul Acosta</SelectItem>
-                                        <SelectItem value="Eduardo Moreno">Eduardo Moreno</SelectItem>
-                                        <SelectItem value="Jordan Bainbridge">Jordan Bainbridge</SelectItem>
-                                        <SelectItem value="Javier Sosa">Javier Sosa</SelectItem>
-                                        <SelectItem value="Rami Ceballos">Rami Ceballos</SelectItem>
-                                        <SelectItem value="Edgar Rodriguez">Edgar Rodriguez</SelectItem>
-                                        <SelectItem value="Ryan Bonilla">Ryan Bonilla</SelectItem>
-                                        <SelectItem value="Sergio Acosta">Sergio Acosta</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              
-                              <FormField
-                                control={form.control}
-                                name={`employees.${index}.hours`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-xs">Hours</FormLabel>
-                                    <FormControl>
-                                      <Input 
-                                        type="number" 
-                                        step="0.01"
-                                        min="0"
-                                        className="paperform-input h-9 text-sm" 
-                                        {...field}
-                                        value={field.value}
-                                        onChange={(e) => {
-                                          // When one employee's hours change, adjust other employees proportionally
-                                          const newValue = parseFloat(e.target.value) || 0;
-                                          const oldValue = field.value || 0;
-                                          const diff = newValue - oldValue;
-                                          
-                                          // If hours are increased, reduce others proportionally
-                                          // If hours are decreased, increase others proportionally
-                                          if (diff !== 0) {
-                                            const employees = [...form.getValues().employees];
-                                            const otherEmployees = employees.filter((_, i) => i !== index);
-                                            const totalOtherHours = otherEmployees.reduce((sum, emp) => sum + emp.hours, 0);
-                                            
-                                            if (totalOtherHours > 0) {
-                                              // Adjust other employees' hours proportionally
-                                              employees.forEach((emp, i) => {
-                                                if (i !== index) {
-                                                  const ratio = emp.hours / totalOtherHours;
-                                                  employees[i].hours = Math.max(0, parseFloat((emp.hours - (diff * ratio)).toFixed(2)));
-                                                }
-                                              });
-                                            }
-                                            
-                                            // Set the new value for the current employee
-                                            employees[index].hours = newValue;
-                                            
-                                            // Update all employees
-                                            form.setValue('employees', employees);
-                                          } else {
-                                            // Just update this employee's hours if no change in total
-                                            field.onChange(newValue);
-                                          }
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
+                            const totalHours = Number(form.watch("totalJobHours") || 0);
+                            const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
                             
-                            <div className="bg-white rounded-md border border-gray-200 p-3">
-                              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                                <div className="col-span-2 flex justify-between text-xs font-medium text-gray-700 mb-1">
-                                  <span>Location:</span>
-                                  <span className={`
-                                    ${form.watch('locationId') === 1 ? 'text-amber-800' : 
-                                      form.watch('locationId') === 2 ? 'text-blue-800' : 
-                                      form.watch('locationId') === 3 ? 'text-red-800' : 
-                                      'text-green-800'
-                                    }
-                                  `}>
-                                    {LOCATIONS.find(loc => loc.id === form.watch('locationId'))?.name || ''}
-                                  </span>
+                            // Calculate individual amounts based on hourly percentage
+                            const totalCommission = cashCommission + creditCardCommission + receiptCommission;
+                            const totalTips = cashTips + creditCardTips + receiptTips;
+                            const employeeCommission = hoursPercent * totalCommission;
+                            const employeeTips = hoursPercent * totalTips;
+                            
+                            // Calculate money owed (if negative cashTurnIn) 
+                            const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
+                              hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
+                              
+                            // Calculate total earnings and tax
+                            const totalEarnings = employeeCommission + employeeTips;
+                            const tax = totalEarnings * 0.22;
+                            const cashTurnIn = Math.max(0, tax - employeeMoneyOwed);
+                            
+                            let employeeName = "Employee";
+                            if (employee.name) {
+                              // Get the full name from employee key
+                              const nameMap: Record<string, string> = {
+                                "antonio": "Antonio Martinez",
+                                "arturo": "Arturo Sanchez",
+                                "brandon": "Brandon Blond",
+                                "brett": "Brett Willson",
+                                "dave": "Dave Roehm",
+                                "devin": "Devin Bean",
+                                "dylan": "Dylan McMullen",
+                                "elijah": "Elijah Aguilar",
+                                "ethan": "Ethan Walker",
+                                "gabe": "Gabe Ott",
+                                "jacob": "Jacob Weldon",
+                                "joe": "Joe Albright",
+                                "jonathan": "Jonathan Zaccheo",
+                                "kevin": "Kevin Hanrahan",
+                                "melvin": "Melvin Lobos",
+                                "noe": "Noe Coronado",
+                                "riley": "Riley McIntyre",
+                                "ryan": "Ryan Hocevar",
+                                "zane": "Zane Springer"
+                              };
+                              employeeName = nameMap[employee.name] || `Employee ${index+1}`;
+                            }
+                            
+                            return (
+                              <div key={index} className="border border-gray-100 rounded-md p-3 bg-gray-50">
+                                <div className="flex justify-between mb-2 pb-1 border-b border-gray-200">
+                                  <div className="font-medium text-sm text-sky-700">{employeeName}</div>
+                                  <div className="text-xs text-gray-600">{employee.hours} hours ({(hoursPercent * 100).toFixed(1)}%)</div>
                                 </div>
                                 
-                                <div className="col-span-2 flex justify-between text-xs text-gray-600">
-                                  <span>Hours:</span>
-                                  <span>{employee.hours} ({(employeeHoursPercent * 100).toFixed(1)}%)</span>
-                                </div>
-                                
-                                <div className="col-span-2 pt-1 mt-1 border-t border-gray-200"></div>
-                                
-                                <div className="col-span-2 flex justify-between text-xs font-medium text-sky-700">
-                                  <span>Commission:</span>
-                                  <span>${empCommission.toFixed(2)}</span>
-                                </div>
-                                
-                                <div className="col-span-2 flex justify-between text-xs font-medium text-sky-700">
-                                  <span>Tips:</span>
-                                  <span>${empTips.toFixed(2)}</span>
-                                </div>
-                                
-                                <div className="col-span-2 flex justify-between text-xs font-medium text-sky-700 border-t border-gray-200 pt-1 mt-1">
-                                  <span>Total Earnings:</span>
-                                  <span>${totalEarnings.toFixed(2)}</span>
-                                </div>
-                                
-                                <div className="col-span-2 flex justify-between text-xs font-medium text-gray-600">
-                                  <span>Tax (22%):</span>
-                                  <span>${tax.toFixed(2)}</span>
-                                </div>
-                                
-                                {employeeMoneyOwed > 0 && (
-                                  <div className="col-span-2 flex justify-between text-xs font-medium text-amber-600">
-                                    <span>Money Owed:</span>
+                                <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">Commission:</span>
+                                    <span>${employeeCommission.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">Tips:</span>
+                                    <span>${employeeTips.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">Money Owed:</span>
                                     <span>${employeeMoneyOwed.toFixed(2)}</span>
                                   </div>
-                                )}
-                                
-                                <div className="col-span-2 flex justify-between text-xs font-medium text-sky-700">
-                                  <span>Cash Turn-In:</span>
-                                  <span>${cashTurnIn.toFixed(2)}</span>
-                                </div>
-                                
-                                {/* Tax Coverage Status */}
-                                <div className="col-span-2 flex justify-between text-xs mt-2 pt-1 border-t border-gray-200">
-                                  <span className="text-gray-600">Tax Coverage Status:</span>
-                                  {(employee.cashPaid || 0) >= Math.ceil(tax - employeeMoneyOwed) ? (
-                                    <span className="text-green-600 font-medium">Taxes Covered</span>
-                                  ) : (
-                                    <span className="text-orange-600 font-medium">
-                                      ${(tax - employeeMoneyOwed - (employee.cashPaid || 0)).toFixed(2)} still owed
-                                    </span>
-                                  )}
-                                </div>
-
-                                {/* Cash Paid Input */}
-                                <div className="col-span-2 mt-2 pt-1">
-                                  <div className="flex items-center justify-between text-xs">
-                                    <span className="text-gray-600">Cash Paid:</span>
-                                    <div className="relative w-20">
-                                      <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                                      <input
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
-                                        value={employee.cashPaid || 0}
-                                        onChange={(e) => {
-                                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
-                                          const newEmployees = [...form.watch('employees')];
-                                          newEmployees[index] = {
-                                            ...newEmployees[index],
-                                            cashPaid: value
-                                          };
-                                          form.setValue('employees', newEmployees);
-                                        }}
-                                      />
-                                    </div>
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">22% Tax:</span>
+                                    <span>${tax.toFixed(2)}</span>
                                   </div>
-                                  {tax > employeeMoneyOwed && (
-                                    <div className="text-right text-xs text-gray-500 mt-1">
-                                      Expected: ${Math.ceil(tax - employeeMoneyOwed)}
+                                  <div className="col-span-2 flex justify-between text-xs font-medium border-t border-gray-200 pt-1 mt-1">
+                                    <span>Total Earnings:</span>
+                                    <span>${totalEarnings.toFixed(2)}</span>
+                                  </div>
+                                  <div className="col-span-2 flex justify-between text-xs font-medium text-sky-700">
+                                    <span>Cash Turn-In:</span>
+                                    <span>${cashTurnIn.toFixed(2)}</span>
+                                  </div>
+                                  
+                                  {/* Tax Coverage Status */}
+                                  <div className="col-span-2 flex justify-between text-xs mt-2 pt-1 border-t border-gray-200">
+                                    <span className="text-gray-600">Tax Coverage Status:</span>
+                                    {(employeeMoneyOwed + (employee.cashPaid || 0)) >= tax ? (
+                                      <span className="text-green-600 font-medium">Taxes Covered</span>
+                                    ) : (
+                                      <span className="text-orange-600 font-medium">
+                                        ${(tax - employeeMoneyOwed - (employee.cashPaid || 0)).toFixed(2)} still owed
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {/* Cash Paid Input */}
+                                  <div className="col-span-2 mt-2 pt-1">
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-gray-600">Cash Paid:</span>
+                                      <div className="relative w-20">
+                                        <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                                        <input
+                                          type="number"
+                                          step="0.01"
+                                          min="0"
+                                          className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
+                                          value={employee.cashPaid || 0}
+                                          onChange={(e) => {
+                                            const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                                            const newEmployees = [...form.watch('employees')];
+                                            newEmployees[index] = {
+                                              ...newEmployees[index],
+                                              cashPaid: value
+                                            };
+                                            form.setValue('employees', newEmployees);
+                                          }}
+                                        />
+                                      </div>
                                     </div>
-                                  )}
+                                    {tax > employeeMoneyOwed && (
+                                      <div className="text-right text-xs text-gray-500 mt-1">
+                                        Expected: ${Math.ceil(tax - employeeMoneyOwed)}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
+                            );
+                          })}
+                          
+                          {/* Total Tax Coverage Summary */}
+                          {form.watch('employees')?.length > 0 && (
+                            <div className="mt-4 border-t-2 border-gray-200 pt-3">
+                              <div className="flex justify-between items-center">
+                                <h4 className="text-sm text-gray-800 uppercase">Tax Coverage Summary</h4>
+                                
+                                {(() => {
+                                  const formEmployees = form.watch('employees') || [];
+                                  const totalJobHrs = form.watch('totalJobHours') || 0;
+                                  
+                                  // Calculate total tax and total money owed
+                                  let totalTax = 0;
+                                  let totalMoneyOwed = 0;
+                                  
+                                  // Using the same calculations as used for individual employees
+                                  const totalCars = form.watch('totalCars') || 0;
+                                  const creditTransactions = form.watch('creditTransactions') || 0;
+                                  const totalReceipts = form.watch('totalReceipts') || 0;
+                                  
+                                  // Commission calculations
+                                  const creditCardCommission = creditTransactions * 4;
+                                  const cashCars = totalCars - creditTransactions - totalReceipts;
+                                  const cashCommission = cashCars * 4;
+                                  const receiptCommission = totalReceipts * 4;
+                                  const commission = cashCommission + creditCardCommission + receiptCommission;
+                                  
+                                  // Tips calculations
+                                  const totalCreditSales = form.watch('totalCreditSales') || 0;
+                                  const expectedCreditSales = creditTransactions * 15;
+                                  const creditCardTips = Math.abs(expectedCreditSales - totalCreditSales);
+                                  
+                                  const totalCashCollected = form.watch('totalCashCollected') || 0;
+                                  const expectedCashSales = cashCars * 15;
+                                  const cashTips = Math.abs(expectedCashSales - totalCashCollected);
+                                  
+                                  const receiptTips = totalReceipts * 3;
+                                  const tips = cashTips + creditCardTips + receiptTips;
+                                  
+                                  // Company cash turn-in calculation
+                                  const locationId = form.watch('locationId');
+                                  let perCarRate = 11; // Default to Capital Grille rate
+                                  if (locationId === 2) { // Bob's
+                                    perCarRate = 6;
+                                  }
+                                  const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
+                                  
+                                  // Calculate for each employee
+                                  formEmployees.forEach(emp => {
+                                    const employeeHoursPercent = emp.hours / totalJobHrs;
+                                    
+                                    // Employee's share of commission and tips
+                                    const empCommission = commission * employeeHoursPercent;
+                                    const empTips = tips * employeeHoursPercent;
+                                    const empEarnings = empCommission + empTips;
+                                    const empTax = empEarnings * 0.22;
+                                    
+                                    // Money owed calculation
+                                    const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
+                                    
+                                    totalTax += empTax;
+                                    totalMoneyOwed += empMoneyOwed;
+                                  });
+                                  
+                                  // Calculate total cash paid by all employees
+                                  const totalCashPaid = formEmployees.reduce((sum, emp) => 
+                                    sum + (parseFloat(String(emp.cashPaid)) || 0), 0
+                                  );
+                                  
+                                  // Calculate the total expected amount (rounded up)
+                                  const totalExpectedAmount = formEmployees.reduce((sum, emp) => {
+                                    const employeeHoursPercent = emp.hours / totalJobHrs;
+                                    const empCommission = commission * employeeHoursPercent;
+                                    const empTips = tips * employeeHoursPercent;
+                                    const empEarnings = empCommission + empTips;
+                                    const empTax = empEarnings * 0.22;
+                                    const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
+                                    
+                                    // Add to sum only if tax exceeds money owed
+                                    return sum + (empTax > empMoneyOwed ? Math.ceil(empTax - empMoneyOwed) : 0);
+                                  }, 0);
+                                  
+                                  // Add console logs to debug the values
+                                  console.log('Tax Summary - Total Tax:', totalTax);
+                                  console.log('Tax Summary - Money Owed:', totalMoneyOwed);
+                                  console.log('Tax Summary - Cash Paid:', totalCashPaid);
+                                  console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
+                                  
+                                  // Only show "All Taxes Covered" if cash paid matches or exceeds the expected amount
+                                  if (totalCashPaid >= totalExpectedAmount && totalTax > 0) {
+                                    return (
+                                      <div className="text-sm text-green-600">
+                                        All Taxes Covered
+                                      </div>
+                                    );
+                                  } else if (totalTax > 0) {
+                                    return (
+                                      <div className="text-sm text-orange-600">
+                                        Total Still Owed: ${(totalTax - totalMoneyOwed - totalCashPaid).toFixed(2)}
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <div className="text-sm text-gray-600">
+                                        No Tax Data Available
+                                      </div>
+                                    );
+                                  }
+                                })()}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-sm text-gray-600 py-4 text-center bg-white rounded-md border border-gray-200">
@@ -1336,9 +1256,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 )}
               </div>
             </div>
+          </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">NOTES</h3>
+            <h3 className="section-title uppercase font-bold">NOTES & INCIDENTS</h3>
             
             <div className="space-y-6">
               <FormField
@@ -1355,24 +1276,36 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 )}
               />
               
+              <FormField
+                control={form.control}
+                name="incidents"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium text-sm">Incidents</FormLabel>
+                    <FormControl>
+                      <Textarea className="paperform-input h-32" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
               <div className="mt-6 border-t border-gray-200 pt-4">
                 <FormField
                   control={form.control}
                   name="confirmationCheck"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 bg-blue-50">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="data-[state=checked]:bg-blue-600"
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel className="font-normal">
-                          I confirm that all the information provided in this report is accurate and complete.
+                        <FormLabel className="text-sm font-medium">
+                          By checking this box, I confirm the numbers above to be correct to the best of my knowledge.
                         </FormLabel>
-                        <FormMessage />
                       </div>
                     </FormItem>
                   )}
@@ -1380,24 +1313,33 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               </div>
             </div>
           </div>
-            
-            <div className="flex justify-center mt-6">
-              <Button 
-                type="submit" 
-                disabled={isSubmitting} 
-                className="w-full md:w-auto px-10 py-6 text-lg rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin h-5 w-5 border-2 border-white border-opacity-50 border-t-transparent rounded-full mr-2"></div>
-                    Submitting...
-                  </>
-                ) : reportId ? "Update Report" : "Submit Report"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+          
+          <div className="py-8 flex justify-center">
+            <Button type="submit" disabled={isSubmitting} className="w-full max-w-md py-6 text-lg">
+              {isSubmitting ? (
+                <>
+                  <span className="mr-2">Submitting...</span>
+                  <span className="animate-spin">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10" />
+                    </svg>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>{reportId ? "Update Report" : "Submit Report"}</span>
+                  <span className="ml-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 2L11 13" />
+                      <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+                    </svg>
+                  </span>
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }
