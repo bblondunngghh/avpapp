@@ -984,10 +984,6 @@ export default function AdminPanel() {
             <Users className="h-4 w-4 mr-2" />
             Manage Employees
           </TabsTrigger>
-          <TabsTrigger value="csv-upload" className="flex items-center" onClick={() => window.location.href = "/admin/csv-upload"}>
-            <FileSpreadsheet className="h-4 w-4 mr-2" />
-            CSV Upload
-          </TabsTrigger>
         </TabsList>
         
 
