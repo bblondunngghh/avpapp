@@ -1151,11 +1151,19 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   const creditTransactions = form.watch('creditTransactions') || 0;
                                   const totalReceipts = form.watch('totalReceipts') || 0;
                                   
-                                  // Commission calculations
-                                  const creditCardCommission = creditTransactions * 4;
+                                  // Get location ID for rates calculation
+                                  const locationId = form.watch('locationId');
                                   const cashCars = totalCars - creditTransactions - totalReceipts;
-                                  const cashCommission = cashCars * 4;
-                                  const receiptCommission = totalReceipts * 4;
+                                  
+                                  // Set commission rate based on location
+                                  let commissionRate = 4; // Default for most locations
+                                  if (locationId === 3) { // Truluck's
+                                    commissionRate = 7;
+                                  }
+                                  
+                                  const creditCardCommission = creditTransactions * commissionRate;
+                                  const cashCommission = cashCars * commissionRate;
+                                  const receiptCommission = totalReceipts * commissionRate;
                                   const commission = cashCommission + creditCardCommission + receiptCommission;
                                   
                                   // Tips calculations
@@ -1172,9 +1180,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   
                                   // Company cash turn-in calculation
                                   const locationId = form.watch('locationId');
+                                  
+                                  // Set per-car rate based on location
                                   let perCarRate = 11; // Default to Capital Grille rate
-                                  if (locationId === 2) { // Bob's
+                                  if (locationId === 2) { // Bob's Steak and Chop House
                                     perCarRate = 6;
+                                  } else if (locationId === 3) { // Truluck's
+                                    perCarRate = 8;
                                   }
                                   const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
                                   
