@@ -419,7 +419,16 @@ export default function AdminPanel() {
           const cashSales = report.totalCashCollected;
           const creditSales = report.totalCreditSales;
           const receiptSales = report.totalReceipts * 18; // $18 per receipt
-          const totalIncome = cashSales + creditSales + receiptSales;
+          
+          // Get turn-in rate based on location
+          let turnInRate = 11; // Default Capital Grille ($11)
+          if (locationId === 2) turnInRate = 6;      // Bob's ($6)
+          else if (locationId === 3) turnInRate = 8; // Truluck's ($8) 
+          else if (locationId === 4) turnInRate = 7; // BOA ($7)
+          
+          // Calculate company's commission (turn-in rate * number of cars)
+          const companyCommission = report.totalCars * turnInRate;
+          const totalIncome = companyCommission; // Only count what the company makes
           
           // Update location stats
           locationMap.set(locationId, {
