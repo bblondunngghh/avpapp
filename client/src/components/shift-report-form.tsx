@@ -94,7 +94,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       locationId: selectedLocationId,
       date: format(new Date(), 'yyyy-MM-dd'),
       shift: selectedLocationId === 1 ? "" : "Dinner", // Default to Dinner for Bob's, Truluck's, and BOA
-      manager: selectedLocationId === 3 ? "devin" : "", // Default to Devin Bean for Truluck's
+      manager: selectedLocationId === 3 ? "devin" : 
+               selectedLocationId === 2 ? "brett" : "", // Default to Devin Bean for Truluck's, Brett Willson for Bob's
       totalCars: 0,
       complimentaryCars: 0,
       creditTransactions: 0,
