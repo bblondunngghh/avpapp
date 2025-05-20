@@ -348,15 +348,27 @@ export default function EmployeeDashboard() {
                       <div className="text-sm font-medium mb-2">Tax Obligations</div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span>Estimated Taxes (22%):</span>
+                          <div className="flex items-center gap-1">
+                            <span>Estimated Taxes (22%):</span>
+                          </div>
                           <span>${paySummary.totalTax.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span>Money Owed to You:</span>
+                          <div>
+                            <span>Money Owed to You:</span>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              Additional money due to you when cash collected was less than expected
+                            </p>
+                          </div>
                           <span>${paySummary.totalMoneyOwed.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-sm font-bold pt-1 border-t border-blue-200">
-                          <span>Net Tax Obligation:</span>
+                          <div>
+                            <span>Net Tax Obligation:</span>
+                            <p className="text-xs text-gray-500 mt-0.5 font-normal">
+                              Final tax amount after subtracting money owed to you
+                            </p>
+                          </div>
                           <span>${Math.max(0, paySummary.totalTax - paySummary.totalMoneyOwed).toFixed(2)}</span>
                         </div>
                       </div>
