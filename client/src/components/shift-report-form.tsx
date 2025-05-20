@@ -1107,7 +1107,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           {form.watch('employees')?.length > 0 && (
                             <div className="mt-4 border-t-2 border-gray-200 pt-3">
                               <div className="flex justify-between items-center">
-                                <h4 className="text-sm font-semibold text-gray-800">Tax Coverage Summary</h4>
+                                <h4 className="text-sm text-gray-800 uppercase">Tax Coverage Summary</h4>
                                 
                                 {(() => {
                                   const formEmployees = form.watch('employees') || [];
@@ -1166,18 +1166,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     totalMoneyOwed += empMoneyOwed;
                                   });
                                   
-                                  const taxDeficit = totalTax - totalMoneyOwed;
-                                  
-                                  if (taxDeficit <= 0) {
+                                  // Calculate if money owed fully covers tax obligation
+                                  if (totalMoneyOwed >= totalTax) {
                                     return (
-                                      <div className="text-sm text-green-600 font-medium">
+                                      <div className="text-sm text-green-600">
                                         All Taxes Covered
                                       </div>
                                     );
                                   } else {
                                     return (
-                                      <div className="text-sm text-orange-600 font-medium">
-                                        Total Still Owed: ${taxDeficit.toFixed(2)}
+                                      <div className="text-sm text-orange-600">
+                                        Total Still Owed: ${(totalTax - totalMoneyOwed).toFixed(2)}
                                       </div>
                                     );
                                   }
