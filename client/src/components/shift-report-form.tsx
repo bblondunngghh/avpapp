@@ -1108,9 +1108,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                           step="0.01"
                                           min="0"
                                           className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
-                                          value={employee.cashPaid || 0}
+                                          value={employee.cashPaid || ''}
                                           onChange={(e) => {
-                                            const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                                            const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
                                             const newEmployees = [...form.watch('employees')];
                                             newEmployees[index] = {
                                               ...newEmployees[index],
