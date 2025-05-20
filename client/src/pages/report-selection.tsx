@@ -3,8 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, AlertTriangle, ChevronLeft } from "lucide-react";
 import { LOCATIONS } from "@/lib/constants";
-import { FaUtensils, FaWineGlassAlt, FaFish } from "react-icons/fa";
-import { GiMeat } from "react-icons/gi";
+import LocationIcon, { getLocationIconDetails } from "@/components/location-icon";
 
 export default function ReportSelection() {
   const [, navigate] = useLocation();
@@ -47,28 +46,7 @@ export default function ReportSelection() {
                 <p className="font-medium text-gray-700 mb-3">Select a location:</p>
                 <div className="grid grid-cols-1 gap-3">
                   {LOCATIONS.map(location => {
-                    // Select the appropriate icon based on location
-                    let LocationIcon = FaUtensils;
-                    let iconBgColor = "bg-blue-100";
-                    let iconColor = "text-blue-600";
-                    
-                    if (location.id === 1) { // Capital Grille
-                      LocationIcon = FaWineGlassAlt;
-                      iconBgColor = "bg-blue-100";
-                      iconColor = "text-blue-600";
-                    } else if (location.id === 2) { // Bob's
-                      LocationIcon = GiMeat;
-                      iconBgColor = "bg-red-100";
-                      iconColor = "text-red-600";
-                    } else if (location.id === 3) { // Truluck's
-                      LocationIcon = FaFish;
-                      iconBgColor = "bg-teal-100";
-                      iconColor = "text-teal-600";
-                    } else if (location.id === 4) { // BOA
-                      LocationIcon = GiMeat;
-                      iconBgColor = "bg-violet-100";
-                      iconColor = "text-violet-600";
-                    }
+                    const { bgColorClass, textColorClass } = getLocationIconDetails(location.id);
                     
                     return (
                       <Button 
@@ -76,8 +54,8 @@ export default function ReportSelection() {
                         onClick={() => navigate(`/new-report?locationId=${location.id}`)}
                         className="relative h-auto py-3 pl-10 w-full bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-800 border-0 shadow-sm hover:shadow group text-left"
                       >
-                        <span className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${iconBgColor} rounded-full p-1`}>
-                          <LocationIcon className={`h-4 w-4 ${iconColor}`} />
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                          <LocationIcon locationId={location.id} size={16} />
                         </span>
                         <span className="font-medium">{location.name}</span>
                       </Button>

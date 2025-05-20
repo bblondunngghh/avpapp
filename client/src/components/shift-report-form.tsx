@@ -19,6 +19,7 @@ import { ChevronLeft, Plus } from "lucide-react";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATIONS, LOCATION_ID_MAP } from "@/lib/constants";
+import LocationIcon from "@/components/location-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Create form schema
