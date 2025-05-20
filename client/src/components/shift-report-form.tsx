@@ -1324,6 +1324,41 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   }
                                 })()}
                               </div>
+                              
+                              {/* Total Cash Tax Summary Section */}
+                              <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mt-3">
+                                {(() => {
+                                  const formEmployees = form.watch('employees') || [];
+                                  const totalJobHrs = form.watch('totalJobHours') || 0;
+                                  
+                                  // Calculate total cash paid by all employees
+                                  const totalCashPaid = formEmployees.reduce((sum, emp) => 
+                                    sum + (parseFloat(String(emp.cashPaid)) || 0), 0
+                                  );
+                                  
+                                  // Calculate total tax from all earnings
+                                  const totalCommission = cashCommission + creditCardCommission + receiptCommission;
+                                  const totalTips = cashTips + creditCardTips + receiptTips;
+                                  const totalEarnings = totalCommission + totalTips;
+                                  const totalTaxAmount = totalEarnings * 0.22;
+                                  
+                                  // Calculate amount still needed for taxes after money owed
+                                  const netTaxObligationTotal = Math.max(0, totalTaxAmount - totalMoneyOwed);
+                                  
+                                  return (
+                                    <>
+                                      <div className="flex justify-between items-center mb-1">
+                                        <span className="text-sm font-medium text-blue-800">Total Cash for Taxes:</span>
+                                        <span className="text-sm font-bold text-blue-900">${totalCashPaid.toFixed(2)}</span>
+                                      </div>
+                                      <p className="text-xs text-blue-700">
+                                        The total cash needed to fulfill your tax obligation is ${Math.ceil(netTaxObligationTotal).toFixed(2)}. 
+                                        This amount is calculated as 22% of total earnings (${totalEarnings.toFixed(2)}) minus any money owed to employees.
+                                      </p>
+                                    </>
+                                  );
+                                })()}
+                              </div>
                             </div>
                           )}
                         </div>
