@@ -22,6 +22,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue 
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { 
   Table, 
   TableBody, 
   TableCaption, 
@@ -102,6 +110,7 @@ export default function AdminPanel() {
   const [, navigate] = useLocation();
   const [isAddingEmployees, setIsAddingEmployees] = useState(false);
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
+  const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const { toast } = useToast();
   const [employeeStats, setEmployeeStats] = useState<{
     name: string;
@@ -205,8 +214,13 @@ export default function AdminPanel() {
       // Initialize monthly data with all months at 0 sales
       const initialMonthlyData = monthNames.map(name => ({ name, sales: 0 }));
       
+      // Filter reports by selected location if applicable
+      const filteredReports = selectedLocation 
+        ? reports.filter(report => report.locationId === selectedLocation)
+        : reports;
+      
       // Group reports by month and sum sales
-      reports.forEach(report => {
+      filteredReports.forEach(report => {
         const reportDate = new Date(report.date);
         const month = reportDate.getMonth(); // 0-11
         
@@ -217,7 +231,12 @@ export default function AdminPanel() {
         
         // Calculate total sales for this report
         const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
-        const cashSales = cashCars * 15; // $15 per car
+        // Apply location-specific pricing
+        let carPrice = 15; // Default
+        if (report.locationId === 4) { // BOA Steakhouse
+          carPrice = 13;
+        }
+        const cashSales = cashCars * carPrice;
         const creditSales = report.totalCreditSales;
         const receiptSales = report.totalReceipts * 18; // $18 per receipt
         const totalSales = cashSales + creditSales + receiptSales;
@@ -232,7 +251,7 @@ export default function AdminPanel() {
       const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       setMonthlyData(monthNames.map(name => ({ name, sales: 0 })));
     }
-  }, [reports, startDate, endDate]);
+  }, [reports, startDate, endDate, selectedLocation]);
   
   // Set initial employees data
   useEffect(() => {
@@ -1370,9 +1389,69 @@ export default function AdminPanel() {
                   {/* Monthly Sales Analysis Section */}
                   <div className="mt-10">
                     <h3 className="text-xl font-medium mb-4">Monthly Sales Analysis</h3>
-                    <p className="text-sm text-muted-foreground mb-6">
+                    <p className="text-sm text-muted-foreground mb-4">
                       View sales performance broken down by month (January - December)
                     </p>
+                    
+                    <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900 mb-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="location-filter">Filter by Location</Label>
+                        <Select
+                          value={selectedLocation?.toString() || ""}
+                          onValueChange={(value) => setSelectedLocation(value ? parseInt(value) : null)}
+                        >
+                          <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder="All Locations" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">All Locations</SelectItem>
+                            {LOCATIONS.map((location) => (
+                              <SelectItem key={location.id} value={location.id.toString()}>
+                                {location.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="chart-start-date">Start Date</Label>
+                        <div className="relative">
+                          <input
+                            id="chart-start-date"
+                            type="date"
+                            className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                            value={startDate ? startDate.toISOString().substring(0, 10) : ""}
+                            onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="chart-end-date">End Date</Label>
+                        <div className="relative">
+                          <input
+                            id="chart-end-date"
+                            type="date"
+                            className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                            value={endDate ? endDate.toISOString().substring(0, 10) : ""}
+                            onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
+                          />
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => {
+                          setStartDate(undefined);
+                          setEndDate(undefined);
+                          setSelectedLocation(null);
+                        }}
+                      >
+                        Clear Filters
+                      </Button>
+                    </div>
                     
                     <div className="w-full h-[400px] mb-6">
                       <ResponsiveContainer width="100%" height="100%">
