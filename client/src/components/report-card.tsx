@@ -260,7 +260,7 @@ export default function ReportCard({
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <span className={textColor}>{location}</span>
+              <span className={`${textColor} font-normal`}>{location}</span>
               <Badge variant="outline" className={`${textColor} bg-gray-50`}>
                 {shift} Shift
               </Badge>
