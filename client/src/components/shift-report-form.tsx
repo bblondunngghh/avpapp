@@ -753,9 +753,19 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 mt-2">
-                    <div>• Cash: $4 per cash car</div>
-                    <div>• Credit: $4 per card transaction</div>
-                    <div>• Receipt: $4 per receipt</div>
+                    {form.watch("locationId") === 3 ? (
+                      <>
+                        <div>• Cash: $7 per cash car (Truluck's rate)</div>
+                        <div>• Credit: $7 per card transaction</div>
+                        <div>• Receipt: $7 per receipt</div>
+                      </>
+                    ) : (
+                      <>
+                        <div>• Cash: $4 per cash car</div>
+                        <div>• Credit: $4 per card transaction</div>
+                        <div>• Receipt: $4 per receipt</div>
+                      </>
+                    )}
                   </div>
                 </div>
                 
