@@ -922,6 +922,14 @@ export default function AdminPanel() {
         <div className="flex gap-2">
           <Button 
             variant="outline" 
+            onClick={() => navigate("/admin/csv-upload")}
+            className="flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+            CSV Upload
+          </Button>
+          <Button 
+            variant="outline" 
             onClick={() => navigate("/")}
             className="flex items-center gap-1"
           >
