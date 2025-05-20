@@ -1,0 +1,5 @@
+locationId,allocatedTickets,usedTickets,batchNumber,notes
+1,500,245,CG-2023-05,May allocation for Capital Grille
+2,350,182,BOB-2023-05,May allocation for Bob's Steak and Chop House
+3,400,210,TRU-2023-05,May allocation for Truluck's
+4,300,156,BOA-2023-05,May allocation for BOA Steakhouse

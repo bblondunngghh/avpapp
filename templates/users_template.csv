@@ -1,0 +1,4 @@
+username,password
+admin,hashedpassword123
+manager1,hashedpassword456
+employee1,hashedpassword789
