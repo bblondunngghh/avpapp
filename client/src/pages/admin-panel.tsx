@@ -807,7 +807,7 @@ export default function AdminPanel() {
           </TabsTrigger>
           <TabsTrigger value="locations" className="flex items-center">
             <MapPin className="h-4 w-4 mr-2" />
-            Locations
+            Location Performance
           </TabsTrigger>
           <TabsTrigger value="tickets" className="flex items-center">
             <Ticket className="h-4 w-4 mr-2" />
