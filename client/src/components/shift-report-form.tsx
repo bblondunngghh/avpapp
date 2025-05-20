@@ -556,13 +556,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger className="paperform-input">
-                              <SelectValue placeholder="Select Shift">{field.value || ""}</SelectValue>
+                              <SelectValue placeholder="Select Shift" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             {SHIFT_OPTIONS.map((shift) => (
-                              <SelectItem key={shift} value={shift}>
-                                {shift}
+                              <SelectItem key={shift.value} value={shift.value}>
+                                {shift.label}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -1283,9 +1283,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 {/* Tax Coverage Status */}
                                 <div className="col-span-2 flex justify-between text-xs mt-2 pt-1 border-t border-gray-200">
                                   <span className="text-gray-600">Tax Coverage Status:</span>
-                                  {tax <= employeeMoneyOwed ? (
-                                    <span className="text-green-600 font-medium">Taxes Covered</span>
-                                  ) : (employee.cashPaid || 0) >= Math.ceil(tax - employeeMoneyOwed) ? (
+                                  {(employee.cashPaid || 0) >= Math.ceil(tax - employeeMoneyOwed) ? (
                                     <span className="text-green-600 font-medium">Taxes Covered</span>
                                   ) : (
                                     <span className="text-orange-600 font-medium">
