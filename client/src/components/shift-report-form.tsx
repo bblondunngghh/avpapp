@@ -387,7 +387,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           
           {form.watch('locationId') === 1 ? (
             <div className="form-header-content">
-              <div className="restaurant-image">
+              <div className="restaurant-image relative">
+                <LocationIcon locationId={1} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src="/src/assets/capital-grille.jpg" 
                   alt="The Capital Grille" 
@@ -401,7 +402,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
           ) : form.watch('locationId') === 2 ? (
             <div className="form-header-content">
-              <div className="restaurant-image">
+              <div className="restaurant-image relative">
+                <LocationIcon locationId={2} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src="/src/assets/bobs.jpg" 
                   alt="Bob's Steak and Chop House" 
@@ -415,7 +417,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
           ) : form.watch('locationId') === 3 ? (
             <div className="form-header-content">
-              <div className="restaurant-image">
+              <div className="restaurant-image relative">
+                <LocationIcon locationId={3} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src="/src/assets/trulucks.jpg" 
                   alt="Truluck's" 
@@ -429,7 +432,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             </div>
           ) : (
             <div className="form-header-content">
-              <div className="restaurant-image">
+              <div className="restaurant-image relative">
+                <LocationIcon locationId={4} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src="/src/assets/boa.jpg" 
                   alt="BOA Steakhouse" 
