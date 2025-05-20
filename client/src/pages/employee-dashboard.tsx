@@ -203,7 +203,7 @@ export default function EmployeeDashboard() {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl font-bold text-indigo-800">{formatName(employeeName)}</h1>
+            <h1 className="text-2xl text-indigo-800">{formatName(employeeName)}</h1>
             <p className="text-gray-500">Employee Dashboard</p>
           </div>
         </div>

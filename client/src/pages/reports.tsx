@@ -158,11 +158,17 @@ export default function Reports() {
               locationId={report.locationId}
               date={report.date}
               shift={report.shift}
+              shiftLeader={report.shiftLeader}
               totalCars={report.totalCars}
               totalCreditSales={report.totalCreditSales || 0}
               totalCashCollected={report.totalCashCollected || 0}
               companyCashTurnIn={report.companyCashTurnIn || 0}
               totalTurnIn={report.totalTurnIn || 0}
+              creditTransactions={report.creditTransactions}
+              totalReceipts={report.totalReceipts}
+              totalReceiptSales={report.totalReceiptSales}
+              employees={report.employees}
+              totalJobHours={report.totalJobHours}
               createdAt={report.createdAt}
             />
           ))}
