@@ -8,6 +8,17 @@ export async function processEmployeePayrollCSV(req: Request, res: Response) {
     if (!req.body.csvData) {
       return res.status(400).json({ error: 'No CSV data provided' });
     }
+    
+    // Test database connection before processing
+    try {
+      await storage.getEmployees();
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      return res.status(503).json({ 
+        error: 'Database connection issue. Your CSV data has been saved locally and will be processed when the connection is restored.',
+        connectionError: true
+      });
+    }
 
     const csvData = req.body.csvData;
     const records = parse(csvData, {
@@ -106,6 +117,17 @@ export async function processEmployeeCSV(req: Request, res: Response) {
     if (!req.body.csvData) {
       return res.status(400).json({ error: 'No CSV data provided' });
     }
+    
+    // Test database connection before processing
+    try {
+      await storage.getEmployees();
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      return res.status(503).json({ 
+        error: 'Database connection issue. Your CSV data has been saved locally and will be processed when the connection is restored.',
+        connectionError: true
+      });
+    }
 
     const csvData = req.body.csvData;
     const records = parse(csvData, {
@@ -187,6 +209,17 @@ export async function processTicketDistributionsCSV(req: Request, res: Response)
   try {
     if (!req.body.csvData) {
       return res.status(400).json({ error: 'No CSV data provided' });
+    }
+    
+    // Test database connection before processing
+    try {
+      await storage.getTicketDistributions();
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      return res.status(503).json({ 
+        error: 'Database connection issue. Your CSV data has been saved locally and will be processed when the connection is restored.',
+        connectionError: true
+      });
     }
 
     const csvData = req.body.csvData;

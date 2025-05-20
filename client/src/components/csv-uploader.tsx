@@ -325,6 +325,34 @@ export default function CSVUploader() {
                 </p>
               </div>
 
+              {pendingUploads.length > 0 && (
+                <div className="border border-amber-200 bg-amber-50 rounded-md p-4">
+                  <h3 className="font-medium text-amber-800 mb-2">Pending Uploads</h3>
+                  <p className="text-sm text-amber-700 mb-3">
+                    The following CSV files were saved when the database connection was unavailable:
+                  </p>
+                  <div className="space-y-2">
+                    {pendingUploads.map((upload) => (
+                      <div key={upload.key} className="flex items-center justify-between p-2 border border-amber-200 bg-white rounded">
+                        <div>
+                          <p className="text-sm font-medium">{upload.type.replace('-', ' ')} data</p>
+                          <p className="text-xs text-gray-500">Saved on {upload.date}</p>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          disabled={loading}
+                          onClick={() => processPendingUpload(upload.key, upload.type)}
+                          className="text-xs"
+                        >
+                          Retry Upload
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
