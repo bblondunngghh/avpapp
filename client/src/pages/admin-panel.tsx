@@ -1912,6 +1912,20 @@ export default function AdminPanel() {
                         </TableCell>
                       </TableRow>
                     ))}
+                    
+                    {/* Total employees row */}
+                    <TableRow className="bg-muted/50">
+                      <TableCell colSpan={2} className="font-medium">
+                        Total Employees: {employees.length}
+                      </TableCell>
+                      <TableCell colSpan={1}>
+                        Active: {employees.filter(e => e.isActive).length}
+                      </TableCell>
+                      <TableCell colSpan={1}>
+                        Shift Leaders: {employees.filter(e => e.isShiftLeader).length}
+                      </TableCell>
+                      <TableCell colSpan={4}></TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               )}
