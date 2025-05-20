@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { format, parseISO } from "date-fns";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, CircleDollarSign, Calendar, Clock, Car, CreditCard, Receipt, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -26,6 +28,7 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [detailsOpen, setDetailsOpen] = useState(false);
   
   // Find location name
   const location = LOCATIONS.find(loc => loc.id === locationId)?.name || 'Unknown Location';
@@ -120,74 +123,210 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
   
   const { borderColor, textColor, bgColor } = getLocationColorScheme();
   
+  // Calculate additional metrics for the detailed view
+  const creditTransactions = Math.round(totalCreditSales / 15);
+  const cashCars = totalCars - creditTransactions;
+  const cashPerCar = locationId === 2 ? 15 : 15; // Same for all locations currently
+  const turnInPerCar = locationId === 2 ? 6 : 11; // Bob's = $6, Capital Grille = $11
+  const expectedCashCollected = cashCars * cashPerCar;
+  const expectedCompanyCashTurnIn = totalCars * turnInPerCar - totalCreditSales;
+  
   return (
-    <Card className={`report-card mb-4 animate-fade-in border-l-4 ${borderColor} ${bgColor}`}>
-      <CardContent className="p-0">
-        <div className="flex justify-between items-start">
-          <div className="p-4">
-            <h4 className={`${textColor}`}>{location}</h4>
-            <p className="text-sm text-gray-600">{formattedDate} - {shift} Shift</p>
-            <div className="mt-2 flex flex-wrap items-center gap-4">
-              <div className="text-sm">
-                <span>Cars: </span>
-                <span>{totalCars}</span>
+    <>
+      <Card className={`report-card mb-4 animate-fade-in border-l-4 ${borderColor} ${bgColor}`}>
+        <CardContent className="p-0">
+          <div className="flex justify-between items-start">
+            <div className="p-4">
+              <h4 
+                className={`${textColor} cursor-pointer hover:underline font-medium`} 
+                onClick={() => setDetailsOpen(true)}
+              >
+                {location}
+              </h4>
+              <p className="text-sm text-gray-600">{formattedDate} - {shift} Shift</p>
+              <div className="mt-2 flex flex-wrap items-center gap-4">
+                <div className="text-sm">
+                  <span>Cars: </span>
+                  <span>{totalCars}</span>
+                </div>
+                <div className="text-sm">
+                  <span>Cash: </span>
+                  <span>{formatCurrency(totalCashCollected)}</span>
+                </div>
+                <div className="text-sm">
+                  <span>Credit: </span>
+                  <span>{formatCurrency(totalCreditSales)}</span>
+                </div>
+                <div className="text-sm">
+                  <span>Total: </span>
+                  <span>{formatCurrency(totalTurnIn)}</span>
+                </div>
               </div>
-              <div className="text-sm">
-                <span>Cash: </span>
-                <span>{formatCurrency(totalCashCollected)}</span>
+            </div>
+            
+            <div className="flex gap-1 p-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleEdit}
+                className="h-8 w-8 text-gray-500 hover:text-secondary"
+              >
+                <Edit className="h-4 w-4" />
+                <span className="sr-only">Edit</span>
+              </Button>
+              
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-gray-500 hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">Delete</span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete the shift report for {location} on {formattedDate}.
+                      This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Detailed Report Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <span className={textColor}>{location}</span>
+              <Badge variant="outline" className={`${textColor} bg-${bgColor.split('-')[1]}`}>
+                {shift} Shift
+              </Badge>
+            </DialogTitle>
+            <DialogDescription>
+              Detailed shift report from {formattedDate}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+            {/* Basic Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Shift Information</h3>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Date:</span>
+                  <span className="text-sm">{formattedDate}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Shift:</span>
+                  <span className="text-sm">{shift}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Car className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Total Cars:</span>
+                  <span className="text-sm">{totalCars}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Credit Transactions:</span>
+                  <span className="text-sm">{creditTransactions}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Car className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Cash Cars:</span>
+                  <span className="text-sm">{cashCars}</span>
+                </div>
               </div>
-              <div className="text-sm">
-                <span>Credit: </span>
-                <span>{formatCurrency(totalCreditSales)}</span>
-              </div>
-              <div className="text-sm">
-                <span>Total: </span>
-                <span>{formatCurrency(totalTurnIn)}</span>
+            </div>
+            
+            {/* Financial Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Financial Summary</h3>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Credit Sales:</span>
+                  <span className="text-sm">{formatCurrency(totalCreditSales)}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Cash Collected:</span>
+                  <span className="text-sm">{formatCurrency(totalCashCollected)}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Company Cash Turn-In:</span>
+                  <span className="text-sm">{formatCurrency(companyCashTurnIn)}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Expected Company Turn-In:</span>
+                  <span className="text-sm">{formatCurrency(expectedCompanyCashTurnIn)}</span>
+                </div>
+                
+                <div className="flex items-center gap-2 pt-2 border-t">
+                  <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Total Turn-In:</span>
+                  <span className="text-sm font-semibold">{formatCurrency(totalTurnIn)}</span>
+                </div>
               </div>
             </div>
           </div>
           
-          <div className="flex gap-1 p-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleEdit}
-              className="h-8 w-8 text-gray-500 hover:text-secondary"
-            >
-              <Edit className="h-4 w-4" />
-              <span className="sr-only">Edit</span>
-            </Button>
+          {/* Other Details */}
+          <div className="space-y-2 pt-2 border-t">
+            <div className="flex items-start gap-2">
+              <User className="h-4 w-4 text-muted-foreground mt-0.5" />
+              <div>
+                <span className="text-sm font-medium">Added on:</span>
+                <span className="text-sm ml-1">{formattedCreatedAt}</span>
+              </div>
+            </div>
             
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-gray-500 hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Delete</span>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete the shift report for {location} on {formattedDate}.
-                    This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <div className="flex items-start gap-2">
+              <Receipt className="h-4 w-4 text-muted-foreground mt-0.5" />
+              <div>
+                <span className="text-sm font-medium">Report ID:</span>
+                <span className="text-sm ml-1">#{id}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+          
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDetailsOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={handleEdit}>
+              Edit Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
