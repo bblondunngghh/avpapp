@@ -82,8 +82,22 @@ export default function EmployeeDashboard() {
         ? report.employees 
         : [];
     
-    // Check if employee worked on this shift
-    return employees.some((emp: any) => emp.name === employeeKey);
+    // Check if employee worked on this shift - support both keys and fullName matching
+    return employees.some((emp: any) => {
+      // Compare with the employee key (both old "antonio" format and new numeric format like "8366")
+      if (emp.name === employeeKey) return true;
+      
+      // Also check if the full name matches (case insensitive) for backward compatibility
+      if (employeeName && emp.name && typeof emp.name === 'string') {
+        const empNameLower = emp.name.toLowerCase();
+        const employeeNameLower = employeeName.toLowerCase();
+        // Check for partial matches (first name or last name)
+        const employeeNameParts = employeeNameLower.split(' ');
+        if (employeeNameParts.some(part => empNameLower.includes(part))) return true;
+      }
+      
+      return false;
+    });
   });
 
   // Calculate employee payroll summary
@@ -109,7 +123,19 @@ export default function EmployeeDashboard() {
       ? JSON.parse(report.employees) 
       : report.employees;
     
-    const employeeData = employees.find((emp: any) => emp.name === employeeKey);
+    // Find employee data using the same matching logic as above
+    const employeeData = employees.find((emp: any) => {
+      if (emp.name === employeeKey) return true;
+      
+      if (employeeName && emp.name && typeof emp.name === 'string') {
+        const empNameLower = emp.name.toLowerCase();
+        const employeeNameLower = employeeName.toLowerCase();
+        const employeeNameParts = employeeNameLower.split(' ');
+        if (employeeNameParts.some(part => empNameLower.includes(part))) return true;
+      }
+      
+      return false;
+    });
     
     if (employeeData) {
       const totalJobHours = employees.reduce((sum: number, emp: any) => sum + Number(emp.hours || 0), 0);
