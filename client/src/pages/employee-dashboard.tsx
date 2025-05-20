@@ -126,7 +126,7 @@ export default function EmployeeDashboard() {
       summary.totalEarnings += empEarnings;
       summary.totalMoneyOwed += moneyOwed;
       summary.totalTax += tax;
-      summary.shifts += 1;
+      summary.count += 1;
       
       // Add to shift details
       summary.shifts.push({
