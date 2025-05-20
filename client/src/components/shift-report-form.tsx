@@ -1135,11 +1135,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                             );
                           })}
                           
-                          {/* Total Tax Coverage Summary */}
-                          {form.watch('employees')?.length > 0 && (
-                            <div className="mt-4 border-t-2 border-gray-200 pt-3">
-                              <div className="flex justify-between items-center">
-                                <h4 className="text-sm text-gray-800 uppercase">Tax Coverage Summary</h4>
+
                                 
                                 {(() => {
                                   const formEmployees = form.watch('employees') || [];
