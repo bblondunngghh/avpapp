@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { getQueryFn } from "@/lib/queryClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Tabs, 
   TabsContent, 
@@ -99,6 +100,7 @@ interface TicketDistribution {
 export default function AdminPanel() {
   const [, navigate] = useLocation();
   const [isAddingEmployees, setIsAddingEmployees] = useState(false);
+  const { toast } = useToast();
   const [employeeStats, setEmployeeStats] = useState<{
     name: string;
     totalHours: number;
