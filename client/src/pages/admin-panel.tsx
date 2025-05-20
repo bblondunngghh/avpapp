@@ -1760,7 +1760,7 @@ export default function AdminPanel() {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="px-2 h-8"
+                              className="px-2 h-7 text-xs"
                               onClick={() => {
                                 // Set current employee data to form
                                 setNewEmployee({
@@ -1785,7 +1785,7 @@ export default function AdminPanel() {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="px-2 h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                              className="px-2 h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50"
                               onClick={async () => {
                                 if (confirm(`Are you sure you want to delete ${employee.fullName}?`)) {
                                   try {
