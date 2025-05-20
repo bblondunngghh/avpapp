@@ -23,10 +23,10 @@ import RestaurantIcon from "@/components/restaurant-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Import restaurant images
-import capitalGrilleImg from "@assets/capital-grille.jpg";
-import bobsImg from "@assets/bobs.jpg";
-import trulucksImg from "@assets/trulucks.jpg";
-import boaImg from "@assets/boa.jpg";
+import capitalGrilleImg from "../assets/capital-grille.jpg";
+import bobsImg from "../assets/bobs.jpg";
+import trulucksImg from "../assets/trulucks.jpg";
+import boaImg from "../assets/boa.jpg";
 
 // Create form schema
 const formSchema = z.object({
@@ -411,7 +411,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               <div className="restaurant-image relative">
                 <RestaurantIcon locationId={2} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
-                  src="/src/assets/bobs.jpg" 
+                  src={bobsImg} 
                   alt="Bob's Steak and Chop House" 
                 />
               </div>
