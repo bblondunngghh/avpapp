@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { LOCATIONS } from "@/lib/constants";
+import { LOCATIONS, EMPLOYEE_NAMES } from "@/lib/constants";
 
 // Define the Employee interface to include the cashPaid property
 interface Employee {
@@ -389,19 +389,63 @@ export default function ReportCard({
                     <tr className="border-b">
                       <th className="text-left py-2 px-2">Name</th>
                       <th className="text-right py-2 px-2">Hours</th>
-                      <th className="text-right py-2 px-2">Cash Paid</th>
+                      <th className="text-right py-2 px-2">Commission</th>
+                      <th className="text-right py-2 px-2">Tips</th>
+                      <th className="text-right py-2 px-2">Total Earned</th>
+                      <th className="text-right py-2 px-2">Tax Due</th>
+                      <th className="text-right py-2 px-2">Tax Paid</th>
+                      <th className="text-right py-2 px-2">Balance</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {parsedEmployees.map((employee, index) => (
-                      <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
-                        <td className="py-2 px-2">{employee.name}</td>
-                        <td className="text-right py-2 px-2">{employee.hours}</td>
-                        <td className="text-right py-2 px-2">
-                          {employee.cashPaid ? formatCurrency(employee.cashPaid) : '-'}
-                        </td>
-                      </tr>
-                    ))}
+                    {parsedEmployees.map((employee, index) => {
+                      // Get employee full name from employee key
+                      const employeeNameMap: Record<string, string> = {
+                        "antonio": "Antonio Martinez",
+                        "arturo": "Arturo Sanchez",
+                        "brandon": "Brandon Blond",
+                        "brett": "Brett Willson",
+                        "dave": "Dave Roehm",
+                        "devin": "Devin Bean",
+                        "dylan": "Dylan McMullen",
+                        "eddie": "Eddie Coleman",
+                        "jorge": "Jorge Garcia",
+                        "josh": "Josh Millan",
+                        "juan": "Juan Carlos Moreno",
+                        "justin": "Justin Hayworth",
+                        "luke": "Luke Wilheim",
+                        "luis": "Luis Banda",
+                        "mitch": "Mitch Wilker",
+                        "ray": "Ray Donovan",
+                        "ruben": "Ruben Gutierrez",
+                        "tim": "Tim Garza"
+                      };
+                      
+                      const fullName = employeeNameMap[employee.name] || employee.name;
+                      
+                      // Calculate financial details for the employee
+                      const commission = employee.hours * 4; // $4 per hour commission
+                      const tips = employee.hours * 5; // $5 per hour in tips
+                      const totalEarned = commission + tips;
+                      const taxDue = Math.ceil(totalEarned * 0.22); // 22% tax rate, rounded up to next dollar
+                      const taxPaid = employee.cashPaid || 0;
+                      const balance = taxPaid - taxDue; // Negative means tax owed, positive means overpaid
+                      
+                      return (
+                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
+                          <td className="py-2 px-2">{fullName}</td>
+                          <td className="text-right py-2 px-2">{employee.hours}</td>
+                          <td className="text-right py-2 px-2">{formatCurrency(commission)}</td>
+                          <td className="text-right py-2 px-2">{formatCurrency(tips)}</td>
+                          <td className="text-right py-2 px-2">{formatCurrency(totalEarned)}</td>
+                          <td className="text-right py-2 px-2">{formatCurrency(taxDue)}</td>
+                          <td className="text-right py-2 px-2">{formatCurrency(taxPaid)}</td>
+                          <td className={`text-right py-2 px-2 font-medium ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {balance >= 0 ? '+' : ''}{formatCurrency(balance)}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
