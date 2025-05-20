@@ -156,9 +156,31 @@ export default function ReportCard({
   
   // Calculate additional metrics for the detailed view
   const displayCreditTransactions = reportCreditTransactions || Math.round(totalCreditSales / 15);
-  const cashCars = totalCars - displayCreditTransactions;
-  const cashPerCar = locationId === 2 ? 15 : 15; // Same for all locations currently
-  const turnInPerCar = locationId === 2 ? 6 : 11; // Bob's = $6, Capital Grille = $11
+  const totalReceiptCars = totalReceipts || 0;
+  const cashCars = totalCars - displayCreditTransactions - totalReceiptCars;
+  
+  // Set per-car rates based on location
+  let cashPerCar = 15; // Default
+  let turnInPerCar = 11; // Default for Capital Grille
+  
+  switch(locationId) {
+    case 1: // Capital Grille
+      cashPerCar = 15;
+      turnInPerCar = 11;
+      break;
+    case 2: // Bob's
+      cashPerCar = 15;
+      turnInPerCar = 6;
+      break;
+    case 3: // Truluck's
+      cashPerCar = 15;
+      turnInPerCar = 8;
+      break;
+    case 4: // BOA
+      cashPerCar = 13;
+      turnInPerCar = 7;
+      break;
+  }
   const expectedCashCollected = cashCars * cashPerCar;
   const expectedCompanyCashTurnIn = totalCars * turnInPerCar - totalCreditSales;
   
