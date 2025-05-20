@@ -76,11 +76,23 @@ export default function EmployeeDashboard() {
     }
     
     // Filter reports where this employee worked
-    const employees = typeof report.employees === 'string' 
-      ? JSON.parse(report.employees) 
-      : Array.isArray(report.employees) 
-        ? report.employees 
-        : [];
+    let employees = [];
+    try {
+      if (typeof report.employees === 'string') {
+        employees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        employees = report.employees;
+      }
+    } catch (err) {
+      console.error("Failed to parse employee data:", err);
+    }
+    
+    // Safety check to ensure employees is an array before using .some()
+    if (!Array.isArray(employees)) {
+      console.warn("employees is not an array, converting to empty array:", employees);
+      employees = [];
+      return false; // No match if not an array
+    }
     
     // Check if employee worked on this shift - support both keys and fullName matching
     return employees.some((emp: any) => {
@@ -119,12 +131,28 @@ export default function EmployeeDashboard() {
     const totalTips = creditCardTips + cashTips + receiptTips;
     
     // Get employee data from report
-    const employees = typeof report.employees === 'string' 
-      ? JSON.parse(report.employees) 
-      : report.employees;
+    // Parse employee data safely
+    let employeesList = [];
+    try {
+      if (typeof report.employees === 'string') {
+        employeesList = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        employeesList = report.employees;
+      }
+    } catch (err) {
+      console.error("Failed to parse employee data:", err);
+    }
+    
+    // Make sure employees is an array before searching
+    if (!Array.isArray(employeesList)) {
+      console.warn("employees is not an array for finding employee data, converting to empty array:", employeesList);
+      employeesList = [];
+    }
     
     // Find employee data using the same matching logic as above
-    const employeeData = employees.find((emp: any) => {
+    const employeeData = employeesList.find((emp: any) => {
+      if (!emp) return false;
+      
       if (emp.name === employeeKey) return true;
       
       if (employeeName && emp.name && typeof emp.name === 'string') {
@@ -138,7 +166,7 @@ export default function EmployeeDashboard() {
     });
     
     if (employeeData) {
-      const totalJobHours = employees.reduce((sum: number, emp: any) => sum + Number(emp.hours || 0), 0);
+      const totalJobHours = employeesList.reduce((sum: number, emp: any) => sum + Number(emp.hours || 0), 0);
       const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
       
       // Calculate employee's share
