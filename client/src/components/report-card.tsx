@@ -12,20 +12,49 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { LOCATIONS } from "@/lib/constants";
 
+interface Employee {
+  name: string;
+  hours: number;
+  cashPaid?: number;
+}
+
 interface ReportCardProps {
   id: number;
   locationId: number;
   date: string;
   shift: string;
+  shiftLeader?: string;
   totalCars: number;
   totalCreditSales: number;
   totalCashCollected: number;
   companyCashTurnIn: number;
   totalTurnIn: number;
+  creditTransactions?: number;
+  totalReceipts?: number;
+  totalReceiptSales?: number;
+  employees?: Employee[] | string;
+  totalJobHours?: number;
   createdAt: string;
 }
 
-export default function ReportCard({ id, locationId, date, shift, totalCars, totalCreditSales, totalCashCollected, companyCashTurnIn, totalTurnIn, createdAt }: ReportCardProps) {
+export default function ReportCard({ 
+  id, 
+  locationId, 
+  date, 
+  shift, 
+  shiftLeader,
+  totalCars, 
+  totalCreditSales, 
+  totalCashCollected, 
+  companyCashTurnIn, 
+  totalTurnIn, 
+  creditTransactions: reportCreditTransactions, 
+  totalReceipts,
+  totalReceiptSales,
+  employees,
+  totalJobHours,
+  createdAt 
+}: ReportCardProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -125,12 +154,17 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
   const { borderColor, textColor, bgColor } = getLocationColorScheme();
   
   // Calculate additional metrics for the detailed view
-  const creditTransactions = Math.round(totalCreditSales / 15);
-  const cashCars = totalCars - creditTransactions;
+  const calculatedCreditTransactions = reportCreditTransactions || Math.round(totalCreditSales / 15);
+  const cashCars = totalCars - calculatedCreditTransactions;
   const cashPerCar = locationId === 2 ? 15 : 15; // Same for all locations currently
   const turnInPerCar = locationId === 2 ? 6 : 11; // Bob's = $6, Capital Grille = $11
   const expectedCashCollected = cashCars * cashPerCar;
   const expectedCompanyCashTurnIn = totalCars * turnInPerCar - totalCreditSales;
+  
+  // Parse employees if it's a string
+  const employeeList = typeof employees === 'string' ? 
+    JSON.parse(employees as string) as Employee[] : 
+    (employees as Employee[] || []);
   
   return (
     <>
@@ -241,6 +275,14 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
                   <span className="text-sm">{shift}</span>
                 </div>
                 
+                {shiftLeader && (
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Shift Leader:</span>
+                    <span className="text-sm">{shiftLeader}</span>
+                  </div>
+                )}
+                
                 <div className="flex items-center gap-2">
                   <Car className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Total Cars:</span>
@@ -250,7 +292,7 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Credit Transactions:</span>
-                  <span className="text-sm">{creditTransactions}</span>
+                  <span className="text-sm">{calculatedCreditTransactions}</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -258,6 +300,22 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
                   <span className="text-sm font-medium">Cash Cars:</span>
                   <span className="text-sm">{cashCars}</span>
                 </div>
+                
+                {totalReceipts && totalReceipts > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Receipt className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Receipt Cars:</span>
+                    <span className="text-sm">{totalReceipts}</span>
+                  </div>
+                )}
+                
+                {totalJobHours && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Total Job Hours:</span>
+                    <span className="text-sm">{totalJobHours}</span>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -277,6 +335,14 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
                   <span className="text-sm font-medium">Cash Collected:</span>
                   <span className="text-sm">{formatCurrency(totalCashCollected)}</span>
                 </div>
+                
+                {totalReceiptSales && totalReceiptSales > 0 && (
+                  <div className="flex items-center gap-2">
+                    <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Receipt Sales:</span>
+                    <span className="text-sm">{formatCurrency(totalReceiptSales)}</span>
+                  </div>
+                )}
                 
                 <div className="flex items-center gap-2">
                   <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
@@ -298,6 +364,36 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
               </div>
             </div>
           </div>
+          
+          {/* Employee Information */}
+          {employeeList && employeeList.length > 0 && (
+            <div className="space-y-4 mt-2 pt-6 border-t">
+              <h3 className="text-lg font-medium">Employee Information</h3>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2 px-2">Name</th>
+                      <th className="text-right py-2 px-2">Hours</th>
+                      <th className="text-right py-2 px-2">Cash Paid</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {employeeList.map((employee, index) => (
+                      <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
+                        <td className="py-2 px-2">{employee.name}</td>
+                        <td className="text-right py-2 px-2">{employee.hours}</td>
+                        <td className="text-right py-2 px-2">
+                          {employee.cashPaid ? formatCurrency(employee.cashPaid) : '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
           
           {/* Other Details */}
           <div className="space-y-2 pt-2 border-t">
