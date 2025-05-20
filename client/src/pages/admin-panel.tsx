@@ -1226,19 +1226,19 @@ export default function AdminPanel() {
                           <div className="grid grid-cols-2 gap-2">
                             <div>
                               <p className="text-sm text-gray-500">Total Cars</p>
-                              <p className="text-xl font-semibold">{location.totalCars}</p>
+                              <p className="text-xl">{location.totalCars}</p>
                             </div>
                             <div>
                               <p className="text-sm text-gray-500">Total Income</p>
-                              <p className="text-xl font-semibold">${location.totalIncome.toFixed(2)}</p>
+                              <p className="text-xl">${location.totalIncome.toFixed(2)}</p>
                             </div>
                             <div>
                               <p className="text-sm text-gray-500">Reports</p>
-                              <p className="text-xl font-semibold">{location.reports}</p>
+                              <p className="text-xl">{location.reports}</p>
                             </div>
                             <div>
                               <p className="text-sm text-gray-500">Avg $ Per Car</p>
-                              <p className="text-xl font-semibold">
+                              <p className="text-xl">
                                 ${location.totalCars > 0 
                                   ? (location.totalIncome / location.totalCars).toFixed(2) 
                                   : '0.00'}

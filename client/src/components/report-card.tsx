@@ -86,24 +86,58 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
     deleteMutation.mutate();
   };
   
+  // Get the color scheme based on location ID
+  const getLocationColorScheme = () => {
+    let borderColor = "border-indigo-500";
+    let textColor = "text-indigo-700";
+    let bgColor = "bg-indigo-50/30";
+    
+    switch(locationId) {
+      case 1: // Capital Grille
+        borderColor = "border-blue-500";
+        textColor = "text-blue-700";
+        bgColor = "bg-blue-50/30";
+        break;
+      case 2: // Bob's Steak
+        borderColor = "border-green-500";
+        textColor = "text-green-700";
+        bgColor = "bg-green-50/30";
+        break;
+      case 3: // Truluck's
+        borderColor = "border-red-500";
+        textColor = "text-red-700";
+        bgColor = "bg-red-50/30";
+        break;
+      case 4: // BOA Steakhouse
+        borderColor = "border-purple-500";
+        textColor = "text-purple-700";
+        bgColor = "bg-purple-50/30";
+        break;
+    }
+    
+    return { borderColor, textColor, bgColor };
+  };
+  
+  const { borderColor, textColor, bgColor } = getLocationColorScheme();
+  
   return (
-    <Card className="report-card mb-4 animate-fade-in">
+    <Card className={`report-card mb-4 animate-fade-in border-l-4 ${borderColor} ${bgColor}`}>
       <CardContent className="p-0">
         <div className="flex justify-between items-start">
           <div className="p-4">
-            <h4 className="font-medium text-primary">{location}</h4>
+            <h4 className={`${textColor}`}>{location}</h4>
             <p className="text-sm text-gray-600">{formattedDate} - {shift} Shift</p>
             <div className="mt-2 flex flex-wrap items-center gap-4">
               <div className="text-sm">
-                <span className="font-medium">Cars: </span>
+                <span>Cars: </span>
                 <span>{totalCars}</span>
               </div>
               <div className="text-sm">
-                <span className="font-medium">Cash: </span>
+                <span>Cash: </span>
                 <span>{formatCurrency(totalCashCollected)}</span>
               </div>
               <div className="text-sm">
-                <span className="font-medium">Credit: </span>
+                <span>Credit: </span>
                 <span>{formatCurrency(totalCreditSales)}</span>
               </div>
               <div className="text-sm">
