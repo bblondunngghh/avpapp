@@ -10,6 +10,9 @@ import Reports from "@/pages/reports";
 import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
+import IncidentReport from "@/pages/incident-report";
+import IncidentSubmitted from "@/pages/incident-submitted";
+import Regulations from "@/pages/regulations";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 
@@ -35,6 +38,9 @@ function Router() {
           <Route path="/submission-complete/:reportId?">
             {(params: {reportId?: string}) => <SubmissionComplete />}
           </Route>
+          <Route path="/incident-report" component={IncidentReport} />
+          <Route path="/incident-submitted" component={IncidentSubmitted} />
+          <Route path="/regulations" component={Regulations} />
           <Route path="/admin-login" component={AdminLogin} />
           <Route path="/admin" component={AdminPanel} />
           <Route component={NotFound} />
