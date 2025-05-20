@@ -775,7 +775,7 @@ export default function AdminPanel() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-blue-800">Admin Panel</h1>
+        <h1 className="text-3xl text-indigo-700">Admin Panel</h1>
         <div className="flex gap-2">
           <Button 
             variant="outline" 
@@ -879,7 +879,7 @@ export default function AdminPanel() {
                         
                         return (
                           <TableRow key={report.id}>
-                            <TableCell className="font-medium">{report.id}</TableCell>
+                            <TableCell>{report.id}</TableCell>
                             <TableCell>{date.toLocaleDateString()}</TableCell>
                             <TableCell>{getLocationName(report.locationId)}</TableCell>
                             <TableCell>{report.shift}</TableCell>
@@ -1222,7 +1222,7 @@ export default function AdminPanel() {
                           key={location.id} 
                           className={`p-4 rounded-lg shadow border-2 ${colorScheme.border} ${colorScheme.background}`}
                         >
-                          <h3 className={`text-lg font-bold mb-2 ${colorScheme.header}`}>{location.name}</h3>
+                          <h3 className={`text-lg mb-2 ${colorScheme.header}`}>{location.name}</h3>
                           <div className="grid grid-cols-2 gap-2">
                             <div>
                               <p className="text-sm text-gray-500">Total Cars</p>
