@@ -959,30 +959,30 @@ export default function AdminPanel() {
       </div>
 
       <Tabs defaultValue="reports" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="reports" className="flex items-center">
+        <TabsList className="mb-6 flex flex-wrap overflow-x-auto no-scrollbar pb-1">
+          <TabsTrigger value="reports" className="flex-shrink-0 flex items-center">
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Reports
           </TabsTrigger>
-          <TabsTrigger value="statistics" className="flex items-center">
+          <TabsTrigger value="statistics" className="flex-shrink-0 flex items-center">
             <Activity className="h-4 w-4 mr-2" />
-            Statistics
+            Stats
           </TabsTrigger>
-          <TabsTrigger value="payroll" className="flex items-center">
+          <TabsTrigger value="payroll" className="flex-shrink-0 flex items-center">
             <Users className="h-4 w-4 mr-2" />
-            Employee Payroll
+            Payroll
           </TabsTrigger>
-          <TabsTrigger value="locations" className="flex items-center">
+          <TabsTrigger value="locations" className="flex-shrink-0 flex items-center">
             <MapPin className="h-4 w-4 mr-2" />
-            Location Performance
+            Locations
           </TabsTrigger>
-          <TabsTrigger value="tickets" className="flex items-center">
+          <TabsTrigger value="tickets" className="flex-shrink-0 flex items-center">
             <Ticket className="h-4 w-4 mr-2" />
-            Ticket Tracking
+            Tickets
           </TabsTrigger>
-          <TabsTrigger value="manage-employees" className="flex items-center">
+          <TabsTrigger value="manage-employees" className="flex-shrink-0 flex items-center">
             <Users className="h-4 w-4 mr-2" />
-            Manage Employees
+            Employees
           </TabsTrigger>
         </TabsList>
         
