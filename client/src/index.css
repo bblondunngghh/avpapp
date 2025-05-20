@@ -150,7 +150,9 @@ input[type="date"].paperform-input {
   -webkit-appearance: none;
   appearance: none;
   display: block;
-  text-align: left;
+  text-align: center; /* Center the date text */
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .paperform-input:focus {
