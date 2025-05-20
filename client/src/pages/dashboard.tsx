@@ -22,7 +22,7 @@ export default function Dashboard() {
             backgroundSize: "100px 100px" 
           }}>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-white uppercase mb-3 relative z-10 tracking-wide flex items-center justify-center">
+        <h1 className="text-3xl md:text-4xl text-white uppercase mb-3 relative z-10 tracking-wide flex items-center justify-center">
           Access Valet Parking
         </h1>
         <p className="text-blue-50 max-w-2xl mx-auto text-lg relative z-10">
