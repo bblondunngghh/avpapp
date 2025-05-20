@@ -33,7 +33,7 @@ export default function ReportSelection() {
                   <ClipboardCheck className="h-8 w-8 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-xl font-bold text-blue-800">Shift Report</h2>
+                  <h2 className="text-xl font-medium text-blue-500">Shift Report</h2>
                   <p className="text-gray-500">Track sales, tips, hours & more</p>
                 </div>
               </div>
@@ -64,16 +64,16 @@ export default function ReportSelection() {
           
           {/* Incident Report Card */}
           <div 
-            className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-l-4 border-amber-500 cursor-pointer" 
+            className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-l-4 border-blue-500 cursor-pointer" 
             onClick={() => navigate("/incident-report")}
           >
             <div className="p-6">
               <div className="flex items-center mb-4">
-                <div className="bg-amber-100 p-3 rounded-full">
-                  <AlertTriangle className="h-8 w-8 text-amber-600" />
+                <div className="bg-blue-100 p-3 rounded-full">
+                  <AlertTriangle className="h-8 w-8 text-blue-500" />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-xl font-bold text-amber-800">Incident Report</h2>
+                  <h2 className="text-xl font-medium text-blue-500">Incident Report</h2>
                   <p className="text-gray-500">Document issues & accidents</p>
                 </div>
               </div>
@@ -84,25 +84,25 @@ export default function ReportSelection() {
               
               <ul className="text-sm text-gray-600 space-y-2 mb-6 mt-4">
                 <li className="flex items-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></div>
                   <span>Vehicle damage or accidents</span>
                 </li>
                 <li className="flex items-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></div>
                   <span>Customer complaints</span>
                 </li>
                 <li className="flex items-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></div>
                   <span>Safety concerns or issues</span>
                 </li>
                 <li className="flex items-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></div>
                   <span>Equipment issues</span>
                 </li>
               </ul>
               
               <Button 
-                className="w-full mt-2 bg-gradient-to-r from-amber-50 to-amber-100 hover:from-amber-100 hover:to-amber-200 text-amber-800 border-0 shadow-sm hover:shadow"
+                className="w-full mt-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-500 border-0 shadow-sm hover:shadow"
               >
                 Create Incident Report
               </Button>
