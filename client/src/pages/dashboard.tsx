@@ -37,7 +37,7 @@ export default function Dashboard() {
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
               <FileText className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-blue-600">Submit Shift Report</h3>
+            <h3 className="text-xl mb-3 text-blue-600">Submit Shift Report</h3>
             <p className="text-gray-600 mb-6 flex-grow">
               Create a new shift report with hourly distributions, financial summaries, and employee payroll information.
             </p>
@@ -56,7 +56,7 @@ export default function Dashboard() {
             <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
               <AlertTriangle className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-amber-600">Incident Report</h3>
+            <h3 className="text-xl mb-3 text-amber-600">Incident Report</h3>
             <p className="text-gray-600 mb-6 flex-grow">
               Report any accidents, incidents, or situations that require documentation and follow-up actions.
             </p>
@@ -75,7 +75,7 @@ export default function Dashboard() {
             <div className="bg-gradient-to-br from-teal-500 to-teal-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
               <BookOpen className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-teal-600">Rules & Regulations</h3>
+            <h3 className="text-xl mb-3 text-teal-600">Rules & Regulations</h3>
             <p className="text-gray-600 mb-6 flex-grow">
               View Right of Way Valet Parking rules and regulations for proper procedures and standards.
             </p>
