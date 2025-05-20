@@ -5,9 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global heading styles with Fjalla One font (non-bold) */
+/* Global heading styles and buttons with Fjalla One font (non-bold) */
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3, h4, h5, h6, button, .button, [role="button"] {
     font-family: 'Fjalla One', sans-serif;
     font-weight: 400; /* Normal weight, not bold */
   }
@@ -190,9 +190,11 @@
 
 /* Submit button */
 .submit-button {
-  @apply bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
+  @apply bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
   position: relative;
   overflow: hidden;
+  font-family: 'Fjalla One', sans-serif;
+  font-weight: 400;
 }
 
 .submit-button::after {
