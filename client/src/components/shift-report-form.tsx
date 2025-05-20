@@ -338,23 +338,32 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // Calculate cash cars (total cars - credit card transactions - receipt transactions)
   const cashCars = totalCars - creditTransactions - totalReceipts;
   
-  // Commission calculations - Bob's uses $9, others use $4
-  const commissionRate = form.watch("locationId") === 2 ? 9 : 4;
+  // Commission calculations - different rates per location
+  let commissionRate = 4; // Default for Capital Grille
+  const currentLocationId = form.watch("locationId");
+  if (currentLocationId === 2) { // Bob's
+    commissionRate = 9;
+  } else if (currentLocationId === 3) { // Truluck's
+    commissionRate = 7;
+  } else if (currentLocationId === 4) { // BOA Steakhouse
+    commissionRate = 6;
+  }
   const creditCardCommission = creditTransactions * commissionRate; 
   const cashCommission = cashCars * commissionRate;
   const receiptCommission = totalReceipts * commissionRate;
   
   // Tips calculations based on specific formulas explained
-  // For credit card tips: credit transactions * $15 = theoretical revenue
+  // For credit card tips: credit transactions * $15/$13 = theoretical revenue
   // If theoretical revenue > actual sales, the difference is tips (excess)
   // If actual sales > theoretical revenue, the difference is also tips (shortfall)
-  const creditCardTransactionsTotal = creditTransactions * 15;
+  const perCarPrice = form.watch("locationId") === 4 ? 13 : 15; // BOA uses $13/car, others use $15/car
+  const creditCardTransactionsTotal = creditTransactions * perCarPrice;
   const creditCardTips = Math.abs(totalCreditSales - creditCardTransactionsTotal);
                       
-  // For cash tips: cash cars * $15 = theoretical cash revenue
+  // For cash tips: cash cars * $15/$13 = theoretical cash revenue
   // If theoretical cash > actual cash collected, the difference is tips (excess)
   // If actual cash > theoretical cash, the difference is also tips (shortfall)
-  const cashCarsTotal = cashCars * 15;
+  const cashCarsTotal = cashCars * perCarPrice;
   const cashTips = Math.abs(totalCashCollected - cashCarsTotal);
   const receiptTips = totalReceipts * 3; // $3 tip per receipt
   
@@ -797,9 +806,19 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 mt-2">
-                    <div>• Cash: $15 per cash car - cash collected</div>
-                    <div>• Credit: $15 per transaction - credit sales</div>
-                    <div>• Receipt: $3 per receipt</div>
+                    {form.watch("locationId") === 4 ? (
+                      <>
+                        <div>• Cash: $13 per cash car - cash collected (BOA rate)</div>
+                        <div>• Credit: $13 per transaction - credit sales</div>
+                        <div>• Receipt: $3 per receipt</div>
+                      </>
+                    ) : (
+                      <>
+                        <div>• Cash: $15 per cash car - cash collected</div>
+                        <div>• Credit: $15 per transaction - credit sales</div>
+                        <div>• Receipt: $3 per receipt</div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
