@@ -1,13 +1,13 @@
-import { FaUtensils, FaWineGlassAlt, FaFish } from "react-icons/fa";
-import { GiMeat, GiSteak } from "react-icons/gi";
+import { FaUtensils, FaWineGlassAlt, FaFish, FaDrumstickBite } from "react-icons/fa";
 
-interface LocationIconProps {
+interface RestaurantIconProps {
   locationId: number;
   size?: number;
   className?: string;
 }
 
-export function getLocationIconDetails(locationId: number) {
+export default function RestaurantIcon({ locationId, size = 16, className = "" }: RestaurantIconProps) {
+  // Choose icon and colors based on location ID
   let Icon = FaUtensils;
   let bgColorClass = "bg-blue-100";
   let textColorClass = "text-blue-600";
@@ -17,7 +17,7 @@ export function getLocationIconDetails(locationId: number) {
     bgColorClass = "bg-blue-100";
     textColorClass = "text-blue-600";
   } else if (locationId === 2) { // Bob's
-    Icon = GiMeat;
+    Icon = FaDrumstickBite;
     bgColorClass = "bg-red-100";
     textColorClass = "text-red-600";
   } else if (locationId === 3) { // Truluck's
@@ -25,20 +25,14 @@ export function getLocationIconDetails(locationId: number) {
     bgColorClass = "bg-teal-100";
     textColorClass = "text-teal-600";
   } else if (locationId === 4) { // BOA
-    Icon = GiSteak;
+    Icon = FaDrumstickBite; // Different icon appearance but same type
     bgColorClass = "bg-violet-100";
     textColorClass = "text-violet-600";
   }
   
-  return { Icon, bgColorClass, textColorClass };
-}
-
-export default function LocationIcon({ locationId, size = 16, className = "" }: LocationIconProps) {
-  const { Icon, bgColorClass, textColorClass } = getLocationIconDetails(locationId);
-  
   return (
     <span className={`inline-flex items-center justify-center rounded-full ${bgColorClass} p-1 ${className}`}>
-      <Icon className={`${textColorClass}`} style={{ width: size, height: size }} />
+      <Icon style={{ width: size, height: size }} className={textColorClass} />
     </span>
   );
 }

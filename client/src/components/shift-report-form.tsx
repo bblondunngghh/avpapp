@@ -19,7 +19,7 @@ import { ChevronLeft, Plus } from "lucide-react";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATIONS, LOCATION_ID_MAP } from "@/lib/constants";
-import LocationIcon from "@/components/location-icon";
+import RestaurantIcon from "@/components/restaurant-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Create form schema
@@ -388,7 +388,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           {form.watch('locationId') === 1 ? (
             <div className="form-header-content">
               <div className="restaurant-image relative">
-                <LocationIcon locationId={1} size={28} className="absolute -top-2 -right-2 z-10" />
+                <RestaurantIcon locationId={1} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src="/src/assets/capital-grille.jpg" 
                   alt="The Capital Grille" 

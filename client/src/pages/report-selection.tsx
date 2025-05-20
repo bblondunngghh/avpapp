@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, AlertTriangle, ChevronLeft } from "lucide-react";
 import { LOCATIONS } from "@/lib/constants";
-import LocationIcon, { getLocationIconDetails } from "@/components/location-icon";
+import RestaurantIcon from "@/components/restaurant-icon";
 
 export default function ReportSelection() {
   const [, navigate] = useLocation();
@@ -45,22 +45,18 @@ export default function ReportSelection() {
               <div className="mt-6 mb-4">
                 <p className="font-medium text-gray-700 mb-3">Select a location:</p>
                 <div className="grid grid-cols-1 gap-3">
-                  {LOCATIONS.map(location => {
-                    const { bgColorClass, textColorClass } = getLocationIconDetails(location.id);
-                    
-                    return (
-                      <Button 
-                        key={location.id}
-                        onClick={() => navigate(`/new-report?locationId=${location.id}`)}
-                        className="relative h-auto py-3 pl-10 w-full bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-800 border-0 shadow-sm hover:shadow group text-left"
-                      >
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                          <LocationIcon locationId={location.id} size={16} />
-                        </span>
-                        <span className="font-medium">{location.name}</span>
-                      </Button>
-                    );
-                  })}
+                  {LOCATIONS.map(location => (
+                    <Button 
+                      key={location.id}
+                      onClick={() => navigate(`/new-report?locationId=${location.id}`)}
+                      className="relative h-auto py-3 pl-10 w-full bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-800 border-0 shadow-sm hover:shadow group text-left"
+                    >
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <RestaurantIcon locationId={location.id} size={16} />
+                      </span>
+                      <span className="font-medium">{location.name}</span>
+                    </Button>
+                  ))}
                 </div>
               </div>
             </div>
