@@ -342,8 +342,8 @@
 
 /* App Header styles */
 .app-header {
-  @apply bg-gradient-to-r from-sky-600 to-sky-700 text-white shadow-lg sticky top-0 z-10 backdrop-blur-md;
-  background-color: rgba(2, 132, 254, 0.95);
+  @apply bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg sticky top-0 z-10 backdrop-blur-md;
+  background-color: rgba(37, 99, 235, 0.95);
 }
 
 .app-header-content {
