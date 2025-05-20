@@ -409,6 +409,7 @@ export default function ReportCard({
                         "devin": "Devin Bean",
                         "dylan": "Dylan McMullen",
                         "eddie": "Eddie Coleman",
+                        "joe": "Joe Albright",
                         "jorge": "Jorge Garcia",
                         "josh": "Josh Millan",
                         "juan": "Juan Carlos Moreno",
