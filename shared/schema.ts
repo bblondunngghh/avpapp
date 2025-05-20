@@ -129,7 +129,8 @@ export const shiftReports = pgTable("shift_reports", {
 const employeeSchema = z.array(
   z.object({
     name: z.string(),
-    hours: z.number()
+    hours: z.number(),
+    cashPaid: z.number().optional()
   })
 );
 

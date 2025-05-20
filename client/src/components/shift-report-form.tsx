@@ -81,11 +81,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   // Set the locationId from URL parameters or default to first location
   const initialLocationId = locationIdParam ? parseInt(locationIdParam) : 1;
-  const [locationId, setLocationId] = useState(initialLocationId);
+  const [selectedLocationId, setSelectedLocationId] = useState(initialLocationId);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Find location name
-  const locationName = LOCATIONS.find(loc => loc.id === locationId)?.name || '';
+  const locationName = LOCATIONS.find(loc => loc.id === selectedLocationId)?.name || '';
   
   // Setup form with zod validation
   const form = useForm<FormValues>({
@@ -321,12 +321,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   // Use different rates based on location 
   let turnInRate = 11; // Default for Capital Grille
-  const locationId = Number(form.watch("locationId"));
-  if (locationId === 2) { // Bob's
+  const currentLocation = Number(form.watch("locationId"));
+  if (currentLocation === 2) { // Bob's
     turnInRate = 6;
-  } else if (locationId === 3) { // Truluck's
+  } else if (currentLocation === 3) { // Truluck's
     turnInRate = 8;
-  } else if (locationId === 4) { // BOA
+  } else if (currentLocation === 4) { // BOA
     turnInRate = 7;
   }
   const totalTurnIn = totalCars * turnInRate;
