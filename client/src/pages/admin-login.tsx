@@ -39,19 +39,21 @@ export default function AdminLogin() {
     
     // Simple password check
     if (data.password === ADMIN_PASSWORD) {
-      // Set admin session in localStorage
-      localStorage.setItem("admin_authenticated", "true");
-      localStorage.setItem("admin_auth_time", Date.now().toString());
-      
-      // Show success toast
-      toast({
-        title: "Authentication successful",
-        description: "Welcome to the admin panel",
-        variant: "default",
+      // Import admin auth utility
+      import("@/lib/admin-auth").then(({ loginAdmin }) => {
+        // Set admin session
+        loginAdmin();
+        
+        // Show success toast
+        toast({
+          title: "Authentication successful",
+          description: "Welcome to the admin panel (session expires after 2 minutes of inactivity)",
+          variant: "default",
+        });
+        
+        // Redirect to admin dashboard
+        navigate("/admin");
       });
-      
-      // Redirect to admin dashboard
-      navigate("/admin");
     } else {
       // Show error toast
       toast({

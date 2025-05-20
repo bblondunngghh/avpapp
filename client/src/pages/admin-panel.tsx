@@ -129,6 +129,41 @@ export default function AdminPanel() {
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   
+  // Set up activity tracking to refresh admin session on user interaction
+  useEffect(() => {
+    // Import admin auth utility
+    let refreshAdminSession: () => void;
+    
+    const setupActivityTracking = async () => {
+      const adminAuth = await import("@/lib/admin-auth");
+      refreshAdminSession = adminAuth.refreshAdminSession;
+      
+      // Add event listeners for user activity
+      const activityEvents = ["mousedown", "keydown", "touchstart", "scroll"];
+      
+      const handleUserActivity = () => {
+        refreshAdminSession();
+      };
+      
+      // Add event listeners
+      activityEvents.forEach(event => {
+        window.addEventListener(event, handleUserActivity);
+      });
+      
+      // Return cleanup function
+      return () => {
+        activityEvents.forEach(event => {
+          window.removeEventListener(event, handleUserActivity);
+        });
+      };
+    };
+    
+    const cleanup = setupActivityTracking();
+    return () => {
+      cleanup.then(cleanupFn => cleanupFn && cleanupFn());
+    };
+  }, []);
+  
   // Statistics state
   const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
   const [carDistributionByLocation, setCarDistributionByLocation] = useState<Array<{name: string; value: number; color: string}>>([]);
@@ -192,17 +227,27 @@ export default function AdminPanel() {
 
   // Check if admin is authenticated
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("admin_authenticated") === "true";
-    const authTime = Number(localStorage.getItem("admin_auth_time") || "0");
-    const currentTime = Date.now();
-    const fourHoursInMs = 4 * 60 * 60 * 1000;
+    // Import admin auth utility
+    import("@/lib/admin-auth").then(({ isAdminAuthenticated }) => {
+      // If not authenticated or session expired, redirect to login
+      if (!isAdminAuthenticated()) {
+        navigate("/admin-login");
+      }
+    });
     
-    // If not authenticated or session expired (4 hours), redirect to login
-    if (!isAuthenticated || (currentTime - authTime > fourHoursInMs)) {
-      localStorage.removeItem("admin_authenticated");
-      localStorage.removeItem("admin_auth_time");
-      navigate("/admin-login");
-    }
+    // Check authentication status every 15 seconds
+    const authCheckInterval = setInterval(() => {
+      import("@/lib/admin-auth").then(({ isAdminAuthenticated }) => {
+        if (!isAdminAuthenticated()) {
+          navigate("/admin-login");
+          clearInterval(authCheckInterval);
+        }
+      });
+    }, 15000); // Check every 15 seconds
+    
+    return () => {
+      clearInterval(authCheckInterval);
+    };
   }, [navigate]);
 
   // Fetch all shift reports
