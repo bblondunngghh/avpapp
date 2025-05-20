@@ -16,7 +16,7 @@ export default function Dashboard() {
   return (
     <div className="max-w-4xl mx-auto px-4">
       <div className="text-center mb-10">
-        <h1 className="text-3xl text-blue-500 uppercase mb-2">Access Valet Parking</h1>
+        <h1 className="text-3xl text-gray-900 uppercase mb-2">Access Valet Parking</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Welcome to the Right of Way Valet Management Portal. Please select from the following options.
         </p>
