@@ -81,7 +81,12 @@ export default function CSVUploader() {
         { csvData: fileContent }
       );
       
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        throw new Error("Server returned an invalid response. There might be a database connection issue.");
+      }
       
       if (response.ok) {
         setSuccess(`Successfully processed ${data.results.success.length} records`);
