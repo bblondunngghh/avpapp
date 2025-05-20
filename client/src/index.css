@@ -232,7 +232,7 @@
   --accent-foreground: 210 40% 98%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
-  --ring: 243 75% 59%;
+  --ring: 210 100% 50%;
   --radius: 0.75rem; /* Slightly more rounded */
   
   /* Chart colors */
@@ -268,11 +268,11 @@
   --primary-foreground: 213 31% 91%;
   --secondary: 174 84% 32%; /* Teal accent */
   --secondary-foreground: 213 31% 91%;
-  --accent: 262 83% 58%; /* Purple accent */
+  --accent: 200 98% 61%; /* Sky blue accent */
   --accent-foreground: 213 31% 91%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 213 31% 91%;
-  --ring: 243 75% 59%;
+  --ring: 210 100% 50%;
   
   /* Chart colors - Slightly adjusted for dark mode */
   --chart-1: 243 75% 69%; /* Brighter Indigo */
