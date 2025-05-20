@@ -48,7 +48,7 @@ export default function Reports() {
         <h2 className="text-2xl font-normal text-primary">All Reports</h2>
         <Button
           onClick={handleNewReport}
-          className="bg-secondary hover:bg-secondary-light"
+          className="bg-gradient-to-r from-blue-500 to-teal-400 hover:from-blue-600 hover:to-teal-500 text-white"
         >
           <Plus className="mr-1 h-4 w-4" /> New Report
         </Button>
@@ -182,7 +182,10 @@ export default function Reports() {
                 ? "No reports match your filter criteria"
                 : "No reports found"}
             </p>
-            <Button onClick={handleNewReport} variant="secondary">
+            <Button 
+              onClick={handleNewReport} 
+              className="bg-gradient-to-r from-blue-500 to-teal-400 hover:from-blue-600 hover:to-teal-500 text-white"
+            >
               Create a New Report
             </Button>
           </CardContent>
