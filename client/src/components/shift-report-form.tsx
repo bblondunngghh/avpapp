@@ -20,6 +20,7 @@ import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATIONS, LOCATION_ID_MAP } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
+import { employeeSchema, type Employee } from "@/schema/form";
 
 // Create form schema
 const formSchema = z.object({
@@ -49,10 +50,7 @@ const formSchema = z.object({
   moneyOwed: z.coerce.number().default(0),
   // Payroll fields
   totalJobHours: z.coerce.number().min(0, "Cannot be negative").default(0),
-  employees: z.array(z.object({
-    name: z.string().nonempty("Employee name is required"),
-    hours: z.coerce.number().min(0, "Cannot be negative"),
-  })).default([]),
+  employees: z.array(employeeSchema).default([]),
   notes: z.string().optional(),
   confirmationCheck: z.boolean().refine(val => val === true, {
     message: "You must confirm that the information is correct",
