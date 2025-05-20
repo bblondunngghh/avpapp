@@ -132,6 +132,27 @@ export default function CSVUploader() {
     return templateLinks[type as keyof typeof templateLinks] || '#';
   };
   
+  const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+  
+  // Check database connection status
+  const checkDatabaseConnection = async () => {
+    setConnectionStatus('checking');
+    try {
+      // Simple API call to check if the database connection is available
+      const response = await fetch('/api/health-check');
+      if (response.ok) {
+        setConnectionStatus('connected');
+        return true;
+      } else {
+        setConnectionStatus('disconnected');
+        return false;
+      }
+    } catch (error) {
+      setConnectionStatus('disconnected');
+      return false;
+    }
+  };
+  
   // Check for pending uploads when component mounts
   useEffect(() => {
     // Get all localStorage keys that start with "pendingCSV_"
@@ -156,8 +177,19 @@ export default function CSVUploader() {
         description: `${pendingKeys.length} CSV upload(s) are waiting to be processed.`,
         variant: "default",
       });
+      
+      // Check connection status if there are pending uploads
+      checkDatabaseConnection();
     }
   }, [toast]);
+  
+  // Check connection status periodically if there are pending uploads
+  useEffect(() => {
+    if (pendingUploads.length > 0) {
+      const interval = setInterval(checkDatabaseConnection, 30000); // Check every 30 seconds
+      return () => clearInterval(interval);
+    }
+  }, [pendingUploads.length]);
   
   // Function to process a pending CSV upload
   const processPendingUpload = async (pendingKey: string, uploadType: string) => {
