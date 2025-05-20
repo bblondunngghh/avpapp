@@ -10,6 +10,7 @@ import Reports from "@/pages/reports";
 import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
+import CSVUploadPage from "@/pages/csv-upload-page";
 import IncidentReport from "@/pages/incident-report";
 import IncidentSubmitted from "@/pages/incident-submitted";
 import Regulations from "@/pages/regulations";
@@ -48,6 +49,7 @@ function Router() {
           <Route path="/regulations" component={Regulations} />
           <Route path="/admin-login" component={AdminLogin} />
           <Route path="/admin" component={AdminPanel} />
+          <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
           <Route component={NotFound} />

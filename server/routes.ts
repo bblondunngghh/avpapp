@@ -13,6 +13,12 @@ import {
   Employee
 } from "@shared/schema";
 import { z } from "zod";
+import { 
+  processEmployeeCSV, 
+  processEmployeePayrollCSV, 
+  processShiftReportsCSV, 
+  processTicketDistributionsCSV 
+} from "./csv-upload";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create API routes
@@ -432,6 +438,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to delete employee' });
     }
   });
+
+  // CSV Upload Routes
+  apiRouter.post('/upload/employees', processEmployeeCSV);
+  apiRouter.post('/upload/employee-payroll', processEmployeePayrollCSV);
+  apiRouter.post('/upload/shift-reports', processShiftReportsCSV);
+  apiRouter.post('/upload/ticket-distributions', processTicketDistributionsCSV);
 
   // Register API routes
   app.use('/api', apiRouter);
