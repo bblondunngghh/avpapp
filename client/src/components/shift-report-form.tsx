@@ -549,11 +549,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         {form.watch("locationId") === 1 ? "Capital Grille Rate: $11.00 per car" :
                          form.watch("locationId") === 2 ? "Bob's Steak & Chop House Rate: $6.00 per car" : 
                          form.watch("locationId") === 3 ? "Truluck's Rate: $8.00 per car" : 
-                         "BOA Steakhouse Rate: $11.00 per car"}
+                         "BOA Steakhouse Rate: $7.00 per car"}
                       </span>
                       <span>Expected Turn-In: ${(totalCars * (
                         form.watch("locationId") === 2 ? 6 : 
-                        form.watch("locationId") === 3 ? 8 : 11
+                        form.watch("locationId") === 3 ? 8 : 
+                        form.watch("locationId") === 4 ? 7 : 11
                       )).toFixed(2)}</span>
                     </div>
                     <FormMessage />
@@ -758,6 +759,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         <div>• Cash: $7 per cash car (Truluck's rate)</div>
                         <div>• Credit: $7 per card transaction</div>
                         <div>• Receipt: $7 per receipt</div>
+                      </>
+                    ) : form.watch("locationId") === 4 ? (
+                      <>
+                        <div>• Cash: $6 per cash car (BOA Steakhouse rate)</div>
+                        <div>• Credit: $6 per card transaction</div>
+                        <div>• Receipt: $6 per receipt</div>
                       </>
                     ) : (
                       <>
@@ -1175,6 +1182,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   let commissionRate = 4; // Default for most locations
                                   if (locationId === 3) { // Truluck's
                                     commissionRate = 7;
+                                  } else if (locationId === 4) { // BOA Steakhouse
+                                    commissionRate = 6;
                                   }
                                   
                                   const creditCardCommission = creditTransactions * commissionRate;
@@ -1200,6 +1209,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     perCarRate = 6;
                                   } else if (locationId === 3) { // Truluck's
                                     perCarRate = 8;
+                                  } else if (locationId === 4) { // BOA Steakhouse
+                                    perCarRate = 7;
                                   }
                                   const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
                                   
