@@ -97,17 +97,7 @@ export default function Dashboard() {
               Employee Login
             </Button>
           </div>
-          <div className="hidden md:block h-12 w-px bg-gray-200"></div>
-          <div>
-            <p className="text-gray-500 mb-3">For administrative functions and management:</p>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/admin-login")}
-              className="border-sky-200 text-sky-700 hover:text-sky-800 hover:bg-sky-50"
-            >
-              Admin Portal
-            </Button>
-          </div>
+
         </div>
       </div>
       
