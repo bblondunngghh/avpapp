@@ -15,6 +15,7 @@ import IncidentSubmitted from "@/pages/incident-submitted";
 import Regulations from "@/pages/regulations";
 import EmployeeLogin from "@/pages/employee-login";
 import EmployeeDashboard from "@/pages/employee-dashboard";
+import ReportSelection from "@/pages/report-selection";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 
@@ -32,6 +33,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/reports" component={Reports} />
+          <Route path="/report-selection" component={ReportSelection} />
           <Route path="/new-report">
             {() => <ReportForm />}
           </Route>

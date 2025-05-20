@@ -6,7 +6,7 @@ export default function BottomNavigation() {
   const [, navigate] = useLocation();
   const [isHome] = useRoute("/");
   const [isReports] = useRoute("/reports");
-  const [isNewReport] = useRoute("/new-report");
+  const [isReportSelection] = useRoute("/report-selection");
   const [isAdmin, setIsAdmin] = useState(false);
   
   // Check if user is logged in as admin
@@ -56,8 +56,8 @@ export default function BottomNavigation() {
       )}
       
       <button 
-        className={`bottom-nav-item ${isNewReport ? 'active' : ''}`}
-        onClick={() => navigate('/new-report')}
+        className={`bottom-nav-item ${isReportSelection ? 'active' : ''}`}
+        onClick={() => navigate('/report-selection')}
       >
         <PlusCircle className="bottom-nav-icon" size={20} />
         <span className="bottom-nav-label">New Report</span>
