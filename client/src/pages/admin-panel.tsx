@@ -460,6 +460,12 @@ export default function AdminPanel() {
           employees = [];
         }
 
+        // Safety check to ensure employees is an array before using forEach
+        if (!Array.isArray(employees)) {
+          console.warn("employees is not an array, converting to empty array:", employees);
+          employees = [];
+        }
+
         // Process each employee
         employees.forEach(employee => {
           // Skip employees with no name
