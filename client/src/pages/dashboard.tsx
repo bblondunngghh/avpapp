@@ -26,7 +26,7 @@ export default function Dashboard() {
           Access Valet Parking
         </h1>
         <p className="text-blue-50 max-w-2xl mx-auto text-lg relative z-10">
-          Welcome to the Right of Way Valet Management Portal. Please select from the following options.
+          Welcome to the Access Valet Parking Management Portal. Please select from the following options.
         </p>
       </div>
       
@@ -77,7 +77,7 @@ export default function Dashboard() {
             </div>
             <h3 className="text-xl mb-3 text-teal-600">Rules & Regulations</h3>
             <p className="text-gray-600 mb-6 flex-grow">
-              View Right of Way Valet Parking rules and regulations for proper procedures and standards.
+              View Access Valet Parking rules and regulations for proper procedures and standards.
             </p>
             <Button 
               onClick={() => navigate("/regulations")}
