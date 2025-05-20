@@ -8,90 +8,104 @@ export default function ReportSelection() {
   const [, navigate] = useLocation();
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <Button 
-        variant="ghost" 
-        onClick={() => navigate("/")} 
-        className="mb-6 p-0 h-8 w-8"
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </Button>
-      
-      <h1 className="text-2xl md:text-3xl font-bold text-center text-blue-800 mb-8">
-        Select Report Type
-      </h1>
-      
-      <div className="grid gap-6">
-        <Card 
-          className="cursor-pointer hover:shadow-md transition-shadow border-blue-100 hover:border-blue-300"
-        >
-          <CardHeader className="flex flex-row items-center gap-4 pb-2">
-            <div className="bg-blue-100 p-2 rounded-full">
-              <ClipboardCheck className="h-8 w-8 text-blue-700" />
-            </div>
-            <div>
-              <CardTitle className="text-lg text-blue-800">Shift Report</CardTitle>
-              <CardDescription>Create a new shift report for a location</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">
-              Use this form to record shift details including:
-            </p>
-            <ul className="text-sm text-gray-600 list-disc pl-5 space-y-1 mb-4">
-              <li>Number of cars parked</li>
-              <li>Credit card and cash transactions</li>
-              <li>Employee hours and pay</li>
-              <li>Financial summaries</li>
-            </ul>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 mb-4">
-              {LOCATIONS.map(location => (
-                <Button 
-                  key={location.id}
-                  variant="outline" 
-                  onClick={() => navigate(`/new-report?locationId=${location.id}`)}
-                  className="h-auto py-2 text-blue-600 border-blue-200 hover:bg-blue-50/50"
-                >
-                  {location.name}
-                </Button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 text-center">
-              Select a location to create a shift report
-            </p>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="flex items-center mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/")} 
+            className="p-0 h-10 w-10 rounded-full bg-white shadow-sm hover:shadow-md"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-3xl md:text-4xl font-bold text-center flex-1 pr-10 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-teal-500">
+            Select Report Type
+          </h1>
+        </div>
         
-        <Card 
-          className="cursor-pointer hover:shadow-md transition-shadow border-amber-100 hover:border-amber-300"
-          onClick={() => navigate("/incident-report")}
-        >
-          <CardHeader className="flex flex-row items-center gap-4 pb-2">
-            <div className="bg-amber-100 p-2 rounded-full">
-              <AlertTriangle className="h-8 w-8 text-amber-700" />
+        <div className="grid md:grid-cols-2 gap-8 mt-10">
+          {/* Shift Report Card */}
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-l-4 border-blue-500">
+            <div className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="bg-blue-100 p-3 rounded-full">
+                  <ClipboardCheck className="h-8 w-8 text-blue-600" />
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-bold text-blue-800">Shift Report</h2>
+                  <p className="text-gray-500">Track sales, tips, hours & more</p>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-600 mb-4">
+                Record complete shift details including number of cars, transactions, employee hours, and financial summaries.
+              </p>
+              
+              <div className="mt-6 mb-4">
+                <p className="font-medium text-gray-700 mb-3">Select a location:</p>
+                <div className="grid grid-cols-1 gap-3">
+                  {LOCATIONS.map(location => (
+                    <Button 
+                      key={location.id}
+                      onClick={() => navigate(`/new-report?locationId=${location.id}`)}
+                      className="relative h-auto py-3 w-full bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-800 border-0 shadow-sm hover:shadow group"
+                    >
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 w-2 h-2 rounded-full bg-blue-500 group-hover:bg-blue-600"></span>
+                      <span className="font-medium">{location.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-lg text-amber-800">Incident Report</CardTitle>
-              <CardDescription>Report an incident or issue at a location</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">
-              Use this form to document incidents such as:
-            </p>
-            <ul className="text-sm text-gray-600 list-disc pl-5 space-y-1 mb-4">
-              <li>Vehicle damage or accidents</li>
-              <li>Customer complaints</li>
-              <li>Safety concerns</li>
-              <li>Equipment issues</li>
-            </ul>
-            <div className="flex justify-end">
-              <Button variant="outline" className="text-amber-600 border-amber-200">
+          </div>
+          
+          {/* Incident Report Card */}
+          <div 
+            className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-l-4 border-amber-500 cursor-pointer" 
+            onClick={() => navigate("/incident-report")}
+          >
+            <div className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="bg-amber-100 p-3 rounded-full">
+                  <AlertTriangle className="h-8 w-8 text-amber-600" />
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-bold text-amber-800">Incident Report</h2>
+                  <p className="text-gray-500">Document issues & accidents</p>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-600 mb-4">
+                Submit detailed records of any incidents including vehicle damage, customer complaints, safety issues, or unusual events.
+              </p>
+              
+              <ul className="text-sm text-gray-600 space-y-2 mb-6 mt-4">
+                <li className="flex items-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <span>Vehicle damage or accidents</span>
+                </li>
+                <li className="flex items-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <span>Customer complaints</span>
+                </li>
+                <li className="flex items-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <span>Safety concerns or issues</span>
+                </li>
+                <li className="flex items-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                  <span>Equipment issues</span>
+                </li>
+              </ul>
+              
+              <Button 
+                className="w-full mt-2 bg-gradient-to-r from-amber-50 to-amber-100 hover:from-amber-100 hover:to-amber-200 text-amber-800 border-0 shadow-sm hover:shadow"
+              >
                 Create Incident Report
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
