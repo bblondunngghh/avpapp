@@ -1086,6 +1086,18 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     <span>Cash Turn-In:</span>
                                     <span>${cashTurnIn.toFixed(2)}</span>
                                   </div>
+                                  
+                                  {/* Tax Coverage Status */}
+                                  <div className="col-span-2 flex justify-between text-xs mt-2 pt-1 border-t border-gray-200">
+                                    <span className="text-gray-600">Tax Coverage Status:</span>
+                                    {employeeMoneyOwed >= tax ? (
+                                      <span className="text-green-600 font-medium">Taxes Covered</span>
+                                    ) : (
+                                      <span className="text-orange-600 font-medium">
+                                        ${(tax - employeeMoneyOwed).toFixed(2)} still owed
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             );
