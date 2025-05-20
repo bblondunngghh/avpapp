@@ -45,7 +45,7 @@ export default function Reports() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-primary">All Reports</h2>
+        <h2 className="text-2xl font-normal text-primary">All Reports</h2>
         <Button
           onClick={handleNewReport}
           className="bg-secondary hover:bg-secondary-light"
