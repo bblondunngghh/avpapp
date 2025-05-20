@@ -1,5 +1,5 @@
-key,fullName,isActive,isShiftLeader,hourlyRate,taxRate,weeklyHours,ytdEarnings,phone,email,hireDate,notes
-employee1,John Smith,TRUE,TRUE,15.00,0.22,38.5,12450.75,555-123-4567,john@example.com,2023-01-15,Lead valet for dinner shifts
-employee2,Jane Doe,TRUE,FALSE,14.00,0.22,25.0,8725.50,555-234-5678,jane@example.com,2023-02-20,Weekend availability only
-employee3,Robert Johnson,TRUE,FALSE,14.00,0.22,32.0,10240.00,555-345-6789,robert@example.com,2023-03-10,
-employee4,Emily Wilson,TRUE,TRUE,15.00,0.22,40.0,14400.00,555-456-7890,emily@example.com,2022-11-05,Trained at all locations
+key,fullName,isActive,isShiftLeader,hoursWorked,creditCardCommission,creditCardTips,cashCommission,cashTips,receiptCommission,receiptTips,totalEarnings,moneyOwed,taxesOwed,phone,email,hireDate,notes
+employee1,John Smith,TRUE,TRUE,38.5,320.00,85.00,180.00,65.00,72.00,36.00,758.00,42.00,166.76,555-123-4567,john@example.com,2023-01-15,Lead valet for dinner shifts
+employee2,Jane Doe,TRUE,FALSE,25.0,220.00,58.00,120.00,42.00,56.00,24.00,520.00,38.00,114.40,555-234-5678,jane@example.com,2023-02-20,Weekend availability only
+employee3,Robert Johnson,TRUE,FALSE,32.0,260.00,71.00,152.00,53.00,60.00,30.00,626.00,29.00,137.72,555-345-6789,robert@example.com,2023-03-10,
+employee4,Emily Wilson,TRUE,TRUE,40.0,340.00,92.00,196.00,70.00,80.00,42.00,820.00,48.00,180.40,555-456-7890,emily@example.com,2022-11-05,Trained at all locations

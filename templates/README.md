@@ -22,6 +22,26 @@ These CSV templates are designed for you to manually populate data and then impo
 - **hireDate**: Date of hire in YYYY-MM-DD format
 - **notes**: Any additional notes about the employee (optional)
 
+### employee_payroll_template.csv
+- **key**: A unique identifier for the employee (e.g., "employee1")
+- **fullName**: The employee's full name
+- **isActive**: TRUE if currently employed, FALSE otherwise
+- **isShiftLeader**: TRUE if the employee is a shift leader, FALSE otherwise
+- **hoursWorked**: Total hours worked in the period
+- **creditCardCommission**: Commission earned from credit card transactions
+- **creditCardTips**: Tips earned from credit card transactions
+- **cashCommission**: Commission earned from cash transactions
+- **cashTips**: Tips earned from cash transactions
+- **receiptCommission**: Commission earned from receipt transactions
+- **receiptTips**: Tips earned from receipt transactions
+- **totalEarnings**: Sum of all commissions and tips
+- **moneyOwed**: Amount owed to the employee
+- **taxesOwed**: Taxes owed (typically 22% of total earnings)
+- **phone**: Employee's phone number (optional)
+- **email**: Employee's email address (optional)
+- **hireDate**: Date of hire in YYYY-MM-DD format
+- **notes**: Any additional notes about the employee (optional)
+
 ### shift_reports_template.csv
 - **locationId**: ID of the location (1=Capital Grille, 2=Bob's, 3=Truluck's, 4=BOA)
 - **date**: Date of the shift in YYYY-MM-DD format
