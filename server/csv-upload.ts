@@ -338,7 +338,7 @@ export async function processShiftReportsCSV(req: Request, res: Response) {
             totalTurnIn: parseFloat(record.totalTurnIn || '0'),
             overShort: parseFloat(record.overShort || '0'),
             totalJobHours: parseFloat(record.totalJobHours || '0'),
-            employees: record.employees ? record.employees : '[]', // Use existing employees data if available
+            employees: '[]', // Always use empty array for employee data in CSV uploads to prevent parsing issues
             notes: record.notes || null,
             incidents: record.incidents || null
           };
