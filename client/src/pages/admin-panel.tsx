@@ -30,7 +30,8 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown, Calendar } from "lucide-react";
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { LOCATIONS, EMPLOYEE_NAMES } from "@/lib/constants";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -100,6 +101,7 @@ interface TicketDistribution {
 export default function AdminPanel() {
   const [, navigate] = useLocation();
   const [isAddingEmployees, setIsAddingEmployees] = useState(false);
+  const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
   const { toast } = useToast();
   const [employeeStats, setEmployeeStats] = useState<{
     name: string;
@@ -195,6 +197,42 @@ export default function AdminPanel() {
       setTicketDistributions(distributionsData);
     }
   }, [distributionsData]);
+  
+  // Calculate monthly sales data
+  useEffect(() => {
+    if (reports.length > 0) {
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      // Initialize monthly data with all months at 0 sales
+      const initialMonthlyData = monthNames.map(name => ({ name, sales: 0 }));
+      
+      // Group reports by month and sum sales
+      reports.forEach(report => {
+        const reportDate = new Date(report.date);
+        const month = reportDate.getMonth(); // 0-11
+        
+        // Skip if outside filter date range
+        if ((startDate && reportDate < startDate) || (endDate && reportDate > endDate)) {
+          return;
+        }
+        
+        // Calculate total sales for this report
+        const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+        const cashSales = cashCars * 15; // $15 per car
+        const creditSales = report.totalCreditSales;
+        const receiptSales = report.totalReceipts * 18; // $18 per receipt
+        const totalSales = cashSales + creditSales + receiptSales;
+        
+        // Add to monthly total
+        initialMonthlyData[month].sales += totalSales;
+      });
+      
+      setMonthlyData(initialMonthlyData);
+    } else {
+      // Initialize with empty data if no reports
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      setMonthlyData(monthNames.map(name => ({ name, sales: 0 })));
+    }
+  }, [reports, startDate, endDate]);
   
   // Set initial employees data
   useEffect(() => {
@@ -800,6 +838,10 @@ export default function AdminPanel() {
           <TabsTrigger value="reports" className="flex items-center">
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Reports
+          </TabsTrigger>
+          <TabsTrigger value="monthly-sales" className="flex items-center">
+            <BarChart className="h-4 w-4 mr-2" />
+            Monthly Sales
           </TabsTrigger>
           <TabsTrigger value="payroll" className="flex items-center">
             <Users className="h-4 w-4 mr-2" />
