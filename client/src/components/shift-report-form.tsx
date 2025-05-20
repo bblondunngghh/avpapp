@@ -125,8 +125,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   // Update locationId in form when it changes
   useEffect(() => {
-    form.setValue("locationId", locationId);
-  }, [locationId, form]);
+    form.setValue("locationId", selectedLocationId);
+  }, [selectedLocationId, form]);
   
   // Fetch report data if editing
   const { data: reportData, isLoading: isLoadingReport } = useQuery({
@@ -140,7 +140,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       // Set the location ID from the report data
       const data = reportData as any;
       if (data.locationId) {
-        setLocationId(data.locationId);
+        setSelectedLocationId(data.locationId);
       }
       
       // Set all other form values
