@@ -141,7 +141,7 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
                 <span>{formatCurrency(totalCreditSales)}</span>
               </div>
               <div className="text-sm">
-                <span className="font-medium">Total: </span>
+                <span>Total: </span>
                 <span>{formatCurrency(totalTurnIn)}</span>
               </div>
             </div>
