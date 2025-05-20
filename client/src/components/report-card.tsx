@@ -182,7 +182,9 @@ export default function ReportCard({
       break;
   }
   const expectedCashCollected = cashCars * cashPerCar;
-  const expectedCompanyCashTurnIn = totalCars * turnInPerCar - totalCreditSales;
+  // Calculate expected total turn-in (this should match what's shown as Total Turn-In)
+  const expectedTotalTurnIn = totalCars * turnInPerCar;
+  const expectedCompanyCashTurnIn = expectedTotalTurnIn - totalCreditSales;
   
   // Parse employees if it's a string
   let parsedEmployees: Employee[] = [];
@@ -389,6 +391,12 @@ export default function ReportCard({
                   <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Expected Company Turn-In:</span>
                   <span className="text-sm">{formatCurrency(expectedCompanyCashTurnIn)}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Expected Total Turn-In:</span>
+                  <span className="text-sm">{formatCurrency(expectedTotalTurnIn)}</span>
                 </div>
                 
                 <div className="flex items-center gap-2 pt-2 border-t">
