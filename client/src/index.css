@@ -168,16 +168,16 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, hsl(243 75% 59%), hsl(174 84% 32%));
+  background: linear-gradient(to bottom, hsl(210 100% 50%), hsl(174 84% 32%));
 }
 
 /* Calculation section */
 .calculation-box {
-  @apply bg-gradient-to-r from-indigo-50/80 to-teal-50/50 p-5 rounded-xl border border-indigo-100/70 my-4 shadow-sm backdrop-blur-sm;
+  @apply bg-gradient-to-r from-sky-50/80 to-teal-50/50 p-5 rounded-xl border border-sky-100/70 my-4 shadow-sm backdrop-blur-sm;
 }
 
 .calculation-row {
-  @apply flex justify-between items-center py-2.5 border-b border-indigo-100/40 last:border-0;
+  @apply flex justify-between items-center py-2.5 border-b border-sky-100/40 last:border-0;
 }
 
 .calculation-label {
@@ -190,7 +190,7 @@
 
 /* Submit button */
 .submit-button {
-  @apply bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
+  @apply bg-gradient-to-r from-sky-600 to-teal-500 hover:from-sky-700 hover:to-teal-600 text-white py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
   position: relative;
   overflow: hidden;
   font-family: 'Fjalla One', sans-serif;
@@ -224,7 +224,7 @@
   --card-foreground: 222.2 47.4% 11.2%;
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --primary: 243 75% 59%; /* Indigo */
+  --primary: 210 100% 50%; /* Vibrant Blue */
   --primary-foreground: 210 40% 98%;
   --secondary: 174 84% 32%; /* Teal accent */
   --secondary-foreground: 210 40% 98%;
