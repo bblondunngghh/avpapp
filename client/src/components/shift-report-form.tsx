@@ -1086,30 +1086,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     <span>Cash Turn-In:</span>
                                     <span>${cashTurnIn.toFixed(2)}</span>
                                   </div>
-
-                                  {/* Cash Paid Input */}
-                                  <div className="col-span-2 flex items-center justify-between text-xs mt-2 pt-2 border-t border-gray-200">
-                                    <span className="text-gray-600">Cash Paid:</span>
-                                    <div className="relative w-20">
-                                      <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                                      <input
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
-                                        value={employee.cashPaid || 0}
-                                        onChange={(e) => {
-                                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
-                                          const newEmployees = [...form.watch('employees')];
-                                          newEmployees[index] = {
-                                            ...newEmployees[index],
-                                            cashPaid: value
-                                          };
-                                          form.setValue('employees', newEmployees);
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
                                   
                                   {/* Tax Coverage Status */}
                                   <div className="col-span-2 flex justify-between text-xs mt-2 pt-1 border-t border-gray-200">
@@ -1120,6 +1096,37 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                       <span className="text-orange-600 font-medium">
                                         ${(tax - employeeMoneyOwed - (employee.cashPaid || 0)).toFixed(2)} still owed
                                       </span>
+                                    )}
+                                  </div>
+
+                                  {/* Cash Paid Input */}
+                                  <div className="col-span-2 mt-2 pt-1">
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-gray-600">Cash Paid:</span>
+                                      <div className="relative w-20">
+                                        <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                                        <input
+                                          type="number"
+                                          step="0.01"
+                                          min="0"
+                                          className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
+                                          value={employee.cashPaid || 0}
+                                          onChange={(e) => {
+                                            const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                                            const newEmployees = [...form.watch('employees')];
+                                            newEmployees[index] = {
+                                              ...newEmployees[index],
+                                              cashPaid: value
+                                            };
+                                            form.setValue('employees', newEmployees);
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                    {tax > employeeMoneyOwed && (
+                                      <div className="text-right text-xs text-gray-500 mt-1">
+                                        Expected: ${Math.ceil(tax - employeeMoneyOwed)}
+                                      </div>
                                     )}
                                   </div>
                                 </div>
