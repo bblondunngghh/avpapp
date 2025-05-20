@@ -36,8 +36,15 @@ export default function EmployeeLogin() {
     
     try {
       console.log("Login attempt with:", data);
+      
       // Call the API to verify employee credentials
-      const response = await apiRequest("POST", "/api/employee-login", data);
+      const response = await fetch("/api/employee-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
       
       console.log("Login response status:", response.status);
       
@@ -119,7 +126,7 @@ export default function EmployeeLogin() {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Enter your full name"
+                        placeholder="Enter your full name (e.g. Antonio Martinez)"
                         disabled={isLoading}
                       />
                     </FormControl>
