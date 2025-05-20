@@ -15,7 +15,7 @@ export default function Dashboard() {
   
   return (
     <div className="max-w-4xl mx-auto px-4">
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden">
+      <div className="relative bg-gradient-to-r from-sky-600 to-sky-700 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden">
         <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
           style={{ 
             backgroundImage: "radial-gradient(circle at 25px 25px, rgba(255,255,255,0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255,255,255,0.15) 2%, transparent 0%)",
