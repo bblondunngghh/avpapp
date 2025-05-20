@@ -468,7 +468,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Date</FormLabel>
                     <FormControl>
-                      <Input type="date" className="paperform-input" {...field} />
+                      <Input type="date" className="paperform-input w-full min-w-[100%]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

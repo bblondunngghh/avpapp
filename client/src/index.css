@@ -142,6 +142,17 @@
   backdrop-filter: blur(8px);
 }
 
+/* Mobile-friendly date input styling */
+input[type="date"].paperform-input {
+  width: 100%;
+  min-width: 100%;
+  font-size: 16px; /* Prevents iOS zoom */
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  text-align: left;
+}
+
 .paperform-input:focus {
   @apply bg-white shadow-md;
   transform: translateY(-1px);
