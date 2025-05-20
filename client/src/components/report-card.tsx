@@ -393,17 +393,11 @@ export default function ReportCard({
                   <span className="text-sm">{formatCurrency(expectedCompanyCashTurnIn)}</span>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">Expected Total Turn-In:</span>
-                  <span className="text-sm">{formatCurrency(expectedTotalTurnIn)}</span>
-                  <span className="text-xs text-gray-500">({totalCars} × ${turnInPerCar})</span>
-                </div>
-                
                 <div className="flex items-center gap-2 pt-2 border-t">
                   <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Total Turn-In:</span>
                   <span className="text-sm font-semibold">{formatCurrency(expectedTotalTurnIn)}</span>
+                  <span className="text-xs text-gray-500">({totalCars} × ${turnInPerCar})</span>
                 </div>
               </div>
             </div>
