@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, Car } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 
@@ -18,7 +18,10 @@ export default function Header() {
     <header className="app-header">
       <div className="app-header-content">
         <div className="flex items-center gap-3">
-          <h1 className="app-title">Access Valet Parking</h1>
+          <h1 className="app-title flex items-center gap-2">
+            <Car className="h-5 w-5 animate-bounce-slow" />
+            Access Valet Parking
+          </h1>
         </div>
         
         <div className="flex items-center gap-2">

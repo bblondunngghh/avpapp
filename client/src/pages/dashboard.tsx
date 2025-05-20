@@ -23,7 +23,7 @@ export default function Dashboard() {
           }}>
         </div>
         <h1 className="text-3xl md:text-4xl font-bold text-white uppercase mb-3 relative z-10 tracking-wide flex items-center justify-center">
-          <Car className="h-8 w-8 mr-3 animate-bounce-slow" /> Access Valet Parking
+          Access Valet Parking
         </h1>
         <p className="text-blue-50 max-w-2xl mx-auto text-lg relative z-10">
           Welcome to the Right of Way Valet Management Portal. Please select from the following options.
