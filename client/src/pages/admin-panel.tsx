@@ -209,11 +209,13 @@ export default function AdminPanel() {
   
   // Calculate monthly sales data
   useEffect(() => {
+    if (!reports) return;
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    // Initialize monthly data with all months at 0 sales
+    const initialMonthlyData = monthNames.map(name => ({ name, sales: 0 }));
+    
     if (reports.length > 0) {
-      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      // Initialize monthly data with all months at 0 sales
-      const initialMonthlyData = monthNames.map(name => ({ name, sales: 0 }));
-      
       // Filter reports by selected location if applicable
       const filteredReports = selectedLocation 
         ? reports.filter(report => report.locationId === selectedLocation)
@@ -244,13 +246,9 @@ export default function AdminPanel() {
         // Add to monthly total
         initialMonthlyData[month].sales += totalSales;
       });
-      
-      setMonthlyData(initialMonthlyData);
-    } else {
-      // Initialize with empty data if no reports
-      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      setMonthlyData(monthNames.map(name => ({ name, sales: 0 })));
     }
+    
+    setMonthlyData(initialMonthlyData);
   }, [reports, startDate, endDate, selectedLocation]);
   
   // Set initial employees data
@@ -1397,14 +1395,14 @@ export default function AdminPanel() {
                       <div className="space-y-2">
                         <Label htmlFor="location-filter">Filter by Location</Label>
                         <Select
-                          value={selectedLocation?.toString() || ""}
-                          onValueChange={(value) => setSelectedLocation(value ? parseInt(value) : null)}
+                          value={selectedLocation?.toString() || "0"}
+                          onValueChange={(value) => setSelectedLocation(value === "0" ? null : parseInt(value))}
                         >
                           <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="All Locations" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">All Locations</SelectItem>
+                            <SelectItem value="0">All Locations</SelectItem>
                             {LOCATIONS.map((location) => (
                               <SelectItem key={location.id} value={location.id.toString()}>
                                 {location.name}
