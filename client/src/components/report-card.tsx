@@ -12,6 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { LOCATIONS } from "@/lib/constants";
 
+// Define the Employee interface to include the cashPaid property
 interface Employee {
   name: string;
   hours: number;
@@ -154,17 +155,29 @@ export default function ReportCard({
   const { borderColor, textColor, bgColor } = getLocationColorScheme();
   
   // Calculate additional metrics for the detailed view
-  const calculatedCreditTransactions = reportCreditTransactions || Math.round(totalCreditSales / 15);
-  const cashCars = totalCars - calculatedCreditTransactions;
+  const displayCreditTransactions = reportCreditTransactions || Math.round(totalCreditSales / 15);
+  const cashCars = totalCars - displayCreditTransactions;
   const cashPerCar = locationId === 2 ? 15 : 15; // Same for all locations currently
   const turnInPerCar = locationId === 2 ? 6 : 11; // Bob's = $6, Capital Grille = $11
   const expectedCashCollected = cashCars * cashPerCar;
   const expectedCompanyCashTurnIn = totalCars * turnInPerCar - totalCreditSales;
   
   // Parse employees if it's a string
-  const employeeList = typeof employees === 'string' ? 
-    JSON.parse(employees as string) as Employee[] : 
-    (employees as Employee[] || []);
+  let parsedEmployees: Employee[] = [];
+  if (employees) {
+    try {
+      if (typeof employees === 'string') {
+        const parsed = JSON.parse(employees);
+        if (Array.isArray(parsed)) {
+          parsedEmployees = parsed;
+        }
+      } else if (Array.isArray(employees)) {
+        parsedEmployees = employees;
+      }
+    } catch (error) {
+      console.error("Error parsing employees:", error);
+    }
+  }
   
   return (
     <>
@@ -292,7 +305,7 @@ export default function ReportCard({
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Credit Transactions:</span>
-                  <span className="text-sm">{calculatedCreditTransactions}</span>
+                  <span className="text-sm">{displayCreditTransactions}</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -366,7 +379,7 @@ export default function ReportCard({
           </div>
           
           {/* Employee Information */}
-          {employeeList && employeeList.length > 0 && (
+          {parsedEmployees.length > 0 && (
             <div className="space-y-4 mt-2 pt-6 border-t">
               <h3 className="text-lg font-medium">Employee Information</h3>
               
@@ -380,7 +393,7 @@ export default function ReportCard({
                     </tr>
                   </thead>
                   <tbody>
-                    {employeeList.map((employee, index) => (
+                    {parsedEmployees.map((employee, index) => (
                       <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
                         <td className="py-2 px-2">{employee.name}</td>
                         <td className="text-right py-2 px-2">{employee.hours}</td>
