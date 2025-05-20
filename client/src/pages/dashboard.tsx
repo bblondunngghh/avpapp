@@ -84,16 +84,31 @@ export default function Dashboard() {
         </Card>
       </div>
       
-      {/* Admin Portal Link */}
+      {/* Admin and Employee Login Links */}
       <div className="text-center mt-8 pt-6 border-t border-gray-200">
-        <p className="text-gray-500 mb-3">For administrative functions including ticket distribution and employee management:</p>
-        <Button 
-          variant="outline" 
-          onClick={() => navigate("/admin-login")}
-          className="border-sky-200 text-sky-700 hover:text-sky-800 hover:bg-sky-50"
-        >
-          Access Admin Portal
-        </Button>
+        <div className="flex flex-col md:flex-row justify-center gap-6 items-center">
+          <div>
+            <p className="text-gray-500 mb-3">View your hours, earnings and tax information:</p>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/employee-login")}
+              className="border-indigo-200 text-indigo-700 hover:text-indigo-800 hover:bg-indigo-50"
+            >
+              Employee Login
+            </Button>
+          </div>
+          <div className="hidden md:block h-12 w-px bg-gray-200"></div>
+          <div>
+            <p className="text-gray-500 mb-3">For administrative functions and management:</p>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/admin-login")}
+              className="border-sky-200 text-sky-700 hover:text-sky-800 hover:bg-sky-50"
+            >
+              Admin Portal
+            </Button>
+          </div>
+        </div>
       </div>
       
       {/* Location selection modal */}

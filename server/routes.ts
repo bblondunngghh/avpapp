@@ -360,6 +360,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Employee login API endpoint
+  apiRouter.post('/employee-login', async (req, res) => {
+    try {
+      const { key, fullName } = req.body;
+      
+      if (!key || !fullName) {
+        return res.status(400).json({ message: 'Employee key and full name are required' });
+      }
+      
+      // Find employee by key
+      const employee = await storage.getEmployeeByKey(key);
+      
+      if (!employee) {
+        return res.status(401).json({ message: 'Invalid employee credentials' });
+      }
+      
+      // Check if the full name matches
+      if (employee.fullName.toLowerCase() !== fullName.toLowerCase()) {
+        return res.status(401).json({ message: 'Invalid employee credentials' });
+      }
+      
+      // If inactive employee
+      if (!employee.isActive) {
+        return res.status(401).json({ message: 'Your account is inactive. Please contact your manager.' });
+      }
+      
+      // Return employee info (excluding password)
+      res.json({
+        id: employee.id,
+        key: employee.key,
+        fullName: employee.fullName,
+        isActive: employee.isActive,
+        isShiftLeader: employee.isShiftLeader
+      });
+    } catch (error) {
+      console.error('Employee login error:', error);
+      res.status(500).json({ message: 'An error occurred during login' });
+    }
+  });
+
   // Delete an employee
   apiRouter.delete('/employees/:id', async (req, res) => {
     try {

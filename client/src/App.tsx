@@ -13,19 +13,22 @@ import AdminPanel from "@/pages/admin-panel";
 import IncidentReport from "@/pages/incident-report";
 import IncidentSubmitted from "@/pages/incident-submitted";
 import Regulations from "@/pages/regulations";
+import EmployeeLogin from "@/pages/employee-login";
+import EmployeeDashboard from "@/pages/employee-dashboard";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 
 function Router() {
   const [location, setLocation] = useLocation();
   
-  // Determine if we're on an admin page to show/hide normal navigation
+  // Determine if we're on an admin or employee page to show/hide normal navigation
   const isAdminPage = location.startsWith('/admin');
+  const isEmployeePage = location.startsWith('/employee-dashboard');
   
   return (
     <div className="flex flex-col min-h-screen pb-16">
-      {!isAdminPage && <Header />}
-      <main className={`${isAdminPage ? '' : 'container mx-auto px-4 py-4'} flex-grow`}>
+      {!isAdminPage && !isEmployeePage && <Header />}
+      <main className={`${isAdminPage || isEmployeePage ? '' : 'container mx-auto px-4 py-4'} flex-grow`}>
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/reports" component={Reports} />
@@ -43,10 +46,12 @@ function Router() {
           <Route path="/regulations" component={Regulations} />
           <Route path="/admin-login" component={AdminLogin} />
           <Route path="/admin" component={AdminPanel} />
+          <Route path="/employee-login" component={EmployeeLogin} />
+          <Route path="/employee-dashboard" component={EmployeeDashboard} />
           <Route component={NotFound} />
         </Switch>
       </main>
-      {!isAdminPage && <BottomNavigation />}
+      {!isAdminPage && !isEmployeePage && <BottomNavigation />}
     </div>
   );
 }
