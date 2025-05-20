@@ -342,8 +342,8 @@
 
 /* App Header styles */
 .app-header {
-  @apply bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg sticky top-0 z-10 backdrop-blur-md;
-  background-color: rgba(79, 70, 229, 0.95);
+  @apply bg-gradient-to-r from-sky-600 to-sky-700 text-white shadow-lg sticky top-0 z-10 backdrop-blur-md;
+  background-color: rgba(2, 132, 254, 0.95);
 }
 
 .app-header-content {
@@ -359,7 +359,7 @@
 
 /* Card styles */
 .report-card {
-  @apply border border-gray-100 rounded-xl p-5 hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-teal-50/20 dark:hover:bg-gray-800/60 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md;
+  @apply border border-gray-100 rounded-xl p-5 hover:bg-gradient-to-r hover:from-sky-50/30 hover:to-teal-50/20 dark:hover:bg-gray-800/60 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md;
   backdrop-filter: blur(5px);
 }
 
