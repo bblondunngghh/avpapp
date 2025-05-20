@@ -1,5 +1,5 @@
 import { useLocation, useRoute } from "wouter";
-import { BarChart3, ClipboardList, Home, PlusCircle, Settings } from "lucide-react";
+import { ClipboardList, Home, PlusCircle } from "lucide-react";
 
 export default function BottomNavigation() {
   const [, navigate] = useLocation();
@@ -31,22 +31,6 @@ export default function BottomNavigation() {
       >
         <PlusCircle className="bottom-nav-icon" size={20} />
         <span className="bottom-nav-label">New Report</span>
-      </button>
-      
-      <button 
-        className="bottom-nav-item"
-        onClick={() => navigate('/stats')}
-      >
-        <BarChart3 className="bottom-nav-icon" size={20} />
-        <span className="bottom-nav-label">Statistics</span>
-      </button>
-      
-      <button 
-        className="bottom-nav-item"
-        onClick={() => navigate('/settings')}
-      >
-        <Settings className="bottom-nav-icon" size={20} />
-        <span className="bottom-nav-label">Settings</span>
       </button>
     </nav>
   );
