@@ -1210,9 +1210,9 @@ export default function AdminPanel() {
                           break;
                         case 4: // BOA Steakhouse
                           colorScheme = {
-                            border: "border-purple-500",
-                            header: "text-purple-700",
-                            background: "bg-purple-50 dark:bg-purple-950/30"
+                            border: "border-sky-500",
+                            header: "text-sky-700",
+                            background: "bg-sky-50 dark:bg-sky-950/30"
                           };
                           break;
                       }
@@ -1282,7 +1282,7 @@ export default function AdminPanel() {
                               textColor = "text-red-700";
                               break;
                             case 4: // BOA Steakhouse
-                              textColor = "text-purple-700";
+                              textColor = "text-sky-700";
                               break;
                           }
                           

@@ -109,9 +109,9 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
         bgColor = "bg-red-50/30";
         break;
       case 4: // BOA Steakhouse
-        borderColor = "border-purple-500";
-        textColor = "text-purple-700";
-        bgColor = "bg-purple-50/30";
+        borderColor = "border-sky-500";
+        textColor = "text-sky-700";
+        bgColor = "bg-sky-50/30";
         break;
     }
     
