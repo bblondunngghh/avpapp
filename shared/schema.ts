@@ -197,8 +197,10 @@ export const insertTicketDistributionSchema = createInsertSchema(ticketDistribut
   .omit({
     id: true,
     createdAt: true,
-    updatedAt: true,
-    usedTickets: true
+    updatedAt: true
+  })
+  .extend({
+    usedTickets: z.number().optional()
   });
 
 export const updateTicketDistributionSchema = createInsertSchema(ticketDistributions)

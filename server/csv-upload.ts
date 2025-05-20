@@ -39,7 +39,7 @@ export async function processEmployeePayrollCSV(req: Request, res: Response) {
         const existingEmployee = await storage.getEmployeeByKey(record.key);
         
         // Update employee with payroll data
-        const payrollData = {
+        const updatedEmployeeData = {
           hoursWorked: parseFloat(record.hoursWorked),
           creditCardCommission: parseFloat(record.creditCardCommission),
           creditCardTips: parseFloat(record.creditCardTips),
@@ -63,7 +63,7 @@ export async function processEmployeePayrollCSV(req: Request, res: Response) {
             email: record.email || null,
             hireDate: record.hireDate || new Date().toISOString().split('T')[0],
             notes: record.notes || null,
-            payrollData: payrollData
+            ...updatedEmployeeData
           });
           
           results.success.push({
@@ -83,7 +83,7 @@ export async function processEmployeePayrollCSV(req: Request, res: Response) {
             hireDate: record.hireDate || existingEmployee.hireDate,
             notes: record.notes || existingEmployee.notes,
             terminationDate: existingEmployee.terminationDate,
-            payrollData: payrollData
+            ...updatedEmployeeData
           });
           
           results.success.push({
