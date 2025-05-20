@@ -1150,8 +1150,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   const totalCars = form.watch('totalCars') || 0;
                                   const creditTransactions = form.watch('creditTransactions') || 0;
                                   const totalReceipts = form.watch('totalReceipts') || 0;
-                                  
-                                  // Get location ID for rates calculation
                                   const locationId = form.watch('locationId');
                                   const cashCars = totalCars - creditTransactions - totalReceipts;
                                   
@@ -1178,10 +1176,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   const receiptTips = totalReceipts * 3;
                                   const tips = cashTips + creditCardTips + receiptTips;
                                   
-                                  // Company cash turn-in calculation
-                                  const locationId = form.watch('locationId');
-                                  
-                                  // Set per-car rate based on location
+                                  // Company cash turn-in calculation based on location
                                   let perCarRate = 11; // Default to Capital Grille rate
                                   if (locationId === 2) { // Bob's Steak and Chop House
                                     perCarRate = 6;
