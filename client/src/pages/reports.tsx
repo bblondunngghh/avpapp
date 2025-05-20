@@ -48,7 +48,7 @@ export default function Reports() {
         <h2 className="text-2xl font-normal bg-gradient-to-r from-blue-600 to-blue-300 bg-clip-text text-transparent">All Reports</h2>
         <Button
           onClick={handleNewReport}
-          className="bg-gradient-to-r from-blue-500 to-teal-400 hover:from-blue-600 hover:to-teal-500 text-white"
+          className="bg-gradient-to-r from-blue-600 to-blue-300 hover:from-blue-700 hover:to-blue-400 text-white"
         >
           <Plus className="mr-1 h-4 w-4" /> New Report
         </Button>
@@ -184,7 +184,7 @@ export default function Reports() {
             </p>
             <Button 
               onClick={handleNewReport} 
-              className="bg-gradient-to-r from-blue-500 to-teal-400 hover:from-blue-600 hover:to-teal-500 text-white"
+              className="bg-gradient-to-r from-blue-600 to-blue-300 hover:from-blue-700 hover:to-blue-400 text-white"
             >
               Create a New Report
             </Button>
