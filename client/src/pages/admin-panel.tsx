@@ -861,6 +861,127 @@ export default function AdminPanel() {
           </TabsTrigger>
         </TabsList>
         
+        <TabsContent value="monthly-sales">
+          <Card>
+            <CardHeader className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <CardTitle>Monthly Sales Analysis</CardTitle>
+                  <CardDescription>
+                    View sales performance broken down by month (January - December)
+                  </CardDescription>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900">
+                <div className="space-y-2">
+                  <Label htmlFor="chart-start-date">Start Date</Label>
+                  <div className="relative">
+                    <input
+                      id="chart-start-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={startDate ? startDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="chart-end-date">End Date</Label>
+                  <div className="relative">
+                    <input
+                      id="chart-end-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={endDate ? endDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                  }}
+                >
+                  Clear Filter
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="text-center py-8">Loading sales data...</div>
+              ) : reports.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No sales data found. Create shift reports to see monthly sales analysis.
+                </div>
+              ) : (
+                <>
+                  <div className="w-full h-[400px] mb-6">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsBarChart
+                        data={monthlyData}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 20,
+                          bottom: 30,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis
+                          label={{ value: 'Sales ($)', angle: -90, position: 'insideLeft' }}
+                          tickFormatter={(value) => `$${value}`}
+                        />
+                        <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Sales']} />
+                        <Legend />
+                        <Bar 
+                          dataKey="sales" 
+                          name="Total Sales ($)" 
+                          fill="#4f46e5" 
+                          radius={[4, 4, 0, 0]}
+                          barSize={30}
+                        />
+                      </RechartsBarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableCaption>Monthly Sales Breakdown</TableCaption>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Month</TableHead>
+                          <TableHead className="text-right">Total Sales ($)</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {monthlyData.map((month) => (
+                          <TableRow key={month.name}>
+                            <TableCell className="font-medium">{month.name}</TableCell>
+                            <TableCell className="text-right font-medium">${month.sales.toFixed(2)}</TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className="bg-muted/50">
+                          <TableCell className="font-bold">Total</TableCell>
+                          <TableCell className="text-right font-bold">
+                            ${monthlyData.reduce((sum, month) => sum + month.sales, 0).toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
         <TabsContent value="reports">
           <Card>
             <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
