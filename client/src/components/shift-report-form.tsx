@@ -1167,16 +1167,26 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   });
                                   
                                   // Calculate if money owed fully covers tax obligation
-                                  if (totalMoneyOwed >= totalTax) {
+                                  // Add console logs to debug the values
+                                  console.log('Tax Summary - Total Tax:', totalTax);
+                                  console.log('Tax Summary - Money Owed:', totalMoneyOwed);
+                                  
+                                  if (totalMoneyOwed >= totalTax && totalTax > 0) {
                                     return (
                                       <div className="text-sm text-green-600">
                                         All Taxes Covered
                                       </div>
                                     );
-                                  } else {
+                                  } else if (totalTax > 0) {
                                     return (
                                       <div className="text-sm text-orange-600">
                                         Total Still Owed: ${(totalTax - totalMoneyOwed).toFixed(2)}
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <div className="text-sm text-gray-600">
+                                        No Tax Data Available
                                       </div>
                                     );
                                   }
