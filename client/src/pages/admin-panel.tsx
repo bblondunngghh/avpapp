@@ -905,7 +905,7 @@ export default function AdminPanel() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="employees">
+        <TabsContent value="payroll">
           <Card>
             <CardHeader className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
