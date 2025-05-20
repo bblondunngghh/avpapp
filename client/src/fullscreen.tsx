@@ -64,10 +64,10 @@ export default function FullscreenSupport() {
       }
     }
     
-    // Add a specific class for iPad to handle layout adjustments
-    if (checkIsIOS() && window.innerWidth >= 768) {
-      document.body.classList.add('ipad-view');
-    }
+    // Don't add the iPad class as it's causing scrolling issues
+    // if (checkIsIOS() && window.innerWidth >= 768) {
+    //   document.body.classList.add('ipad-view');
+    // }
     
     window.addEventListener('load', handleLoad);
     

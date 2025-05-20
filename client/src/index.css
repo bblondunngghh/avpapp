@@ -325,10 +325,10 @@ input[type="date"].paperform-input {
   /* iPad specific styles */
   body.ipad-view {
     /* iPad specific enhancements */
-    height: 100vh;
-    width: 100vw;
-    position: fixed;
-    overflow: auto;
+    height: 100%;
+    width: 100%;
+    position: static;
+    overflow: visible;
   }
 }
 
