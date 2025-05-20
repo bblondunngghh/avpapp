@@ -1102,6 +1102,59 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               </div>
                             );
                           })}
+                          
+                          {/* Total Tax Coverage Summary */}
+                          {employeeCards.length > 0 && (
+                            <div className="mt-4 border-t-2 border-gray-200 pt-3">
+                              <div className="flex justify-between items-center">
+                                <h4 className="text-sm font-semibold text-gray-800">Tax Coverage Summary</h4>
+                                
+                                {(() => {
+                                  // Calculate total tax and total money owed across all employees
+                                  const totalTax = employeeCards.reduce((sum, emp) => {
+                                    const { commission, tips, totalCars, creditTransactions, totalReceipts } = calculations;
+                                    const employeeHoursPercent = emp.hours / totalJobHours;
+                                    
+                                    // Calculate employee's share of earnings
+                                    const empCommission = commission * employeeHoursPercent;
+                                    const empTips = tips * employeeHoursPercent;
+                                    const empEarnings = empCommission + empTips;
+                                    const empTax = empEarnings * 0.22;
+                                    
+                                    return sum + empTax;
+                                  }, 0);
+                                  
+                                  const totalMoneyOwed = employeeCards.reduce((sum, emp) => {
+                                    const { commission, tips, totalCars, creditTransactions, totalReceipts } = calculations;
+                                    const employeeHoursPercent = emp.hours / totalJobHours;
+                                    
+                                    // Calculate employee's share of earnings
+                                    const empCommission = commission * employeeHoursPercent;
+                                    const empTips = tips * employeeHoursPercent;
+                                    const empMoneyOwed = (empCommission + empTips) - calculations.companyCashTurnIn * employeeHoursPercent;
+                                    
+                                    return sum + (empMoneyOwed > 0 ? empMoneyOwed : 0);
+                                  }, 0);
+                                  
+                                  const taxDeficit = totalTax - totalMoneyOwed;
+                                  
+                                  if (taxDeficit <= 0) {
+                                    return (
+                                      <div className="text-sm text-green-600 font-medium">
+                                        All Taxes Covered
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <div className="text-sm text-orange-600 font-medium">
+                                        Total Still Owed: ${taxDeficit.toFixed(2)}
+                                      </div>
+                                    );
+                                  }
+                                })()}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
