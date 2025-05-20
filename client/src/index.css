@@ -109,7 +109,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: #1e3a8a;
+  color: hsl(243 75% 59%);
   border-bottom: 2px solid #e5e7eb;
   padding-bottom: 0.75rem;
   position: relative;
@@ -122,22 +122,24 @@
   left: 0;
   width: 60px;
   height: 2px;
-  background: linear-gradient(90deg, #1a56db, #3b82f6);
+  background: linear-gradient(90deg, hsl(243 75% 59%), hsl(174 84% 32%));
 }
 
-/* Paperform-like inputs */
+/* Sleek modern inputs */
 .paperform-input {
-  @apply rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-sm;
-  background-color: #f9fafb;
+  @apply rounded-lg px-4 py-3.5 border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 shadow-sm;
+  background-color: rgba(249, 250, 251, 0.8);
+  backdrop-filter: blur(8px);
 }
 
 .paperform-input:focus {
-  @apply bg-white;
+  @apply bg-white shadow-md;
+  transform: translateY(-1px);
 }
 
 /* Cards */
 .form-card {
-  @apply rounded-lg shadow-md border border-gray-200 p-6 mb-8 transition-all duration-300 hover:shadow-lg;
+  @apply rounded-xl shadow-lg border border-gray-100 p-6 mb-8 transition-all duration-300 hover:shadow-xl;
   background-color: white;
   position: relative;
   overflow: hidden;
@@ -145,6 +147,8 @@
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .form-card::before {
@@ -154,16 +158,16 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, #1a56db, #3b82f6);
+  background: linear-gradient(to bottom, hsl(243 75% 59%), hsl(174 84% 32%));
 }
 
 /* Calculation section */
 .calculation-box {
-  @apply bg-gradient-to-r from-blue-50 to-blue-50/50 p-5 rounded-md border border-blue-100 my-4 shadow-sm;
+  @apply bg-gradient-to-r from-indigo-50/80 to-teal-50/50 p-5 rounded-xl border border-indigo-100/70 my-4 shadow-sm backdrop-blur-sm;
 }
 
 .calculation-row {
-  @apply flex justify-between items-center py-2 border-b border-blue-100/50 last:border-0;
+  @apply flex justify-between items-center py-2.5 border-b border-indigo-100/40 last:border-0;
 }
 
 .calculation-label {
@@ -176,11 +180,29 @@
 
 /* Submit button */
 .submit-button {
-  @apply bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-md transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
+  @apply bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.submit-button:hover::after {
+  left: 100%;
 }
 
 :root {
-  --background: 0 0% 100%;
+  /* Modern sleek theme - Indigo/Teal color scheme */
+  --background: 210 40% 98%;
   --foreground: 222.2 47.4% 11.2%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
@@ -190,72 +212,72 @@
   --card-foreground: 222.2 47.4% 11.2%;
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --primary: 217 91% 45%; /* #1a56db - Vibrant blue */
+  --primary: 243 75% 59%; /* Indigo */
   --primary-foreground: 210 40% 98%;
-  --secondary: 212 96% 62%; /* #3b82f6 - Lighter vibrant blue */
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --accent: 50 100% 50%; /* #FFD700 */
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 100% 50%;
+  --secondary: 174 84% 32%; /* Teal accent */
+  --secondary-foreground: 210 40% 98%;
+  --accent: 262 83% 58%; /* Purple accent */
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
-  --ring: 215 20.2% 65.1%;
-  --radius: 0.5rem;
+  --ring: 243 75% 59%;
+  --radius: 0.75rem; /* Slightly more rounded */
   
   /* Chart colors */
-  --chart-1: 217 91% 45%;
-  --chart-2: 50 100% 50%;
-  --chart-3: 340 100% 55%;
-  --chart-4: 150 60% 50%;
-  --chart-5: 270 60% 55%;
+  --chart-1: 243 75% 59%; /* Indigo */
+  --chart-2: 174 84% 32%; /* Teal */
+  --chart-3: 262 83% 58%; /* Purple */
+  --chart-4: 335 78% 60%; /* Pink */
+  --chart-5: 32 95% 44%;  /* Orange */
   
   /* Sidebar colors */
-  --sidebar-background: 217 91% 45%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 210 40% 98%;
-  --sidebar-primary-foreground: 217 91% 45%;
-  --sidebar-accent: 50 100% 50%;
-  --sidebar-accent-foreground: 217 91% 45%;
-  --sidebar-border: 212 96% 62%;
-  --sidebar-ring: 212 96% 62%;
+  --sidebar-background: 243 75% 59%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 0 0% 100%;
+  --sidebar-primary-foreground: 243 75% 59%;
+  --sidebar-accent: 174 84% 32%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 243 65% 69%;
+  --sidebar-ring: 243 65% 69%;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
+  --background: 240 10% 4%;
+  --foreground: 213 31% 91%;
+  --muted: 240 4% 16%;
   --muted-foreground: 215 20.2% 65.1%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --primary: 210 100% 30%; /* Slightly lighter for dark mode */
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 100% 50%; /* Slightly lighter for dark mode */
-  --secondary-foreground: 210 40% 98%;
-  --accent: 50 100% 55%; /* Slightly brighter for dark mode */
-  --accent-foreground: 210 40% 5%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 85.7% 97.3%;
-  --ring: 217.2 32.6% 17.5%;
+  --popover: 240 10% 4%;
+  --popover-foreground: 213 31% 91%;
+  --card: 240 10% 4%;
+  --card-foreground: 213 31% 91%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --primary: 243 75% 59%; /* Indigo - slightly brighter */
+  --primary-foreground: 213 31% 91%;
+  --secondary: 174 84% 32%; /* Teal accent */
+  --secondary-foreground: 213 31% 91%;
+  --accent: 262 83% 58%; /* Purple accent */
+  --accent-foreground: 213 31% 91%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 213 31% 91%;
+  --ring: 243 75% 59%;
   
   /* Chart colors - Slightly adjusted for dark mode */
-  --chart-1: 210 100% 50%;
-  --chart-2: 50 100% 60%;
-  --chart-3: 340 100% 65%;
-  --chart-4: 150 60% 60%;
-  --chart-5: 270 60% 70%;
+  --chart-1: 243 75% 69%; /* Brighter Indigo */
+  --chart-2: 174 84% 42%; /* Brighter Teal */
+  --chart-3: 262 83% 68%; /* Brighter Purple */
+  --chart-4: 335 78% 70%; /* Brighter Pink */
+  --chart-5: 32 95% 54%;  /* Brighter Orange */
   
   /* Sidebar colors */
-  --sidebar-background: 210 100% 15%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 210 40% 98%;
-  --sidebar-primary-foreground: 210 100% 15%;
-  --sidebar-accent: 50 100% 55%;
-  --sidebar-accent-foreground: 210 100% 15%;
-  --sidebar-border: 210 100% 25%;
-  --sidebar-ring: 210 100% 25%;
+  --sidebar-background: 240 21% 12%;
+  --sidebar-foreground: 213 31% 91%;
+  --sidebar-primary: 213 31% 91%;
+  --sidebar-primary-foreground: 240 21% 12%;
+  --sidebar-accent: 174 84% 32%;
+  --sidebar-accent-foreground: 213 31% 91%;
+  --sidebar-border: 240 21% 22%;
+  --sidebar-ring: 240 21% 22%;
 }
 
 @layer base {
@@ -308,20 +330,23 @@
 
 /* App Header styles */
 .app-header {
-  @apply bg-primary text-white shadow-md sticky top-0 z-10;
+  @apply bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg sticky top-0 z-10 backdrop-blur-md;
+  background-color: rgba(79, 70, 229, 0.95);
 }
 
 .app-header-content {
-  @apply container mx-auto px-4 py-3 flex justify-between items-center;
+  @apply container mx-auto px-4 py-4 flex justify-between items-center;
 }
 
 .app-title {
-  @apply text-xl font-bold;
+  @apply text-xl font-bold tracking-wide;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 /* Card styles */
 .report-card {
-  @apply border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors duration-200;
+  @apply border border-gray-100 rounded-xl p-5 hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-teal-50/20 dark:hover:bg-gray-800/60 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md;
+  backdrop-filter: blur(5px);
 }
 
 /* Animated element */
