@@ -1,204 +1,102 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarIcon, Plus, Search } from "lucide-react";
+import { FileText, AlertTriangle, BookOpen, ArrowRight } from "lucide-react";
 import LocationSelectorModal from "@/components/location-selector-modal";
-import ReportCard from "@/components/report-card";
-import { LOCATIONS } from "@/lib/constants";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
-  const [locationFilter, setLocationFilter] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  // Fetch all shift reports
-  const { data: reports, isLoading } = useQuery({
-    queryKey: ['/api/shift-reports'],
-  });
-  
-  // Filter reports
-  const filteredReports = reports ? reports.filter((report: any) => {
-    let matchesLocation = true;
-    let matchesDate = true;
-    
-    if (locationFilter && locationFilter !== "all") {
-      matchesLocation = report.locationId === parseInt(locationFilter);
-    }
-    
-    if (dateFilter) {
-      matchesDate = report.date === dateFilter;
-    }
-    
-    return matchesLocation && matchesDate;
-  }) : [];
-  
-  // Get limited reports for dashboard
-  const dashboardReports = filteredReports.slice(0, 5);
   
   const handleNewReport = () => {
     setIsModalOpen(true);
   };
   
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl text-sky-700">Dashboard</h2>
+    <div className="max-w-4xl mx-auto px-4">
+      <div className="text-center mb-10">
+        <h1 className="text-3xl text-sky-700 uppercase mb-2">Access Valet Parking</h1>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Welcome to the Right of Way Valet Management Portal. Please select from the following options.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Submit Shift Report Card */}
+        <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden group">
+          <div className="h-1 bg-sky-500 w-full"></div>
+          <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
+            <div className="bg-sky-50 p-4 rounded-full mb-4">
+              <FileText className="h-10 w-10 text-sky-600" />
+            </div>
+            <h3 className="text-xl font-medium mb-3 text-sky-700">Submit Shift Report</h3>
+            <p className="text-gray-600 mb-6 flex-grow">
+              Create a new shift report with hourly distributions, financial summaries, and employee payroll information.
+            </p>
+            <Button 
+              onClick={handleNewReport}
+              className="w-full bg-sky-600 hover:bg-sky-700 text-white group-hover:shadow-md"
+            >
+              Create Report <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Incident Report Card */}
+        <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden group">
+          <div className="h-1 bg-orange-500 w-full"></div>
+          <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
+            <div className="bg-orange-50 p-4 rounded-full mb-4">
+              <AlertTriangle className="h-10 w-10 text-orange-600" />
+            </div>
+            <h3 className="text-xl font-medium mb-3 text-orange-700">Incident Report</h3>
+            <p className="text-gray-600 mb-6 flex-grow">
+              Report any accidents, incidents, or situations that require documentation and follow-up actions.
+            </p>
+            <Button 
+              onClick={() => navigate("/incident-report")}
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white group-hover:shadow-md"
+            >
+              Report Incident <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Rules and Regulations Card */}
+        <Card className="hover:shadow-lg transition-all duration-300 overflow-hidden group">
+          <div className="h-1 bg-emerald-500 w-full"></div>
+          <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
+            <div className="bg-emerald-50 p-4 rounded-full mb-4">
+              <BookOpen className="h-10 w-10 text-emerald-600" />
+            </div>
+            <h3 className="text-xl font-medium mb-3 text-emerald-700">Rules & Regulations</h3>
+            <p className="text-gray-600 mb-6 flex-grow">
+              View Right of Way Valet Parking rules and regulations for proper procedures and standards.
+            </p>
+            <Button 
+              onClick={() => navigate("/regulations")}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white group-hover:shadow-md"
+            >
+              View Guidelines <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Admin Portal Link */}
+      <div className="text-center mt-8 pt-6 border-t border-gray-200">
+        <p className="text-gray-500 mb-3">For administrative functions including ticket distribution and employee management:</p>
         <Button 
-          onClick={handleNewReport}
-          className="bg-sky-600 hover:bg-sky-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+          variant="outline" 
+          onClick={() => navigate("/admin-login")}
+          className="border-sky-200 text-sky-700 hover:text-sky-800 hover:bg-sky-50"
         >
-          <Plus className="mr-1 h-4 w-4" /> New Report
+          Access Admin Portal
         </Button>
       </div>
       
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-3">Filter Reports</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="locationFilter">
-                Location
-              </label>
-              <Select
-                value={locationFilter}
-                onValueChange={setLocationFilter}
-              >
-                <SelectTrigger id="locationFilter">
-                  <SelectValue placeholder="All Locations" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Locations</SelectItem>
-                  {LOCATIONS.map(location => (
-                    <SelectItem key={location.id} value={location.id.toString()}>
-                      {location.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="dateFilter">
-                Date
-              </label>
-              <div className="relative">
-                <Input
-                  id="dateFilter"
-                  type="date"
-                  value={dateFilter}
-                  onChange={e => setDateFilter(e.target.value)}
-                />
-                {dateFilter && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full"
-                    onClick={() => setDateFilter("")}
-                  >
-                    <span className="sr-only">Clear date</span>
-                    &times;
-                  </Button>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex items-end">
-              <Button
-                className="w-full"
-                variant={locationFilter || dateFilter ? "default" : "outline"}
-                onClick={() => {
-                  if (locationFilter || dateFilter) {
-                    setLocationFilter("");
-                    setDateFilter("");
-                  }
-                }}
-              >
-                <Search className="mr-1 h-4 w-4" /> 
-                {locationFilter || dateFilter ? "Reset Filters" : "Filter"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-3">Recent Reports</h3>
-          
-          {isLoading ? (
-            // Loading state
-            <div className="space-y-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Card key={i} className="mb-4">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between">
-                      <div>
-                        <Skeleton className="h-5 w-40 mb-2" />
-                        <Skeleton className="h-4 w-32 mb-3" />
-                        <div className="flex gap-4">
-                          <Skeleton className="h-4 w-16" />
-                          <Skeleton className="h-4 w-24" />
-                        </div>
-                      </div>
-                      <div className="flex gap-1">
-                        <Skeleton className="h-8 w-8 rounded-md" />
-                        <Skeleton className="h-8 w-8 rounded-md" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : dashboardReports.length > 0 ? (
-            // Reports list
-            <div>
-              {dashboardReports.map(report => (
-                <ReportCard
-                  key={report.id}
-                  id={report.id}
-                  locationId={report.locationId}
-                  date={report.date}
-                  shift={report.shift}
-                  totalCars={report.totalCars}
-                  totalCreditSales={report.totalCreditSales || 0}
-                  totalCashCollected={report.totalCashCollected || 0}
-                  companyCashTurnIn={report.companyCashTurnIn || 0}
-                  totalTurnIn={report.totalTurnIn || 0}
-                  createdAt={report.createdAt}
-                />
-              ))}
-            </div>
-          ) : (
-            // No reports state
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No reports found</p>
-              <Button onClick={handleNewReport} variant="secondary">
-                Create Your First Report
-              </Button>
-            </div>
-          )}
-          
-          {filteredReports.length > 5 && (
-            <div className="mt-6">
-              <Button 
-                variant="link" 
-                className="text-secondary text-sm font-medium flex items-center p-0"
-                onClick={() => navigate("/reports")}
-              >
-                View All Reports
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
+      {/* Location selection modal */}
       <LocationSelectorModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
