@@ -45,7 +45,7 @@ export default function Reports() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-normal bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">All Reports</h2>
+        <h2 className="text-2xl font-normal bg-gradient-to-r from-blue-500 to-gray-500 bg-clip-text text-transparent">All Reports</h2>
         <Button
           onClick={handleNewReport}
           className="bg-gradient-to-r from-blue-500 to-teal-400 hover:from-blue-600 hover:to-teal-500 text-white"
