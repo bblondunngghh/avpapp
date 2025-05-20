@@ -20,7 +20,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <h1 className="app-title flex items-center gap-2">
             <Car className="h-5 w-5 animate-bounce-slow" />
-            Access Valet Parking
+            ACCESS VALET PARKING
           </h1>
         </div>
         
