@@ -45,10 +45,10 @@ export default function Reports() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-normal bg-gradient-to-r from-blue-600 to-blue-300 bg-clip-text text-transparent">All Reports</h2>
+        <h2 className="text-2xl font-normal text-primary">All Reports</h2>
         <Button
           onClick={handleNewReport}
-          className="bg-gradient-to-r from-blue-600 to-blue-300 hover:from-blue-700 hover:to-blue-400 text-white"
+          className="bg-blue-500 hover:bg-blue-600 text-white"
         >
           <Plus className="mr-1 h-4 w-4" /> New Report
         </Button>
@@ -184,7 +184,7 @@ export default function Reports() {
             </p>
             <Button 
               onClick={handleNewReport} 
-              className="bg-gradient-to-r from-blue-600 to-blue-300 hover:from-blue-700 hover:to-blue-400 text-white"
+              className="bg-blue-500 hover:bg-blue-600 text-white"
             >
               Create a New Report
             </Button>
