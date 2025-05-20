@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -213,7 +214,7 @@ export default function ReportCard({ id, locationId, date, shift, totalCars, tot
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <span className={textColor}>{location}</span>
-              <Badge variant="outline" className={`${textColor} bg-${bgColor.split('-')[1]}`}>
+              <Badge variant="outline" className={`${textColor} bg-gray-50`}>
                 {shift} Shift
               </Badge>
             </DialogTitle>
