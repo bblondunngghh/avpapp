@@ -1090,7 +1090,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   {/* Tax Coverage Status */}
                                   <div className="col-span-2 flex justify-between text-xs mt-2 pt-1 border-t border-gray-200">
                                     <span className="text-gray-600">Tax Coverage Status:</span>
-                                    {(employeeMoneyOwed + (employee.cashPaid || 0)) >= tax ? (
+                                    {tax <= employeeMoneyOwed ? (
+                                      <span className="text-green-600 font-medium">Taxes Covered</span>
+                                    ) : (employee.cashPaid || 0) >= Math.ceil(tax - employeeMoneyOwed) ? (
                                       <span className="text-green-600 font-medium">Taxes Covered</span>
                                     ) : (
                                       <span className="text-orange-600 font-medium">
@@ -1202,8 +1204,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     sum + (parseFloat(String(emp.cashPaid)) || 0), 0
                                   );
                                   
-                                  // Calculate the total expected amount (rounded up)
-                                  const totalExpectedAmount = formEmployees.reduce((sum, emp) => {
+                                  // Calculate whether each employee needs to pay cash to cover taxes
+                                  let totalRequired = 0;
+                                  let totalCovered = true;
+                                  
+                                  formEmployees.forEach(emp => {
                                     const employeeHoursPercent = emp.hours / totalJobHrs;
                                     const empCommission = commission * employeeHoursPercent;
                                     const empTips = tips * employeeHoursPercent;
@@ -1211,18 +1216,27 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     const empTax = empEarnings * 0.22;
                                     const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
                                     
-                                    // Add to sum only if tax exceeds money owed
-                                    return sum + (empTax > empMoneyOwed ? Math.ceil(empTax - empMoneyOwed) : 0);
-                                  }, 0);
+                                    // Check if tax exceeds money owed
+                                    if (empTax > empMoneyOwed) {
+                                      const expected = Math.ceil(empTax - empMoneyOwed);
+                                      totalRequired += expected;
+                                      
+                                      // If cash paid is less than expected, taxes are not fully covered
+                                      if ((emp.cashPaid || 0) < expected) {
+                                        totalCovered = false;
+                                      }
+                                    }
+                                  });
                                   
                                   // Add console logs to debug the values
                                   console.log('Tax Summary - Total Tax:', totalTax);
                                   console.log('Tax Summary - Money Owed:', totalMoneyOwed);
                                   console.log('Tax Summary - Cash Paid:', totalCashPaid);
-                                  console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
+                                  console.log('Tax Summary - Required Cash:', totalRequired);
+                                  console.log('Tax Summary - All Covered:', totalCovered);
                                   
-                                  // Only show "All Taxes Covered" if cash paid matches or exceeds the expected amount
-                                  if (totalCashPaid >= totalExpectedAmount && totalTax > 0) {
+                                  // Only show "All Taxes Covered" if all employees have paid their required amount
+                                  if (totalCovered && totalTax > 0) {
                                     return (
                                       <div className="text-sm text-green-600">
                                         All Taxes Covered
