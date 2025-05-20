@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import avpLogo from "@assets/avp-logo.png";
+import avpLogo from "../../assets/avp-logo.png";
 
 export default function Header() {
   const [, navigate] = useLocation();
