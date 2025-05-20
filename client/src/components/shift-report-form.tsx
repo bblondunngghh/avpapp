@@ -54,7 +54,6 @@ const formSchema = z.object({
     hours: z.coerce.number().min(0, "Cannot be negative"),
   })).default([]),
   notes: z.string().optional(),
-  incidents: z.string().optional(),
   confirmationCheck: z.boolean().refine(val => val === true, {
     message: "You must confirm that the information is correct",
   }),
@@ -113,7 +112,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalJobHours: 0,
       employees: [],
       notes: "",
-      incidents: "",
       confirmationCheck: false,
     }
   });
@@ -1275,21 +1273,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={form.control}
-                name="incidents"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Incidents</FormLabel>
-                    <FormControl>
-                      <Textarea className="paperform-input h-32" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
               <div className="mt-6 border-t border-gray-200 pt-4">
                 <FormField
                   control={form.control}
