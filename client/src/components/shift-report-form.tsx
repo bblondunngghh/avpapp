@@ -835,42 +835,34 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
                 
                 {form.watch("totalJobHours") > 0 ? (
-                  <div className="space-y-4">
-                    <div className="overflow-x-auto pb-2">
-                      <div className="w-full">
-                        <div className="grid grid-cols-7 gap-2 pb-2 border-b border-blue-200 mb-2">
-                          <div className="font-medium text-sm text-left">Employee</div>
-                          <div className="font-medium text-sm text-center">Hours</div>
-                          <div className="font-medium text-sm text-center">Commission</div>
-                          <div className="font-medium text-sm text-center">Tips</div>
-                          <div className="font-medium text-sm text-center">Money Owed</div>
-                          <div className="font-medium text-sm text-center">Earnings</div>
-                          <div className="font-medium text-sm text-center">22% Tax Due</div>
-                        </div>
-                        
+                  <div className="space-y-5">
+                    {/* Employee input section */}
+                    <div className="bg-white p-4 rounded-md border border-gray-200">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="text-sm font-medium">Employee Details</div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const currentEmployees = form.watch('employees') || [];
+                            form.setValue('employees', [...currentEmployees, { name: '', hours: 0 }]);
+                          }}
+                          className="text-xs h-8"
+                        >
+                          <Plus className="h-3.5 w-3.5 mr-1" /> Add Employee
+                        </Button>
+                      </div>
+                      
+                      <div className="space-y-3">
                         {(form.watch('employees') || []).map((employee, index) => {
                           const totalHours = Number(form.watch("totalJobHours") || 0);
                           const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
                           const hourPercentage = (hoursPercent * 100).toFixed(1);
                           
-                          // Calculate individual amounts based on hourly percentage
-                          const totalCommission = cashCommission + creditCardCommission + receiptCommission;
-                          const totalTips = cashTips + creditCardTips + receiptTips;
-                          const employeeCommission = hoursPercent * totalCommission;
-                          const employeeTips = hoursPercent * totalTips;
-                          
-                          // Calculate money owed (if negative cashTurnIn) 
-                          const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
-                            hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
-                            
-                          // Calculate total earnings and tax
-                          const totalEarnings = employeeCommission + employeeTips;
-                          const tax = totalEarnings * 0.22;
-                          const cashTurnIn = Math.max(0, tax - employeeMoneyOwed);
-                          
                           return (
-                            <div key={index} className="grid grid-cols-7 gap-2 items-center py-2 border-b border-blue-50">
-                              <div>
+                            <div key={index} className="flex items-center gap-2 p-2 rounded bg-gray-50 border border-gray-100">
+                              <div className="flex-1">
                                 <Select 
                                   value={employee.name || ''}
                                   onValueChange={(value) => {
@@ -882,7 +874,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     form.setValue('employees', newEmployees);
                                   }}
                                 >
-                                  <SelectTrigger className="paperform-input w-full">
+                                  <SelectTrigger className="h-9 w-full text-sm">
                                     <SelectValue placeholder="Select employee..." />
                                   </SelectTrigger>
                                   <SelectContent className="text-xs">
@@ -908,12 +900,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <div className="text-center">
+                              <div className="w-20">
                                 <Input 
                                   type="number" 
                                   min="0" 
                                   step="0.01" 
-                                  className="paperform-input text-center w-16 mx-auto"
+                                  className="h-9 text-center text-sm"
                                   value={employee.hours === 0 ? '' : employee.hours}
                                   onChange={(e) => {
                                     const newEmployees = [...(form.watch('employees') || [])];
@@ -935,58 +927,180 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   }}
                                 />
                               </div>
-                              <div className="text-sm font-medium text-center">
-                                ${employeeCommission.toFixed(2)}
+                              <div className="w-12 text-xs text-gray-500 text-center">
+                                {hourPercentage}%
                               </div>
-                              <div className="text-sm font-medium text-center">
-                                ${employeeTips.toFixed(2)}
-                              </div>
-                              <div className="text-sm font-medium text-center">
-                                ${employeeMoneyOwed.toFixed(2)}
-                              </div>
-                              <div className="text-sm font-medium text-center text-blue-800">
-                                ${totalEarnings.toFixed(2)}
-                              </div>
-                              <div className="text-sm font-medium text-center">
-                                ${cashTurnIn.toFixed(2)}
-                              </div>
+                              <Button 
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-gray-400 hover:text-red-500"
+                                onClick={() => {
+                                  const newEmployees = [...(form.watch('employees') || [])];
+                                  newEmployees.splice(index, 1);
+                                  form.setValue('employees', newEmployees);
+                                  
+                                  // Calculate total employee hours
+                                  const totalEmployeeHours = newEmployees.reduce(
+                                    (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
+                                    0
+                                  );
+                                  
+                                  // Update total job hours
+                                  form.setValue('totalJobHours', totalEmployeeHours);
+                                }}
+                              >
+                                <span className="sr-only">Remove</span>
+                                &times;
+                              </Button>
                             </div>
                           );
                         })}
+                        
+                        {(form.watch('employees') || []).length === 0 && (
+                          <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
+                            Add employees to distribute hours
+                          </div>
+                        )}
                       </div>
                     </div>
                     
-                    <div className="flex justify-between gap-4 mt-4">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const currentEmployees = form.watch('employees') || [];
-                          form.setValue('employees', [...currentEmployees, { name: '', hours: 0 }]);
-                        }}
-                      >
-                        Add Employee
-                      </Button>
+                    {/* Employee earnings calculation breakdown */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                        <div className="text-sm font-medium mb-3">Total Payroll Summary</div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Total Commission:</span>
+                            <span>${(cashCommission + creditCardCommission + receiptCommission).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Total Tips:</span>
+                            <span>${(cashTips + creditCardTips + receiptTips).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm border-t border-gray-100 pt-2 mt-2 font-medium">
+                            <span>Total Earnings:</span>
+                            <span>${(cashCommission + creditCardCommission + receiptCommission + cashTips + creditCardTips + receiptTips).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Job Hours:</span>
+                            <span>{form.watch("totalJobHours") || 0}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Money Owed to Employees:</span>
+                            <span>${expectedCompanyCashTurnIn < 0 ? Math.abs(expectedCompanyCashTurnIn).toFixed(2) : '0.00'}</span>
+                          </div>
+                        </div>
+                      </div>
                       
-                      {(form.watch('employees')?.length || 0) > 0 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const currentEmployees = [...(form.watch('employees') || [])];
-                            currentEmployees.pop();
-                            form.setValue('employees', currentEmployees);
-                          }}
-                        >
-                          Remove Last
-                        </Button>
-                      )}
+                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                        <div className="text-sm font-medium mb-3">Distribution Formula</div>
+                        <div className="space-y-1 text-xs text-gray-600">
+                          <div>• Commission is distributed based on percentage of total hours worked</div>
+                          <div>• Tips are distributed based on percentage of total hours worked</div>
+                          <div>• Money owed is distributed based on percentage of total hours worked</div>
+                          <div>• Tax calculation: 22% of total earnings (commission + tips)</div>
+                          <div>• Cash turn-in = Tax amount - Money owed (if positive)</div>
+                        </div>
+                      </div>
                     </div>
+                    
+                    {/* Employee individual breakdowns */}
+                    {(form.watch('employees') || []).length > 0 && (
+                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                        <div className="text-sm font-medium mb-3">Employee Earnings Breakdown</div>
+                        
+                        <div className="space-y-4">
+                          {(form.watch('employees') || []).map((employee, index) => {
+                            if (!employee.name) return null;
+                            
+                            const totalHours = Number(form.watch("totalJobHours") || 0);
+                            const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
+                            
+                            // Calculate individual amounts based on hourly percentage
+                            const totalCommission = cashCommission + creditCardCommission + receiptCommission;
+                            const totalTips = cashTips + creditCardTips + receiptTips;
+                            const employeeCommission = hoursPercent * totalCommission;
+                            const employeeTips = hoursPercent * totalTips;
+                            
+                            // Calculate money owed (if negative cashTurnIn) 
+                            const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
+                              hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
+                              
+                            // Calculate total earnings and tax
+                            const totalEarnings = employeeCommission + employeeTips;
+                            const tax = totalEarnings * 0.22;
+                            const cashTurnIn = Math.max(0, tax - employeeMoneyOwed);
+                            
+                            let employeeName = "Employee";
+                            if (employee.name) {
+                              // Get the full name from employee key
+                              const nameMap: Record<string, string> = {
+                                "antonio": "Antonio Martinez",
+                                "arturo": "Arturo Sanchez",
+                                "brandon": "Brandon Blond",
+                                "brett": "Brett Willson",
+                                "dave": "Dave Roehm",
+                                "devin": "Devin Bean",
+                                "dylan": "Dylan McMullen",
+                                "elijah": "Elijah Aguilar",
+                                "ethan": "Ethan Walker",
+                                "gabe": "Gabe Ott",
+                                "jacob": "Jacob Weldon",
+                                "joe": "Joe Albright",
+                                "jonathan": "Jonathan Zaccheo",
+                                "kevin": "Kevin Hanrahan",
+                                "melvin": "Melvin Lobos",
+                                "noe": "Noe Coronado",
+                                "riley": "Riley McIntyre",
+                                "ryan": "Ryan Hocevar",
+                                "zane": "Zane Springer"
+                              };
+                              employeeName = nameMap[employee.name] || `Employee ${index+1}`;
+                            }
+                            
+                            return (
+                              <div key={index} className="border border-gray-100 rounded-md p-3 bg-gray-50">
+                                <div className="flex justify-between mb-2 pb-1 border-b border-gray-200">
+                                  <div className="font-medium text-sm text-sky-700">{employeeName}</div>
+                                  <div className="text-xs text-gray-600">{employee.hours} hours ({(hoursPercent * 100).toFixed(1)}%)</div>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">Commission:</span>
+                                    <span>${employeeCommission.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">Tips:</span>
+                                    <span>${employeeTips.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">Money Owed:</span>
+                                    <span>${employeeMoneyOwed.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-gray-600">22% Tax:</span>
+                                    <span>${tax.toFixed(2)}</span>
+                                  </div>
+                                  <div className="col-span-2 flex justify-between text-xs font-medium border-t border-gray-200 pt-1 mt-1">
+                                    <span>Total Earnings:</span>
+                                    <span>${totalEarnings.toFixed(2)}</span>
+                                  </div>
+                                  <div className="col-span-2 flex justify-between text-xs font-medium text-sky-700">
+                                    <span>Cash Turn-In:</span>
+                                    <span>${cashTurnIn.toFixed(2)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-600 py-4">
+                  <div className="text-sm text-gray-600 py-4 text-center bg-white rounded-md border border-gray-200">
                     Enter Total Job Hours above to begin distributing commission and tips to employees.
                   </div>
                 )}
