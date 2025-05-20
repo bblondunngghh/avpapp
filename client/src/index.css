@@ -149,10 +149,14 @@ input[type="date"].paperform-input {
   font-size: 16px; /* Prevents iOS zoom */
   -webkit-appearance: none;
   appearance: none;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center; /* Center the date text */
   padding-left: 0;
   padding-right: 0;
+  height: 46px;
+  line-height: 46px;
 }
 
 .paperform-input:focus {
