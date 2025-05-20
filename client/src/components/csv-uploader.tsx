@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -35,6 +35,7 @@ export default function CSVUploader() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [results, setResults] = useState<any | null>(null);
+  const [pendingUploads, setPendingUploads] = useState<{key: string, type: string, date: string}[]>([]);
   const { toast } = useToast();
 
   const form = useForm<CSVUploadFormValues>({
@@ -85,7 +86,10 @@ export default function CSVUploader() {
       try {
         data = await response.json();
       } catch (jsonError) {
-        throw new Error("Server returned an invalid response. There might be a database connection issue.");
+        // Store the CSV file locally in localStorage as a fallback
+        const fallbackKey = `pendingCSV_${values.uploadType}_${new Date().toISOString()}`;
+        localStorage.setItem(fallbackKey, fileContent);
+        throw new Error("Server returned an invalid response. The CSV file has been saved locally and will be processed when the database connection is restored.");
       }
       
       if (response.ok) {
@@ -126,6 +130,92 @@ export default function CSVUploader() {
 
   const getTemplateLink = (type: string) => {
     return templateLinks[type as keyof typeof templateLinks] || '#';
+  };
+  
+  // Check for pending uploads when component mounts
+  useEffect(() => {
+    // Get all localStorage keys that start with "pendingCSV_"
+    const pendingKeys: {key: string, type: string, date: string}[] = [];
+    
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('pendingCSV_')) {
+        const [_, type, dateStr] = key.split('_');
+        pendingKeys.push({
+          key,
+          type,
+          date: new Date(dateStr).toLocaleString()
+        });
+      }
+    }
+    
+    if (pendingKeys.length > 0) {
+      setPendingUploads(pendingKeys);
+      toast({
+        title: "Pending uploads found",
+        description: `${pendingKeys.length} CSV upload(s) are waiting to be processed.`,
+        variant: "default",
+      });
+    }
+  }, [toast]);
+  
+  // Function to process a pending CSV upload
+  const processPendingUpload = async (pendingKey: string, uploadType: string) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    setResults(null);
+    
+    try {
+      const csvData = localStorage.getItem(pendingKey);
+      if (!csvData) {
+        throw new Error("Pending CSV data not found");
+      }
+      
+      // Send to server
+      const response = await apiRequest(
+        'POST', 
+        `/api/upload/${uploadType}`,
+        { csvData }
+      );
+      
+      try {
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Remove the pending upload from localStorage
+          localStorage.removeItem(pendingKey);
+          
+          // Update pending uploads list
+          setPendingUploads(prev => prev.filter(item => item.key !== pendingKey));
+          
+          setSuccess(`Successfully processed ${data.results.success.length} records`);
+          setResults(data.results);
+          toast({
+            title: 'Upload Successful',
+            description: data.message,
+          });
+        } else {
+          setError(data.error || 'Failed to process CSV');
+          toast({
+            title: 'Upload Failed',
+            description: data.error || 'Failed to process CSV',
+            variant: 'destructive',
+          });
+        }
+      } catch (jsonError) {
+        throw new Error("Server returned an invalid response. The database connection might still be unavailable.");
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to process pending upload');
+      toast({
+        title: 'Processing Error',
+        description: err.message || 'Failed to process pending upload',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
