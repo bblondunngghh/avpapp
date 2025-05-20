@@ -113,7 +113,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalJobHours: 0,
       employees: [],
       notes: "",
-      incidents: "",
       confirmationCheck: false,
     }
   });
@@ -1273,7 +1272,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">NOTES & INCIDENTS</h3>
+            <h3 className="section-title uppercase font-bold">NOTES</h3>
             
             <div className="space-y-6">
               <FormField
@@ -1282,20 +1281,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Notes</FormLabel>
-                    <FormControl>
-                      <Textarea className="paperform-input h-32" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="incidents"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Incidents</FormLabel>
                     <FormControl>
                       <Textarea className="paperform-input h-32" {...field} />
                     </FormControl>
