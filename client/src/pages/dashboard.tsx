@@ -92,7 +92,7 @@ export default function Dashboard() {
             <Button 
               variant="outline" 
               onClick={() => navigate("/employee-login")}
-              className="border-indigo-200 text-indigo-700 hover:text-indigo-800 hover:bg-indigo-50"
+              className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50"
             >
               Employee Login
             </Button>
