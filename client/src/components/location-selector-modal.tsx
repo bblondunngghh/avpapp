@@ -22,7 +22,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-center">
-          <DialogTitle className="font-normal">Select Location</DialogTitle>
+          <DialogTitle className="font-normal text-center">Select Location</DialogTitle>
           <DialogDescription className="text-center">
             Choose a location to create a new shift report
           </DialogDescription>
