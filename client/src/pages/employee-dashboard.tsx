@@ -209,7 +209,7 @@ export default function EmployeeDashboard() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -233,6 +233,23 @@ export default function EmployeeDashboard() {
               <div>
                 <p className="text-sm text-gray-500">Total Earnings</p>
                 <h3 className="text-2xl font-bold">${paySummary.totalEarnings.toFixed(2)}</h3>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className={paySummary.totalMoneyOwed > 0 ? "border-2 border-blue-300 shadow-md" : ""}>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-3 rounded-full">
+                <DollarSign className="h-6 w-6 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Money Owed to You</p>
+                <h3 className="text-2xl font-bold text-blue-700">${paySummary.totalMoneyOwed.toFixed(2)}</h3>
+                {paySummary.totalMoneyOwed > 0 && (
+                  <p className="text-xs text-blue-500 mt-1">From negative cash turn-in</p>
+                )}
               </div>
             </div>
           </CardContent>
