@@ -680,7 +680,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           <FormControl>
                             <InputMoney 
                               {...field}
-                              onValueChange={(value) => {
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
                                 field.onChange(value);
                                 
                                 // Update company cash turn-in and over/short when credit sales change
@@ -735,7 +736,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           <FormControl>
                             <InputMoney 
                               {...field} 
-                              onValueChange={(value) => {
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
                                 field.onChange(value);
                                 
                                 // Recalculate cash tips
@@ -769,7 +771,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           <FormControl>
                             <InputMoney 
                               {...field} 
-                              onValueChange={(value) => field.onChange(value)}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                field.onChange(value);
+                              }}
                               className={`paperform-input ${
                                 expectedCompanyCashTurnIn < 0 ? "bg-amber-50" : ""
                               }`}
@@ -859,7 +864,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           <FormControl>
                             <InputMoney 
                               {...field} 
-                              onValueChange={(value) => field.onChange(value)}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                field.onChange(value);
+                              }}
                               className="paperform-input"
                               readOnly
                             />
