@@ -1202,12 +1202,31 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     sum + (parseFloat(String(emp.cashPaid)) || 0), 0
                                   );
                                   
+                                  // Calculate the total expected amount (rounded up)
+                                  const totalExpectedAmount = formEmployees.reduce((sum, emp) => {
+                                    const employeeHoursPercent = emp.hours / totalJobHrs;
+                                    const empCommission = commission * employeeHoursPercent;
+                                    const empTips = tips * employeeHoursPercent;
+                                    const empEarnings = empCommission + empTips;
+                                    const empTax = empEarnings * 0.22;
+                                    const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
+                                    
+                                    // Add to sum only if tax exceeds money owed
+                                    return sum + (empTax > empMoneyOwed ? Math.ceil(empTax - empMoneyOwed) : 0);
+                                  }, 0);
+                                  
                                   // Add console logs to debug the values
                                   console.log('Tax Summary - Total Tax:', totalTax);
                                   console.log('Tax Summary - Money Owed:', totalMoneyOwed);
                                   console.log('Tax Summary - Cash Paid:', totalCashPaid);
+                                  console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
                                   
-                                  if ((totalMoneyOwed + totalCashPaid) >= totalTax && totalTax > 0) {
+                                  // Only show "All Taxes Covered" if:
+                                  // 1. Money owed + cash paid covers tax obligation AND
+                                  // 2. Cash paid matches or exceeds the expected amount (taxes not covered by money owed)
+                                  if ((totalMoneyOwed + totalCashPaid) >= totalTax && 
+                                      totalCashPaid >= totalExpectedAmount &&
+                                      totalTax > 0) {
                                     return (
                                       <div className="text-sm text-green-600">
                                         All Taxes Covered
