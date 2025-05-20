@@ -334,11 +334,17 @@ input[type="date"].paperform-input {
 
 /* Bottom navigation styles */
 .bottom-nav {
-  @apply fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10;
+  @apply fixed inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10;
+  /* Move up from bottom to avoid iPhone swipe-up area */
+  bottom: env(safe-area-inset-bottom, 12px);
+  padding-bottom: env(safe-area-inset-bottom, 12px);
 }
 
 .bottom-nav-item {
   @apply flex flex-col items-center justify-center flex-1 py-2;
+  /* Add a bit more padding to make touch targets larger but keep the nav compact */
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .bottom-nav-item.active {
