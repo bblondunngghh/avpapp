@@ -49,10 +49,10 @@ export default function Dashboard() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-primary">Dashboard</h2>
+        <h2 className="text-2xl text-indigo-700">Dashboard</h2>
         <Button 
           onClick={handleNewReport}
-          className="bg-secondary hover:bg-secondary-light"
+          className="bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white"
         >
           <Plus className="mr-1 h-4 w-4" /> New Report
         </Button>
