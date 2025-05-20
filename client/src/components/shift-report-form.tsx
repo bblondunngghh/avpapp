@@ -54,7 +54,6 @@ const formSchema = z.object({
     hours: z.coerce.number().min(0, "Cannot be negative"),
   })).default([]),
   notes: z.string().optional(),
-  incidents: z.string().optional(),
   confirmationCheck: z.boolean().refine(val => val === true, {
     message: "You must confirm that the information is correct",
   }),
