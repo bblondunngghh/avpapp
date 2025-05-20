@@ -1336,14 +1336,59 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     sum + (parseFloat(String(emp.cashPaid)) || 0), 0
                                   );
                                   
-                                  // Calculate total tax from all earnings
+                                  // Recalculate all the values we need (copied from above to maintain scope)
+                                  const totalCars = form.watch('totalCars') || 0;
+                                  const creditTransactions = form.watch('creditTransactions') || 0;
+                                  const totalReceipts = form.watch('totalReceipts') || 0;
+                                  const locationId = form.watch('locationId');
+                                  const cashCars = totalCars - creditTransactions - totalReceipts;
+                                  
+                                  // Commission rates
+                                  let commissionRate = 4; // Default for most locations
+                                  if (locationId === 3) { // Truluck's
+                                    commissionRate = 7;
+                                  } else if (locationId === 4) { // BOA Steakhouse
+                                    commissionRate = 6;
+                                  }
+                                  
+                                  // Commission calculations
+                                  const creditCardCommission = creditTransactions * commissionRate;
+                                  const cashCommission = cashCars * commissionRate;
+                                  const receiptCommission = totalReceipts * commissionRate;
+                                  
+                                  // Tips calculations
+                                  const totalCreditSales = form.watch('totalCreditSales') || 0;
+                                  const expectedCreditSales = creditTransactions * 15;
+                                  const creditCardTips = Math.abs(expectedCreditSales - totalCreditSales);
+                                  
+                                  const totalCashCollected = form.watch('totalCashCollected') || 0;
+                                  const expectedCashSales = cashCars * 15;
+                                  const cashTips = Math.abs(expectedCashSales - totalCashCollected);
+                                  
+                                  const receiptTips = totalReceipts * 3;
+                                  
+                                  // Total calculations
                                   const totalCommission = cashCommission + creditCardCommission + receiptCommission;
                                   const totalTips = cashTips + creditCardTips + receiptTips;
                                   const totalEarnings = totalCommission + totalTips;
                                   const totalTaxAmount = totalEarnings * 0.22;
                                   
-                                  // Calculate amount still needed for taxes after money owed
-                                  const netTaxObligationTotal = Math.max(0, totalTaxAmount - totalMoneyOwed);
+                                  // Calculate money owed (if company cash turn in is negative)
+                                  let perCarRate = 11; // Default to Capital Grille rate
+                                  if (locationId === 2) { // Bob's Steak and Chop House
+                                    perCarRate = 6;
+                                  } else if (locationId === 3) { // Truluck's
+                                    perCarRate = 8;
+                                  } else if (locationId === 4) { // BOA Steakhouse
+                                    perCarRate = 7;
+                                  }
+                                  const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
+                                  
+                                  // Calculate total money owed to employees
+                                  const calculatedMoneyOwed = companyCashTurnIn < 0 ? Math.abs(companyCashTurnIn) : 0;
+                                  
+                                  // Calculate net tax obligation (tax amount minus any money owed to employees)
+                                  const netTaxObligationTotal = Math.max(0, totalTaxAmount - calculatedMoneyOwed);
                                   
                                   return (
                                     <>
