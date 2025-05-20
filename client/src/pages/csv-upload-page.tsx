@@ -8,7 +8,7 @@ export default function CSVUploadPage() {
   const { toast } = useToast();
 
   // Simple admin check - can be replaced with proper authentication
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  const isAdmin = localStorage.getItem('admin_authenticated') === 'true';
 
   useEffect(() => {
     if (!isAdmin) {
