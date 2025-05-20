@@ -1,9 +1,9 @@
 // Script to add employees from EMPLOYEE_NAMES to the database
 
-const { Pool } = require('@neondatabase/serverless');
-const ws = require('ws');
-const { neonConfig, drizzle } = require('drizzle-orm/neon-serverless');
-const { employees } = require('../../shared/schema');
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import ws from 'ws';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { employees } from '../../shared/schema.js';
 
 // Setup for neon database
 neonConfig.webSocketConstructor = ws;

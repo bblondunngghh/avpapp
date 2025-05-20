@@ -98,6 +98,7 @@ interface TicketDistribution {
 
 export default function AdminPanel() {
   const [, navigate] = useLocation();
+  const [isAddingEmployees, setIsAddingEmployees] = useState(false);
   const [employeeStats, setEmployeeStats] = useState<{
     name: string;
     totalHours: number;
