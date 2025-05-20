@@ -1686,27 +1686,119 @@ export default function AdminPanel() {
                   Add, edit and manage employees for shift leader selection and payroll calculations
                 </CardDescription>
               </div>
-              <Button 
-                onClick={() => {
-                  // Reset new employee form
-                  setNewEmployee({
-                    key: '',
-                    fullName: '',
-                    isActive: true,
-                    isShiftLeader: false,
-                    phone: '',
-                    email: '',
-                    hireDate: new Date().toISOString().split('T')[0],
-                    notes: ''
-                  });
-                  // Open dialog
-                  setIsAddEmployeeOpen(true);
-                }}
-                className="flex items-center gap-1"
-              >
-                <PlusCircle className="h-4 w-4" />
-                Add Employee
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    // Start adding all employees from EMPLOYEE_NAMES
+                    const confirmImport = confirm(
+                      "This will add all missing employees from the system that are listed in the EMPLOYEE_NAMES constant. Continue?"
+                    );
+                    
+                    if (confirmImport) {
+                      // Get existing employees
+                      fetch('/api/employees')
+                        .then(res => res.json())
+                        .then(existingEmployees => {
+                          const existingKeys = existingEmployees.map(emp => emp.key);
+                          
+                          // Get today's date in YYYY-MM-DD format
+                          const today = new Date().toISOString().split('T')[0];
+                          
+                          // Create array of employees from EMPLOYEE_NAMES that don't exist yet
+                          const employeesToAdd = Object.entries(EMPLOYEE_NAMES)
+                            .filter(([key]) => !existingKeys.includes(key))
+                            .map(([key, fullName]) => ({
+                              key,
+                              fullName,
+                              isActive: true,
+                              isShiftLeader: false,
+                              hireDate: today
+                            }));
+                            
+                          if (employeesToAdd.length === 0) {
+                            alert("All employees already exist in the database.");
+                            return;
+                          }
+                          
+                          setIsAddingEmployees(true);
+                          
+                          // Add each employee one by one
+                          const addPromises = employeesToAdd.map(employee => 
+                            fetch('/api/employees', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify(employee),
+                            })
+                          );
+                          
+                          Promise.allSettled(addPromises)
+                            .then(results => {
+                              const successful = results.filter(r => r.status === 'fulfilled').length;
+                              const failed = results.filter(r => r.status === 'rejected').length;
+                              
+                              // Refresh employee list
+                              refetchEmployees();
+                              
+                              // Show results message
+                              alert(`Import complete: Added ${successful} employees. ${failed > 0 ? `Failed to add ${failed} employees.` : ''}`);
+                              setIsAddingEmployees(false);
+                            })
+                            .catch(error => {
+                              console.error("Error importing employees:", error);
+                              alert(`Error importing employees: ${error.message}`);
+                              setIsAddingEmployees(false);
+                            });
+                        })
+                        .catch(error => {
+                          console.error("Error fetching existing employees:", error);
+                          alert(`Error fetching existing employees: ${error.message}`);
+                          setIsAddingEmployees(false);
+                        });
+                    }
+                  }}
+                  disabled={isAddingEmployees}
+                  className="flex items-center gap-1"
+                >
+                  {isAddingEmployees ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Importing...
+                    </>
+                  ) : (
+                    <>
+                      <Users className="h-4 w-4" />
+                      Import All Employees
+                    </>
+                  )}
+                </Button>
+                <Button 
+                  onClick={() => {
+                    // Reset new employee form
+                    setNewEmployee({
+                      key: '',
+                      fullName: '',
+                      isActive: true,
+                      isShiftLeader: false,
+                      phone: '',
+                      email: '',
+                      hireDate: new Date().toISOString().split('T')[0],
+                      notes: ''
+                    });
+                    // Open dialog
+                    setIsAddEmployeeOpen(true);
+                  }}
+                  className="flex items-center gap-1"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  Add Employee
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {isLoadingEmployees ? (
