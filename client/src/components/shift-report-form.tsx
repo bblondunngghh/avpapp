@@ -1104,37 +1104,67 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           })}
                           
                           {/* Total Tax Coverage Summary */}
-                          {employeeCards.length > 0 && (
+                          {form.watch('employees')?.length > 0 && (
                             <div className="mt-4 border-t-2 border-gray-200 pt-3">
                               <div className="flex justify-between items-center">
                                 <h4 className="text-sm font-semibold text-gray-800">Tax Coverage Summary</h4>
                                 
                                 {(() => {
-                                  // Calculate total tax and total money owed across all employees
-                                  const totalTax = employeeCards.reduce((sum, emp) => {
-                                    const { commission, tips, totalCars, creditTransactions, totalReceipts } = calculations;
-                                    const employeeHoursPercent = emp.hours / totalJobHours;
+                                  const formEmployees = form.watch('employees') || [];
+                                  const totalJobHrs = form.watch('totalJobHours') || 0;
+                                  
+                                  // Calculate total tax and total money owed
+                                  let totalTax = 0;
+                                  let totalMoneyOwed = 0;
+                                  
+                                  // Using the same calculations as used for individual employees
+                                  const totalCars = form.watch('totalCars') || 0;
+                                  const creditTransactions = form.watch('creditTransactions') || 0;
+                                  const totalReceipts = form.watch('totalReceipts') || 0;
+                                  
+                                  // Commission calculations
+                                  const creditCardCommission = creditTransactions * 4;
+                                  const cashCars = totalCars - creditTransactions - totalReceipts;
+                                  const cashCommission = cashCars * 4;
+                                  const receiptCommission = totalReceipts * 4;
+                                  const commission = cashCommission + creditCardCommission + receiptCommission;
+                                  
+                                  // Tips calculations
+                                  const totalCreditSales = form.watch('totalCreditSales') || 0;
+                                  const expectedCreditSales = creditTransactions * 15;
+                                  const creditCardTips = Math.abs(expectedCreditSales - totalCreditSales);
+                                  
+                                  const totalCashCollected = form.watch('totalCashCollected') || 0;
+                                  const expectedCashSales = cashCars * 15;
+                                  const cashTips = Math.abs(expectedCashSales - totalCashCollected);
+                                  
+                                  const receiptTips = totalReceipts * 3;
+                                  const tips = cashTips + creditCardTips + receiptTips;
+                                  
+                                  // Company cash turn-in calculation
+                                  const locationId = form.watch('locationId');
+                                  let perCarRate = 11; // Default to Capital Grille rate
+                                  if (locationId === 2) { // Bob's
+                                    perCarRate = 6;
+                                  }
+                                  const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
+                                  
+                                  // Calculate for each employee
+                                  formEmployees.forEach(emp => {
+                                    const employeeHoursPercent = emp.hours / totalJobHrs;
                                     
-                                    // Calculate employee's share of earnings
+                                    // Employee's share of commission and tips
                                     const empCommission = commission * employeeHoursPercent;
                                     const empTips = tips * employeeHoursPercent;
                                     const empEarnings = empCommission + empTips;
                                     const empTax = empEarnings * 0.22;
                                     
-                                    return sum + empTax;
-                                  }, 0);
-                                  
-                                  const totalMoneyOwed = employeeCards.reduce((sum, emp) => {
-                                    const { commission, tips, totalCars, creditTransactions, totalReceipts } = calculations;
-                                    const employeeHoursPercent = emp.hours / totalJobHours;
+                                    // Money owed calculation
+                                    const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
                                     
-                                    // Calculate employee's share of earnings
-                                    const empCommission = commission * employeeHoursPercent;
-                                    const empTips = tips * employeeHoursPercent;
-                                    const empMoneyOwed = (empCommission + empTips) - calculations.companyCashTurnIn * employeeHoursPercent;
-                                    
-                                    return sum + (empMoneyOwed > 0 ? empMoneyOwed : 0);
-                                  }, 0);
+                                    totalTax += empTax;
+                                    totalMoneyOwed += empMoneyOwed;
+                                  });
                                   
                                   const taxDeficit = totalTax - totalMoneyOwed;
                                   
