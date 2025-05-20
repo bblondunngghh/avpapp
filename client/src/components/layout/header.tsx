@@ -58,7 +58,7 @@ export default function Header() {
                 <Button 
                   variant="ghost" 
                   className="justify-start" 
-                  onClick={() => handleNavigation('/new-report')}
+                  onClick={() => handleNavigation('/report-selection')}
                 >
                   New Report
                 </Button>
