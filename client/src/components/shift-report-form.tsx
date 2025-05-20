@@ -7,8 +7,8 @@ import { format } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-// @ts-ignore
-import { ShiftReport } from "@shared/schema";
+// Import types from schema
+import { ShiftReport, EmployeeWithCashPaid } from "@shared/schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -59,6 +59,7 @@ const formSchema = z.object({
   employees: z.array(z.object({
     name: z.string().nonempty("Employee name is required"),
     hours: z.coerce.number().min(0, "Cannot be negative"),
+    cashPaid: z.coerce.number().min(0, "Cannot be negative").optional(),
   })).default([]),
   notes: z.string().optional(),
   confirmationCheck: z.boolean().refine(val => val === true, {

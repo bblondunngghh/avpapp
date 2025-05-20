@@ -17,6 +17,13 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
+// Define type for Employee with cashPaid property used in components
+export interface EmployeeWithCashPaid {
+  name: string;
+  hours: number;
+  cashPaid?: number;
+}
+
 // Employee schema
 export const employees = pgTable("employees", {
   id: serial("id").primaryKey(),
