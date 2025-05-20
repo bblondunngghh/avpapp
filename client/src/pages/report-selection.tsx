@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, AlertTriangle, ChevronLeft } from "lucide-react";
+import { LOCATIONS } from "@/lib/constants";
 
 export default function ReportSelection() {
   const [, navigate] = useLocation();
@@ -23,7 +24,6 @@ export default function ReportSelection() {
       <div className="grid gap-6">
         <Card 
           className="cursor-pointer hover:shadow-md transition-shadow border-blue-100 hover:border-blue-300"
-          onClick={() => navigate("/new-report")}
         >
           <CardHeader className="flex flex-row items-center gap-4 pb-2">
             <div className="bg-blue-100 p-2 rounded-full">
@@ -44,11 +44,21 @@ export default function ReportSelection() {
               <li>Employee hours and pay</li>
               <li>Financial summaries</li>
             </ul>
-            <div className="flex justify-end">
-              <Button variant="outline" className="text-blue-600 border-blue-200">
-                Create Shift Report
-              </Button>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 mb-4">
+              {LOCATIONS.map(location => (
+                <Button 
+                  key={location.id}
+                  variant="outline" 
+                  onClick={() => navigate(`/new-report?locationId=${location.id}`)}
+                  className="h-auto py-2 text-blue-600 border-blue-200 hover:bg-blue-50/50"
+                >
+                  {location.name}
+                </Button>
+              ))}
             </div>
+            <p className="text-xs text-gray-500 text-center">
+              Select a location to create a shift report
+            </p>
           </CardContent>
         </Card>
         
