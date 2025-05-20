@@ -35,19 +35,24 @@ export default function EmployeeLogin() {
     setIsLoading(true);
     
     try {
+      console.log("Login attempt with:", data);
       // Call the API to verify employee credentials
       const response = await apiRequest("POST", "/api/employee-login", data);
       
+      console.log("Login response status:", response.status);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("Login error:", errorData);
         throw new Error(errorData.message || "Invalid employee credentials");
       }
       
       const employee = await response.json();
+      console.log("Login successful:", employee);
       
       // Store employee info in localStorage for session
       localStorage.setItem("employee_authenticated", "true");
-      localStorage.setItem("employee_id", employee.id);
+      localStorage.setItem("employee_id", employee.id.toString());
       localStorage.setItem("employee_name", employee.fullName);
       localStorage.setItem("employee_key", employee.key);
       localStorage.setItem("employee_auth_time", Date.now().toString());
@@ -56,6 +61,7 @@ export default function EmployeeLogin() {
       navigate("/employee-dashboard");
       
     } catch (error: any) {
+      console.error("Login error details:", error);
       toast({
         title: "Login failed",
         description: error.message || "Invalid employee credentials",

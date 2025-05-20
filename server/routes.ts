@@ -363,18 +363,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Employee login API endpoint
   apiRouter.post('/employee-login', async (req, res) => {
     try {
+      console.log('Employee login attempt:', req.body);
+      
       const { key, fullName } = req.body;
       
       if (!key || !fullName) {
+        console.log('Missing key or fullName in request');
         return res.status(400).json({ message: 'Employee key and full name are required' });
       }
       
       // Find employee by key
       const employee = await storage.getEmployeeByKey(key);
+      console.log('Employee found by key:', employee ? `${employee.key} (${employee.fullName})` : 'none');
       
       if (!employee) {
         return res.status(401).json({ message: 'Invalid employee credentials' });
       }
+      
+      // Debug fullname comparison
+      console.log('Fullname comparison:', {
+        provided: fullName.toLowerCase(),
+        stored: employee.fullName.toLowerCase(),
+        matches: employee.fullName.toLowerCase() === fullName.toLowerCase()
+      });
       
       // Check if the full name matches
       if (employee.fullName.toLowerCase() !== fullName.toLowerCase()) {
@@ -387,13 +398,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Return employee info (excluding password)
-      res.json({
+      const employeeResponse = {
         id: employee.id,
         key: employee.key,
         fullName: employee.fullName,
         isActive: employee.isActive,
         isShiftLeader: employee.isShiftLeader
-      });
+      };
+      
+      console.log('Login successful, returning:', employeeResponse);
+      res.json(employeeResponse);
     } catch (error) {
       console.error('Employee login error:', error);
       res.status(500).json({ message: 'An error occurred during login' });
