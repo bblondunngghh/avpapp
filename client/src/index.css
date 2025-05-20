@@ -228,7 +228,7 @@
   --primary-foreground: 210 40% 98%;
   --secondary: 174 84% 32%; /* Teal accent */
   --secondary-foreground: 210 40% 98%;
-  --accent: 262 83% 58%; /* Purple accent */
+  --accent: 200 98% 61%; /* Sky blue accent */
   --accent-foreground: 210 40% 98%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
@@ -236,9 +236,9 @@
   --radius: 0.75rem; /* Slightly more rounded */
   
   /* Chart colors */
-  --chart-1: 243 75% 59%; /* Indigo */
+  --chart-1: 210 100% 50%; /* Vibrant Blue */
   --chart-2: 174 84% 32%; /* Teal */
-  --chart-3: 262 83% 58%; /* Purple */
+  --chart-3: 200 98% 61%; /* Sky Blue */
   --chart-4: 335 78% 60%; /* Pink */
   --chart-5: 32 95% 44%;  /* Orange */
   
