@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, AlertTriangle, BookOpen, ArrowRight } from "lucide-react";
-import avpLogo from "../assets/avp-logo.png";
+
 import LocationSelectorModal from "@/components/location-selector-modal";
 
 export default function Dashboard() {
@@ -23,9 +23,8 @@ export default function Dashboard() {
             backgroundSize: "100px 100px" 
           }}>
         </div>
-        <h1 className="text-3xl md:text-4xl text-white uppercase mb-3 relative z-10 tracking-wide flex items-center justify-center gap-3">
-          <img src={avpLogo} alt="AVP Logo" className="h-16 w-auto" />
-          <span>Access Valet Parking</span>
+        <h1 className="text-3xl md:text-4xl text-white uppercase mb-3 relative z-10 tracking-wide flex items-center justify-center">
+          Access Valet Parking
         </h1>
         <p className="text-blue-50 max-w-2xl mx-auto text-lg relative z-10">
           Welcome to the Access Valet Parking Management Portal. Please select from the following options.

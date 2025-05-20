@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, Car } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import avpLogo from "../../assets/avp-logo.png";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -20,8 +19,8 @@ export default function Header() {
       <div className="app-header-content">
         <div className="flex items-center gap-3">
           <h1 className="app-title flex items-center gap-2">
-            <img src={avpLogo} alt="AVP Logo" className="h-8 w-auto" />
-            <span className="hidden md:inline">ACCESS VALET PARKING</span>
+            <Car className="h-5 w-5 animate-bounce-slow" />
+            <span>ACCESS VALET PARKING</span>
           </h1>
         </div>
         
