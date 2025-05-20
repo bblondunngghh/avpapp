@@ -275,6 +275,17 @@ export async function processShiftReportsCSV(req: Request, res: Response) {
     if (!req.body.csvData) {
       return res.status(400).json({ error: 'No CSV data provided' });
     }
+    
+    // Test database connection before processing
+    try {
+      await storage.getShiftReports();
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      return res.status(503).json({ 
+        error: 'Database connection issue. Your CSV data has been saved locally and will be processed when the connection is restored.',
+        connectionError: true
+      });
+    }
 
     const csvData = req.body.csvData;
     const records = parse(csvData, {
