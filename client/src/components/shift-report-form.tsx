@@ -823,35 +823,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         onChange={(e) => {
                           const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                           field.onChange(value);
-                          
-                          // Get current employees
-                          const currentEmployees = form.watch('employees') || [];
-                          
-                          // If there are no employees and a total was set, create a default employee
-                          if (value > 0 && currentEmployees.length === 0) {
-                            form.setValue('employees', [{ name: '', hours: value }]);
-                            return;
-                          }
-                          
-                          // If there are employees, adjust their hours to match the new total
-                          if (value > 0 && currentEmployees.length > 0) {
-                            // Calculate current sum of hours
-                            const currentSum = currentEmployees.reduce(
-                              (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
-                              0
-                            );
-                            
-                            if (currentSum !== value) {
-                              // Adjust hours proportionally
-                              const ratio = value / currentSum;
-                              const updatedEmployees = currentEmployees.map(emp => ({
-                                ...emp,
-                                hours: Math.round((parseFloat(String(emp.hours)) || 0) * ratio * 100) / 100
-                              }));
-                              
-                              form.setValue('employees', updatedEmployees);
-                            }
-                          }
+                          // No auto-update of employee hours when total changes
                         }}
                       />
                     </FormControl>
