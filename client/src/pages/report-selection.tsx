@@ -19,7 +19,7 @@ export default function ReportSelection() {
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-3xl md:text-4xl font-bold text-center flex-1 pr-10 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-teal-500">
+          <h1 className="text-3xl md:text-4xl font-bold text-center flex-1 pr-10 text-gray-900">
             Select Report Type
           </h1>
         </div>
