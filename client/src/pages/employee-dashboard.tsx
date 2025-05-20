@@ -245,10 +245,10 @@ export default function EmployeeDashboard() {
                 <DollarSign className="h-6 w-6 text-blue-700" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Money Owed to You</p>
+                <p className="text-sm text-gray-500">Additional Tax Payments</p>
                 <h3 className="text-2xl font-bold text-blue-700">${paySummary.totalMoneyOwed.toFixed(2)}</h3>
                 {paySummary.totalMoneyOwed > 0 && (
-                  <p className="text-xs text-blue-500 mt-1">From negative cash turn-in</p>
+                  <p className="text-xs text-blue-500 mt-1">Credit for tax obligations</p>
                 )}
               </div>
             </div>
@@ -372,9 +372,9 @@ export default function EmployeeDashboard() {
                         </div>
                         <div className="flex justify-between text-sm">
                           <div>
-                            <span>Money Owed to You:</span>
+                            <span>Additional Tax Payments:</span>
                             <p className="text-xs text-gray-500 mt-0.5">
-                              Additional money due to you when cash collected was less than expected
+                              Credit applied toward tax obligations from negative cash turn-in
                             </p>
                           </div>
                           <span>${paySummary.totalMoneyOwed.toFixed(2)}</span>
