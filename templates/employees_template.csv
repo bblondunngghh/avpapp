@@ -1,0 +1,5 @@
+key,fullName,isActive,isShiftLeader,phone,email,hireDate,notes
+employee1,John Smith,TRUE,TRUE,555-123-4567,john@example.com,2023-01-15,Lead valet for dinner shifts
+employee2,Jane Doe,TRUE,FALSE,555-234-5678,jane@example.com,2023-02-20,Weekend availability only
+employee3,Robert Johnson,TRUE,FALSE,555-345-6789,robert@example.com,2023-03-10,
+employee4,Emily Wilson,TRUE,TRUE,555-456-7890,emily@example.com,2022-11-05,Trained at all locations

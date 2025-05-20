@@ -1,0 +1,5 @@
+locationId,date,shift,manager,totalCars,complimentaryCars,creditTransactions,totalCreditSales,totalReceipts,totalCashCollected,companyCashTurnIn,totalTurnIn,overShort,totalJobHours,notes,incidents
+1,2023-05-15,Lunch,John Smith,45,2,20,300.00,5,350.00,231.00,531.00,119.00,16.5,Busy lunch service,
+2,2023-05-15,Dinner,Emily Wilson,60,1,35,525.00,8,280.00,330.00,855.00,-50.00,22.0,Full lot by 7pm,Minor fender bender at 8:30pm
+3,2023-05-16,Lunch,Robert Johnson,30,0,12,180.00,3,225.00,192.00,372.00,33.00,12.0,,
+4,2023-05-16,Dinner,Jane Doe,52,3,28,420.00,6,335.00,343.00,763.00,-8.00,18.0,Heavy rain affected service,
