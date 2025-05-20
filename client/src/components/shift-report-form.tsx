@@ -545,8 +545,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
-                      <span>{form.watch("locationId") === 2 ? "Bob's Steak & Chop House" : "Capital Grille"} Rate: ${form.watch("locationId") === 2 ? "6.00" : "11.00"} per car</span>
-                      <span>Expected Turn-In: ${(totalCars * (form.watch("locationId") === 2 ? 6 : 11)).toFixed(2)}</span>
+                      <span>
+                        {form.watch("locationId") === 1 ? "Capital Grille Rate: $11.00 per car" :
+                         form.watch("locationId") === 2 ? "Bob's Steak & Chop House Rate: $6.00 per car" : 
+                         form.watch("locationId") === 3 ? "Truluck's Rate: $8.00 per car" : 
+                         "BOA Steakhouse Rate: $11.00 per car"}
+                      </span>
+                      <span>Expected Turn-In: ${(totalCars * (
+                        form.watch("locationId") === 2 ? 6 : 
+                        form.watch("locationId") === 3 ? 8 : 11
+                      )).toFixed(2)}</span>
                     </div>
                     <FormMessage />
                   </FormItem>
