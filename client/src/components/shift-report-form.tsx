@@ -1221,12 +1221,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   console.log('Tax Summary - Cash Paid:', totalCashPaid);
                                   console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
                                   
-                                  // Only show "All Taxes Covered" if:
-                                  // 1. Money owed + cash paid covers tax obligation AND
-                                  // 2. Cash paid matches or exceeds the expected amount (taxes not covered by money owed)
-                                  if ((totalMoneyOwed + totalCashPaid) >= totalTax && 
-                                      totalCashPaid >= totalExpectedAmount &&
-                                      totalTax > 0) {
+                                  // Only show "All Taxes Covered" if cash paid matches or exceeds the expected amount
+                                  if (totalCashPaid >= totalExpectedAmount && totalTax > 0) {
                                     return (
                                       <div className="text-sm text-green-600">
                                         All Taxes Covered
