@@ -38,8 +38,25 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown, Calendar } from "lucide-react";
-import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart, PieChart, TrendingUp, Activity } from "lucide-react";
+import { 
+  BarChart as RechartsBarChart, 
+  LineChart as RechartsLineChart, 
+  PieChart as RechartsPieChart,
+  Line,
+  Pie,
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  Cell,
+  Area,
+  AreaChart,
+  ComposedChart
+} from 'recharts';
 import { LOCATIONS, EMPLOYEE_NAMES } from "@/lib/constants";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -111,6 +128,12 @@ export default function AdminPanel() {
   const [isAddingEmployees, setIsAddingEmployees] = useState(false);
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
+  
+  // Statistics state
+  const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
+  const [carDistributionByLocation, setCarDistributionByLocation] = useState<Array<{name: string; value: number; color: string}>>([]);
+  const [salesTrendData, setSalesTrendData] = useState<Array<{date: string; sales: number; cars: number}>>([]);
+  const [reportsByDay, setReportsByDay] = useState<Array<{name: string; reports: number}>>([]);
   const { toast } = useToast();
   const [employeeStats, setEmployeeStats] = useState<{
     name: string;
@@ -207,13 +230,47 @@ export default function AdminPanel() {
     }
   }, [distributionsData]);
   
-  // Calculate monthly sales data
+  // Calculate statistics and analytics data
   useEffect(() => {
     if (!reports) return;
     
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    // Initialize monthly data with all months at 0 sales
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
+    // Initialize data structures
     const initialMonthlyData = monthNames.map(name => ({ name, sales: 0 }));
+    const initialDailyData = dayNames.map(name => ({ name, cars: 0 }));
+    const dayReportCounts = dayNames.map(name => ({ name, reports: 0 }));
+    
+    // Initialize location distribution data with consistent colors
+    const locationColors = {
+      1: "#4f46e5", // Capital Grille - blue
+      2: "#10b981", // Bob's Steak - green
+      3: "#ef4444", // Truluck's - red
+      4: "#0ea5e9"  // BOA Steakhouse - sky blue
+    };
+    
+    const locationDistribution: {name: string; value: number; color: string}[] = [];
+    LOCATIONS.forEach(location => {
+      locationDistribution.push({
+        name: location.name,
+        value: 0,
+        color: locationColors[location.id as keyof typeof locationColors]
+      });
+    });
+    
+    // Initialize sales trend data (last 14 days)
+    const salesTrend: {date: string; sales: number; cars: number}[] = [];
+    const today = new Date();
+    for (let i = 13; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(today.getDate() - i);
+      salesTrend.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        sales: 0,
+        cars: 0
+      });
+    }
     
     if (reports.length > 0) {
       // Filter reports by selected location if applicable
@@ -221,10 +278,11 @@ export default function AdminPanel() {
         ? reports.filter(report => report.locationId === selectedLocation)
         : reports;
       
-      // Group reports by month and sum sales
+      // Process each report
       filteredReports.forEach(report => {
         const reportDate = new Date(report.date);
         const month = reportDate.getMonth(); // 0-11
+        const dayOfWeek = reportDate.getDay(); // 0-6
         
         // Skip if outside filter date range
         if ((startDate && reportDate < startDate) || (endDate && reportDate > endDate)) {
@@ -243,12 +301,39 @@ export default function AdminPanel() {
         const receiptSales = report.totalReceipts * 18; // $18 per receipt
         const totalSales = cashSales + creditSales + receiptSales;
         
-        // Add to monthly total
+        // Add to monthly sales total
         initialMonthlyData[month].sales += totalSales;
+        
+        // Add to daily car volume
+        initialDailyData[dayOfWeek].cars += report.totalCars;
+        
+        // Add to reports by day of week
+        dayReportCounts[dayOfWeek].reports += 1;
+        
+        // Add to location distribution
+        const locationIndex = locationDistribution.findIndex(loc => 
+          loc.name === LOCATIONS.find(l => l.id === report.locationId)?.name
+        );
+        if (locationIndex !== -1) {
+          locationDistribution[locationIndex].value += report.totalCars;
+        }
+        
+        // Add to sales trend (last 14 days)
+        const daysAgo = Math.floor((today.getTime() - reportDate.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysAgo >= 0 && daysAgo < 14) {
+          salesTrend[13 - daysAgo].sales += totalSales;
+          salesTrend[13 - daysAgo].cars += report.totalCars;
+        }
       });
     }
     
+    // Update all state variables with calculated data
     setMonthlyData(initialMonthlyData);
+    setDailyCarVolume(initialDailyData);
+    setCarDistributionByLocation(locationDistribution);
+    setSalesTrendData(salesTrend);
+    setReportsByDay(dayReportCounts);
+    
   }, [reports, startDate, endDate, selectedLocation]);
   
   // Set initial employees data
@@ -856,6 +941,10 @@ export default function AdminPanel() {
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Reports
           </TabsTrigger>
+          <TabsTrigger value="statistics" className="flex items-center">
+            <Activity className="h-4 w-4 mr-2" />
+            Statistics
+          </TabsTrigger>
           <TabsTrigger value="payroll" className="flex items-center">
             <Users className="h-4 w-4 mr-2" />
             Employee Payroll
@@ -875,6 +964,248 @@ export default function AdminPanel() {
         </TabsList>
         
 
+        
+        <TabsContent value="statistics">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <CardTitle>Business Statistics & Analytics</CardTitle>
+                <CardDescription>
+                  Comprehensive visualizations of your business performance metrics
+                </CardDescription>
+              </div>
+              <div className="flex flex-wrap items-end gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="stats-start-date">Start Date</Label>
+                  <div className="relative">
+                    <input
+                      id="stats-start-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={startDate ? startDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="stats-end-date">End Date</Label>
+                  <div className="relative">
+                    <input
+                      id="stats-end-date"
+                      type="date"
+                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      value={endDate ? endDate.toISOString().substring(0, 10) : ""}
+                      onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+                
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                    setSelectedLocation(null);
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="text-center py-8">Loading statistics data...</div>
+              ) : reports.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No data found. Create shift reports to see statistics.
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {/* Sales Trend Chart (Last 14 days) */}
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">Sales & Car Volume Trends (Last 14 Days)</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Daily trends showing sales revenue and car volume</p>
+                    <div className="w-full h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                          data={salesTrendData}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 20,
+                            bottom: 20,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="date" />
+                          <YAxis 
+                            yAxisId="left" 
+                            orientation="left" 
+                            stroke="#4f46e5"
+                            label={{ value: 'Sales ($)', angle: -90, position: 'insideLeft' }}
+                            tickFormatter={(value) => `$${value}`}
+                          />
+                          <YAxis 
+                            yAxisId="right" 
+                            orientation="right" 
+                            stroke="#10b981"
+                            label={{ value: 'Cars', angle: -90, position: 'insideRight' }}
+                          />
+                          <Tooltip formatter={(value, name) => {
+                            if (name === 'sales') return [`$${Number(value).toFixed(2)}`, 'Sales'];
+                            return [value, 'Cars'];
+                          }} />
+                          <Legend />
+                          <Bar 
+                            yAxisId="right" 
+                            dataKey="cars" 
+                            fill="#10b981" 
+                            name="Cars" 
+                            barSize={20}
+                          />
+                          <Line 
+                            yAxisId="left" 
+                            type="monotone" 
+                            dataKey="sales" 
+                            stroke="#4f46e5" 
+                            strokeWidth={2}
+                            activeDot={{ r: 6 }}
+                            name="Sales ($)"
+                          />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                  
+                  {/* Dual Chart Row: Location Distribution and Day of Week Analysis */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Location Distribution Pie Chart */}
+                    <div className="border rounded-lg p-4">
+                      <h3 className="text-lg font-medium mb-2">Car Distribution by Location</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Breakdown of car volume by restaurant</p>
+                      <div className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <RechartsPieChart>
+                            <Pie
+                              data={carDistributionByLocation}
+                              dataKey="value"
+                              nameKey="name"
+                              cx="50%"
+                              cy="50%"
+                              outerRadius={90}
+                              label={(entry) => `${entry.name}: ${entry.value} cars`}
+                              labelLine={true}
+                            >
+                              {carDistributionByLocation.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip formatter={(value) => [`${value} cars`, 'Volume']} />
+                            <Legend />
+                          </RechartsPieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                    
+                    {/* Daily Car Volume Bar Chart */}
+                    <div className="border rounded-lg p-4">
+                      <h3 className="text-lg font-medium mb-2">Car Volume by Day of Week</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Average car volume by day of the week</p>
+                      <div className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <RechartsBarChart
+                            data={dailyCarVolume}
+                            margin={{
+                              top: 20,
+                              right: 30,
+                              left: 20,
+                              bottom: 20,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis
+                              label={{ value: 'Cars', angle: -90, position: 'insideLeft' }}
+                            />
+                            <Tooltip formatter={(value) => [`${value} cars`, 'Volume']} />
+                            <Legend />
+                            <Bar 
+                              dataKey="cars" 
+                              name="Car Volume" 
+                              fill="#4f46e5" 
+                              radius={[4, 4, 0, 0]}
+                              barSize={30}
+                            />
+                          </RechartsBarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Monthly Sales Area Chart */}
+                  <div className="border rounded-lg p-4">
+                    <h3 className="text-lg font-medium mb-2">Monthly Sales Performance</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Sales performance trends across the year</p>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={monthlyData}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 20,
+                            bottom: 20,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis tickFormatter={(value) => `$${value}`} />
+                          <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Sales']} />
+                          <Legend />
+                          <Area 
+                            type="monotone" 
+                            dataKey="sales" 
+                            name="Total Sales ($)" 
+                            stroke="#4f46e5" 
+                            fill="#4f46e580"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                  
+                  {/* Report Summary Stats Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 border p-4 rounded-lg">
+                      <h3 className="text-blue-700 dark:text-blue-400 font-medium text-sm mb-1">Total Reports</h3>
+                      <p className="text-2xl font-bold">{reports.length}</p>
+                    </div>
+                    <div className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900 border p-4 rounded-lg">
+                      <h3 className="text-green-700 dark:text-green-400 font-medium text-sm mb-1">Total Cars</h3>
+                      <p className="text-2xl font-bold">
+                        {reports.reduce((sum, report) => sum + report.totalCars, 0)}
+                      </p>
+                    </div>
+                    <div className="bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900 border p-4 rounded-lg">
+                      <h3 className="text-purple-700 dark:text-purple-400 font-medium text-sm mb-1">Total Sales</h3>
+                      <p className="text-2xl font-bold">
+                        ${monthlyData.reduce((sum, month) => sum + month.sales, 0).toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900 border p-4 rounded-lg">
+                      <h3 className="text-amber-700 dark:text-amber-400 font-medium text-sm mb-1">Busiest Day</h3>
+                      <p className="text-2xl font-bold">
+                        {dailyCarVolume.reduce((max, day) => max.cars > day.cars ? max : day, { name: '', cars: 0 }).name}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
         
         <TabsContent value="reports">
           <Card>
