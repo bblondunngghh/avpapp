@@ -91,7 +91,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      locationId: locationId,
+      locationId: selectedLocationId,
       date: format(new Date(), 'yyyy-MM-dd'),
       shift: "",
       manager: "",
