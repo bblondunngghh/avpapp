@@ -1086,15 +1086,39 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     <span>Cash Turn-In:</span>
                                     <span>${cashTurnIn.toFixed(2)}</span>
                                   </div>
+
+                                  {/* Cash Paid Input */}
+                                  <div className="col-span-2 flex items-center justify-between text-xs mt-2 pt-2 border-t border-gray-200">
+                                    <span className="text-gray-600">Cash Paid:</span>
+                                    <div className="relative w-20">
+                                      <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                                      <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
+                                        value={employee.cashPaid || 0}
+                                        onChange={(e) => {
+                                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                                          const newEmployees = [...form.watch('employees')];
+                                          newEmployees[index] = {
+                                            ...newEmployees[index],
+                                            cashPaid: value
+                                          };
+                                          form.setValue('employees', newEmployees);
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
                                   
                                   {/* Tax Coverage Status */}
                                   <div className="col-span-2 flex justify-between text-xs mt-2 pt-1 border-t border-gray-200">
                                     <span className="text-gray-600">Tax Coverage Status:</span>
-                                    {employeeMoneyOwed >= tax ? (
+                                    {(employeeMoneyOwed + (employee.cashPaid || 0)) >= tax ? (
                                       <span className="text-green-600 font-medium">Taxes Covered</span>
                                     ) : (
                                       <span className="text-orange-600 font-medium">
-                                        ${(tax - employeeMoneyOwed).toFixed(2)} still owed
+                                        ${(tax - employeeMoneyOwed - (employee.cashPaid || 0)).toFixed(2)} still owed
                                       </span>
                                     )}
                                   </div>
@@ -1166,12 +1190,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     totalMoneyOwed += empMoneyOwed;
                                   });
                                   
-                                  // Calculate if money owed fully covers tax obligation
+                                  // Calculate total cash paid by all employees
+                                  const totalCashPaid = formEmployees.reduce((sum, emp) => 
+                                    sum + (parseFloat(String(emp.cashPaid)) || 0), 0
+                                  );
+                                  
                                   // Add console logs to debug the values
                                   console.log('Tax Summary - Total Tax:', totalTax);
                                   console.log('Tax Summary - Money Owed:', totalMoneyOwed);
+                                  console.log('Tax Summary - Cash Paid:', totalCashPaid);
                                   
-                                  if (totalMoneyOwed >= totalTax && totalTax > 0) {
+                                  if ((totalMoneyOwed + totalCashPaid) >= totalTax && totalTax > 0) {
                                     return (
                                       <div className="text-sm text-green-600">
                                         All Taxes Covered
@@ -1180,7 +1209,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   } else if (totalTax > 0) {
                                     return (
                                       <div className="text-sm text-orange-600">
-                                        Total Still Owed: ${(totalTax - totalMoneyOwed).toFixed(2)}
+                                        Total Still Owed: ${(totalTax - totalMoneyOwed - totalCashPaid).toFixed(2)}
                                       </div>
                                     );
                                   } else {
