@@ -468,7 +468,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger className="paperform-input">
-                              <SelectValue placeholder="Select Shift Leader" />
+                              <SelectValue placeholder="Select Shift Leader">{field.value || ""}</SelectValue>
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -510,7 +510,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 'bg-gradient-to-r from-green-50 to-green-100 border-green-300'
                               }`}
                             >
-                              <SelectValue placeholder="Select Location" />
+                              <SelectValue placeholder="Select Location">{field.value ? LOCATIONS.find(loc => loc.id === field.value)?.name || "" : ""}</SelectValue>
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -549,7 +549,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger className="paperform-input">
-                              <SelectValue placeholder="Select Shift" />
+                              <SelectValue placeholder="Select Shift">{field.value || ""}</SelectValue>
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -1131,7 +1131,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     >
                                       <FormControl>
                                         <SelectTrigger className="paperform-input h-9 text-sm">
-                                          <SelectValue placeholder="Select Employee" />
+                                          <SelectValue placeholder="Select Employee">{field.value || ""}</SelectValue>
                                         </SelectTrigger>
                                       </FormControl>
                                       <SelectContent>
