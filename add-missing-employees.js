@@ -1,5 +1,8 @@
-// Script to add employees using the API endpoint
-import fetch from 'node-fetch';
+// Script to add missing employees to the database
+import { Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { eq } from 'drizzle-orm';
+import { employees } from './shared/schema.js';
 
 // Get today's date in ISO format (YYYY-MM-DD)
 const today = new Date().toISOString().split('T')[0];
@@ -27,18 +30,17 @@ const employeesToAdd = [
   { key: 'zane', fullName: 'Zane Springer', isActive: true, isShiftLeader: false, hireDate: today }
 ];
 
+// Configure the database connection
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const db = drizzle(pool);
+
+// Function to add employees
 async function addEmployees() {
   console.log('Starting to add employees...');
   
   try {
     // Get existing employees to avoid duplicates
-    const response = await fetch('http://localhost:3000/api/employees');
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch employees: ${response.status} ${response.statusText}`);
-    }
-    
-    const existingEmployees = await response.json();
+    const existingEmployees = await db.select().from(employees);
     const existingKeys = existingEmployees.map(emp => emp.key);
     
     // Filter out employees that already exist
@@ -54,22 +56,8 @@ async function addEmployees() {
       console.log(`Adding employee: ${employee.fullName}`);
       
       try {
-        const addResponse = await fetch('http://localhost:3000/api/employees', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(employee),
-        });
-        
-        if (!addResponse.ok) {
-          const errorText = await addResponse.text();
-          console.error(`Error adding ${employee.fullName}: ${errorText}`);
-          continue;
-        }
-        
-        const result = await addResponse.json();
-        console.log(`Successfully added ${employee.fullName} with ID: ${result.id}`);
+        const result = await db.insert(employees).values(employee).returning();
+        console.log(`Successfully added ${employee.fullName} with ID: ${result[0].id}`);
       } catch (error) {
         console.error(`Error adding ${employee.fullName}:`, error.message);
       }
@@ -77,7 +65,10 @@ async function addEmployees() {
     
     console.log('Finished adding employees.');
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Database error:', error);
+  } finally {
+    // Close the pool
+    await pool.end();
   }
 }
 
