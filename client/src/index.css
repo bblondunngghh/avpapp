@@ -5,6 +5,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global heading styles with Fjalla One font (non-bold) */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fjalla One', sans-serif;
+    font-weight: 400; /* Normal weight, not bold */
+  }
+}
+
 /* Custom Form Styling to match Paperform */
 .form-section {
   max-width: 1000px;
