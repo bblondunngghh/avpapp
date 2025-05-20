@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { LOCATIONS } from "@/lib/constants";
+import RestaurantIcon from "@/components/restaurant-icon";
 
 interface LocationSelectorModalProps {
   isOpen: boolean;
@@ -32,10 +33,13 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
             <Button
               key={location.id}
               variant="outline"
-              className="justify-start h-auto py-3 px-4 text-left"
+              className="justify-center h-auto py-3 px-4 text-center relative"
               onClick={() => handleLocationSelect(location.id)}
             >
-              <span className="font-medium text-primary">{location.name}</span>
+              <div className="flex items-center gap-3">
+                <RestaurantIcon locationId={location.id} size={18} />
+                <span className="font-medium text-primary">{location.name}</span>
+              </div>
             </Button>
           ))}
         </div>
