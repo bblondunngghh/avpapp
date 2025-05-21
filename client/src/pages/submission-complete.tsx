@@ -229,9 +229,10 @@ export default function SubmissionComplete() {
                   
                   {/* Calculate total expected revenue */}
                   {(() => {
-                    const totalReceiptSales = safeNumber(report.totalReceiptSales);
+                    // Calculate receipt sales based on number of receipts * $18
+                    const receiptSales = safeNumber(report.totalReceipts) * 18;
                     const totalCreditSales = safeNumber(report.totalCreditSales);
-                    const totalRevenue = totalReceiptSales + totalCreditSales;
+                    const totalRevenue = receiptSales + totalCreditSales;
                     const totalTurnIn = safeNumber(report.totalTurnIn);
                     
                     // Calculate money owed (when credit + receipt exceeds turn-in)
@@ -273,7 +274,7 @@ export default function SubmissionComplete() {
                       <tr className="bg-gray-50">
                         <th className="text-left p-2">Name</th>
                         <th className="text-right p-2">Hours</th>
-                        <th className="text-right p-2">Earnings</th>
+                        <th className="text-right p-2">Total Earnings</th>
                         <th className="text-right p-2">Tax (22%)</th>
                         <th className="text-right p-2">Cash Paid</th>
                       </tr>
@@ -339,15 +340,8 @@ export default function SubmissionComplete() {
                                                   
                           const taxAmount = empTotalEarnings * 0.22;
                           
-                          // For detailed view when clicking on row
-                          const detailsId = `emp-details-${index}`;
-                          
-                          // Use React state to track details visibility instead of DOM manipulation
-                          const [showDetails, setShowDetails] = useState(false);
-                          
-                          return [
-                            <tr key={`emp-row-${index}`} className="border-t border-gray-100 cursor-pointer hover:bg-gray-50"
-                                onClick={() => setShowDetails(!showDetails)}>
+                          return (
+                            <tr key={`employee-${index}`} className="border-t border-gray-100">
                               <td className="p-2">{emp.name}</td>
                               <td className="text-right p-2">{safeNumber(emp.hours)}</td>
                               <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
@@ -355,58 +349,8 @@ export default function SubmissionComplete() {
                               <td className="text-right p-2">
                                 {emp.cashPaid ? formatCurrency(emp.cashPaid) : '-'}
                               </td>
-                            </tr>,
-                            
-                            /* Collapsible details row */
-                            showDetails && (
-                              <tr key={`emp-details-${index}`} className="border-b border-gray-100 bg-gray-50">
-                                <td colSpan={5} className="p-0">
-                                  <div className="p-3">
-                                    <h6 className="text-xs font-semibold text-gray-700 mb-2">Earnings Breakdown</h6>
-                                    <div className="grid grid-cols-2 gap-2 text-xs">
-                                      <div>
-                                        <p className="flex justify-between">
-                                          <span className="text-gray-600">Credit Commission:</span> 
-                                          <span>{formatCurrency(empCreditCommission)}</span>
-                                        </p>
-                                        <p className="flex justify-between">
-                                          <span className="text-gray-600">Credit Tips:</span> 
-                                          <span>{formatCurrency(empCreditTips)}</span>
-                                        </p>
-                                        <p className="flex justify-between">
-                                          <span className="text-gray-600">Cash Commission:</span> 
-                                          <span>{formatCurrency(empCashCommission)}</span>
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="flex justify-between">
-                                          <span className="text-gray-600">Cash Tips:</span> 
-                                          <span>{formatCurrency(empCashTips)}</span>
-                                        </p>
-                                        <p className="flex justify-between">
-                                          <span className="text-gray-600">Receipt Commission:</span> 
-                                          <span>{formatCurrency(empReceiptCommission)}</span>
-                                        </p>
-                                        <p className="flex justify-between">
-                                          <span className="text-gray-600">Receipt Tips:</span> 
-                                          <span>{formatCurrency(empReceiptTips)}</span>
-                                        </p>
-                                      </div>
-                                    </div>
-                                    
-                                    {empMoneyOwed > 0 && (
-                                      <div className="mt-2 pt-1 border-t border-gray-200">
-                                        <p className="flex justify-between text-xs font-medium text-red-700">
-                                          <span>Money Owed:</span> 
-                                          <span>{formatCurrency(empMoneyOwed)}</span>
-                                        </p>
-                                      </div>
-                                    )}
-                                  </div>
-                                </td>
-                              </tr>
-                            )
-                          ].filter(Boolean);
+                            </tr>
+                          );
                         });
                       })()}
                     </tbody>
@@ -419,6 +363,135 @@ export default function SubmissionComplete() {
                         <td className="text-right p-2">{formatCurrency(taxSummary.cashPaid)}</td>
                       </tr>
                     </tfoot>
+                  </table>
+                  
+                  {/* Detailed Earnings Breakdown */}
+                  <div className="mt-4 pt-4 border-t border-blue-100">
+                    <h5 className="text-sm font-medium text-blue-700 mb-3">Detailed Earnings Breakdown</h5>
+                    
+                    {(() => {
+                      const totalCars = safeNumber(report.totalCars);
+                      const creditTransactions = safeNumber(report.creditTransactions);
+                      const totalReceipts = safeNumber(report.totalReceipts);
+                      const cashCars = Math.max(0, totalCars - creditTransactions - totalReceipts);
+                      
+                      // Calculate commission rate based on location
+                      let commissionRate = 4; // Default (Capital Grille)
+                      if (report.locationId === 2) commissionRate = 9; // Bob's Steak
+                      else if (report.locationId === 3) commissionRate = 7; // Truluck's
+                      else if (report.locationId === 4) commissionRate = 6; // BOA
+                      
+                      // Commission and tips calculations
+                      const creditCommission = creditTransactions * commissionRate;
+                      const creditTips = Math.abs(creditTransactions * commissionRate - safeNumber(report.totalCreditSales));
+                      
+                      const cashCommission = cashCars * commissionRate;
+                      const cashTips = Math.abs(cashCars * commissionRate - safeNumber(report.totalCashCollected));
+                      
+                      const receiptCommission = totalReceipts * commissionRate;
+                      const receiptTips = totalReceipts * 3;
+                      
+                      // Calculate receipt sales and money owed
+                      const receiptSales = totalReceipts * 18;
+                      const totalCreditSales = safeNumber(report.totalCreditSales);
+                      const totalRevenue = receiptSales + totalCreditSales;
+                      const totalTurnIn = safeNumber(report.totalTurnIn);
+                      const moneyOwed = Math.max(0, totalRevenue - totalTurnIn);
+                      
+                      // Calculate totals
+                      const totalCommission = creditCommission + cashCommission + receiptCommission;
+                      const totalTips = creditTips + cashTips + receiptTips;
+                      const totalEarnings = totalCommission + totalTips + moneyOwed;
+                      
+                      return (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="bg-white p-3 rounded border border-gray-100">
+                            <h6 className="text-xs font-semibold mb-2">Commission Earnings</h6>
+                            <div className="space-y-1 text-xs">
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Credit Car Commission ({creditTransactions} cars × ${commissionRate}):</span> 
+                                <strong>{formatCurrency(creditCommission)}</strong>
+                              </p>
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Cash Car Commission ({cashCars} cars × ${commissionRate}):</span> 
+                                <strong>{formatCurrency(cashCommission)}</strong>
+                              </p>
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Receipt Commission ({totalReceipts} receipts × ${commissionRate}):</span> 
+                                <strong>{formatCurrency(receiptCommission)}</strong>
+                              </p>
+                              <div className="pt-1 mt-1 border-t border-gray-100">
+                                <p className="flex justify-between font-medium">
+                                  <span>Total Commission:</span> 
+                                  <span>{formatCurrency(totalCommission)}</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-white p-3 rounded border border-gray-100">
+                            <h6 className="text-xs font-semibold mb-2">Tips & Additional Earnings</h6>
+                            <div className="space-y-1 text-xs">
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Credit Card Tips:</span> 
+                                <strong>{formatCurrency(creditTips)}</strong>
+                              </p>
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Cash Tips:</span> 
+                                <strong>{formatCurrency(cashTips)}</strong>
+                              </p>
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Receipt Tips ({totalReceipts} receipts × $3):</span> 
+                                <strong>{formatCurrency(receiptTips)}</strong>
+                              </p>
+                              {moneyOwed > 0 && (
+                                <p className="flex justify-between text-red-700">
+                                  <span>Money Owed to Employees:</span> 
+                                  <strong>{formatCurrency(moneyOwed)}</strong>
+                                </p>
+                              )}
+                              <div className="pt-1 mt-1 border-t border-gray-100">
+                                <p className="flex justify-between font-medium">
+                                  <span>Total Tips & Additional:</span> 
+                                  <span>{formatCurrency(totalTips + moneyOwed)}</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="md:col-span-2 bg-blue-50 p-3 rounded border border-blue-100">
+                            <h6 className="text-xs font-semibold mb-2 text-blue-700">Total Earnings Summary</h6>
+                            <div className="space-y-1 text-xs">
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Total Commission:</span> 
+                                <strong>{formatCurrency(totalCommission)}</strong>
+                              </p>
+                              <p className="flex justify-between">
+                                <span className="text-gray-600">Total Tips:</span> 
+                                <strong>{formatCurrency(totalTips)}</strong>
+                              </p>
+                              {moneyOwed > 0 && (
+                                <p className="flex justify-between">
+                                  <span className="text-gray-600">Total Money Owed:</span> 
+                                  <strong>{formatCurrency(moneyOwed)}</strong>
+                                </p>
+                              )}
+                              <div className="pt-1 mt-1 border-t border-blue-200">
+                                <p className="flex justify-between font-medium">
+                                  <span>Total Employee Earnings:</span> 
+                                  <span className="text-blue-800">{formatCurrency(totalEarnings)}</span>
+                                </p>
+                                <p className="flex justify-between text-xs text-gray-600 mt-1">
+                                  <span>22% Tax on Earnings:</span> 
+                                  <span>{formatCurrency(totalEarnings * 0.22)}</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
                   </table>
                 </div>
               </div>
