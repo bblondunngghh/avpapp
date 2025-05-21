@@ -500,8 +500,13 @@ export default function SubmissionComplete() {
                         
                         // Calculate individual earnings
                         const empEarnings = earnings.totalEarnings * hoursProportion;
+                        // Calculate individual share of money owed
+                        const empMoneyOwed = earnings.moneyOwed * hoursProportion;
                         // Calculate individual tax (22%)
-                        const empTax = Math.ceil(empEarnings * 0.22);
+                        const empTaxRaw = empEarnings * 0.22;
+                        // Subtract money owed from tax (capped at tax amount)
+                        const empTaxReduction = Math.min(empTaxRaw, empMoneyOwed);
+                        const empTax = Math.ceil(empTaxRaw - empTaxReduction);
                         // Get amount paid by this employee
                         const empPaid = safeNumber(emp.cashPaid);
                         // Calculate remaining amount needed
