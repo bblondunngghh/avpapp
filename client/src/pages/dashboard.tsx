@@ -23,12 +23,19 @@ export default function Dashboard() {
             backgroundSize: "100px 100px" 
           }}>
         </div>
-        <h1 className="text-3xl md:text-4xl text-white uppercase mb-3 relative z-10 tracking-wide flex items-center justify-center">
-          Access Valet Parking
-        </h1>
-        <p className="text-blue-50 max-w-2xl mx-auto text-lg relative z-10">
-          Welcome to the Access Valet Parking Management Portal. Please select from the following options.
-        </p>
+        <div className="flex flex-col items-center justify-center relative z-10">
+          <img 
+            src="/assets/AVP LOGO 2024 - 2 HQ.jpg" 
+            alt="AVP Logo 2024" 
+            className="h-32 mb-4 object-contain bg-white p-2 rounded-lg"
+          />
+          <h1 className="text-3xl md:text-4xl text-white uppercase mb-3 tracking-wide">
+            Access Valet Parking
+          </h1>
+          <p className="text-blue-50 max-w-2xl mx-auto text-lg">
+            Welcome to the Access Valet Parking Management Portal. Please select from the following options.
+          </p>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
