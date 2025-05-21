@@ -71,7 +71,7 @@ function Router() {
   return (
     <div className="flex flex-col min-h-screen pb-16">
       {!isAdminPage && !isEmployeePage && <Header />}
-      <main className={`${isAdminPage || isEmployeePage ? '' : 'container mx-auto px-4 py-4'} flex-grow`}>
+      <main className={`${isAdminPage || isEmployeePage ? '' : 'container mx-auto px-4 py-4 mt-16'} flex-grow`}>
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/report-selection" component={ReportSelection} />

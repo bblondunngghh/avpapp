@@ -413,9 +413,12 @@ input[type="date"].paperform-input {
 
 /* App Header styles */
 .app-header {
-  @apply bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg sticky z-10 backdrop-blur-md;
+  @apply bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg fixed w-full backdrop-blur-md;
   background-color: rgba(37, 99, 235, 0.95);
   top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
   padding-top: env(safe-area-inset-top, 0);
 }
 
