@@ -150,11 +150,11 @@ export default function SubmissionComplete() {
     const cashCommission = calculatedCashCars * commissionRate;
     const receiptCommission = totalReceipts * commissionRate;
     
-    // Fixed tips calculations (using fixed amounts per transaction type)
-    // Credit tips - $10 flat per location
-    const creditTips = 10;
-    // Cash tips - $10 flat per location
-    const cashTips = 10;
+    // Tips calculations based on transaction counts
+    // Credit tips - $6 per credit transaction (for Capital Grille)
+    const creditTips = creditTransactions * 6;
+    // Cash tips - $6 per cash car (for Capital Grille)
+    const cashTips = calculatedCashCars * 6; 
     // Receipt tips - $3 per receipt
     const receiptTips = totalReceipts * 3;
     
