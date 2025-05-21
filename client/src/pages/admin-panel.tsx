@@ -983,7 +983,15 @@ export default function AdminPanel() {
           <Button 
             variant="default" 
             className="bg-blue-600 hover:bg-blue-700"
-            onClick={() => navigate("/admin/tax-payments")}
+            onClick={() => {
+              const password = prompt("Please enter the password to access the Accountant Section:");
+              if (password === "bbonly") {
+                navigate("/admin/tax-payments");
+              } else if (password !== null) {
+                // Only show error if user didn't cancel
+                alert("Incorrect password. Access denied.");
+              }
+            }}
           >
             <DollarSign className="mr-2 h-4 w-4" />
             Accountant Section
