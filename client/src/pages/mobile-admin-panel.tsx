@@ -7,7 +7,7 @@ import { User, BarChart, Ticket, LogOut, RefreshCw, Trash2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
-import { LOCATIONS } from "@shared/schema";
+import { LOCATIONS, ShiftReport, Employee, TicketDistribution } from "@shared/schema";
 
 // Simple mobile-friendly admin panel that works on iOS
 export default function MobileAdminPanel() {
@@ -15,21 +15,24 @@ export default function MobileAdminPanel() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
-  // Data queries
-  const { data: reports = [] } = useQuery({
+  // Data queries with proper typing
+  const reportsQuery = useQuery<ShiftReport[]>({
     queryKey: ["/api/shift-reports"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  const reports = reportsQuery.data || [];
   
-  const { data: employees = [] } = useQuery({
+  const employeesQuery = useQuery<Employee[]>({
     queryKey: ["/api/employees"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  const employees = employeesQuery.data || [];
   
-  const { data: ticketDistributions = [] } = useQuery({
+  const ticketDistributionsQuery = useQuery<TicketDistribution[]>({
     queryKey: ["/api/ticket-distributions"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  const ticketDistributions = ticketDistributionsQuery.data || [];
   
   // Log out function
   const handleLogout = async () => {
@@ -86,8 +89,30 @@ export default function MobileAdminPanel() {
   };
   
   // Get location name by ID
-  const getLocationName = (locationId: number) => {
-    return Object.values(LOCATIONS).find(loc => loc.id === locationId)?.name || "Unknown";
+  const getLocationName = (locationId: number): string => {
+    // Type safety for LOCATIONS
+    type LocationType = {
+      id: number;
+      name: string;
+    };
+    
+    // Convert locations to array with proper types
+    const locationsArray: LocationType[] = [];
+    
+    // Manually add locations to ensure type safety
+    for (const key in LOCATIONS) {
+      if (Object.prototype.hasOwnProperty.call(LOCATIONS, key)) {
+        const loc = LOCATIONS[key as keyof typeof LOCATIONS];
+        locationsArray.push({
+          id: Number(loc.id),
+          name: String(loc.name)
+        });
+      }
+    }
+    
+    // Find location by ID
+    const location = locationsArray.find(loc => loc.id === locationId);
+    return location ? location.name : "Unknown";
   };
   
   // Format date for display
