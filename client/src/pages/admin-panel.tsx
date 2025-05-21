@@ -210,6 +210,10 @@ export default function AdminPanel() {
   const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
   const [currentMonth, setCurrentMonth] = useState<string>("");
   const [savedExpenses, setSavedExpenses] = useState<Record<string, number>>({});
+  const [isEditingExpenses, setIsEditingExpenses] = useState<boolean>(false);
+  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
+  const [expensesPassword, setExpensesPassword] = useState<string>("");
+  const EXPENSES_EDIT_PASSWORD = "bblonly";
   
   // Load saved expenses from localStorage on initial render
   useEffect(() => {
@@ -1909,63 +1913,213 @@ export default function AdminPanel() {
                                   step="0.01"
                                   className="w-full h-full px-3 py-2 rounded-r-md focus:outline-none"
                                   value={monthlyExpenses}
-                                  onChange={(e) => setMonthlyExpenses(parseFloat(e.target.value) || 0)}
+                                  onChange={(e) => {
+                                    if (savedExpenses[currentMonth] !== undefined && !isEditingExpenses) {
+                                      // Show password modal if trying to edit locked expenses
+                                      setShowPasswordModal(true);
+                                      return;
+                                    }
+                                    setMonthlyExpenses(parseFloat(e.target.value) || 0);
+                                  }}
+                                  disabled={savedExpenses[currentMonth] !== undefined && !isEditingExpenses}
                                 />
                               </div>
                               
-                              {/* Save expenses button */}
+                              {/* Save/Edit expenses buttons */}
                               {currentMonth && (
                                 <div className="mt-2 flex gap-2">
-                                  <Button 
-                                    size="sm" 
-                                    className="bg-green-600 hover:bg-green-700"
-                                    onClick={() => {
-                                      if (!currentMonth) return;
-                                      
-                                      // Save the expenses for this month in state
-                                      setSavedExpenses(prev => ({
-                                        ...prev,
-                                        [currentMonth]: monthlyExpenses
-                                      }));
-                                      
-                                      // Also persist to localStorage for persistence across sessions
-                                      try {
-                                        // Get existing saved expenses
-                                        const existingSavedExpenses = localStorage.getItem('savedMonthlyExpenses');
-                                        const parsedExpenses = existingSavedExpenses ? 
-                                          JSON.parse(existingSavedExpenses) : {};
+                                  {savedExpenses[currentMonth] === undefined ? (
+                                    // Save button - only shown for new expenses
+                                    <Button 
+                                      size="sm" 
+                                      className="bg-green-600 hover:bg-green-700"
+                                      onClick={() => {
+                                        if (!currentMonth) return;
                                         
-                                        // Update with new value
-                                        parsedExpenses[currentMonth] = monthlyExpenses;
+                                        // Save the expenses for this month in state
+                                        setSavedExpenses(prev => ({
+                                          ...prev,
+                                          [currentMonth]: monthlyExpenses
+                                        }));
                                         
-                                        // Save back to localStorage
-                                        localStorage.setItem('savedMonthlyExpenses', 
-                                          JSON.stringify(parsedExpenses));
+                                        // Also persist to localStorage for persistence across sessions
+                                        try {
+                                          // Get existing saved expenses
+                                          const existingSavedExpenses = localStorage.getItem('savedMonthlyExpenses');
+                                          const parsedExpenses = existingSavedExpenses ? 
+                                            JSON.parse(existingSavedExpenses) : {};
                                           
-                                        toast({
-                                          title: "Expenses saved",
-                                          description: `Monthly expenses for ${new Date(parseInt(currentMonth.split('-')[0]), 
-                                            parseInt(currentMonth.split('-')[1])-1).toLocaleString('default', 
-                                            { month: 'long', year: 'numeric' })} saved successfully.`,
-                                        });
-                                      } catch (error) {
-                                        console.error("Error saving expenses:", error);
-                                        toast({
-                                          title: "Error saving expenses",
-                                          description: "There was a problem saving your expenses data.",
-                                          variant: "destructive",
-                                        });
-                                      }
-                                    }}
-                                  >
-                                    Save Expenses
-                                  </Button>
+                                          // Update with new value
+                                          parsedExpenses[currentMonth] = monthlyExpenses;
+                                          
+                                          // Save back to localStorage
+                                          localStorage.setItem('savedMonthlyExpenses', 
+                                            JSON.stringify(parsedExpenses));
+                                            
+                                          toast({
+                                            title: "Expenses saved",
+                                            description: `Monthly expenses for ${new Date(parseInt(currentMonth.split('-')[0]), 
+                                              parseInt(currentMonth.split('-')[1])-1).toLocaleString('default', 
+                                              { month: 'long', year: 'numeric' })} saved successfully.`,
+                                          });
+                                          
+                                          // Expenses are now locked
+                                          setIsEditingExpenses(false);
+                                        } catch (error) {
+                                          console.error("Error saving expenses:", error);
+                                          toast({
+                                            title: "Error saving expenses",
+                                            description: "There was a problem saving your expenses data.",
+                                            variant: "destructive",
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      Save Expenses
+                                    </Button>
+                                  ) : isEditingExpenses ? (
+                                    // Update button - shown when editing existing expenses
+                                    <>
+                                      <Button 
+                                        size="sm" 
+                                        className="bg-amber-600 hover:bg-amber-700"
+                                        onClick={() => {
+                                          if (!currentMonth) return;
+                                          
+                                          // Update the expenses for this month in state
+                                          setSavedExpenses(prev => ({
+                                            ...prev,
+                                            [currentMonth]: monthlyExpenses
+                                          }));
+                                          
+                                          // Also persist to localStorage for persistence across sessions
+                                          try {
+                                            // Get existing saved expenses
+                                            const existingSavedExpenses = localStorage.getItem('savedMonthlyExpenses');
+                                            const parsedExpenses = existingSavedExpenses ? 
+                                              JSON.parse(existingSavedExpenses) : {};
+                                            
+                                            // Update with new value
+                                            parsedExpenses[currentMonth] = monthlyExpenses;
+                                            
+                                            // Save back to localStorage
+                                            localStorage.setItem('savedMonthlyExpenses', 
+                                              JSON.stringify(parsedExpenses));
+                                              
+                                            toast({
+                                              title: "Expenses updated",
+                                              description: `Monthly expenses for ${new Date(parseInt(currentMonth.split('-')[0]), 
+                                                parseInt(currentMonth.split('-')[1])-1).toLocaleString('default', 
+                                                { month: 'long', year: 'numeric' })} updated successfully.`,
+                                            });
+                                            
+                                            // Exit edit mode
+                                            setIsEditingExpenses(false);
+                                          } catch (error) {
+                                            console.error("Error updating expenses:", error);
+                                            toast({
+                                              title: "Error updating expenses",
+                                              description: "There was a problem updating your expenses data.",
+                                              variant: "destructive",
+                                            });
+                                          }
+                                        }}
+                                      >
+                                        Update Expenses
+                                      </Button>
+                                      
+                                      <Button 
+                                        size="sm" 
+                                        variant="outline"
+                                        onClick={() => {
+                                          // Cancel edit - revert to saved value
+                                          setMonthlyExpenses(savedExpenses[currentMonth]);
+                                          setIsEditingExpenses(false);
+                                        }}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    // Edit button - shown for saved expenses
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => {
+                                        // Show password modal
+                                        setShowPasswordModal(true);
+                                      }}
+                                    >
+                                      Edit Expenses
+                                    </Button>
+                                  )}
                                   
-                                  {savedExpenses[currentMonth] !== undefined && (
+                                  {savedExpenses[currentMonth] !== undefined && !isEditingExpenses && (
                                     <div className="text-sm self-center text-green-600 ml-2">
-                                      ✓ Expenses saved
+                                      ✓ Expenses saved and locked
                                     </div>
                                   )}
+                                </div>
+                              )}
+                              
+                              {/* Password Modal */}
+                              {showPasswordModal && (
+                                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                                  <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                                    <h3 className="text-lg font-medium mb-4">Enter Password</h3>
+                                    <p className="text-sm text-gray-600 mb-4">
+                                      Enter the password to edit saved expenses.
+                                    </p>
+                                    
+                                    <div className="mb-4">
+                                      <input 
+                                        type="password"
+                                        className="w-full p-2 border rounded"
+                                        placeholder="Password"
+                                        value={expensesPassword}
+                                        onChange={(e) => setExpensesPassword(e.target.value)}
+                                      />
+                                    </div>
+                                    
+                                    <div className="flex justify-end gap-2">
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          setShowPasswordModal(false);
+                                          setExpensesPassword("");
+                                        }}
+                                      >
+                                        Cancel
+                                      </Button>
+                                      
+                                      <Button
+                                        size="sm"
+                                        onClick={() => {
+                                          if (expensesPassword === EXPENSES_EDIT_PASSWORD) {
+                                            // Correct password
+                                            setIsEditingExpenses(true);
+                                            setShowPasswordModal(false);
+                                            setExpensesPassword("");
+                                            
+                                            toast({
+                                              title: "Expenses unlocked",
+                                              description: "You can now edit the saved expenses.",
+                                            });
+                                          } else {
+                                            // Incorrect password
+                                            toast({
+                                              title: "Incorrect password",
+                                              description: "The password you entered is incorrect.",
+                                              variant: "destructive",
+                                            });
+                                          }
+                                        }}
+                                      >
+                                        Submit
+                                      </Button>
+                                    </div>
+                                  </div>
                                 </div>
                               )}
                             </div>
