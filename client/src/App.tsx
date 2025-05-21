@@ -18,7 +18,7 @@ import Regulations from "@/pages/regulations";
 import EmployeeLogin from "@/pages/employee-login";
 import EmployeeDashboard from "@/pages/employee-dashboard";
 import ReportSelection from "@/pages/report-selection";
-import TaxPaymentsPage from "@/pages/tax-payments";
+import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 
@@ -52,7 +52,7 @@ function Router() {
           <Route path="/admin-login" component={AdminLogin} />
           <Route path="/admin" component={AdminPanel} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
-          <Route path="/admin/tax-payments" component={TaxPaymentsPage} />
+          <Route path="/admin/tax-payments" component={AccountantPage} />
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
           <Route component={NotFound} />

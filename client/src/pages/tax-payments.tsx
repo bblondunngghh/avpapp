@@ -207,51 +207,63 @@ export default function AccountantPage() {
         </Button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base text-gray-700">Total Earnings</CardTitle>
+            <CardTitle className="text-base text-gray-700">Total Commission</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
               <DollarSign className="h-4 w-4 text-blue-600 mr-1" />
-              <span className="text-2xl font-bold">{formatCurrency(totalEarnings)}</span>
+              <span className="text-2xl font-bold">{formatCurrency(totalCommission)}</span>
             </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base text-gray-700">Total Tax Amount</CardTitle>
+            <CardTitle className="text-base text-gray-700">Total Tips</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <DollarSign className="h-4 w-4 text-purple-600 mr-1" />
-              <span className="text-2xl font-bold">{formatCurrency(totalTaxes)}</span>
+              <DollarSign className="h-4 w-4 text-teal-600 mr-1" />
+              <span className="text-2xl font-bold">{formatCurrency(totalTips)}</span>
             </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base text-gray-700">Total Paid</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
-              <span className="text-2xl font-bold">{formatCurrency(totalPaid)}</span>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base text-gray-700">Remaining Due</CardTitle>
+            <CardTitle className="text-base text-gray-700">Money Owed</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
               <AlertTriangle className="h-4 w-4 text-amber-600 mr-1" />
-              <span className="text-2xl font-bold">{formatCurrency(totalRemaining)}</span>
+              <span className="text-2xl font-bold">{formatCurrency(totalMoneyOwed)}</span>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base text-gray-700">Advance Amount</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <DollarSign className="h-4 w-4 text-purple-600 mr-1" />
+              <span className="text-2xl font-bold">{formatCurrency(totalAdvance)}</span>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base text-gray-700">Tax Contributions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
+              <span className="text-2xl font-bold">{formatCurrency(totalTaxContributions)}</span>
             </div>
           </CardContent>
         </Card>
@@ -259,9 +271,9 @@ export default function AccountantPage() {
       
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Tax Payment Records</CardTitle>
+          <CardTitle>Employee Financial Records</CardTitle>
           <CardDescription>
-            View and filter employee tax payment records
+            View detailed employee financial information including commissions, tips, money owed, advances, and tax contributions
           </CardDescription>
         </CardHeader>
         <CardContent>
