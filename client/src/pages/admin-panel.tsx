@@ -9,16 +9,7 @@ import {
   TabsList, 
   TabsTrigger 
 } from "@/components/ui/tabs";
-import {
-  BarChart as RechartsBarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ResponsiveContainer
-} from "recharts";
+
 import {
   Dialog,
   DialogContent,
@@ -48,11 +39,11 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart, PieChart, TrendingUp, Activity, DollarSign } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign } from "lucide-react";
 import { 
-  BarChart as RechartsBarChart, 
-  LineChart as RechartsLineChart, 
-  PieChart as RechartsPieChart,
+  BarChart, 
+  LineChart, 
+  PieChart,
   Line,
   Pie,
   Bar, 
