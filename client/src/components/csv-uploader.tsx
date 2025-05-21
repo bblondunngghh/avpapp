@@ -153,6 +153,26 @@ export default function CSVUploader() {
     }
   };
   
+  // Function to clear all pending uploads
+  const clearAllPendingUploads = () => {
+    // Get all localStorage keys that start with "pendingCSV_"
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('pendingCSV_')) {
+        localStorage.removeItem(key);
+      }
+    }
+    
+    // Clear the pendingUploads list
+    setPendingUploads([]);
+    
+    toast({
+      title: "Pending uploads cleared",
+      description: "All pending CSV uploads have been removed.",
+      variant: "default",
+    });
+  };
+
   // Check for pending uploads when component mounts
   useEffect(() => {
     // Get all localStorage keys that start with "pendingCSV_"
