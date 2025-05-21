@@ -11,7 +11,11 @@ import LocationSelectorModal from "@/components/location-selector-modal";
 import ReportCard from "@/components/report-card";
 import { LOCATIONS } from "@/lib/constants";
 
+import { useLocation } from "wouter";
+import { ArrowLeft } from "lucide-react";
+
 export default function Reports() {
+  const [, navigate] = useLocation();
   const [locationFilter, setLocationFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +49,17 @@ export default function Reports() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-normal text-primary">All Reports</h2>
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/admin")}
+            className="flex items-center gap-1"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Admin Panel
+          </Button>
+          <h2 className="text-2xl font-normal text-primary">All Reports</h2>
+        </div>
         <Button
           onClick={handleNewReport}
           className="bg-blue-500 hover:bg-blue-600 text-white"
