@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,94 +6,41 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Lock, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// Define the admin password
+// Define the admin password - hardcoded for simplicity
 const ADMIN_PASSWORD = "cg2023";
 
 export default function AdminLogin() {
   const [, navigate] = useLocation();
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
 
-  // Check if we're in the browser
-  useEffect(() => {
-    setIsClient(true);
-    
-    // Check if already authenticated on page load
-    try {
-      const isAuthenticated = sessionStorage.getItem("admin_authenticated") === "true";
-      if (isAuthenticated) {
-        navigate("/admin");
-      }
-    } catch (e) {
-      console.warn("Could not check sessionStorage", e);
-    }
-  }, [navigate]);
-
-  // Handle form submission
+  // Super simple login handler - no storage methods
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simple password check
     if (password === ADMIN_PASSWORD) {
-      try {
-        // Set auth in sessionStorage (more reliable on mobile)
-        sessionStorage.setItem("admin_authenticated", "true");
-        sessionStorage.setItem("admin_auth_time", Date.now().toString());
-        
-        // Also try localStorage as backup
-        try {
-          localStorage.setItem("admin_authenticated", "true");
-          localStorage.setItem("admin_auth_time", Date.now().toString());
-        } catch (e) {
-          console.warn("localStorage not available, using sessionStorage only");
-        }
-        
-        // For extra reliability, set a variable directly on window
-        // @ts-ignore
-        window.__adminAuthenticated = true;
-        
-        // Show success toast
-        toast({
-          title: "Authentication successful",
-          description: "Welcome to the admin panel",
-          variant: "default",
-        });
-        
-        // Navigate to admin dashboard
-        navigate("/admin");
-      } catch (error) {
-        console.error("Login error:", error);
-        toast({
-          title: "Authentication error",
-          description: "There was a problem processing your login. Please try again.",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-      }
-    } else {
-      // Show error toast
+      // Success - just navigate to admin
       toast({
-        title: "Authentication failed",
-        description: "The password you entered is incorrect",
+        title: "Login successful",
+        description: "Welcome to the admin panel",
+      });
+      
+      // Navigate to admin
+      navigate("/admin");
+    } else {
+      // Error - show message
+      toast({
+        title: "Login failed",
+        description: "Invalid password",
         variant: "destructive",
       });
       
-      // Reset form
       setPassword("");
       setIsLoading(false);
     }
   };
-
-  if (!isClient) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh]">
@@ -127,7 +74,6 @@ export default function AdminLogin() {
                 id="password"
                 type="password" 
                 placeholder="Enter admin password" 
-                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -139,7 +85,7 @@ export default function AdminLogin() {
               className="w-full" 
               disabled={isLoading}
             >
-              {isLoading ? "Authenticating..." : "Login"}
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>
