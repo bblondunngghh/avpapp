@@ -442,56 +442,111 @@ export default function AccountantPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredPayments?.length ? (
-                    filteredPayments.map(payment => (
-                      <TableRow key={payment.id}>
-                        <TableCell className="font-medium">
-                          {getEmployeeName(payment.employeeId)}
-                        </TableCell>
-                        <TableCell>{payment.reportId}</TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrency(calculateCommission(payment))}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrency(calculateTips(payment))}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrency(calculateMoneyOwed(payment))}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrency(calculateAdvance(payment))}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrency(Number(payment.paidAmount) - calculateMoneyOwed(payment))}
-                        </TableCell>
-                        <TableCell>
-                          {formatDate(payment.paymentDate || payment.createdAt)}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem>
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                Record Payment
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
+                  {employees && employees.length > 0 ? (
+                    // Display all employees, even if they don't have payment records
+                    employees.map(employee => {
+                      // Find payments for this employee
+                      const employeePayments = filteredPayments?.filter(
+                        payment => payment.employeeId === employee.id
+                      ) || [];
+                      
+                      // If employee has payments, show them
+                      if (employeePayments.length > 0) {
+                        return employeePayments.map(payment => (
+                          <TableRow key={`payment-${payment.id}`}>
+                            <TableCell className="font-medium">
+                              {employee.fullName}
+                            </TableCell>
+                            <TableCell>{payment.reportId || "N/A"}</TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(calculateCommission(payment))}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(calculateTips(payment))}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(calculateMoneyOwed(payment))}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(calculateAdvance(payment))}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(Number(payment.paidAmount || 0) - calculateMoneyOwed(payment))}
+                            </TableCell>
+                            <TableCell>
+                              {formatDate(payment.paymentDate || payment.createdAt)}
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem>
+                                    View Details
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    Record Payment
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ));
+                      } else {
+                        // If employee has no payments, display a row with zeros
+                        return (
+                          <TableRow key={`employee-${employee.id}`}>
+                            <TableCell className="font-medium">
+                              {employee.fullName}
+                            </TableCell>
+                            <TableCell>N/A</TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(0)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(0)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(0)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(0)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(0)}
+                            </TableCell>
+                            <TableCell>
+                              N/A
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem>
+                                    Record Payment
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      }
+                    })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-6 text-gray-500">
-                        No tax payment records found
+                      <TableCell colSpan={9} className="text-center py-6 text-gray-500">
+                        No employees found. Please add employees first.
                       </TableCell>
                     </TableRow>
                   )}
