@@ -334,20 +334,22 @@ export default function AdminPanel() {
           return;
         }
         
-        // Calculate total sales for this report
-        const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
-        // Apply location-specific pricing
-        let carPrice = 15; // Default
-        if (report.locationId === 4) { // BOA Steakhouse
-          carPrice = 13;
-        }
-        const cashSales = cashCars * carPrice;
-        const creditSales = report.totalCreditSales;
-        const receiptSales = report.totalReceipts * 18; // $18 per receipt
-        const totalSales = cashSales + creditSales + receiptSales;
+        // Calculate company turn-in rate based on location
+        let turnInRate = 11; // Default for Capital Grille (id: 1)
         
-        // Add to monthly sales total
-        initialMonthlyData[month].sales += totalSales;
+        if (report.locationId === 2) { // Bob's Steak
+          turnInRate = 6;
+        } else if (report.locationId === 3) { // Truluck's
+          turnInRate = 8;
+        } else if (report.locationId === 4) { // BOA Steakhouse
+          turnInRate = 7;
+        }
+        
+        // Calculate company earnings (total cars * turn-in rate)
+        const companySales = report.totalCars * turnInRate;
+        
+        // Add to monthly sales total (company earnings only)
+        initialMonthlyData[month].sales += companySales;
         
         // Add to daily car volume
         initialDailyData[dayOfWeek].cars += report.totalCars;
@@ -366,37 +368,21 @@ export default function AdminPanel() {
         // Add to sales trend (last 14 days)
         const daysAgo = Math.floor((today.getTime() - reportDate.getTime()) / (1000 * 60 * 60 * 24));
         if (daysAgo >= 0 && daysAgo < 14) {
-          salesTrend[13 - daysAgo].sales += totalSales;
+          salesTrend[13 - daysAgo].sales += companySales;
           salesTrend[13 - daysAgo].cars += report.totalCars;
         }
       });
     }
     
-    // Fix monthly data to show correct values
-    // January
-    initialMonthlyData[0].sales = 18732;
-    // February
-    initialMonthlyData[1].sales = 22150;
-    // March
-    initialMonthlyData[2].sales = 25411;
-    // April
-    initialMonthlyData[3].sales = 23845;
-    // May
-    initialMonthlyData[4].sales = 27625;
-    // June
-    initialMonthlyData[5].sales = 29450;
-    // July
-    initialMonthlyData[6].sales = 30215;
-    // August
-    initialMonthlyData[7].sales = 31080;
-    // September
-    initialMonthlyData[8].sales = 28975;
-    // October
-    initialMonthlyData[9].sales = 26340;
-    // November
-    initialMonthlyData[10].sales = 24680;
-    // December
-    initialMonthlyData[11].sales = 27890;
+    // Example calculation for March based on actual numbers provided:
+    // Capital Grille: 1302 cars × $11 = $14,322
+    // Truluck's: 670 cars × $8 = $5,360
+    // BOA: 474 cars × $7 = $3,318
+    // Bob's: 377 cars × $6 = $2,262
+    // Total: $25,262
+    //
+    // The calculation is now done dynamically based on actual car counts and 
+    // turn-in rates for each location in the code above
     
     // Update all state variables with calculated data
     setMonthlyData(initialMonthlyData);
