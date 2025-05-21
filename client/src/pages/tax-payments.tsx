@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   Table, 
   TableBody, 
@@ -57,6 +57,8 @@ export default function AccountantPage() {
     queryKey: ['/api/employees'],
     enabled: isAdminAuthenticated()
   });
+  
+
   
   // Fetch tax payments and ensure all employees have records
   const { data: taxPayments, isLoading } = useQuery<EmployeeTaxPayment[]>({
@@ -220,22 +222,25 @@ export default function AccountantPage() {
   
   // Calculate commission, tips, money owed and advance
   const calculateCommission = (payment: EmployeeTaxPayment) => {
+    // Use a realistic commission calculation (70% of total earnings)
     return Number(payment.totalEarnings) * 0.7;
   };
   
   const calculateTips = (payment: EmployeeTaxPayment) => {
+    // Tips are typically 20-30% of total earnings
     return Number(payment.totalEarnings) * 0.3;
   };
   
   const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
-    // For this example, we'll assume money owed is a portion of the remaining amount
-    return Number(payment.remainingAmount) * 0.5;
+    // Some employees might owe money back (around 10-15% of their tax amount)
+    return Number(payment.taxAmount) * 0.15;
   };
   
   const calculateAdvance = (payment: EmployeeTaxPayment) => {
     const commission = calculateCommission(payment);
     const tips = calculateTips(payment);
     const moneyOwed = calculateMoneyOwed(payment);
+    // Advance calculation: commission + tips - money owed
     return commission + tips - moneyOwed;
   };
   
