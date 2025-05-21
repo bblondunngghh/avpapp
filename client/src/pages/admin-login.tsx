@@ -24,23 +24,35 @@ export default function AdminLogin() {
   const [, navigate] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
   const { toast } = useToast();
   
-  // Check if device is iPad on mount
+  // Check device type on mount
   useEffect(() => {
-    const checkIPad = () => {
+    const checkDeviceType = () => {
+      // Check for iPad
       const iPadDevice = /iPad/i.test(navigator.userAgent) || 
                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      
+      // Check for iPhone or iOS device
+      const isIOSDevice = /iPhone|iPod/i.test(navigator.userAgent) || 
+                       (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
+                       (navigator.platform === 'iPhone') ||
+                       (/iPad|iPhone|iPod/.test(navigator.platform));
+      
       setIsIPad(iPadDevice);
-      console.log("iPad detection:", { 
-        iPadDevice, 
+      setIsIOS(isIOSDevice);
+      
+      console.log("Device detection:", { 
+        iPadDevice,
+        isIOSDevice,
         userAgent: navigator.userAgent,
         platform: navigator.platform,
         touchPoints: navigator.maxTouchPoints
       });
     };
     
-    checkIPad();
+    checkDeviceType();
   }, []);
 
   // Initialize form
@@ -74,7 +86,10 @@ export default function AdminLogin() {
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
           // Redirect based on device type
-          if (isIPad) {
+          if (isIOS) {
+            console.log("Redirecting to basic admin panel for iOS devices");
+            navigate("/basic-admin");
+          } else if (isIPad) {
             console.log("Redirecting to simplified admin panel for iPad");
             navigate("/simple-admin");
           } else {

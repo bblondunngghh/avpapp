@@ -91,6 +91,7 @@ function Router() {
           <Route path="/admin-login" component={AdminLogin} />
           <Route path="/mobile-admin" component={MobileAdminPanel} />
           <Route path="/simple-admin" component={SimpleMobileAdmin} />
+          <Route path="/basic-admin" component={() => import("@/pages/basic-mobile-admin").then(module => <module.default />)} />
           <Route path="/admin-redirect" component={() => import("@/pages/mobile-redirect").then(module => <module.default />)} />
           <Route path="/admin" component={AdminPanel} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
