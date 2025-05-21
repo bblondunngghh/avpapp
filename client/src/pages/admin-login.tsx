@@ -14,7 +14,8 @@ export default function AdminLogin() {
   
   // Handle direct admin access
   const goToAdmin = () => {
-    window.location.href = "/admin";
+    // Use the special direct HTML page
+    window.location.href = "/admin.html";
   };
   
   // Regular form login
@@ -22,8 +23,8 @@ export default function AdminLogin() {
     e.preventDefault();
     
     if (password === ADMIN_PASSWORD) {
-      // Go to admin page
-      window.location.href = "/admin";
+      // Go to admin page using the HTML redirect
+      window.location.href = "/admin.html";
     } else {
       // Show error
       setError("Invalid password. Please try again.");
