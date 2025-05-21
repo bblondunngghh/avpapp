@@ -76,12 +76,12 @@ export default function MobileAdminPanel() {
     fetchData();
   }, []);
   
-  // Log out function
-  const handleLogout = async () => {
+  // Log out function - simplified for mobile
+  const handleLogout = () => {
     try {
-      // Import admin auth utility
-      const { logoutAdmin } = await import("@/lib/admin-auth");
-      logoutAdmin();
+      // Direct localStorage manipulation for better mobile reliability
+      localStorage.removeItem("admin_authenticated");
+      localStorage.removeItem("admin_auth_time");
       
       // Show success toast
       toast({
@@ -90,8 +90,11 @@ export default function MobileAdminPanel() {
         variant: "default",
       });
       
-      // Redirect to login
-      navigate("/admin-login");
+      // Short delay before redirecting
+      setTimeout(() => {
+        // Redirect to login
+        navigate("/admin-login");
+      }, 100);
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -212,31 +215,46 @@ export default function MobileAdminPanel() {
   // Verify authentication on load
   useEffect(() => {
     // Double check authentication on component mount
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
-        const { isAdminAuthenticated } = await import("@/lib/admin-auth");
-        const isAuth = isAdminAuthenticated();
+        // Use synchronous authentication check to prevent race conditions
+        const adminAuthenticated = localStorage.getItem("admin_authenticated") === "true";
+        const authTime = Number(localStorage.getItem("admin_auth_time") || "0");
+        const currentTime = Date.now();
+        const sessionTimeout = 2 * 60 * 1000; // 2 minutes
+        
+        // Directly check if authenticated and session is valid
+        const isAuth = adminAuthenticated && (currentTime - authTime <= sessionTimeout);
         
         if (!isAuth) {
+          console.log("Mobile admin panel: Authentication failed, redirecting to login");
           navigate("/admin-login");
+        } else {
+          console.log("Mobile admin panel: Authentication successful");
+          localStorage.setItem("admin_auth_time", currentTime.toString());
         }
       } catch (error) {
         console.error("Auth check error:", error);
-        navigate("/admin-login");
+        // Don't automatically redirect on error - this could cause redirect loops
       }
     };
     
-    checkAuth();
+    // Run auth check with a small delay to ensure component is fully mounted
+    const timer = setTimeout(checkAuth, 100);
+    return () => clearTimeout(timer);
   }, [navigate]);
   
-  // Register activity to keep session alive
+  // Register activity to keep session alive - simplified version for mobile
   useEffect(() => {
     const activityEvents = ["mousedown", "keydown", "touchstart", "scroll"];
     
-    const handleUserActivity = async () => {
+    // Direct localStorage update without dynamic imports that can cause issues on mobile
+    const handleUserActivity = () => {
       try {
-        const { refreshAdminSession } = await import("@/lib/admin-auth");
-        refreshAdminSession();
+        // Only refresh if already authenticated
+        if (localStorage.getItem("admin_authenticated") === "true") {
+          localStorage.setItem("admin_auth_time", Date.now().toString());
+        }
       } catch (error) {
         console.error("Error refreshing session:", error);
       }
@@ -247,10 +265,14 @@ export default function MobileAdminPanel() {
       window.addEventListener(event, handleUserActivity);
     });
     
+    // Setup periodic refresh as a backup for mobile
+    const intervalId = setInterval(handleUserActivity, 30000);
+    
     return () => {
       activityEvents.forEach(event => {
         window.removeEventListener(event, handleUserActivity);
       });
+      clearInterval(intervalId);
     };
   }, []);
 
