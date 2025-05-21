@@ -870,6 +870,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   * Money Owed represents the negative cash turn-in amount that needs to be made up
                 </div>
               )}
+
+              {/* Total Bank Calculation (Cars x Turn-in Rate) */}
+              <div className="flex justify-between bg-blue-50 p-4 rounded-md border border-blue-200 mt-3">
+                <div className="text-base font-bold text-blue-800">
+                  Total Bank (Cars × Turn-in Rate)
+                </div>
+                <div className="text-xl font-bold text-blue-800">
+                  ${(totalCars * perCarRate).toFixed(2)}
+                </div>
+              </div>
             </div>
           </div>
           
