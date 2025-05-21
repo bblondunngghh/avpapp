@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
-// This component adds fullscreen support for mobile devices and iPads
+// This component adds fullscreen support only for mobile devices and iPads, not desktop browsers
 export default function FullscreenSupport() {
   const [isIOS, setIsIOS] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   useEffect(() => {
     // Check if device is iOS (iPhone, iPad, iPod)
@@ -12,19 +13,38 @@ export default function FullscreenSupport() {
       setIsIOS(isIOSDevice);
       return isIOSDevice;
     };
+    
+    // Check if device is a mobile device (including iPad)
+    const checkIsMobileDevice = () => {
+      // Regular expression to detect mobile devices
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      
+      // Check if it's a mobile device based on user agent
+      const isMobile = mobileRegex.test(navigator.userAgent);
+      
+      // Additional check for iPad on newer iOS (which reports as MacIntel)
+      const isModernIPad = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+      
+      const result = isMobile || isModernIPad;
+      setIsMobileDevice(result);
+      return result;
+    };
 
     function handleLoad() {
       // Add a small delay to allow the page to fully render
       setTimeout(() => {
         const isIOSDevice = checkIsIOS();
+        const isMobile = checkIsMobileDevice();
         
         // For iOS devices - hide address bar by scrolling down
         if (isIOSDevice) {
           window.scrollTo(0, 1);
         }
         
-        // Add fullscreen event listener for first user interaction
-        document.addEventListener('click', enableFullscreen, { once: true });
+        // Only add fullscreen event listener for mobile devices
+        if (isMobile) {
+          document.addEventListener('click', enableFullscreen, { once: true });
+        }
         
         // For iPad - ensure proper orientation change handling
         if (isIOSDevice && window.innerWidth >= 768) {
@@ -41,6 +61,9 @@ export default function FullscreenSupport() {
     }
     
     function enableFullscreen() {
+      // Only attempt fullscreen on mobile devices
+      if (!isMobileDevice) return;
+      
       // Try to enable fullscreen mode on interaction
       const doc = window.document as any;
       const docEl = doc.documentElement;
@@ -64,10 +87,9 @@ export default function FullscreenSupport() {
       }
     }
     
-    // Don't add the iPad class as it's causing scrolling issues
-    // if (checkIsIOS() && window.innerWidth >= 768) {
-    //   document.body.classList.add('ipad-view');
-    // }
+    // Initialize detection
+    checkIsIOS();
+    checkIsMobileDevice();
     
     window.addEventListener('load', handleLoad);
     
@@ -75,7 +97,7 @@ export default function FullscreenSupport() {
       window.removeEventListener('load', handleLoad);
       window.removeEventListener('orientationchange', handleOrientationChange);
     };
-  }, [isIOS]);
+  }, [isIOS, isMobileDevice]);
   
   return null;
 }
