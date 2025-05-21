@@ -990,7 +990,7 @@ export default function AdminPanel() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl text-indigo-700">Admin Panel</h1>
+        <h1 className="text-3xl text-blue-600">Admin Panel</h1>
         <div className="flex gap-2">
           <Button 
             variant="default" 
