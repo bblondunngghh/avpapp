@@ -8,9 +8,12 @@ import {
   updateTicketDistributionSchema,
   insertEmployeeSchema,
   updateEmployeeSchema,
+  insertEmployeeTaxPaymentSchema,
+  updateEmployeeTaxPaymentSchema,
   ShiftReport,
   TicketDistribution,
-  Employee
+  Employee,
+  EmployeeTaxPayment
 } from "@shared/schema";
 import { z } from "zod";
 import { 
@@ -448,6 +451,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Database health check failed:', error);
       res.status(503).json({ status: 'disconnected', error: 'Database connection unavailable' });
+    }
+  });
+
+  // Tax Payment Routes
+  // Get all tax payments
+  apiRouter.get('/tax-payments', async (req, res) => {
+    try {
+      const payments = await storage.getEmployeeTaxPayments();
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch tax payments' });
+    }
+  });
+
+  // Get tax payments by employee ID
+  apiRouter.get('/tax-payments/employee/:id', async (req, res) => {
+    try {
+      const employeeId = parseInt(req.params.id);
+      if (isNaN(employeeId)) {
+        return res.status(400).json({ message: 'Invalid employee ID' });
+      }
+      
+      const payments = await storage.getEmployeeTaxPaymentsByEmployee(employeeId);
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch tax payments for employee' });
+    }
+  });
+
+  // Get tax payments by report ID
+  apiRouter.get('/tax-payments/report/:id', async (req, res) => {
+    try {
+      const reportId = parseInt(req.params.id);
+      if (isNaN(reportId)) {
+        return res.status(400).json({ message: 'Invalid report ID' });
+      }
+      
+      const payments = await storage.getEmployeeTaxPaymentsByReport(reportId);
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch tax payments for report' });
+    }
+  });
+
+  // Get tax payment by ID
+  apiRouter.get('/tax-payments/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid payment ID' });
+      }
+      
+      const payment = await storage.getEmployeeTaxPayment(id);
+      if (!payment) {
+        return res.status(404).json({ message: 'Tax payment not found' });
+      }
+      
+      res.json(payment);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch tax payment' });
+    }
+  });
+
+  // Create a new tax payment
+  apiRouter.post('/tax-payments', async (req, res) => {
+    try {
+      const payment = insertEmployeeTaxPaymentSchema.parse(req.body);
+      const createdPayment = await storage.createEmployeeTaxPayment(payment);
+      res.status(201).json(createdPayment);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid tax payment data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to create tax payment' });
+    }
+  });
+
+  // Update a tax payment
+  apiRouter.put('/tax-payments/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid payment ID' });
+      }
+      
+      const payment = updateEmployeeTaxPaymentSchema.parse(req.body);
+      const updatedPayment = await storage.updateEmployeeTaxPayment(id, payment);
+      
+      if (!updatedPayment) {
+        return res.status(404).json({ message: 'Tax payment not found' });
+      }
+      
+      res.json(updatedPayment);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid tax payment data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to update tax payment' });
+    }
+  });
+
+  // Delete a tax payment
+  apiRouter.delete('/tax-payments/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid payment ID' });
+      }
+      
+      const success = await storage.deleteEmployeeTaxPayment(id);
+      if (!success) {
+        return res.status(404).json({ message: 'Tax payment not found' });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete tax payment' });
     }
   });
 
