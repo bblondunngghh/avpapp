@@ -878,13 +878,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 </div>
                 <div className="text-xl font-bold text-blue-800">
                   ${(() => {
+                    const selectedLocationId = form.watch('locationId');
                     // Get the turn-in rate based on location
                     let turnInRate = 11; // Default to Capital Grille rate
-                    if (locationId === 2) { // Bob's Steak and Chop House
+                    if (selectedLocationId === 2) { // Bob's Steak and Chop House
                       turnInRate = 6;
-                    } else if (locationId === 3) { // Truluck's
+                    } else if (selectedLocationId === 3) { // Truluck's
                       turnInRate = 8;
-                    } else if (locationId === 4) { // BOA Steakhouse
+                    } else if (selectedLocationId === 4) { // BOA Steakhouse
                       turnInRate = 7;
                     }
                     return (totalCars * turnInRate).toFixed(2);
@@ -1192,35 +1193,59 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   </div>
 
                                   {/* Cash Paid Input */}
-                                  <div className="col-span-2 mt-2 pt-1">
-                                    <div className="flex items-center justify-between text-xs">
-                                      <span className="text-gray-600">Cash Paid:</span>
-                                      <div className="relative w-20">
-                                        <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                                        <input
-                                          type="number"
-                                          step="0.01"
-                                          min="0"
-                                          className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
-                                          value={employee.cashPaid || ''}
-                                          onChange={(e) => {
-                                            const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
-                                            const newEmployees = [...form.watch('employees')];
-                                            newEmployees[index] = {
-                                              ...newEmployees[index],
-                                              cashPaid: value
-                                            };
-                                            form.setValue('employees', newEmployees);
-                                          }}
-                                        />
-                                      </div>
-                                    </div>
-                                    {tax > employeeMoneyOwed && (
-                                      <div className="text-right text-xs text-gray-500 mt-1">
-                                        Expected: ${Math.ceil(tax - employeeMoneyOwed)}
-                                      </div>
-                                    )}
-                                  </div>
+                                  {/* Only show tax box if taxes aren't fully covered */}
+                                  {(() => {
+                                    // Check if taxes are fully covered for this employee
+                                    const cashPaid = parseFloat(String(employee.cashPaid)) || 0;
+                                    const expectedAmount = tax > employeeMoneyOwed ? Math.ceil(tax - employeeMoneyOwed) : 0;
+                                    const taxesCovered = cashPaid >= expectedAmount;
+                                    
+                                    // Only display the cash paid input for admins or if taxes aren't covered
+                                    const isAdmin = window.location.pathname.includes('/admin');
+                                    
+                                    if (taxesCovered && !isAdmin) {
+                                      return (
+                                        <div className="col-span-2 mt-2 pt-1">
+                                          <div className="text-xs text-green-600 font-medium">
+                                            ✓ Taxes covered
+                                          </div>
+                                        </div>
+                                      );
+                                    } else {
+                                      return (
+                                        <div className="col-span-2 mt-2 pt-1">
+                                          <div className="flex items-center justify-between text-xs">
+                                            <span className="text-gray-600">Cash Paid:</span>
+                                            <div className="relative w-20">
+                                              <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                                              <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                className="w-full h-6 pl-5 pr-2 text-xs rounded border border-gray-300"
+                                                value={employee.cashPaid || ''}
+                                                onChange={(e) => {
+                                                  const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
+                                                  const newEmployees = [...form.watch('employees')];
+                                                  newEmployees[index] = {
+                                                    ...newEmployees[index],
+                                                    cashPaid: value
+                                                  };
+                                                  form.setValue('employees', newEmployees);
+                                                }}
+                                              />
+                                            </div>
+                                          </div>
+                                          {tax > employeeMoneyOwed && (
+                                            <div className="text-right text-xs text-gray-500 mt-1">
+                                              Expected: ${Math.ceil(tax - employeeMoneyOwed)}
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  })()}
+                                  
                                 </div>
                               </div>
                             );
