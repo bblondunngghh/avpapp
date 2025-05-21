@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Car, DollarSign, Users, AlertTriangle, Shield } from "lucide-react";
 import { LOCATIONS } from "@/lib/constants";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { ShiftReport } from "@shared/schema";
+import { ShiftReport, Employee } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import RestaurantIcon from "@/components/restaurant-icon";
 import { apiRequest } from "@/lib/queryClient";
@@ -215,19 +215,25 @@ export default function SubmissionComplete() {
         // Calculate remaining amount (tax minus any money already paid)
         const remainingAmount = taxAmount.toFixed(2);
         
-        // Create tax payment record for this employee
-        const paymentData = {
-          employeeId: getEmployeeIdByName(emp.name),
-          reportId: report.id,
-          locationId: report.locationId,
-          totalEarnings: empTotalEarnings.toFixed(2),
-          taxAmount: taxAmount.toFixed(2),
-          paidAmount,
-          remainingAmount
-        };
+        // Get valid employee ID
+        const employeeId = getEmployeeIdByName(emp.name);
         
-        // Save the tax payment record to the database
-        saveTaxPayment(paymentData);
+        // Only create payment records for valid employee IDs
+        if (employeeId > 0) {
+          // Create tax payment record for this employee
+          const paymentData = {
+            employeeId,
+            reportId: report.id,
+            locationId: report.locationId,
+            totalEarnings: empTotalEarnings.toFixed(2),
+            taxAmount: taxAmount.toFixed(2),
+            paidAmount,
+            remainingAmount
+          };
+          
+          // Save the tax payment record to the database
+          saveTaxPayment(paymentData);
+        }
       });
     }
     
