@@ -757,9 +757,16 @@ export class DatabaseStorage implements IStorage {
   
   async deleteShiftReport(id: number): Promise<boolean> {
     try {
+      // First, delete all associated tax payment records
+      await db
+        .delete(employeeTaxPayments)
+        .where(eq(employeeTaxPayments.reportId, id));
+      
+      // Then delete the shift report
       await db
         .delete(shiftReports)
         .where(eq(shiftReports.id, id));
+      
       return true;
     } catch (error) {
       console.error("Error deleting shift report:", error);
