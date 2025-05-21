@@ -3,7 +3,29 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { User, BarChart, Ticket, LogOut, RefreshCw, Trash2 } from "lucide-react";
+import { 
+  Tabs, TabsContent, TabsList, TabsTrigger 
+} from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { 
+  User, 
+  BarChart, 
+  Ticket, 
+  LogOut, 
+  RefreshCw, 
+  Trash2, 
+  PlusCircle,
+  LineChart,
+  DollarSign
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
@@ -232,6 +254,109 @@ export default function MobileAdminPanel() {
     };
   }, []);
 
+  // New state for ticket distribution form
+  const [newTicketForm, setNewTicketForm] = useState({
+    locationId: 1,
+    allocatedTickets: 100,
+    usedTickets: 0,
+    batchNumber: '',
+    notes: ''
+  });
+
+  // Handle new ticket distribution creation
+  const handleCreateTicketDistribution = async () => {
+    if (!newTicketForm.batchNumber) {
+      toast({
+        title: "Missing information",
+        description: "Please enter a batch number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Create new ticket distribution
+      await apiRequest("POST", "/api/ticket-distributions", {
+        locationId: newTicketForm.locationId,
+        allocatedTickets: Number(newTicketForm.allocatedTickets),
+        usedTickets: Number(newTicketForm.usedTickets),
+        batchNumber: newTicketForm.batchNumber,
+        notes: newTicketForm.notes || null
+      });
+      
+      // Show success message
+      toast({
+        title: "Tickets created",
+        description: "New ticket batch has been created successfully",
+        variant: "default",
+      });
+      
+      // Reset form
+      setNewTicketForm({
+        locationId: 1,
+        allocatedTickets: 100,
+        usedTickets: 0,
+        batchNumber: '',
+        notes: ''
+      });
+      
+      // Refresh ticket distributions data
+      const ticketsResponse = await fetch('/api/ticket-distributions');
+      if (ticketsResponse.ok) {
+        const ticketsData = await ticketsResponse.json();
+        setTicketDistributions(ticketsData);
+      }
+    } catch (error) {
+      console.error("Error creating ticket distribution:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create new tickets",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Calculate location performance metrics
+  const getLocationPerformance = () => {
+    const performance: Record<number, { 
+      name: string;
+      totalCars: number;
+      totalRevenue: number;
+      creditTransactions: number;
+      cashTransactions: number;
+    }> = {};
+    
+    // Initialize data for each location
+    Object.values(LOCATIONS).forEach(loc => {
+      if (typeof loc === 'object' && loc.id) {
+        performance[Number(loc.id)] = {
+          name: String(loc.name),
+          totalCars: 0,
+          totalRevenue: 0,
+          creditTransactions: 0,
+          cashTransactions: 0
+        };
+      }
+    });
+    
+    // Process report data
+    reports.forEach((report: any) => {
+      const locationId = report.locationId;
+      if (performance[locationId]) {
+        performance[locationId].totalCars += report.totalCars || 0;
+        performance[locationId].totalRevenue += report.totalTurnIn || 0;
+        performance[locationId].creditTransactions += report.creditTransactions || 0;
+        performance[locationId].cashTransactions += (report.totalCars - report.creditTransactions) || 0;
+      }
+    });
+    
+    return Object.values(performance);
+  };
+
   return (
     <div className="container mx-auto p-4 pb-20">
       <div className="flex justify-between items-center mb-4">
@@ -296,88 +421,264 @@ export default function MobileAdminPanel() {
         </Card>
       </div>
       
-      {/* Recent Reports */}
-      <Card className="mb-6">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Recent Reports</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {reports.length === 0 ? (
-            <p className="text-gray-500 text-sm">No reports available</p>
-          ) : (
-            <div className="space-y-3">
-              {reports.slice(0, 10).map((report: any) => (
-                <div key={report.id} className="border rounded p-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-medium">{getLocationName(report.locationId)}</h3>
-                      <p className="text-sm text-gray-600">{formatDate(report.date)} - {report.shift}</p>
+      {/* Tabbed Interface */}
+      <Tabs defaultValue="reports" className="mb-6">
+        <TabsList className="grid grid-cols-3 mb-4">
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+          <TabsTrigger value="tickets">Tickets</TabsTrigger>
+          <TabsTrigger value="performance">Performance</TabsTrigger>
+        </TabsList>
+        
+        {/* Reports Tab */}
+        <TabsContent value="reports" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Recent Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {reports.length === 0 ? (
+                <p className="text-gray-500 text-sm">No reports available</p>
+              ) : (
+                <div className="space-y-3">
+                  {reports.slice(0, 10).map((report: any) => (
+                    <div key={report.id} className="border rounded p-3">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="font-medium">{getLocationName(report.locationId)}</h3>
+                          <p className="text-sm text-gray-600">{formatDate(report.date)} - {report.shift}</p>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="h-8 w-8 p-0" 
+                          onClick={() => handleDeleteReport(report.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                      <Separator className="my-2" />
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <p className="text-gray-500">Total Cars:</p>
+                          <p className="font-medium">{report.totalCars}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Cash Collected:</p>
+                          <p className="font-medium">{formatCurrency(report.totalCashCollected)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Credit Sales:</p>
+                          <p className="font-medium">{formatCurrency(report.totalCreditSales)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Turn-In:</p>
+                          <p className="font-medium">{formatCurrency(report.totalTurnIn)}</p>
+                        </div>
+                      </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      className="h-8 w-8 p-0" 
-                      onClick={() => handleDeleteReport(report.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Active Employees</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {employees.length === 0 ? (
+                <p className="text-gray-500 text-sm">No employees available</p>
+              ) : (
+                <div className="grid grid-cols-1 gap-2">
+                  {employees
+                    .filter((emp: any) => emp.isActive)
+                    .slice(0, 10)
+                    .map((emp: any) => (
+                      <div key={emp.id} className="border rounded p-2 flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{emp.fullName}</p>
+                          <p className="text-xs text-gray-500">ID: {emp.key}</p>
+                        </div>
+                        {emp.isShiftLeader && (
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                            Shift Leader
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Tickets Tab */}
+        <TabsContent value="tickets" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Issue New Tickets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="location">Location</Label>
+                  <Select 
+                    value={String(newTicketForm.locationId)} 
+                    onValueChange={(val) => setNewTicketForm({...newTicketForm, locationId: Number(val)})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(LOCATIONS).map(([key, location]) => (
+                        <SelectItem key={key} value={String(location.id)}>
+                          {location.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor="batchNumber">Batch Number</Label>
+                    <Input 
+                      id="batchNumber"
+                      value={newTicketForm.batchNumber}
+                      onChange={(e) => setNewTicketForm({...newTicketForm, batchNumber: e.target.value})}
+                      placeholder="e.g., B12345"
+                    />
                   </div>
-                  <Separator className="my-2" />
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <p className="text-gray-500">Total Cars:</p>
-                      <p className="font-medium">{report.totalCars}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Cash Collected:</p>
-                      <p className="font-medium">{formatCurrency(report.totalCashCollected)}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Credit Sales:</p>
-                      <p className="font-medium">{formatCurrency(report.totalCreditSales)}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Turn-In:</p>
-                      <p className="font-medium">{formatCurrency(report.totalTurnIn)}</p>
-                    </div>
+                  
+                  <div>
+                    <Label htmlFor="allocatedTickets">Allocated Tickets</Label>
+                    <Input 
+                      id="allocatedTickets"
+                      type="number"
+                      value={newTicketForm.allocatedTickets}
+                      onChange={(e) => setNewTicketForm({...newTicketForm, allocatedTickets: Number(e.target.value)})}
+                    />
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      {/* Active Employees */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Active Employees</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {employees.length === 0 ? (
-            <p className="text-gray-500 text-sm">No employees available</p>
-          ) : (
-            <div className="grid grid-cols-1 gap-2">
-              {employees
-                .filter((emp: any) => emp.isActive)
-                .slice(0, 10)
-                .map((emp: any) => (
-                  <div key={emp.id} className="border rounded p-2 flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{emp.fullName}</p>
-                      <p className="text-xs text-gray-500">ID: {emp.key}</p>
+                
+                <div>
+                  <Label htmlFor="notes">Notes (Optional)</Label>
+                  <Input 
+                    id="notes"
+                    value={newTicketForm.notes}
+                    onChange={(e) => setNewTicketForm({...newTicketForm, notes: e.target.value})}
+                    placeholder="Any additional information"
+                  />
+                </div>
+                
+                <Button 
+                  className="w-full" 
+                  onClick={handleCreateTicketDistribution}
+                  disabled={isLoading}
+                >
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Issue New Tickets
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Recent Ticket Batches</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {ticketDistributions.length === 0 ? (
+                <p className="text-gray-500 text-sm">No ticket batches available</p>
+              ) : (
+                <div className="space-y-3">
+                  {ticketDistributions.slice(0, 10).map((dist: any) => (
+                    <div key={dist.id} className="border rounded p-3">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="font-medium">{getLocationName(dist.locationId)}</h3>
+                          <p className="text-sm text-gray-600">Batch: {dist.batchNumber}</p>
+                        </div>
+                      </div>
+                      <Separator className="my-2" />
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <p className="text-gray-500">Allocated:</p>
+                          <p className="font-medium">{dist.allocatedTickets}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Used:</p>
+                          <p className="font-medium">{dist.usedTickets}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Remaining:</p>
+                          <p className="font-medium">{dist.allocatedTickets - dist.usedTickets}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Date:</p>
+                          <p className="font-medium">{formatDate(dist.createdAt)}</p>
+                        </div>
+                      </div>
                     </div>
-                    {emp.isShiftLeader && (
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                        Shift Leader
-                      </span>
-                    )}
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Performance Tab */}
+        <TabsContent value="performance" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Location Performance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {getLocationPerformance().map((location, index) => (
+                  <div key={index} className="border rounded p-3">
+                    <h3 className="font-medium text-lg mb-2">{location.name}</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-blue-50 rounded p-3 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-blue-700">Total Cars</p>
+                          <p className="text-xl font-bold">{location.totalCars}</p>
+                        </div>
+                        <BarChart className="h-8 w-8 text-blue-500" />
+                      </div>
+                      
+                      <div className="bg-green-50 rounded p-3 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-green-700">Revenue</p>
+                          <p className="text-xl font-bold">{formatCurrency(location.totalRevenue)}</p>
+                        </div>
+                        <DollarSign className="h-8 w-8 text-green-500" />
+                      </div>
+                      
+                      <div className="bg-purple-50 rounded p-3 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-purple-700">Credit Trans.</p>
+                          <p className="text-xl font-bold">{location.creditTransactions}</p>
+                        </div>
+                        <LineChart className="h-8 w-8 text-purple-500" />
+                      </div>
+                      
+                      <div className="bg-amber-50 rounded p-3 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-amber-700">Cash Trans.</p>
+                          <p className="text-xl font-bold">{location.cashTransactions}</p>
+                        </div>
+                        <DollarSign className="h-8 w-8 text-amber-500" />
+                      </div>
+                    </div>
                   </div>
                 ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       
       {/* Footer Note */}
       <p className="text-center text-xs text-gray-500 mt-6">
