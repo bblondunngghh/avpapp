@@ -10,6 +10,16 @@ import {
   TabsTrigger 
 } from "@/components/ui/tabs";
 import {
+  BarChart as RechartsBarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend,
+  ResponsiveContainer
+} from "recharts";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -218,6 +228,14 @@ export default function AdminPanel() {
     "2025-01": 17901,
     "2025-02": 27556
   });
+  
+  // Partner pay history chart data
+  const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
+    month: string;
+    brandon: number;
+    ryan: number;
+    dave: number;
+  }>>([]);
   const EXPENSES_EDIT_PASSWORD = "bblonly";
   
   // Load saved expenses from localStorage on initial render
@@ -227,6 +245,89 @@ export default function AdminPanel() {
       if (savedExpensesFromStorage) {
         setSavedExpenses(JSON.parse(savedExpensesFromStorage));
       }
+      
+      // Generate partner payment history from saved expenses and manual revenue
+      const expensesData = savedExpensesFromStorage ? JSON.parse(savedExpensesFromStorage) : {};
+      const historyData: Array<{
+        month: string;
+        brandon: number;
+        ryan: number;
+        dave: number;
+      }> = [];
+      
+      // Process each month with saved expenses
+      Object.keys(expensesData).forEach(month => {
+        const expenses = expensesData[month];
+        let revenue = 0;
+        
+        // Use manual revenue if available, otherwise calculate from reports
+        if (manualRevenue[month]) {
+          revenue = manualRevenue[month];
+        } else {
+          // Use a placeholder for now (this would ideally be calculated from reports)
+          revenue = 0;
+        }
+        
+        if (revenue > 0) {
+          const profit = revenue - expenses;
+          if (profit > 0) {
+            // Format month for display (e.g., "2025-01" -> "Jan 2025")
+            const [year, monthNum] = month.split('-');
+            const monthDate = new Date(parseInt(year), parseInt(monthNum) - 1);
+            const monthDisplay = monthDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+            
+            historyData.push({
+              month: monthDisplay,
+              brandon: profit * 0.5, // 50%
+              ryan: profit * 0.4,    // 40%
+              dave: profit * 0.1     // 10%
+            });
+          }
+        }
+      });
+      
+      // Add manual entries for January and February 2025 if not already included
+      const hasJan = historyData.some(item => item.month === 'Jan 2025');
+      const hasFeb = historyData.some(item => item.month === 'Feb 2025');
+      
+      if (!hasJan && manualRevenue['2025-01']) {
+        // Add a default value for expenses if not saved yet
+        const janExpenses = expensesData['2025-01'] || 5000;
+        const janProfit = manualRevenue['2025-01'] - janExpenses;
+        
+        if (janProfit > 0) {
+          historyData.push({
+            month: 'Jan 2025',
+            brandon: janProfit * 0.5,
+            ryan: janProfit * 0.4,
+            dave: janProfit * 0.1
+          });
+        }
+      }
+      
+      if (!hasFeb && manualRevenue['2025-02']) {
+        // Add a default value for expenses if not saved yet
+        const febExpenses = expensesData['2025-02'] || 6500;
+        const febProfit = manualRevenue['2025-02'] - febExpenses;
+        
+        if (febProfit > 0) {
+          historyData.push({
+            month: 'Feb 2025',
+            brandon: febProfit * 0.5,
+            ryan: febProfit * 0.4,
+            dave: febProfit * 0.1
+          });
+        }
+      }
+      
+      // Sort by month
+      historyData.sort((a, b) => {
+        const dateA = new Date(a.month);
+        const dateB = new Date(b.month);
+        return dateA.getTime() - dateB.getTime();
+      });
+      
+      setPartnerPaymentHistory(historyData);
     } catch (error) {
       console.error("Error loading saved expenses:", error);
     }
