@@ -322,7 +322,7 @@ input[type="date"].paperform-input {
     min-height: -webkit-fill-available;
     
     /* Modern valet parking themed background */
-    background-color: #0c2d48; /* Fallback */
+    background-color: #1a5f7a; /* Fallback - lighter shade */
     background-image: url('@assets/valet-bg.svg');
     background-size: cover;
     background-position: center center;
