@@ -1880,15 +1880,14 @@ export default function AdminPanel() {
                                 const month = i + 1;
                                 const monthStr = month.toString().padStart(2, '0');
                                 
-                                // Create options for current year and previous year
-                                return [
-                                  <option key={`${currentYear}-${monthStr}`} value={`${currentYear}-${monthStr}`}>
-                                    {new Date(currentYear, i).toLocaleString('default', { month: 'long' })} {currentYear}
-                                  </option>,
-                                  <option key={`${currentYear-1}-${monthStr}`} value={`${currentYear-1}-${monthStr}`}>
-                                    {new Date(currentYear-1, i).toLocaleString('default', { month: 'long' })} {currentYear-1}
+                                // Create options for current year and 2023 (remove 2024)
+                                const years = [2023, 2025];
+                                
+                                return years.map(year => (
+                                  <option key={`${year}-${monthStr}`} value={`${year}-${monthStr}`}>
+                                    {new Date(year, i).toLocaleString('default', { month: 'long' })} {year}
                                   </option>
-                                ];
+                                ));
                               }).flat()}
                             </select>
                           </div>
