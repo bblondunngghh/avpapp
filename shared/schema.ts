@@ -225,7 +225,7 @@ export type TicketDistribution = typeof ticketDistributions.$inferSelect;
 export const employeeTaxPayments = pgTable("employee_tax_payments", {
   id: serial("id").primaryKey(),
   employeeId: integer("employee_id").notNull().references(() => employees.id),
-  reportId: integer("report_id").notNull().references(() => shiftReports.id),
+  reportId: integer("report_id").notNull().references(() => shiftReports.id, { onDelete: "cascade" }),
   locationId: integer("location_id").notNull(),
   totalEarnings: numeric("total_earnings").notNull(),
   taxAmount: numeric("tax_amount").notNull(),
