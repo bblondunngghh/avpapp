@@ -3,8 +3,8 @@
   <!-- Gradient Background -->
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1a5f7a" stop-opacity="1" />
-      <stop offset="100%" stop-color="#507d91" stop-opacity="1" />
+      <stop offset="0%" stop-color="#111111" stop-opacity="1" />
+      <stop offset="100%" stop-color="#1a1a1a" stop-opacity="1" />
     </linearGradient>
     
     <!-- Car silhouette path -->
@@ -18,68 +18,68 @@
   <rect width="100%" height="100%" fill="url(#bgGradient)" />
   
   <!-- Decorative grid patterns -->
-  <g opacity="0.05">
+  <g opacity="0.06">
     <!-- Horizontal lines -->
-    <line x1="0" y1="100" x2="1440" y2="100" stroke="#ffffff" stroke-width="1" />
-    <line x1="0" y1="200" x2="1440" y2="200" stroke="#ffffff" stroke-width="1" />
-    <line x1="0" y1="300" x2="1440" y2="300" stroke="#ffffff" stroke-width="1" />
-    <line x1="0" y1="400" x2="1440" y2="400" stroke="#ffffff" stroke-width="1" />
-    <line x1="0" y1="500" x2="1440" y2="500" stroke="#ffffff" stroke-width="1" />
-    <line x1="0" y1="600" x2="1440" y2="600" stroke="#ffffff" stroke-width="1" />
-    <line x1="0" y1="700" x2="1440" y2="700" stroke="#ffffff" stroke-width="1" />
+    <line x1="0" y1="100" x2="1440" y2="100" stroke="#3b82f6" stroke-width="1" />
+    <line x1="0" y1="200" x2="1440" y2="200" stroke="#3b82f6" stroke-width="1" />
+    <line x1="0" y1="300" x2="1440" y2="300" stroke="#3b82f6" stroke-width="1" />
+    <line x1="0" y1="400" x2="1440" y2="400" stroke="#3b82f6" stroke-width="1" />
+    <line x1="0" y1="500" x2="1440" y2="500" stroke="#3b82f6" stroke-width="1" />
+    <line x1="0" y1="600" x2="1440" y2="600" stroke="#3b82f6" stroke-width="1" />
+    <line x1="0" y1="700" x2="1440" y2="700" stroke="#3b82f6" stroke-width="1" />
     
     <!-- Vertical lines -->
-    <line x1="100" y1="0" x2="100" y2="800" stroke="#ffffff" stroke-width="1" />
-    <line x1="300" y1="0" x2="300" y2="800" stroke="#ffffff" stroke-width="1" />
-    <line x1="500" y1="0" x2="500" y2="800" stroke="#ffffff" stroke-width="1" />
-    <line x1="700" y1="0" x2="700" y2="800" stroke="#ffffff" stroke-width="1" />
-    <line x1="900" y1="0" x2="900" y2="800" stroke="#ffffff" stroke-width="1" />
-    <line x1="1100" y1="0" x2="1100" y2="800" stroke="#ffffff" stroke-width="1" />
-    <line x1="1300" y1="0" x2="1300" y2="800" stroke="#ffffff" stroke-width="1" />
+    <line x1="100" y1="0" x2="100" y2="800" stroke="#3b82f6" stroke-width="1" />
+    <line x1="300" y1="0" x2="300" y2="800" stroke="#3b82f6" stroke-width="1" />
+    <line x1="500" y1="0" x2="500" y2="800" stroke="#3b82f6" stroke-width="1" />
+    <line x1="700" y1="0" x2="700" y2="800" stroke="#3b82f6" stroke-width="1" />
+    <line x1="900" y1="0" x2="900" y2="800" stroke="#3b82f6" stroke-width="1" />
+    <line x1="1100" y1="0" x2="1100" y2="800" stroke="#3b82f6" stroke-width="1" />
+    <line x1="1300" y1="0" x2="1300" y2="800" stroke="#3b82f6" stroke-width="1" />
   </g>
   
   <!-- Car silhouettes scattered around -->
-  <g opacity="0.1">
+  <g opacity="0.15">
     <!-- Top left cars -->
-    <use href="#carPath" x="100" y="50" fill="#ffffff" transform="scale(0.7)" />
-    <use href="#carPath" x="300" y="150" fill="#ffffff" transform="scale(0.5) rotate(45)" />
+    <use href="#carPath" x="100" y="50" fill="#3b82f6" transform="scale(0.7)" />
+    <use href="#carPath" x="300" y="150" fill="#3b82f6" transform="scale(0.5) rotate(45)" />
     
     <!-- Top right cars -->
-    <use href="#carPath" x="800" y="100" fill="#ffffff" transform="scale(0.8) rotate(-20)" />
-    <use href="#carPath" x="1200" y="50" fill="#ffffff" transform="scale(0.6)" />
+    <use href="#carPath" x="800" y="100" fill="#3b82f6" transform="scale(0.8) rotate(-20)" />
+    <use href="#carPath" x="1200" y="50" fill="#3b82f6" transform="scale(0.6)" />
     
     <!-- Bottom left cars -->
-    <use href="#carPath" x="150" y="550" fill="#ffffff" transform="scale(0.5) rotate(15)" />
-    <use href="#carPath" x="350" y="650" fill="#ffffff" transform="scale(0.7) rotate(-10)" />
+    <use href="#carPath" x="150" y="550" fill="#3b82f6" transform="scale(0.5) rotate(15)" />
+    <use href="#carPath" x="350" y="650" fill="#3b82f6" transform="scale(0.7) rotate(-10)" />
     
     <!-- Bottom right cars -->
-    <use href="#carPath" x="900" y="600" fill="#ffffff" transform="scale(0.6) rotate(30)" />
-    <use href="#carPath" x="1100" y="500" fill="#ffffff" transform="scale(0.8) rotate(-15)" />
+    <use href="#carPath" x="900" y="600" fill="#3b82f6" transform="scale(0.6) rotate(30)" />
+    <use href="#carPath" x="1100" y="500" fill="#3b82f6" transform="scale(0.8) rotate(-15)" />
     
     <!-- Center cars -->
-    <use href="#carPath" x="500" y="300" fill="#ffffff" transform="scale(1) rotate(5)" />
-    <use href="#carPath" x="700" y="400" fill="#ffffff" transform="scale(0.9) rotate(-5)" />
+    <use href="#carPath" x="500" y="300" fill="#3b82f6" transform="scale(1) rotate(5)" />
+    <use href="#carPath" x="700" y="400" fill="#3b82f6" transform="scale(0.9) rotate(-5)" />
   </g>
   
   <!-- Key silhouettes -->
-  <g opacity="0.08">
-    <use href="#keyPath" x="200" y="200" fill="#ffffff" transform="scale(0.6)" />
-    <use href="#keyPath" x="1000" y="300" fill="#ffffff" transform="scale(0.5) rotate(45)" />
-    <use href="#keyPath" x="400" y="500" fill="#ffffff" transform="scale(0.7) rotate(-30)" />
-    <use href="#keyPath" x="900" y="650" fill="#ffffff" transform="scale(0.8) rotate(15)" />
+  <g opacity="0.13">
+    <use href="#keyPath" x="200" y="200" fill="#60a5fa" transform="scale(0.6)" />
+    <use href="#keyPath" x="1000" y="300" fill="#60a5fa" transform="scale(0.5) rotate(45)" />
+    <use href="#keyPath" x="400" y="500" fill="#60a5fa" transform="scale(0.7) rotate(-30)" />
+    <use href="#keyPath" x="900" y="650" fill="#60a5fa" transform="scale(0.8) rotate(15)" />
   </g>
   
   <!-- Parking lines pattern -->
-  <g opacity="0.05">
-    <rect x="200" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
-    <rect x="400" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
-    <rect x="600" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
-    <rect x="800" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
-    <rect x="1000" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
+  <g opacity="0.08">
+    <rect x="200" y="250" width="150" height="300" stroke="#60a5fa" fill="none" stroke-width="2" />
+    <rect x="400" y="250" width="150" height="300" stroke="#60a5fa" fill="none" stroke-width="2" />
+    <rect x="600" y="250" width="150" height="300" stroke="#60a5fa" fill="none" stroke-width="2" />
+    <rect x="800" y="250" width="150" height="300" stroke="#60a5fa" fill="none" stroke-width="2" />
+    <rect x="1000" y="250" width="150" height="300" stroke="#60a5fa" fill="none" stroke-width="2" />
     
     <!-- Parking lot lines -->
-    <line x1="200" y1="250" x2="1150" y2="250" stroke="#ffffff" stroke-width="3" />
-    <line x1="200" y1="550" x2="1150" y2="550" stroke="#ffffff" stroke-width="3" />
+    <line x1="200" y1="250" x2="1150" y2="250" stroke="#60a5fa" stroke-width="3" />
+    <line x1="200" y1="550" x2="1150" y2="550" stroke="#60a5fa" stroke-width="3" />
   </g>
   
   <!-- Abstract light streaks to represent car lights -->
