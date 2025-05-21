@@ -11,6 +11,7 @@ import Reports from "@/pages/reports";
 import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
+import AdminAuthGuard from "@/pages/admin-auth-guard";
 import CSVUploadPage from "@/pages/csv-upload-page";
 import IncidentReport from "@/pages/incident-report";
 import IncidentSubmitted from "@/pages/incident-submitted";
@@ -35,7 +36,6 @@ function Router() {
       <main className={`${isAdminPage || isEmployeePage ? '' : 'container mx-auto px-4 py-4'} flex-grow`}>
         <Switch>
           <Route path="/" component={Dashboard} />
-          <Route path="/reports" component={Reports} />
           <Route path="/report-selection" component={ReportSelection} />
           <Route path="/new-report">
             {() => <ReportForm />}
@@ -53,6 +53,16 @@ function Router() {
           <Route path="/admin" component={AdminPanel} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/admin/tax-payments" component={AccountantPage} />
+          <Route path="/reports">
+            {() => {
+              const isAdmin = localStorage.getItem("admin_authenticated") === "true";
+              if (!isAdmin) {
+                window.location.href = "/admin-login";
+                return null;
+              }
+              return <Reports />;
+            }}
+          </Route>
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
           <Route component={NotFound} />
