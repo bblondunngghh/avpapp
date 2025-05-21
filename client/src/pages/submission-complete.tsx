@@ -490,6 +490,38 @@ export default function SubmissionComplete() {
                     <span>Cash Paid By Employees:</span> <strong>{formatCurrency(taxSummary.cashPaid)}</strong>
                   </p>
                   
+                  {/* Individual Tax Requirements */}
+                  <div className="my-3 p-2 bg-blue-50 rounded border border-blue-200">
+                    <p className="text-sm font-medium text-blue-700 mb-2">Individual Tax Requirements</p>
+                    <div className="space-y-2">
+                      {employees.map((emp, index) => {
+                        const totalHours = employees.reduce((sum, e) => sum + safeNumber(e.hours), 0);
+                        const hoursProportion = totalHours > 0 ? safeNumber(emp.hours) / totalHours : 0;
+                        
+                        // Calculate individual earnings
+                        const empEarnings = earnings.totalEarnings * hoursProportion;
+                        // Calculate individual tax (22%)
+                        const empTax = Math.ceil(empEarnings * 0.22);
+                        // Get amount paid by this employee
+                        const empPaid = safeNumber(emp.cashPaid);
+                        // Calculate remaining amount needed
+                        const empNeeded = Math.max(0, empTax - empPaid);
+                        
+                        return (
+                          <div key={`tax-${index}`} className="flex justify-between text-xs">
+                            <span className="text-gray-700">{emp.name}:</span>
+                            <span className="font-medium">
+                              {empNeeded > 0 
+                                ? `Needs to pay ${formatCurrency(empNeeded)}`
+                                : `Fully paid ${formatCurrency(empPaid)}`
+                              }
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  
                   {/* Tax Status */}
                   <div className={`mt-3 p-2 rounded ${taxSummary.isCovered ? 'bg-green-100 border border-green-200' : 'bg-amber-100 border border-amber-200'}`}>
                     {taxSummary.isCovered ? (
