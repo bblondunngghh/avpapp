@@ -1880,8 +1880,8 @@ export default function AdminPanel() {
                                 const month = i + 1;
                                 const monthStr = month.toString().padStart(2, '0');
                                 
-                                // Create options for current year and 2023 (remove 2024)
-                                const years = [2023, 2025];
+                                // Only show 2025
+                                const years = [2025];
                                 
                                 return years.map(year => (
                                   <option key={`${year}-${monthStr}`} value={`${year}-${monthStr}`}>
