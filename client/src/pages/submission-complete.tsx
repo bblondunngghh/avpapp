@@ -334,7 +334,12 @@ export default function SubmissionComplete() {
                         <td className="text-right p-2">{safeNumber(report.totalJobHours)}</td>
                         <td className="text-right p-2">{formatCurrency(earnings.totalEarnings)}</td>
                         <td className="text-right p-2">{formatCurrency(taxSummary.totalTax)}</td>
-                        <td className="text-right p-2">{formatCurrency(taxSummary.cashPaid)}</td>
+                        <td className="text-right p-2">{formatCurrency(
+                          (earnings.creditCommission + earnings.cashCommission + 
+                          earnings.receiptCommission + earnings.creditTips + 
+                          earnings.cashTips + earnings.receiptTips - 
+                          earnings.moneyOwed)
+                        )}</td>
                       </tr>
                     </tfoot>
                   </table>
