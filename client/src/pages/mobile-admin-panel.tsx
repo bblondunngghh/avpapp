@@ -322,6 +322,14 @@ export default function MobileAdminPanel() {
   
   // Calculate location performance metrics
   const getLocationPerformance = () => {
+    // Hardcoded location data for reliability
+    const locations = [
+      { id: 1, name: "The Capital Grille" },
+      { id: 2, name: "Bob's Steak & Chop House" },
+      { id: 3, name: "Truluck's" },
+      { id: 4, name: "BOA Steakhouse" }
+    ];
+    
     const performance: Record<number, { 
       name: string;
       totalCars: number;
@@ -331,28 +339,30 @@ export default function MobileAdminPanel() {
     }> = {};
     
     // Initialize data for each location
-    Object.values(LOCATIONS).forEach(loc => {
-      if (typeof loc === 'object' && loc.id) {
-        performance[Number(loc.id)] = {
-          name: String(loc.name),
-          totalCars: 0,
-          totalRevenue: 0,
-          creditTransactions: 0,
-          cashTransactions: 0
-        };
-      }
+    locations.forEach(loc => {
+      performance[loc.id] = {
+        name: loc.name,
+        totalCars: 0,
+        totalRevenue: 0,
+        creditTransactions: 0,
+        cashTransactions: 0
+      };
     });
     
-    // Process report data
-    reports.forEach((report: any) => {
-      const locationId = report.locationId;
-      if (performance[locationId]) {
-        performance[locationId].totalCars += report.totalCars || 0;
-        performance[locationId].totalRevenue += report.totalTurnIn || 0;
-        performance[locationId].creditTransactions += report.creditTransactions || 0;
-        performance[locationId].cashTransactions += (report.totalCars - report.creditTransactions) || 0;
-      }
-    });
+    // Process report data safely
+    if (Array.isArray(reports)) {
+      reports.forEach((report: any) => {
+        if (report && typeof report === 'object') {
+          const locationId = report.locationId;
+          if (performance[locationId]) {
+            performance[locationId].totalCars += Number(report.totalCars) || 0;
+            performance[locationId].totalRevenue += Number(report.totalTurnIn) || 0;
+            performance[locationId].creditTransactions += Number(report.creditTransactions) || 0;
+            performance[locationId].cashTransactions += (Number(report.totalCars) - Number(report.creditTransactions)) || 0;
+          }
+        }
+      });
+    }
     
     return Object.values(performance);
   };
@@ -531,11 +541,10 @@ export default function MobileAdminPanel() {
                       <SelectValue placeholder="Select location" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(LOCATIONS).map(([key, location]) => (
-                        <SelectItem key={key} value={String(location.id)}>
-                          {location.name}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="1">The Capital Grille</SelectItem>
+                      <SelectItem value="2">Bob's Steak & Chop House</SelectItem>
+                      <SelectItem value="3">Truluck's</SelectItem>
+                      <SelectItem value="4">BOA Steakhouse</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
