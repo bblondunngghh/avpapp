@@ -418,7 +418,35 @@ export default function SubmissionComplete() {
                             <td className="p-2">
                               {/* Use the employee's full name from the database if available */}
                               {(() => {
-                                // Check if this employee name is a key (like "8366")
+                                // Map common first names to full names
+                                const nameMap: Record<string, string> = {
+                                  "antonio": "Antonio Martinez",
+                                  "arturo": "Arturo Sanchez",
+                                  "brandon": "Brandon Blond",
+                                  "brett": "Brett Willson",
+                                  "dave": "Dave Roehm",
+                                  "devin": "Devin Bean",
+                                  "dylan": "Dylan McMullen",
+                                  "elijah": "Elijah Aguilar",
+                                  "ethan": "Ethan Walker",
+                                  "gabe": "Gabe Ott",
+                                  "jacob": "Jacob Weldon",
+                                  "joe": "Joe Albright",
+                                  "jonathan": "Jonathan Zaccheo",
+                                  "kevin": "Kevin Hanrahan",
+                                  "melvin": "Melvin Lobos",
+                                  "noe": "Noe Coronado",
+                                  "riley": "Riley McIntyre",
+                                  "ryan": "Ryan Hocevar",
+                                  "zane": "Zane Springer"
+                                };
+                                
+                                // First check if it's a simple name (like "arturo" or "antonio")
+                                if (typeof emp.name === 'string' && nameMap[emp.name.toLowerCase()]) {
+                                  return nameMap[emp.name.toLowerCase()];
+                                }
+                                
+                                // Then check if it's an employee key (like "8366")
                                 const isEmployeeKey = !isNaN(Number(emp.name)) || 
                                   (typeof emp.name === 'string' && emp.name.length <= 5 && !emp.name.includes(' '));
                                 
