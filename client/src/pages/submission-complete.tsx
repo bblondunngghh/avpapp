@@ -5,7 +5,7 @@ import { CheckCircle, Car, DollarSign, Users, AlertTriangle, Shield } from "luci
 import { LOCATIONS } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
-import { ShiftReport, Employee } from "@shared/schema";
+import { ShiftReport } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import RestaurantIcon from "@/components/restaurant-icon";
 
@@ -15,23 +15,31 @@ interface EmployeeWithCashPaid {
   cashPaid?: number;
 }
 
+interface TaxSummary {
+  totalTax: number;
+  moneyOwed: number;
+  cashPaid: number;
+  expectedAmount: number;
+  isCovered: boolean;
+}
+
 export default function SubmissionComplete() {
   const [, navigate] = useLocation();
   const [, params] = useRoute<{ reportId?: string }>("/submission-complete/:reportId?");
-  const [taxSummary, setTaxSummary] = useState({
+  const [taxSummary, setTaxSummary] = useState<TaxSummary>({
     totalTax: 0,
     moneyOwed: 0,
     cashPaid: 0,
     expectedAmount: 0,
     isCovered: false
   });
+  const [employees, setEmployees] = useState<EmployeeWithCashPaid[]>([]);
+  const [cashCars, setCashCars] = useState<number>(0);
 
   // Fetch the submitted report
-  const { data: report, isLoading, error } = useQuery<ShiftReport>({
+  const { data: report, isLoading, error } = useQuery({
     queryKey: ['/api/shift-reports', params?.reportId],
-    queryFn: params?.reportId 
-      ? getQueryFn({ on401: "returnNull" }) 
-      : () => Promise.resolve(undefined),
+    queryFn: getQueryFn(),
     enabled: !!params?.reportId
   });
 
@@ -45,70 +53,75 @@ export default function SubmissionComplete() {
     }
   }, [params, navigate]);
 
-  // Calculate tax summary when report data is available
+  // Process report data when it's available
   useEffect(() => {
-    if (report) {
-      try {
-        let employees: EmployeeWithCashPaid[] = [];
-        let totalCashPaid = 0;
-        
-        // Parse employee data from string or use array directly
-        if (typeof report.employees === 'string') {
-          try {
-            employees = JSON.parse(report.employees);
-          } catch (err) {
-            console.error("Failed to parse employees", err);
-            employees = [];
-          }
-        } else if (Array.isArray(report.employees)) {
-          employees = report.employees;
-        }
-        
-        // Calculate total cash paid
-        employees.forEach(emp => {
-          if (emp.cashPaid) {
-            totalCashPaid += Number(emp.cashPaid);
-          }
-        });
-        
-        // Calculate commission based on location
-        let commissionRate = 4; // Default
-        if (report.locationId === 2) commissionRate = 9; // Bob's Steak
-        else if (report.locationId === 3) commissionRate = 7; // Truluck's
-        else if (report.locationId === 4) commissionRate = 6; // BOA
-        
-        // Calculate money owed to employees (total earnings)
-        const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
-        const creditCommission = report.creditTransactions * commissionRate;
-        const cashCommission = cashCars * commissionRate;
-        const receiptCommission = report.totalReceipts * commissionRate;
-        const totalCommission = creditCommission + cashCommission + receiptCommission;
-        
-        // Calculate tax (22% of total earnings)
-        const totalTax = totalCommission * 0.22;
-        const moneyOwed = totalCommission;
-        
-        // Calculate expected amount (rounded up to next dollar)
-        const expectedAmount = Math.ceil(totalTax);
-        
-        // Update tax summary state
-        setTaxSummary({
-          totalTax,
-          moneyOwed,
-          cashPaid: totalCashPaid,
-          expectedAmount,
-          isCovered: totalCashPaid >= expectedAmount
-        });
-        
-        // Log values for debugging
-        console.log("Tax Summary - Total Tax:", totalTax);
-        console.log("Tax Summary - Money Owed:", moneyOwed);
-        console.log("Tax Summary - Cash Paid:", totalCashPaid);
-        console.log("Tax Summary - Expected Amount:", expectedAmount);
-      } catch (error) {
-        console.error("Error calculating tax summary:", error);
+    if (!report) return;
+
+    // Parse employee data
+    let parsedEmployees: EmployeeWithCashPaid[] = [];
+    let totalCashPaid = 0;
+    
+    try {
+      if (typeof report.employees === 'string' && report.employees) {
+        parsedEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        parsedEmployees = report.employees;
       }
+    } catch (err) {
+      console.error("Failed to parse employees", err);
+      parsedEmployees = [];
     }
+    
+    // Set employees state
+    setEmployees(parsedEmployees);
+    
+    // Calculate total cash paid
+    parsedEmployees.forEach(emp => {
+      if (emp.cashPaid) {
+        totalCashPaid += Number(emp.cashPaid) || 0;
+      }
+    });
+    
+    // Ensure all values are valid numbers
+    const totalCars = Number(report.totalCars) || 0;
+    const creditTransactions = Number(report.creditTransactions) || 0;
+    const totalReceipts = Number(report.totalReceipts) || 0;
+    
+    // Calculate cash cars
+    const calculatedCashCars = Math.max(0, totalCars - creditTransactions - totalReceipts);
+    setCashCars(calculatedCashCars);
+    
+    // Calculate commission based on location
+    let commissionRate = 4; // Default (Capital Grille)
+    if (report.locationId === 2) commissionRate = 9; // Bob's Steak
+    else if (report.locationId === 3) commissionRate = 7; // Truluck's
+    else if (report.locationId === 4) commissionRate = 6; // BOA
+    
+    // Calculate money owed to employees (total earnings)
+    const creditCommission = creditTransactions * commissionRate;
+    const cashCommission = calculatedCashCars * commissionRate;
+    const receiptCommission = totalReceipts * commissionRate;
+    const totalCommission = creditCommission + cashCommission + receiptCommission;
+    
+    // Calculate tax (22% of total earnings)
+    const totalTax = totalCommission * 0.22;
+    const expectedAmount = Math.ceil(totalTax);
+    
+    // Update tax summary state
+    setTaxSummary({
+      totalTax,
+      moneyOwed: totalCommission,
+      cashPaid: totalCashPaid,
+      expectedAmount,
+      isCovered: totalCashPaid >= expectedAmount
+    });
+    
+    // Log values for debugging
+    console.log("Tax Summary - Total Tax:", totalTax);
+    console.log("Tax Summary - Money Owed:", totalCommission);
+    console.log("Tax Summary - Cash Paid:", totalCashPaid);
+    console.log("Tax Summary - Expected Amount:", expectedAmount);
+    
   }, [report]);
 
   const handleViewReports = () => {
@@ -120,11 +133,18 @@ export default function SubmissionComplete() {
   };
   
   // Format currency
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (amount === null || amount === undefined) return '$0.00';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
+  };
+
+  // Safe number display
+  const safeNumber = (value: any) => {
+    const num = Number(value);
+    return isNaN(num) ? 0 : num;
   };
 
   return (
@@ -174,16 +194,16 @@ export default function SubmissionComplete() {
                 </div>
                 <div className="space-y-1 pl-6">
                   <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Total Cars:</span> <strong>{report.totalCars}</strong>
+                    <span>Total Cars:</span> <strong>{safeNumber(report.totalCars)}</strong>
                   </p>
                   <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Credit Transactions:</span> <strong>{report.creditTransactions}</strong>
+                    <span>Credit Transactions:</span> <strong>{safeNumber(report.creditTransactions)}</strong>
                   </p>
                   <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Receipts:</span> <strong>{report.totalReceipts}</strong>
+                    <span>Receipts:</span> <strong>{safeNumber(report.totalReceipts)}</strong>
                   </p>
                   <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Cash Cars:</span> <strong>{report.totalCars - report.creditTransactions - report.totalReceipts}</strong>
+                    <span>Cash Cars:</span> <strong>{cashCars}</strong>
                   </p>
                 </div>
               </div>
@@ -208,7 +228,7 @@ export default function SubmissionComplete() {
             </div>
             
             {/* Employee Section */}
-            {(typeof report.employees === 'string' || Array.isArray(report.employees)) && (
+            {employees.length > 0 && (
               <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
                 <div className="flex items-center mb-2">
                   <Users className="h-4 w-4 text-purple-600 mr-2" />
@@ -224,34 +244,20 @@ export default function SubmissionComplete() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(() => {
-                        let employees: EmployeeWithCashPaid[] = [];
-                        try {
-                          if (typeof report.employees === 'string') {
-                            employees = JSON.parse(report.employees);
-                          } else if (Array.isArray(report.employees)) {
-                            employees = report.employees;
-                          }
-                        } catch (err) {
-                          console.warn("employees is not an array, converting to empty array:", JSON.stringify(employees));
-                          employees = [];
-                        }
-                        
-                        return employees.map((emp, index) => (
-                          <tr key={index} className="border-t border-gray-100">
-                            <td className="p-2">{emp.name}</td>
-                            <td className="text-right p-2">{emp.hours}</td>
-                            <td className="text-right p-2">
-                              {emp.cashPaid ? formatCurrency(emp.cashPaid) : '-'}
-                            </td>
-                          </tr>
-                        ));
-                      })()}
+                      {employees.map((emp, index) => (
+                        <tr key={index} className="border-t border-gray-100">
+                          <td className="p-2">{emp.name}</td>
+                          <td className="text-right p-2">{safeNumber(emp.hours)}</td>
+                          <td className="text-right p-2">
+                            {emp.cashPaid ? formatCurrency(emp.cashPaid) : '-'}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                     <tfoot>
                       <tr className="border-t border-gray-200 font-medium">
                         <td className="p-2">Total</td>
-                        <td className="text-right p-2">{report.totalJobHours || '-'}</td>
+                        <td className="text-right p-2">{safeNumber(report.totalJobHours)}</td>
                         <td className="text-right p-2">{formatCurrency(taxSummary.cashPaid)}</td>
                       </tr>
                     </tfoot>
