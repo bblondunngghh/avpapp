@@ -220,12 +220,13 @@ export default function AdminPanel() {
     "2025-02": 27556
   });
   
-  // Partner pay history chart data
+  // Partner pay history data for table display
   const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
     month: string;
     brandon: number;
     ryan: number;
     dave: number;
+    total: number;
   }>>([]);
   const EXPENSES_EDIT_PASSWORD = "bblonly";
   
