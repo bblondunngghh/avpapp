@@ -877,7 +877,18 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   Total Bank (Cars × Turn-in Rate)
                 </div>
                 <div className="text-xl font-bold text-blue-800">
-                  ${(totalCars * perCarRate).toFixed(2)}
+                  ${(() => {
+                    // Get the turn-in rate based on location
+                    let turnInRate = 11; // Default to Capital Grille rate
+                    if (locationId === 2) { // Bob's Steak and Chop House
+                      turnInRate = 6;
+                    } else if (locationId === 3) { // Truluck's
+                      turnInRate = 8;
+                    } else if (locationId === 4) { // BOA Steakhouse
+                      turnInRate = 7;
+                    }
+                    return (totalCars * turnInRate).toFixed(2);
+                  })()}
                 </div>
               </div>
             </div>
