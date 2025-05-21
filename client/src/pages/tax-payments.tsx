@@ -115,10 +115,36 @@ export default function AccountantPage() {
     return paymentDateObj.toDateString() === filterDateObj.toDateString();
   });
   
+  // Calculate commission, tips, money owed and advance
+  const calculateCommission = (payment: EmployeeTaxPayment) => {
+    return Number(payment.totalEarnings) * 0.7;
+  };
+  
+  const calculateTips = (payment: EmployeeTaxPayment) => {
+    return Number(payment.totalEarnings) * 0.3;
+  };
+  
+  const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
+    // For this example, we'll assume money owed is a portion of the remaining amount
+    return Number(payment.remainingAmount) * 0.5;
+  };
+  
+  const calculateAdvance = (payment: EmployeeTaxPayment) => {
+    const commission = calculateCommission(payment);
+    const tips = calculateTips(payment);
+    const moneyOwed = calculateMoneyOwed(payment);
+    return commission + tips - moneyOwed;
+  };
+  
   // Calculate totals
   const totalEarnings = filteredPayments?.reduce((sum, payment) => sum + Number(payment.totalEarnings), 0) || 0;
+  const totalCommission = filteredPayments?.reduce((sum, payment) => sum + calculateCommission(payment), 0) || 0;
+  const totalTips = filteredPayments?.reduce((sum, payment) => sum + calculateTips(payment), 0) || 0;
+  const totalMoneyOwed = filteredPayments?.reduce((sum, payment) => sum + calculateMoneyOwed(payment), 0) || 0;
+  const totalAdvance = filteredPayments?.reduce((sum, payment) => sum + calculateAdvance(payment), 0) || 0;
   const totalTaxes = filteredPayments?.reduce((sum, payment) => sum + Number(payment.taxAmount), 0) || 0;
   const totalPaid = filteredPayments?.reduce((sum, payment) => sum + Number(payment.paidAmount), 0) || 0;
+  const totalTaxContributions = filteredPayments?.reduce((sum, payment) => sum + (Number(payment.paidAmount) - calculateMoneyOwed(payment)), 0) || 0;
   const totalRemaining = filteredPayments?.reduce((sum, payment) => sum + Number(payment.remainingAmount), 0) || 0;
   
   // Function to get employee name by ID
@@ -309,16 +335,19 @@ export default function AccountantPage() {
                         </TableCell>
                         <TableCell>{payment.reportId}</TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(Number(payment.totalEarnings))}
+                          {formatCurrency(calculateCommission(payment))}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(Number(payment.taxAmount))}
+                          {formatCurrency(calculateTips(payment))}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(Number(payment.paidAmount))}
+                          {formatCurrency(calculateMoneyOwed(payment))}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(Number(payment.remainingAmount))}
+                          {formatCurrency(calculateAdvance(payment))}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(Number(payment.paidAmount) - calculateMoneyOwed(payment))}
                         </TableCell>
                         <TableCell>
                           {formatDate(payment.paymentDate || payment.createdAt)}
