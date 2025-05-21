@@ -1,5 +1,16 @@
-import { FaUtensils, FaWineGlassAlt, FaFish } from "react-icons/fa";
-import { GiMeat, GiSteak } from "react-icons/gi";
+import { 
+  FaUtensils, 
+  FaWineBottle, 
+  FaCocktail, 
+  FaBuilding
+} from "react-icons/fa";
+import { 
+  GiCow, 
+  GiShrimp, 
+  GiSteakKnife,
+  GiRoastChicken 
+} from "react-icons/gi";
+import { BsFillBuildingsFill } from "react-icons/bs";
 
 interface LocationIconProps {
   locationId: number;
@@ -13,21 +24,21 @@ export function getLocationIconDetails(locationId: number) {
   let textColorClass = "text-blue-600";
   
   if (locationId === 1) { // Capital Grille
-    Icon = FaWineGlassAlt;
+    Icon = GiSteakKnife;
     bgColorClass = "bg-blue-100";
-    textColorClass = "text-blue-600";
+    textColorClass = "text-blue-700";
   } else if (locationId === 2) { // Bob's
-    Icon = GiMeat;
+    Icon = GiCow;
     bgColorClass = "bg-red-100";
-    textColorClass = "text-red-600";
+    textColorClass = "text-red-700";
   } else if (locationId === 3) { // Truluck's
-    Icon = FaFish;
+    Icon = GiShrimp;
     bgColorClass = "bg-teal-100";
-    textColorClass = "text-teal-600";
+    textColorClass = "text-teal-700";
   } else if (locationId === 4) { // BOA
-    Icon = GiSteak;
-    bgColorClass = "bg-violet-100";
-    textColorClass = "text-violet-600";
+    Icon = GiRoastChicken;
+    bgColorClass = "bg-amber-100";
+    textColorClass = "text-amber-700";
   }
   
   return { Icon, bgColorClass, textColorClass };
