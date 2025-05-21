@@ -14,25 +14,45 @@ export default function MobileAdminPanel() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [reports, setReports] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
+  const [ticketDistributions, setTicketDistributions] = useState<any[]>([]);
   
-  // Data queries with proper typing
-  const reportsQuery = useQuery<ShiftReport[]>({
-    queryKey: ["/api/shift-reports"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
-  });
-  const reports = reportsQuery.data || [];
-  
-  const employeesQuery = useQuery<Employee[]>({
-    queryKey: ["/api/employees"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
-  });
-  const employees = employeesQuery.data || [];
-  
-  const ticketDistributionsQuery = useQuery<TicketDistribution[]>({
-    queryKey: ["/api/ticket-distributions"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
-  });
-  const ticketDistributions = ticketDistributionsQuery.data || [];
+  // Load data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch reports
+        const reportsResponse = await fetch('/api/shift-reports');
+        if (reportsResponse.ok) {
+          const reportsData = await reportsResponse.json();
+          setReports(reportsData);
+        }
+        
+        // Fetch employees
+        const employeesResponse = await fetch('/api/employees');
+        if (employeesResponse.ok) {
+          const employeesData = await employeesResponse.json();
+          setEmployees(employeesData);
+        }
+        
+        // Fetch ticket distributions
+        const ticketsResponse = await fetch('/api/ticket-distributions');
+        if (ticketsResponse.ok) {
+          const ticketsData = await ticketsResponse.json();
+          setTicketDistributions(ticketsData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
   
   // Log out function
   const handleLogout = async () => {
@@ -56,12 +76,46 @@ export default function MobileAdminPanel() {
   };
   
   // Refresh data
-  const refreshData = () => {
-    setIsLoading(true);
-    queryClient.invalidateQueries({ queryKey: ["/api/shift-reports"] });
-    queryClient.invalidateQueries({ queryKey: ["/api/employees"] });
-    queryClient.invalidateQueries({ queryKey: ["/api/ticket-distributions"] });
-    setTimeout(() => setIsLoading(false), 1000);
+  const refreshData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Fetch reports
+      const reportsResponse = await fetch('/api/shift-reports');
+      if (reportsResponse.ok) {
+        const reportsData = await reportsResponse.json();
+        setReports(reportsData);
+      }
+      
+      // Fetch employees
+      const employeesResponse = await fetch('/api/employees');
+      if (employeesResponse.ok) {
+        const employeesData = await employeesResponse.json();
+        setEmployees(employeesData);
+      }
+      
+      // Fetch ticket distributions
+      const ticketsResponse = await fetch('/api/ticket-distributions');
+      if (ticketsResponse.ok) {
+        const ticketsData = await ticketsResponse.json();
+        setTicketDistributions(ticketsData);
+      }
+
+      toast({
+        title: "Data refreshed",
+        description: "The latest data has been loaded",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to refresh data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   // Delete report
@@ -77,7 +131,13 @@ export default function MobileAdminPanel() {
         description: "The report has been successfully deleted",
         variant: "default",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/shift-reports"] });
+      
+      // Refresh reports after deletion
+      const reportsResponse = await fetch('/api/shift-reports');
+      if (reportsResponse.ok) {
+        const reportsData = await reportsResponse.json();
+        setReports(reportsData);
+      }
     } catch (error) {
       console.error("Error deleting report:", error);
       toast({
@@ -90,29 +150,15 @@ export default function MobileAdminPanel() {
   
   // Get location name by ID
   const getLocationName = (locationId: number): string => {
-    // Type safety for LOCATIONS
-    type LocationType = {
-      id: number;
-      name: string;
+    // Hardcoded location mapping for simplicity and reliability
+    const locationMap: Record<number, string> = {
+      1: "The Capital Grille",
+      2: "Bob's Steak & Chop House",
+      3: "Truluck's",
+      4: "BOA Steakhouse"
     };
     
-    // Convert locations to array with proper types
-    const locationsArray: LocationType[] = [];
-    
-    // Manually add locations to ensure type safety
-    for (const key in LOCATIONS) {
-      if (Object.prototype.hasOwnProperty.call(LOCATIONS, key)) {
-        const loc = LOCATIONS[key as keyof typeof LOCATIONS];
-        locationsArray.push({
-          id: Number(loc.id),
-          name: String(loc.name)
-        });
-      }
-    }
-    
-    // Find location by ID
-    const location = locationsArray.find(loc => loc.id === locationId);
-    return location ? location.name : "Unknown";
+    return locationMap[locationId] || "Unknown";
   };
   
   // Format date for display
