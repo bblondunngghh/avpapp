@@ -38,7 +38,7 @@ export default function CSVUploadPage() {
         
         <div className="mt-8 flex flex-col gap-4">
           <button
-            onClick={() => navigate('/admin-panel')}
+            onClick={() => navigate('/admin')}
             className="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center w-full"
           >
             ← Back to Admin Panel
