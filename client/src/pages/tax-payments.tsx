@@ -135,26 +135,12 @@ export default function AccountantPage() {
             const reportId = employeeReport ? employeeReport.id : 0;
             const locationId = employeeReport ? employeeReport.locationId : 1;
             
-            // Default values (zeros) for employees with no data
+            // Always use zero values for employees with no financial data
             let totalEarnings = "0";
             let taxAmount = "0";
             let paidAmount = "0";
             let remainingAmount = "0";
             let recordDate = new Date();
-            
-            // If we have a report, calculate some representative values
-            if (employeeReport) {
-              // Simple calculation based on report data
-              const carCount = employeeReport.totalCars || 0;
-              totalEarnings = ((carCount * 15) / 2).toString(); // Assume this employee handled half the cars
-              taxAmount = (parseFloat(totalEarnings) * 0.22).toString(); // 22% tax rate
-              
-              // For display purposes, show some amount as paid and some as remaining
-              paidAmount = (parseFloat(taxAmount) * 0.4).toString(); // 40% paid
-              remainingAmount = (parseFloat(taxAmount) * 0.6).toString(); // 60% remaining
-              
-              recordDate = new Date(employeeReport.date);
-            }
             
             allPayments.push({
               id: recordId++,
