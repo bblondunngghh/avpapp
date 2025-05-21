@@ -275,10 +275,6 @@ export default function SubmissionComplete() {
                   
                   {earnings.moneyOwed > 0 && (
                     <div className="mt-2 pt-2 border-t border-gray-100">
-                      <p className="text-sm text-gray-700 flex justify-between">
-                        <span>Total Credit + Receipt Sales:</span> 
-                        <strong>{formatCurrency(safeNumber(report.totalCreditSales) + (safeNumber(report.totalReceipts) * 18))}</strong>
-                      </p>
                       <p className="text-sm text-red-700 flex justify-between font-medium">
                         <span>Money Owed to Employees:</span> <strong>{formatCurrency(earnings.moneyOwed)}</strong>
                       </p>
