@@ -282,6 +282,9 @@ export default function SubmissionComplete() {
                       {(() => {
                         const totalHours = employees.reduce((sum, emp) => sum + safeNumber(emp.hours), 0);
                         const totalCars = safeNumber(report.totalCars);
+                        const creditTransactions = safeNumber(report.creditTransactions);
+                        const totalReceipts = safeNumber(report.totalReceipts);
+                        const cashCars = Math.max(0, totalCars - creditTransactions - totalReceipts);
                         
                         // Calculate commission rate based on location
                         let commissionRate = 4; // Default (Capital Grille)
@@ -289,26 +292,121 @@ export default function SubmissionComplete() {
                         else if (report.locationId === 3) commissionRate = 7; // Truluck's
                         else if (report.locationId === 4) commissionRate = 6; // BOA
                         
-                        // Total earnings from all cars
-                        const totalEarnings = totalCars * commissionRate;
+                        // Calculate total revenue vs turn-in for money owed
+                        // Calculate receipt sales based on number of receipts * $18
+                        const receiptSales = totalReceipts * 18;
+                        const totalCreditSales = safeNumber(report.totalCreditSales);
+                        const totalRevenue = receiptSales + totalCreditSales;
+                        const totalTurnIn = safeNumber(report.totalTurnIn);
+                        const moneyOwedToEmployees = Math.max(0, totalRevenue - totalTurnIn);
+                        
+                        // Commission breakdowns
+                        const creditCommission = creditTransactions * commissionRate;
+                        // Credit card tips (credit transactions * rate - credit sales)
+                        const creditTips = Math.abs(creditTransactions * commissionRate - safeNumber(report.totalCreditSales));
+                        
+                        const cashCommission = cashCars * commissionRate;
+                        // Cash tips (cash cars * rate - cash collected)
+                        const cashTips = Math.abs(cashCars * commissionRate - safeNumber(report.totalCashCollected));
+                        
+                        const receiptCommission = totalReceipts * commissionRate;
+                        // Receipt tips (receipts * $3)
+                        const receiptTips = totalReceipts * 3;
+                        
+                        // Total earnings from all sources
+                        const totalCommission = creditCommission + cashCommission + receiptCommission;
+                        const totalTips = creditTips + cashTips + receiptTips;
+                        const totalEarnings = totalCommission + totalTips + moneyOwedToEmployees;
                         
                         return employees.map((emp, index) => {
-                          // Calculate earnings proportional to hours worked
+                          // Calculate proportions based on hours worked
                           const hoursProportion = totalHours > 0 ? safeNumber(emp.hours) / totalHours : 0;
-                          const earnings = totalEarnings * hoursProportion;
-                          const taxAmount = earnings * 0.22;
                           
-                          return (
-                            <tr key={index} className="border-t border-gray-100">
+                          // Individual earnings breakdown
+                          const empCreditCommission = creditCommission * hoursProportion;
+                          const empCreditTips = creditTips * hoursProportion;
+                          const empCashCommission = cashCommission * hoursProportion;
+                          const empCashTips = cashTips * hoursProportion;
+                          const empReceiptCommission = receiptCommission * hoursProportion;
+                          const empReceiptTips = receiptTips * hoursProportion;
+                          const empMoneyOwed = moneyOwedToEmployees * hoursProportion;
+                          
+                          // Total earnings for this employee
+                          const empTotalEarnings = empCreditCommission + empCreditTips + 
+                                                  empCashCommission + empCashTips + 
+                                                  empReceiptCommission + empReceiptTips + 
+                                                  empMoneyOwed;
+                                                  
+                          const taxAmount = empTotalEarnings * 0.22;
+                          
+                          // For detailed view when clicking on row
+                          const detailsId = `emp-details-${index}`;
+                          
+                          // Use React state to track details visibility instead of DOM manipulation
+                          const [showDetails, setShowDetails] = useState(false);
+                          
+                          return [
+                            <tr key={`emp-row-${index}`} className="border-t border-gray-100 cursor-pointer hover:bg-gray-50"
+                                onClick={() => setShowDetails(!showDetails)}>
                               <td className="p-2">{emp.name}</td>
                               <td className="text-right p-2">{safeNumber(emp.hours)}</td>
-                              <td className="text-right p-2">{formatCurrency(earnings)}</td>
+                              <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
                               <td className="text-right p-2">{formatCurrency(taxAmount)}</td>
                               <td className="text-right p-2">
                                 {emp.cashPaid ? formatCurrency(emp.cashPaid) : '-'}
                               </td>
-                            </tr>
-                          );
+                            </tr>,
+                            
+                            /* Collapsible details row */
+                            showDetails && (
+                              <tr key={`emp-details-${index}`} className="border-b border-gray-100 bg-gray-50">
+                                <td colSpan={5} className="p-0">
+                                  <div className="p-3">
+                                    <h6 className="text-xs font-semibold text-gray-700 mb-2">Earnings Breakdown</h6>
+                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                      <div>
+                                        <p className="flex justify-between">
+                                          <span className="text-gray-600">Credit Commission:</span> 
+                                          <span>{formatCurrency(empCreditCommission)}</span>
+                                        </p>
+                                        <p className="flex justify-between">
+                                          <span className="text-gray-600">Credit Tips:</span> 
+                                          <span>{formatCurrency(empCreditTips)}</span>
+                                        </p>
+                                        <p className="flex justify-between">
+                                          <span className="text-gray-600">Cash Commission:</span> 
+                                          <span>{formatCurrency(empCashCommission)}</span>
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="flex justify-between">
+                                          <span className="text-gray-600">Cash Tips:</span> 
+                                          <span>{formatCurrency(empCashTips)}</span>
+                                        </p>
+                                        <p className="flex justify-between">
+                                          <span className="text-gray-600">Receipt Commission:</span> 
+                                          <span>{formatCurrency(empReceiptCommission)}</span>
+                                        </p>
+                                        <p className="flex justify-between">
+                                          <span className="text-gray-600">Receipt Tips:</span> 
+                                          <span>{formatCurrency(empReceiptTips)}</span>
+                                        </p>
+                                      </div>
+                                    </div>
+                                    
+                                    {empMoneyOwed > 0 && (
+                                      <div className="mt-2 pt-1 border-t border-gray-200">
+                                        <p className="flex justify-between text-xs font-medium text-red-700">
+                                          <span>Money Owed:</span> 
+                                          <span>{formatCurrency(empMoneyOwed)}</span>
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            )
+                          ].filter(Boolean);
                         });
                       })()}
                     </tbody>
