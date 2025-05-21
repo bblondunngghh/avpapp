@@ -1,35 +1,32 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, Home } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 
-// Define the admin password - hardcoded for simplicity
+// Define the admin password
 const ADMIN_PASSWORD = "cg2023";
 
 export default function AdminLogin() {
-  const [, navigate] = useLocation();
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  // Super simple, reliable direct approach
+  const [error, setError] = useState("");
+  
+  // Handle direct admin access
+  const goToAdmin = () => {
+    window.location.href = "/admin";
+  };
+  
+  // Regular form login
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password === ADMIN_PASSWORD) {
-      // Immediately redirect with no async operations
+      // Go to admin page
       window.location.href = "/admin";
     } else {
-      // Error message
-      toast({
-        title: "Login failed",
-        description: "Invalid password",
-        variant: "destructive",
-      });
-      
+      // Show error
+      setError("Invalid password. Please try again.");
       setPassword("");
     }
   };
@@ -37,15 +34,16 @@ export default function AdminLogin() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh]">
       <div className="flex w-full max-w-md justify-end mb-4">
-        <Button 
-          variant="outline"
-          size="sm"
-          onClick={() => navigate("/")}
-          className="bg-white hover:bg-gray-100 flex items-center gap-1"
-        >
-          <Home className="h-4 w-4" />
-          Return to Home
-        </Button>
+        <Link href="/">
+          <Button 
+            variant="outline"
+            size="sm"
+            className="bg-white hover:bg-gray-100 flex items-center gap-1"
+          >
+            <Home className="h-4 w-4" />
+            Return to Home
+          </Button>
+        </Link>
       </div>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -70,15 +68,27 @@ export default function AdminLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              {error && (
+                <div className="text-red-500 text-sm mt-1">{error}</div>
+              )}
             </div>
             
             <Button 
               type="submit" 
-              className="w-full" 
-              disabled={isLoading}
+              className="w-full"
             >
-              {isLoading ? "Logging in..." : "Login"}
+              Login
             </Button>
+            
+            <div className="mt-4 text-center">
+              <button 
+                type="button" 
+                onClick={goToAdmin}
+                className="underline text-blue-600"
+              >
+                Go directly to admin panel
+              </button>
+            </div>
           </form>
         </CardContent>
         
