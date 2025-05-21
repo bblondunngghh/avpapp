@@ -1311,9 +1311,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                       </div>
                                     );
                                   } else if (totalTax > 0) {
+                                    // Calculate the remaining amount still owed - should be totalExpectedAmount minus totalCashPaid
+                                    const stillOwed = totalExpectedAmount - totalCashPaid;
                                     return (
                                       <div className="text-sm text-orange-600">
-                                        Total Still Owed: ${(totalTax - totalMoneyOwed - totalCashPaid).toFixed(2)}
+                                        Total Still Owed: ${Math.max(0, stillOwed).toFixed(2)}
                                       </div>
                                     );
                                   } else {
