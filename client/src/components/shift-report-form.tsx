@@ -146,8 +146,27 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         setSelectedLocationId(data.locationId);
       }
       
-      // Set all other form values
-      Object.entries(data).forEach(([key, value]) => {
+      // Handle employees data properly to avoid form.watch() issues
+      let parsedEmployees = [];
+      if (typeof data.employees === 'string' && data.employees) {
+        try {
+          parsedEmployees = JSON.parse(data.employees);
+          if (!Array.isArray(parsedEmployees)) parsedEmployees = [];
+        } catch (e) {
+          console.warn("Failed to parse employees data:", e);
+        }
+      } else if (Array.isArray(data.employees)) {
+        parsedEmployees = data.employees;
+      }
+      
+      // Create a processed version of the data with properly handled employees
+      const processedData = {
+        ...data,
+        employees: parsedEmployees
+      };
+      
+      // Set all form values
+      Object.entries(processedData).forEach(([key, value]) => {
         // @ts-ignore
         if (key in form.getValues()) {
           // @ts-ignore
@@ -1006,7 +1025,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   className="h-9 text-center text-sm"
                                   value={employee.hours === 0 ? '' : employee.hours}
                                   onChange={(e) => {
-                                    const newEmployees = [...(form.watch('employees') || [])];
+                                    const newEmployees = parseEmployeesData(form.watch('employees'));
                                     const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                                     newEmployees[index] = { 
                                       ...newEmployees[index], 
@@ -1034,7 +1053,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 size="icon"
                                 className="h-8 w-8 text-gray-400 hover:text-red-500"
                                 onClick={() => {
-                                  const newEmployees = [...(form.watch('employees') || [])];
+                                  const newEmployees = parseEmployeesData(form.watch('employees'));
                                   newEmployees.splice(index, 1);
                                   form.setValue('employees', newEmployees);
                                   
