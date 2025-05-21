@@ -1,16 +1,11 @@
 import { 
-  FaUtensils, 
-  FaWineBottle, 
-  FaCocktail, 
-  FaBuilding
-} from "react-icons/fa";
+  FaBuilding,
+  FaBuildingColumns
+} from "react-icons/fa6";
 import { 
-  GiCow, 
-  GiShrimp, 
-  GiSteakKnife,
-  GiRoastChicken 
-} from "react-icons/gi";
-import { BsFillBuildingsFill } from "react-icons/bs";
+  BsBuilding,
+  BsBuildingFill
+} from "react-icons/bs";
 
 interface LocationIconProps {
   locationId: number;
@@ -19,26 +14,26 @@ interface LocationIconProps {
 }
 
 export function getLocationIconDetails(locationId: number) {
-  let Icon = FaUtensils;
-  let bgColorClass = "bg-blue-100";
-  let textColorClass = "text-blue-600";
+  let Icon = BsBuilding;
+  let bgColorClass = "bg-slate-100";
+  let textColorClass = "text-slate-800";
   
   if (locationId === 1) { // Capital Grille
-    Icon = GiSteakKnife;
-    bgColorClass = "bg-blue-100";
-    textColorClass = "text-blue-700";
+    Icon = FaBuildingColumns;
+    bgColorClass = "bg-slate-100";
+    textColorClass = "text-slate-800";
   } else if (locationId === 2) { // Bob's
-    Icon = GiCow;
-    bgColorClass = "bg-red-100";
-    textColorClass = "text-red-700";
+    Icon = BsBuildingFill;
+    bgColorClass = "bg-slate-100";
+    textColorClass = "text-slate-800";
   } else if (locationId === 3) { // Truluck's
-    Icon = GiShrimp;
-    bgColorClass = "bg-teal-100";
-    textColorClass = "text-teal-700";
+    Icon = FaBuilding;
+    bgColorClass = "bg-slate-100";
+    textColorClass = "text-slate-800";
   } else if (locationId === 4) { // BOA
-    Icon = GiRoastChicken;
-    bgColorClass = "bg-amber-100";
-    textColorClass = "text-amber-700";
+    Icon = BsBuilding;
+    bgColorClass = "bg-slate-100";
+    textColorClass = "text-slate-800";
   }
   
   return { Icon, bgColorClass, textColorClass };
