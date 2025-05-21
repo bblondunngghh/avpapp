@@ -1,9 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,73 +9,91 @@ import { useToast } from "@/hooks/use-toast";
 // Define the admin password
 const ADMIN_PASSWORD = "cg2023";
 
-// Define form schema with zod
-const formSchema = z.object({
-  password: z.string().min(1, { message: "Password is required" })
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export default function AdminLogin() {
   const [, navigate] = useLocation();
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
 
-  // Initialize form
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      password: ""
+  // Check if we're in the browser
+  useEffect(() => {
+    setIsClient(true);
+    
+    // Check if already authenticated on page load
+    try {
+      const isAuthenticated = sessionStorage.getItem("admin_authenticated") === "true";
+      if (isAuthenticated) {
+        navigate("/admin");
+      }
+    } catch (e) {
+      console.warn("Could not check sessionStorage", e);
     }
-  });
+  }, [navigate]);
 
   // Handle form submission
-  const onSubmit = async (data: FormValues) => {
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
     
-    try {
-      // Simple password check
-      if (data.password === ADMIN_PASSWORD) {
-        // Import admin auth utility
-        const { loginAdmin } = await import("@/lib/admin-auth");
+    // Simple password check
+    if (password === ADMIN_PASSWORD) {
+      try {
+        // Set auth in sessionStorage (more reliable on mobile)
+        sessionStorage.setItem("admin_authenticated", "true");
+        sessionStorage.setItem("admin_auth_time", Date.now().toString());
         
-        // Set admin session
-        loginAdmin();
+        // Also try localStorage as backup
+        try {
+          localStorage.setItem("admin_authenticated", "true");
+          localStorage.setItem("admin_auth_time", Date.now().toString());
+        } catch (e) {
+          console.warn("localStorage not available, using sessionStorage only");
+        }
+        
+        // For extra reliability, set a variable directly on window
+        // @ts-ignore
+        window.__adminAuthenticated = true;
         
         // Show success toast
         toast({
           title: "Authentication successful",
-          description: "Welcome to the admin panel (session expires after 2 minutes of inactivity)",
+          description: "Welcome to the admin panel",
           variant: "default",
         });
         
-        // Short delay to ensure localStorage is set before navigation
-        setTimeout(() => {
-          // Redirect to admin dashboard
-          navigate("/admin");
-        }, 100);
-      } else {
-        // Show error toast
+        // Navigate to admin dashboard
+        navigate("/admin");
+      } catch (error) {
+        console.error("Login error:", error);
         toast({
-          title: "Authentication failed",
-          description: "The password you entered is incorrect",
+          title: "Authentication error",
+          description: "There was a problem processing your login. Please try again.",
           variant: "destructive",
         });
-        
-        // Reset form
-        form.reset();
         setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } else {
+      // Show error toast
       toast({
-        title: "Authentication error",
-        description: "There was a problem processing your login. Please try again.",
+        title: "Authentication failed",
+        description: "The password you entered is incorrect",
         variant: "destructive",
       });
+      
+      // Reset form
+      setPassword("");
       setIsLoading(false);
     }
   };
+
+  if (!isClient) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh]">
@@ -106,36 +120,28 @@ export default function AdminLogin() {
         </CardHeader>
         
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="Enter admin password" 
-                        autoComplete="current-password"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">Password</label>
+              <Input 
+                id="password"
+                type="password" 
+                placeholder="Enter admin password" 
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
-              
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
-                {isLoading ? "Authenticating..." : "Login"}
-              </Button>
-            </form>
-          </Form>
+            </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading}
+            >
+              {isLoading ? "Authenticating..." : "Login"}
+            </Button>
+          </form>
         </CardContent>
         
         <CardFooter className="text-center text-sm text-gray-500 border-t pt-4">

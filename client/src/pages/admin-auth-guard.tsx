@@ -15,23 +15,54 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check authentication status
+    // Check authentication status using multiple methods
     const checkAuth = () => {
-      const isAdmin = localStorage.getItem("admin_authenticated") === "true";
-      const authTime = Number(localStorage.getItem("admin_auth_time") || "0");
-      const currentTime = Date.now();
-      const fourHoursInMs = 4 * 60 * 60 * 1000;
+      // Try multiple storage types for better cross-platform reliability
+      let isAuthenticated = false;
       
-      // If session expired (4 hours), clear auth
-      if (currentTime - authTime > fourHoursInMs) {
-        localStorage.removeItem("admin_authenticated");
-        localStorage.removeItem("admin_auth_time");
-        setIsAuthenticated(false);
-        return false;
+      // Check sessionStorage (best for iOS)
+      try {
+        if (sessionStorage.getItem("admin_authenticated") === "true") {
+          isAuthenticated = true;
+        }
+      } catch (e) {
+        console.warn("Error checking sessionStorage", e);
       }
-
-      setIsAuthenticated(isAdmin);
-      return isAdmin;
+      
+      // If not found in sessionStorage, check localStorage as backup
+      if (!isAuthenticated) {
+        try {
+          if (localStorage.getItem("admin_authenticated") === "true") {
+            isAuthenticated = true;
+            // Copy to sessionStorage for future checks
+            try {
+              sessionStorage.setItem("admin_authenticated", "true");
+              sessionStorage.setItem("admin_auth_time", Date.now().toString());
+            } catch (e) {
+              console.warn("Could not set sessionStorage", e);
+            }
+          }
+        } catch (e) {
+          console.warn("Error checking localStorage", e);
+        }
+      }
+      
+      // Check window property as last resort
+      // @ts-ignore
+      if (!isAuthenticated && window.__adminAuthenticated === true) {
+        isAuthenticated = true;
+        // Try to save to storages
+        try {
+          sessionStorage.setItem("admin_authenticated", "true");
+          sessionStorage.setItem("admin_auth_time", Date.now().toString());
+        } catch (e) {
+          console.warn("Could not set sessionStorage", e);
+        }
+      }
+      
+      // Set state and return result
+      setIsAuthenticated(isAuthenticated);
+      return isAuthenticated;
     };
 
     const isAuth = checkAuth();

@@ -3,73 +3,70 @@
 // Admin session timeout (2 minutes in milliseconds)
 export const ADMIN_SESSION_TIMEOUT = 2 * 60 * 1000;
 
-/**
- * Get storage implementation that works across platforms
- * This provides fallbacks in case localStorage is unavailable or restricted
- */
-const getStorage = () => {
-  // Use a closure to store values in memory as a fallback
-  const memoryStore: Record<string, string> = {};
-  
-  // Test if localStorage is available and working
-  let localStorageAvailable = false;
-  try {
-    localStorage.setItem('test', 'test');
-    localStorage.removeItem('test');
-    localStorageAvailable = true;
-  } catch (e) {
-    console.warn('localStorage not available, using memory storage fallback');
-    localStorageAvailable = false;
-  }
-  
-  return {
-    getItem: (key: string): string | null => {
-      if (localStorageAvailable) {
-        return localStorage.getItem(key);
-      }
-      return memoryStore[key] || null;
-    },
-    setItem: (key: string, value: string): void => {
-      if (localStorageAvailable) {
-        try {
-          localStorage.setItem(key, value);
-        } catch (e) {
-          console.warn('localStorage setItem failed, using memory fallback', e);
-          memoryStore[key] = value;
-        }
-      } else {
-        memoryStore[key] = value;
-      }
-    },
-    removeItem: (key: string): void => {
-      if (localStorageAvailable) {
-        localStorage.removeItem(key);
-      }
-      delete memoryStore[key];
-    }
-  };
+// Use a variable in memory to track authentication state
+// This is more reliable on mobile devices where localStorage can be problematic
+let inMemoryAuthState = {
+  isAuthenticated: false,
+  authTime: 0
 };
 
-// Create a storage instance
-const storage = getStorage();
+// Safely check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
+
+// Try to initialize from localStorage if available
+try {
+  if (isBrowser) {
+    const storedAuth = localStorage.getItem("admin_authenticated");
+    const storedTime = localStorage.getItem("admin_auth_time");
+    
+    if (storedAuth === "true" && storedTime) {
+      inMemoryAuthState.isAuthenticated = true;
+      inMemoryAuthState.authTime = Number(storedTime);
+    }
+  }
+} catch (e) {
+  console.warn("Could not initialize auth state from localStorage");
+}
 
 // Check if admin is authenticated
 export const isAdminAuthenticated = (): boolean => {
   try {
-    const isAuthenticated = storage.getItem("admin_authenticated") === "true";
-    const authTime = Number(storage.getItem("admin_auth_time") || "0");
     const currentTime = Date.now();
     
-    // Session expires after ADMIN_SESSION_TIMEOUT of inactivity
-    if (isAuthenticated && (currentTime - authTime <= ADMIN_SESSION_TIMEOUT)) {
-      // Update the authentication time to extend the session
-      storage.setItem("admin_auth_time", currentTime.toString());
-      return true;
+    // First check in-memory state
+    if (inMemoryAuthState.isAuthenticated) {
+      // Check if session is still valid
+      if (currentTime - inMemoryAuthState.authTime <= ADMIN_SESSION_TIMEOUT) {
+        // Update the authentication time to extend the session
+        inMemoryAuthState.authTime = currentTime;
+        
+        // Try to update localStorage if available
+        try {
+          if (isBrowser) {
+            localStorage.setItem("admin_auth_time", currentTime.toString());
+          }
+        } catch (e) {
+          console.warn("Could not update localStorage, but in-memory auth is still valid");
+        }
+        
+        return true;
+      }
     }
     
-    // If not authenticated or session expired, clear auth data
-    storage.removeItem("admin_authenticated");
-    storage.removeItem("admin_auth_time");
+    // If we get here, either not authenticated or session expired
+    // Clear all auth data
+    inMemoryAuthState.isAuthenticated = false;
+    inMemoryAuthState.authTime = 0;
+    
+    try {
+      if (isBrowser) {
+        localStorage.removeItem("admin_authenticated");
+        localStorage.removeItem("admin_auth_time");
+      }
+    } catch (e) {
+      console.warn("Could not clear localStorage");
+    }
+    
     return false;
   } catch (error) {
     console.error("Error checking admin authentication:", error);
@@ -80,39 +77,90 @@ export const isAdminAuthenticated = (): boolean => {
 // Log out admin user
 export const logoutAdmin = (): void => {
   try {
-    storage.removeItem("admin_authenticated");
-    storage.removeItem("admin_auth_time");
+    // Clear in-memory state
+    inMemoryAuthState.isAuthenticated = false;
+    inMemoryAuthState.authTime = 0;
+    
+    // Try to clear localStorage
+    try {
+      if (isBrowser) {
+        localStorage.removeItem("admin_authenticated");
+        localStorage.removeItem("admin_auth_time");
+      }
+    } catch (e) {
+      console.warn("Could not clear localStorage, but in-memory auth has been cleared");
+    }
   } catch (error) {
     console.error("Error logging out admin:", error);
   }
 };
 
 // Set admin authentication
-export const loginAdmin = (): void => {
+export const loginAdmin = (): boolean => {
   try {
-    const currentTime = Date.now().toString();
-    storage.setItem("admin_authenticated", "true");
-    storage.setItem("admin_auth_time", currentTime);
+    const currentTime = Date.now();
     
-    // Double-check that values were set correctly
-    const storedAuth = storage.getItem("admin_authenticated");
-    const storedTime = storage.getItem("admin_auth_time");
+    // Set in-memory state
+    inMemoryAuthState.isAuthenticated = true;
+    inMemoryAuthState.authTime = currentTime;
     
-    if (storedAuth !== "true" || !storedTime) {
-      console.warn("Admin authentication storage issue - values not persisted correctly");
+    // Try to set localStorage
+    try {
+      if (isBrowser) {
+        localStorage.setItem("admin_authenticated", "true");
+        localStorage.setItem("admin_auth_time", currentTime.toString());
+        
+        // Verify localStorage was set correctly
+        const storedAuth = localStorage.getItem("admin_authenticated");
+        const storedTime = localStorage.getItem("admin_auth_time");
+        
+        if (storedAuth !== "true" || !storedTime) {
+          console.warn("localStorage values not set correctly, but in-memory auth is still valid");
+        }
+      }
+    } catch (e) {
+      console.warn("Could not set localStorage, but in-memory auth is still valid");
     }
+    
+    return true;
   } catch (error) {
     console.error("Error setting admin authentication:", error);
+    return false;
   }
 };
 
 // Refresh admin session (call this on user activity)
-export const refreshAdminSession = (): void => {
+export const refreshAdminSession = (): boolean => {
   try {
-    if (storage.getItem("admin_authenticated") === "true") {
-      storage.setItem("admin_auth_time", Date.now().toString());
+    if (inMemoryAuthState.isAuthenticated) {
+      const currentTime = Date.now();
+      inMemoryAuthState.authTime = currentTime;
+      
+      // Try to update localStorage
+      try {
+        if (isBrowser) {
+          localStorage.setItem("admin_auth_time", currentTime.toString());
+        }
+      } catch (e) {
+        console.warn("Could not update localStorage, but in-memory auth is still valid");
+      }
+      
+      return true;
     }
+    return false;
   } catch (error) {
     console.error("Error refreshing admin session:", error);
+    return false;
   }
+};
+
+// Get current auth status (for debugging purposes)
+export const getAuthStatus = () => {
+  return {
+    inMemory: { ...inMemoryAuthState },
+    localStorage: isBrowser ? {
+      isAuthenticated: localStorage.getItem("admin_authenticated") === "true",
+      authTime: Number(localStorage.getItem("admin_auth_time") || "0")
+    } : "Not in browser environment"
+  };
 };
