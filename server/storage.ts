@@ -346,6 +346,53 @@ export class MemStorage implements IStorage {
   async deleteTicketDistribution(id: number): Promise<boolean> {
     return this.ticketDistributions.delete(id);
   }
+  
+  // Employee Tax Payment methods
+  async getEmployeeTaxPayments(): Promise<EmployeeTaxPayment[]> {
+    return Array.from(this.employeeTaxPayments.values());
+  }
+  
+  async getEmployeeTaxPayment(id: number): Promise<EmployeeTaxPayment | undefined> {
+    return this.employeeTaxPayments.get(id);
+  }
+  
+  async getEmployeeTaxPaymentsByEmployee(employeeId: number): Promise<EmployeeTaxPayment[]> {
+    return Array.from(this.employeeTaxPayments.values())
+      .filter(payment => payment.employeeId === employeeId);
+  }
+  
+  async getEmployeeTaxPaymentsByReport(reportId: number): Promise<EmployeeTaxPayment[]> {
+    return Array.from(this.employeeTaxPayments.values())
+      .filter(payment => payment.reportId === reportId);
+  }
+  
+  async createEmployeeTaxPayment(payment: InsertEmployeeTaxPayment): Promise<EmployeeTaxPayment> {
+    const id = this.employeeTaxPaymentCurrentId++;
+    const newPayment: EmployeeTaxPayment = {
+      ...payment,
+      id,
+      createdAt: new Date()
+    };
+    this.employeeTaxPayments.set(id, newPayment);
+    return newPayment;
+  }
+  
+  async updateEmployeeTaxPayment(id: number, payment: UpdateEmployeeTaxPayment): Promise<EmployeeTaxPayment | undefined> {
+    const existingPayment = this.employeeTaxPayments.get(id);
+    if (!existingPayment) return undefined;
+    
+    const updatedPayment: EmployeeTaxPayment = {
+      ...existingPayment,
+      ...payment
+    };
+    
+    this.employeeTaxPayments.set(id, updatedPayment);
+    return updatedPayment;
+  }
+  
+  async deleteEmployeeTaxPayment(id: number): Promise<boolean> {
+    return this.employeeTaxPayments.delete(id);
+  }
 }
 
 // Database storage implementation

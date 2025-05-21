@@ -93,7 +93,8 @@ export default function TaxPaymentsPage() {
   };
   
   // Format date
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date | null) => {
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -105,10 +106,13 @@ export default function TaxPaymentsPage() {
   const filteredPayments = taxPayments?.filter(payment => {
     if (!filterDate) return true;
     
-    const paymentDate = new Date(payment.paymentDate || payment.createdAt);
+    const paymentDate = payment.paymentDate || payment.createdAt;
+    if (!paymentDate) return false;
+    
+    const paymentDateObj = new Date(paymentDate);
     const filterDateObj = new Date(filterDate);
     
-    return paymentDate.toDateString() === filterDateObj.toDateString();
+    return paymentDateObj.toDateString() === filterDateObj.toDateString();
   });
   
   // Calculate totals
@@ -120,7 +124,7 @@ export default function TaxPaymentsPage() {
   // Function to get employee name by ID
   const getEmployeeName = (id: number) => {
     const employee = employees?.find(emp => emp.id === id);
-    return employee?.name || `Employee ${id}`;
+    return employee?.fullName || `Employee ${id}`;
   };
   
   // Export tax data to CSV
@@ -142,10 +146,10 @@ export default function TaxPaymentsPage() {
       getEmployeeName(p.employeeId),
       p.reportId,
       p.locationId,
-      p.totalEarnings,
-      p.taxAmount,
-      p.paidAmount,
-      p.remainingAmount,
+      Number(p.totalEarnings).toFixed(2),
+      Number(p.taxAmount).toFixed(2),
+      Number(p.paidAmount).toFixed(2),
+      Number(p.remainingAmount).toFixed(2),
       formatDate(p.paymentDate || p.createdAt)
     ]);
     
@@ -246,7 +250,7 @@ export default function TaxPaymentsPage() {
                   <SelectItem value="all">All Employees</SelectItem>
                   {employees?.map(employee => (
                     <SelectItem key={employee.id} value={employee.id.toString()}>
-                      {employee.name}
+                      {employee.fullName}
                     </SelectItem>
                   ))}
                 </SelectContent>
