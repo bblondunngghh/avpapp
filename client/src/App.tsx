@@ -29,13 +29,31 @@ function Router() {
   const [location, setLocation] = useLocation();
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   
-  // Detect if user is on a mobile device
+  // Enhanced detection for mobile devices and iPads
   useEffect(() => {
     const checkMobile = () => {
+      // Specific iPad detection (including newer models)
+      const isIPad = /iPad/i.test(navigator.userAgent) || 
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                    
+      // Broader mobile device detection
       const isMobile = 
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+        /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
         (window.innerWidth <= 768);
-      setIsMobileDevice(isMobile);
+        
+      // Consider iPads as mobile devices for admin panel
+      setIsMobileDevice(isMobile || isIPad);
+      
+      // Debug info to console
+      console.log("Device detection:", { 
+        isIPad, 
+        isMobile, 
+        userAgent: navigator.userAgent, 
+        platform: navigator.platform,
+        touchPoints: navigator.maxTouchPoints,
+        width: window.innerWidth,
+        usingMobile: isMobile || isIPad
+      });
     };
     
     checkMobile();
@@ -70,9 +88,9 @@ function Router() {
           <Route path="/incident-submitted" component={IncidentSubmitted} />
           <Route path="/regulations" component={Regulations} />
           <Route path="/admin-login" component={AdminLogin} />
-          <Route path="/admin">
-            {() => (isMobileDevice ? <MobileAdminPanel /> : <AdminPanel />)}
-          </Route>
+          <Route path="/mobile-admin" component={MobileAdminPanel} />
+          <Route path="/admin-redirect" component={() => import("@/pages/mobile-redirect").then(module => <module.default />)} />
+          <Route path="/admin" component={AdminPanel} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/admin/tax-payments" component={AccountantPage} />
           <Route path="/reports">
