@@ -15,25 +15,15 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  // Simple login handler with direct navigation
+  // Super simple, reliable direct approach
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
     if (password === ADMIN_PASSWORD) {
-      // Success - show toast
-      toast({
-        title: "Login successful",
-        description: "Welcome to the admin panel",
-      });
-      
-      // Force navigation with a small delay to ensure the toast appears
-      setTimeout(() => {
-        console.log("Navigating to admin panel...");
-        window.location.href = "/admin"; // Direct browser navigation
-      }, 500);
+      // Immediately redirect with no async operations
+      window.location.href = "/admin";
     } else {
-      // Error - show message
+      // Error message
       toast({
         title: "Login failed",
         description: "Invalid password",
@@ -41,7 +31,6 @@ export default function AdminLogin() {
       });
       
       setPassword("");
-      setIsLoading(false);
     }
   };
 
