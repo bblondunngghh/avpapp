@@ -40,7 +40,7 @@ import { Employee, EmployeeTaxPayment } from "@shared/schema";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { useLocation } from "wouter";
 
-export default function TaxPaymentsPage() {
+export default function AccountantPage() {
   const [, navigate] = useLocation();
   const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
   const [filterDate, setFilterDate] = useState<string>('');
@@ -173,8 +173,8 @@ export default function TaxPaymentsPage() {
     <div className="container py-8">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Employee Tax Payments</h1>
-          <p className="text-gray-600">Track and manage employee tax contributions</p>
+          <h1 className="text-3xl font-bold text-gray-900">Accountant Section</h1>
+          <p className="text-gray-600">Track employee commissions, tips, advances, and tax contributions</p>
         </div>
         <Button variant="outline" onClick={() => navigate("/admin-panel")}>
           Back to Admin Panel
@@ -291,10 +291,11 @@ export default function TaxPaymentsPage() {
                   <TableRow>
                     <TableHead>Employee</TableHead>
                     <TableHead>Report ID</TableHead>
-                    <TableHead className="text-right">Earnings</TableHead>
-                    <TableHead className="text-right">Tax Amount</TableHead>
-                    <TableHead className="text-right">Paid</TableHead>
-                    <TableHead className="text-right">Remaining</TableHead>
+                    <TableHead className="text-right">Commission</TableHead>
+                    <TableHead className="text-right">Tips</TableHead>
+                    <TableHead className="text-right">Money Owed</TableHead>
+                    <TableHead className="text-right">Advance</TableHead>
+                    <TableHead className="text-right">Tax Contribution</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
