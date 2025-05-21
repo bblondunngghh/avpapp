@@ -1,11 +1,8 @@
-import { 
-  FaBuilding,
-  FaBuildingColumns
-} from "react-icons/fa6";
-import { 
-  BsBuilding,
-  BsBuildingFill
-} from "react-icons/bs";
+import { ImOffice } from "react-icons/im";
+import { BiBuildingHouse } from "react-icons/bi";
+import { MdBusinessCenter, MdCorporateFare } from "react-icons/md";
+import { FaHotel } from "react-icons/fa";
+import { TbBuildingSkyscraper } from "react-icons/tb";
 
 interface LocationIconProps {
   locationId: number;
@@ -14,26 +11,26 @@ interface LocationIconProps {
 }
 
 export function getLocationIconDetails(locationId: number) {
-  let Icon = BsBuilding;
-  let bgColorClass = "bg-slate-100";
-  let textColorClass = "text-slate-800";
+  let Icon = TbBuildingSkyscraper;
+  let bgColorClass = "bg-zinc-100";
+  let textColorClass = "text-zinc-800";
   
   if (locationId === 1) { // Capital Grille
-    Icon = FaBuildingColumns;
-    bgColorClass = "bg-slate-100";
-    textColorClass = "text-slate-800";
+    Icon = MdCorporateFare;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
   } else if (locationId === 2) { // Bob's
-    Icon = BsBuildingFill;
-    bgColorClass = "bg-slate-100";
-    textColorClass = "text-slate-800";
+    Icon = FaHotel;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
   } else if (locationId === 3) { // Truluck's
-    Icon = FaBuilding;
-    bgColorClass = "bg-slate-100";
-    textColorClass = "text-slate-800";
+    Icon = MdBusinessCenter;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
   } else if (locationId === 4) { // BOA
-    Icon = BsBuilding;
-    bgColorClass = "bg-slate-100";
-    textColorClass = "text-slate-800";
+    Icon = BiBuildingHouse;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
   }
   
   return { Icon, bgColorClass, textColorClass };

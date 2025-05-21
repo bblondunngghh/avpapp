@@ -1,4 +1,7 @@
-import { BsBuilding } from "react-icons/bs";
+import { ImOffice } from "react-icons/im";
+import { BiBuildingHouse } from "react-icons/bi";
+import { MdBusinessCenter, MdCorporateFare } from "react-icons/md";
+import { FaHotel } from "react-icons/fa";
 
 interface RestaurantIconProps {
   locationId: number;
@@ -7,14 +10,32 @@ interface RestaurantIconProps {
 }
 
 export default function RestaurantIcon({ locationId, size = 16, className = "" }: RestaurantIconProps) {
-  // Use a consistent professional look for all locations
-  const bgColorClass = "bg-slate-100";
-  const textColorClass = "text-slate-700";
+  // Choose icon and colors based on location ID
+  let Icon = ImOffice;
+  let bgColorClass = "bg-zinc-100";
+  let textColorClass = "text-zinc-800";
   
-  // A simple professional icon for all locations
+  if (locationId === 1) { // Capital Grille
+    Icon = MdCorporateFare;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
+  } else if (locationId === 2) { // Bob's
+    Icon = FaHotel;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
+  } else if (locationId === 3) { // Truluck's
+    Icon = MdBusinessCenter;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
+  } else if (locationId === 4) { // BOA
+    Icon = BiBuildingHouse;
+    bgColorClass = "bg-zinc-100";
+    textColorClass = "text-zinc-800";
+  }
+  
   return (
     <span className={`inline-flex items-center justify-center rounded-full ${bgColorClass} p-1 ${className}`}>
-      <BsBuilding style={{ width: size, height: size }} className={textColorClass} />
+      <Icon style={{ width: size, height: size }} className={textColorClass} />
     </span>
   );
 }
