@@ -222,25 +222,22 @@ export default function AccountantPage() {
   
   // Calculate commission, tips, money owed and advance
   const calculateCommission = (payment: EmployeeTaxPayment) => {
-    // Use a realistic commission calculation (70% of total earnings)
+    // Simple calculation based on earnings
     return Number(payment.totalEarnings) * 0.7;
   };
   
   const calculateTips = (payment: EmployeeTaxPayment) => {
-    // Tips are typically 20-30% of total earnings
     return Number(payment.totalEarnings) * 0.3;
   };
   
   const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
-    // Some employees might owe money back (around 10-15% of their tax amount)
-    return Number(payment.taxAmount) * 0.15;
+    return Number(payment.remainingAmount) * 0.5;
   };
   
   const calculateAdvance = (payment: EmployeeTaxPayment) => {
     const commission = calculateCommission(payment);
     const tips = calculateTips(payment);
     const moneyOwed = calculateMoneyOwed(payment);
-    // Advance calculation: commission + tips - money owed
     return commission + tips - moneyOwed;
   };
   
