@@ -233,12 +233,34 @@ export default function SubmissionComplete() {
     
   }, [report, taxPaymentsSaved, saveTaxPayment]);
   
+  // Fetch all employees to get their IDs
+  const { data: employeeList = [] } = useQuery<Employee[]>({
+    queryKey: ['/api/employees'],
+    queryFn: async () => {
+      const res = await fetch('/api/employees');
+      if (!res.ok) return [];
+      return res.json();
+    }
+  });
+
   // Helper function to get employee ID by name
   const getEmployeeIdByName = (name: string): number => {
-    // This is a placeholder. In a real app, you would look up the employee ID
-    // by their name in your employees database
-    // For now, we'll return 1 as a placeholder ID
-    return 1;
+    // Find the employee by name - try to match with fullName
+    const employee = employeeList.find(emp => 
+      emp.fullName?.toLowerCase() === name.toLowerCase() ||
+      emp.key?.toLowerCase() === name.toLowerCase()
+    );
+    
+    // If employee is found, return their ID, otherwise use a valid employee ID as fallback
+    if (employee) {
+      return employee.id;
+    } else if (employeeList.length > 0) {
+      // Use the first employee's ID as a fallback
+      return employeeList[0].id;
+    }
+    
+    // If no employees are loaded, don't create payment records
+    return 0;
   };
 
   const handleViewReports = () => {
