@@ -270,7 +270,7 @@ export default function SubmissionComplete() {
   };
 
   const handleViewReports = () => {
-    navigate("/");
+    navigate("/reports");
   };
 
   const handleNewReport = () => {
