@@ -4,6 +4,7 @@ import {
   locations, type Location, type InsertLocation,
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
   ticketDistributions, type TicketDistribution, type InsertTicketDistribution, type UpdateTicketDistribution,
+  employeeTaxPayments, type EmployeeTaxPayment, type InsertEmployeeTaxPayment, type UpdateEmployeeTaxPayment,
   LOCATIONS
 } from "@shared/schema";
 import { db } from "./db";
@@ -64,11 +65,13 @@ export class MemStorage implements IStorage {
   private locations: Map<number, Location>;
   private shiftReports: Map<number, ShiftReport>;
   private ticketDistributions: Map<number, TicketDistribution>;
+  private employeeTaxPayments: Map<number, EmployeeTaxPayment>;
   private userCurrentId: number;
   private employeeCurrentId: number;
   private locationCurrentId: number;
   private shiftReportCurrentId: number;
   private ticketDistributionCurrentId: number;
+  private employeeTaxPaymentCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -76,11 +79,13 @@ export class MemStorage implements IStorage {
     this.locations = new Map();
     this.shiftReports = new Map();
     this.ticketDistributions = new Map();
+    this.employeeTaxPayments = new Map();
     this.userCurrentId = 1;
     this.employeeCurrentId = 1;
     this.locationCurrentId = 1;
     this.shiftReportCurrentId = 1;
     this.ticketDistributionCurrentId = 1;
+    this.employeeTaxPaymentCurrentId = 1;
     
     // Initialize with default locations
     this.initializeLocations();
@@ -345,6 +350,82 @@ export class MemStorage implements IStorage {
 
 // Database storage implementation
 export class DatabaseStorage implements IStorage {
+  // Tax Payment Methods
+  async getEmployeeTaxPayments(): Promise<EmployeeTaxPayment[]> {
+    try {
+      return await db.select().from(employeeTaxPayments).orderBy(desc(employeeTaxPayments.createdAt));
+    } catch (error) {
+      console.error("Error getting employee tax payments:", error);
+      return [];
+    }
+  }
+
+  async getEmployeeTaxPayment(id: number): Promise<EmployeeTaxPayment | undefined> {
+    try {
+      const [payment] = await db.select().from(employeeTaxPayments).where(eq(employeeTaxPayments.id, id));
+      return payment;
+    } catch (error) {
+      console.error("Error getting employee tax payment by ID:", error);
+      return undefined;
+    }
+  }
+
+  async getEmployeeTaxPaymentsByEmployee(employeeId: number): Promise<EmployeeTaxPayment[]> {
+    try {
+      return await db.select().from(employeeTaxPayments)
+        .where(eq(employeeTaxPayments.employeeId, employeeId))
+        .orderBy(desc(employeeTaxPayments.createdAt));
+    } catch (error) {
+      console.error("Error getting employee tax payments by employee ID:", error);
+      return [];
+    }
+  }
+
+  async getEmployeeTaxPaymentsByReport(reportId: number): Promise<EmployeeTaxPayment[]> {
+    try {
+      return await db.select().from(employeeTaxPayments)
+        .where(eq(employeeTaxPayments.reportId, reportId))
+        .orderBy(desc(employeeTaxPayments.createdAt));
+    } catch (error) {
+      console.error("Error getting employee tax payments by report ID:", error);
+      return [];
+    }
+  }
+
+  async createEmployeeTaxPayment(payment: InsertEmployeeTaxPayment): Promise<EmployeeTaxPayment> {
+    try {
+      const [createdPayment] = await db.insert(employeeTaxPayments).values(payment).returning();
+      return createdPayment;
+    } catch (error) {
+      console.error("Error creating employee tax payment:", error);
+      throw new Error("Failed to create employee tax payment");
+    }
+  }
+
+  async updateEmployeeTaxPayment(id: number, payment: UpdateEmployeeTaxPayment): Promise<EmployeeTaxPayment | undefined> {
+    try {
+      const [updatedPayment] = await db.update(employeeTaxPayments)
+        .set(payment)
+        .where(eq(employeeTaxPayments.id, id))
+        .returning();
+      return updatedPayment;
+    } catch (error) {
+      console.error("Error updating employee tax payment:", error);
+      return undefined;
+    }
+  }
+
+  async deleteEmployeeTaxPayment(id: number): Promise<boolean> {
+    try {
+      const [deletedPayment] = await db.delete(employeeTaxPayments)
+        .where(eq(employeeTaxPayments.id, id))
+        .returning();
+      return !!deletedPayment;
+    } catch (error) {
+      console.error("Error deleting employee tax payment:", error);
+      return false;
+    }
+  }
   // User methods
   async getUser(id: number): Promise<User | undefined> {
     try {
