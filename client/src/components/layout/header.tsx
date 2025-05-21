@@ -29,7 +29,7 @@ export default function Header() {
             variant="secondary" 
             size="sm" 
             className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
-            onClick={() => window.location.href = '/admin-access.html'}
+            onClick={() => window.location.href = '/mobile-admin.html'}
           >
             Admin Login
           </Button>
@@ -71,7 +71,7 @@ export default function Header() {
                 <Button 
                   variant="ghost" 
                   className="justify-start" 
-                  onClick={() => window.location.href = '/admin-access.html'}
+                  onClick={() => window.location.href = '/mobile-admin.html'}
                 >
                   <User className="mr-2 h-5 w-5" />
                   Admin Login

@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Lite - Access Valet Parking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      min-height: 100vh;
+    }
+    
+    header {
+      background-color: #0f172a;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #3b82f6;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+    
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .tabs {
+      display: flex;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      background-color: #1e293b;
+      border-radius: 8px;
+    }
+    
+    .tab {
+      padding: 12px 16px;
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+      color: #94a3b8;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    
+    .tab.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .card {
+      background-color: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    
+    .card-header {
+      background-color: #0f172a;
+      padding: 16px;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .card-body {
+      padding: 16px;
+    }
+    
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .stat-card {
+      background-color: #0f172a;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .stat-title {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #3b82f6;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #e2e8f0;
+    }
+    
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .filter-select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background-color: #1e293b;
+      color: #e2e8f0;
+      flex-grow: 1;
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      text-decoration: none;
+      text-align: center;
+    }
+    
+    .button-outline {
+      background-color: transparent;
+      border: 1px solid #3b82f6;
+      color: #3b82f6;
+    }
+    
+    .button-danger {
+      background-color: #ef4444;
+    }
+    
+    .data-list {
+      list-style: none;
+    }
+    
+    .data-item {
+      padding: 12px;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .data-item:last-child {
+      border-bottom: none;
+    }
+    
+    .data-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .data-subtitle {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .data-label {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .data-value {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px 0;
+      color: #94a3b8;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: #94a3b8;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+      font-size: 14px;
+      border-top: 1px solid #334155;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    
+    .action-button {
+      background-color: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    
+    .action-button:hover {
+      background-color: rgba(148, 163, 184, 0.1);
+    }
+    
+    .chart-container {
+      width: 100%;
+      height: 300px;
+      margin-bottom: 20px;
+    }
+    
+    /* Mobile Optimizations */
+    @media (max-width: 640px) {
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .data-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">ACCESS VALET PARKING</div>
+    <div class="subtitle">Admin Lite Panel</div>
+  </header>
+  
+  <main>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('dashboard')">Dashboard</div>
+      <div class="tab" onclick="showTab('reports')">Reports</div>
+      <div class="tab" onclick="showTab('tickets')">Tickets</div>
+      <div class="tab" onclick="showTab('employees')">Employees</div>
+    </div>
+    
+    <div id="dashboard" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Performance Overview</h2>
+        </div>
+        <div class="card-body">
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-title">Total Reports</div>
+              <div class="stat-value" id="totalReports">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Total Cars</div>
+              <div class="stat-value" id="totalCars">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Total Income</div>
+              <div class="stat-value" id="totalIncome">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Avg Cars/Day</div>
+              <div class="stat-value" id="avgCars">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Quick Actions</h2>
+        </div>
+        <div class="card-body">
+          <a href="/admin/csv-upload" class="button">Upload CSV Data</a>
+          <a href="/admin/tax-payments" class="button">View Tax Payments</a>
+          <a href="/reports" class="button">View All Reports</a>
+          <a href="/report-selection" class="button">Create New Report</a>
+          <a href="/" class="button button-outline">Return to Dashboard</a>
+        </div>
+      </div>
+    </div>
+    
+    <div id="reports" class="tab-content">
+      <div class="section-title">Recent Reports</div>
+      
+      <div class="filter-controls">
+        <select id="locationFilter" class="filter-select">
+          <option value="0">All Locations</option>
+          <option value="1">The Capital Grille</option>
+          <option value="2">Bob's Steak and Chop House</option>
+          <option value="3">Truluck's</option>
+          <option value="4">BOA Steakhouse</option>
+        </select>
+        
+        <select id="limitFilter" class="filter-select">
+          <option value="10">Last 10</option>
+          <option value="20">Last 20</option>
+          <option value="50">Last 50</option>
+        </select>
+      </div>
+      
+      <div class="card">
+        <div id="reportsList" class="card-body">
+          <div class="loading">Loading reports...</div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="tickets" class="tab-content">
+      <div class="section-title">Ticket Distributions</div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Ticket Allocation Summary</h2>
+        </div>
+        <div class="card-body">
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-title">Total Allocated</div>
+              <div class="stat-value" id="totalAllocated">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Total Used</div>
+              <div class="stat-value" id="totalUsed">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Utilization Rate</div>
+              <div class="stat-value" id="utilizationRate">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Batches</div>
+              <div class="stat-value" id="totalBatches">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div id="ticketsList" class="card-body">
+          <div class="loading">Loading ticket distributions...</div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="employees" class="tab-content">
+      <div class="section-title">Employee Management</div>
+      
+      <div class="filter-controls">
+        <select id="employeeStatusFilter" class="filter-select">
+          <option value="all">All Employees</option>
+          <option value="active">Active Only</option>
+          <option value="inactive">Inactive Only</option>
+        </select>
+        
+        <select id="employeeRoleFilter" class="filter-select">
+          <option value="all">All Roles</option>
+          <option value="leader">Shift Leaders</option>
+          <option value="valet">Valets</option>
+        </select>
+      </div>
+      
+      <div class="card">
+        <div id="employeesList" class="card-body">
+          <div class="loading">Loading employees...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <div class="footer">
+    Access Valet Parking © 2025 | Lightweight Admin Panel
+  </div>
+  
+  <script>
+    // Set authenticated in local storage
+    function setAdminAuthenticated() {
+      try {
+        const currentTime = Date.now();
+        localStorage.setItem('admin_authenticated', 'true');
+        localStorage.setItem('admin_auth_time', currentTime.toString());
+      } catch (e) {
+        console.error('Error setting local storage auth', e);
+      }
+    }
+    
+    // Set authentication on load
+    setAdminAuthenticated();
+    
+    // Tab switching
+    function showTab(tabId) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab
+      document.getElementById(tabId).classList.add('active');
+      
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Find the clicked tab button and make it active
+      const tabs = document.querySelectorAll('.tab');
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].innerText.toLowerCase().includes(tabId.toLowerCase())) {
+          tabs[i].classList.add('active');
+          break;
+        }
+      }
+    }
+    
+    // Fetch reports data
+    async function fetchReports() {
+      try {
+        const response = await fetch('/api/shift-reports');
+        if (!response.ok) {
+          throw new Error('Failed to fetch reports');
+        }
+        
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+        return [];
+      }
+    }
+    
+    // Fetch ticket distributions
+    async function fetchTicketDistributions() {
+      try {
+        const response = await fetch('/api/ticket-distributions');
+        if (!response.ok) {
+          throw new Error('Failed to fetch ticket distributions');
+        }
+        
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching ticket distributions:', error);
+        return [];
+      }
+    }
+    
+    // Fetch employees
+    async function fetchEmployees() {
+      try {
+        const response = await fetch('/api/employees');
+        if (!response.ok) {
+          throw new Error('Failed to fetch employees');
+        }
+        
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+        return [];
+      }
+    }
+    
+    // Format currency
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+      }).format(amount);
+    }
+    
+    // Format date
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+    
+    // Get location name
+    function getLocationName(locationId) {
+      const locations = {
+        1: 'The Capital Grille',
+        2: "Bob's Steak and Chop House",
+        3: "Truluck's",
+        4: 'BOA Steakhouse'
+      };
+      
+      return locations[locationId] || 'Unknown Location';
+    }
+    
+    // Initialize dashboard
+    async function initDashboard() {
+      const reports = await fetchReports();
+      
+      if (reports.length === 0) {
+        document.getElementById('totalReports').textContent = '0';
+        document.getElementById('totalCars').textContent = '0';
+        document.getElementById('totalIncome').textContent = '$0';
+        document.getElementById('avgCars').textContent = '0';
+        return;
+      }
+      
+      const totalReports = reports.length;
+      const totalCars = reports.reduce((sum, report) => sum + report.totalCars, 0);
+      
+      // Calculate total income based on location-specific turn-in rates
+      let totalIncome = 0;
+      reports.forEach(report => {
+        const turnInRate = getTurnInRate(report.locationId);
+        totalIncome += report.totalCars * turnInRate;
+      });
+      
+      const avgCars = Math.round(totalCars / totalReports);
+      
+      document.getElementById('totalReports').textContent = totalReports;
+      document.getElementById('totalCars').textContent = totalCars;
+      document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
+      document.getElementById('avgCars').textContent = avgCars;
+    }
+    
+    // Get turn-in rate based on location
+    function getTurnInRate(locationId) {
+      const rates = {
+        1: 11, // Capital Grille
+        2: 6,  // Bob's
+        3: 8,  // Truluck's
+        4: 7   // BOA
+      };
+      
+      return rates[locationId] || 0;
+    }
+    
+    // Initialize reports tab
+    async function initReports() {
+      const reportsContainer = document.getElementById('reportsList');
+      const reports = await fetchReports();
+      
+      if (reports.length === 0) {
+        reportsContainer.innerHTML = '<div class="empty-state">No reports found</div>';
+        return;
+      }
+      
+      // Sort reports by date (newest first)
+      reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      // Create report items
+      let html = '<ul class="data-list">';
+      
+      reports.slice(0, 10).forEach(report => {
+        const locationName = getLocationName(report.locationId);
+        const turnInRate = getTurnInRate(report.locationId);
+        const totalIncome = report.totalCars * turnInRate;
+        
+        html += `
+          <li class="data-item">
+            <div class="data-title">${locationName} - ${report.date}</div>
+            <div class="data-subtitle">${report.shift} Shift</div>
+            <div class="data-grid">
+              <div>
+                <div class="data-label">Cars</div>
+                <div class="data-value">${report.totalCars}</div>
+              </div>
+              <div>
+                <div class="data-label">Income</div>
+                <div class="data-value">${formatCurrency(totalIncome)}</div>
+              </div>
+              <div>
+                <div class="data-label">Credit</div>
+                <div class="data-value">${report.creditTransactions}</div>
+              </div>
+              <div>
+                <div class="data-label">Receipts</div>
+                <div class="data-value">${report.totalReceipts}</div>
+              </div>
+            </div>
+            <div class="actions">
+              <a href="/edit-report/${report.id}" class="action-button">Edit</a>
+            </div>
+          </li>
+        `;
+      });
+      
+      html += '</ul>';
+      reportsContainer.innerHTML = html;
+      
+      // Set up location filter
+      document.getElementById('locationFilter').addEventListener('change', function() {
+        filterReports();
+      });
+      
+      document.getElementById('limitFilter').addEventListener('change', function() {
+        filterReports();
+      });
+    }
+    
+    // Filter reports
+    function filterReports() {
+      const locationId = parseInt(document.getElementById('locationFilter').value);
+      const limit = parseInt(document.getElementById('limitFilter').value);
+      
+      fetchReports().then(reports => {
+        // Sort reports by date (newest first)
+        reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Filter by location if needed
+        let filteredReports = reports;
+        if (locationId > 0) {
+          filteredReports = reports.filter(report => report.locationId === locationId);
+        }
+        
+        // Apply limit
+        filteredReports = filteredReports.slice(0, limit);
+        
+        // Create report items
+        const reportsContainer = document.getElementById('reportsList');
+        
+        if (filteredReports.length === 0) {
+          reportsContainer.innerHTML = '<div class="empty-state">No reports found</div>';
+          return;
+        }
+        
+        let html = '<ul class="data-list">';
+        
+        filteredReports.forEach(report => {
+          const locationName = getLocationName(report.locationId);
+          const turnInRate = getTurnInRate(report.locationId);
+          const totalIncome = report.totalCars * turnInRate;
+          
+          html += `
+            <li class="data-item">
+              <div class="data-title">${locationName} - ${report.date}</div>
+              <div class="data-subtitle">${report.shift} Shift</div>
+              <div class="data-grid">
+                <div>
+                  <div class="data-label">Cars</div>
+                  <div class="data-value">${report.totalCars}</div>
+                </div>
+                <div>
+                  <div class="data-label">Income</div>
+                  <div class="data-value">${formatCurrency(totalIncome)}</div>
+                </div>
+                <div>
+                  <div class="data-label">Credit</div>
+                  <div class="data-value">${report.creditTransactions}</div>
+                </div>
+                <div>
+                  <div class="data-label">Receipts</div>
+                  <div class="data-value">${report.totalReceipts}</div>
+                </div>
+              </div>
+              <div class="actions">
+                <a href="/edit-report/${report.id}" class="action-button">Edit</a>
+              </div>
+            </li>
+          `;
+        });
+        
+        html += '</ul>';
+        reportsContainer.innerHTML = html;
+      });
+    }
+    
+    // Initialize tickets tab
+    async function initTickets() {
+      const ticketsContainer = document.getElementById('ticketsList');
+      const distributions = await fetchTicketDistributions();
+      
+      // Update summary stats
+      if (distributions.length > 0) {
+        const totalAllocated = distributions.reduce((sum, dist) => sum + dist.allocatedTickets, 0);
+        const totalUsed = distributions.reduce((sum, dist) => sum + dist.usedTickets, 0);
+        const utilizationRate = totalAllocated > 0 ? Math.round((totalUsed / totalAllocated) * 100) : 0;
+        const totalBatches = distributions.length;
+        
+        document.getElementById('totalAllocated').textContent = totalAllocated;
+        document.getElementById('totalUsed').textContent = totalUsed;
+        document.getElementById('utilizationRate').textContent = `${utilizationRate}%`;
+        document.getElementById('totalBatches').textContent = totalBatches;
+      } else {
+        document.getElementById('totalAllocated').textContent = '0';
+        document.getElementById('totalUsed').textContent = '0';
+        document.getElementById('utilizationRate').textContent = '0%';
+        document.getElementById('totalBatches').textContent = '0';
+      }
+      
+      if (distributions.length === 0) {
+        ticketsContainer.innerHTML = '<div class="empty-state">No ticket distributions found</div>';
+        return;
+      }
+      
+      // Sort distributions by date (newest first)
+      distributions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      // Create distribution items
+      let html = '<ul class="data-list">';
+      
+      distributions.forEach(dist => {
+        const locationName = getLocationName(dist.locationId);
+        const usageRate = Math.round((dist.usedTickets / dist.allocatedTickets) * 100);
+        
+        html += `
+          <li class="data-item">
+            <div class="data-title">Batch: ${dist.batchNumber}</div>
+            <div class="data-subtitle">${locationName} - ${formatDate(dist.createdAt)}</div>
+            <div class="data-grid">
+              <div>
+                <div class="data-label">Allocated</div>
+                <div class="data-value">${dist.allocatedTickets}</div>
+              </div>
+              <div>
+                <div class="data-label">Used</div>
+                <div class="data-value">${dist.usedTickets}</div>
+              </div>
+              <div>
+                <div class="data-label">Remaining</div>
+                <div class="data-value">${dist.allocatedTickets - dist.usedTickets}</div>
+              </div>
+              <div>
+                <div class="data-label">Usage</div>
+                <div class="data-value">${usageRate}%</div>
+              </div>
+            </div>
+            ${dist.notes ? `<div class="data-subtitle">Notes: ${dist.notes}</div>` : ''}
+          </li>
+        `;
+      });
+      
+      html += '</ul>';
+      ticketsContainer.innerHTML = html;
+    }
+    
+    // Initialize employees tab
+    async function initEmployees() {
+      const employeesContainer = document.getElementById('employeesList');
+      const employees = await fetchEmployees();
+      
+      if (employees.length === 0) {
+        employeesContainer.innerHTML = '<div class="empty-state">No employees found</div>';
+        return;
+      }
+      
+      // Sort employees by name
+      employees.sort((a, b) => a.fullName.localeCompare(b.fullName));
+      
+      // Create employee items
+      let html = '<ul class="data-list">';
+      
+      employees.forEach(employee => {
+        const statusClass = employee.isActive ? 'text-green-500' : 'text-red-500';
+        const statusText = employee.isActive ? 'Active' : 'Inactive';
+        
+        html += `
+          <li class="data-item">
+            <div class="data-title">${employee.fullName}</div>
+            <div class="data-subtitle">ID: ${employee.key} · <span class="${statusClass}">${statusText}</span></div>
+            <div class="data-grid">
+              <div>
+                <div class="data-label">Role</div>
+                <div class="data-value">${employee.isShiftLeader ? 'Shift Leader' : 'Valet'}</div>
+              </div>
+              <div>
+                <div class="data-label">Status</div>
+                <div class="data-value">${statusText}</div>
+              </div>
+            </div>
+          </li>
+        `;
+      });
+      
+      html += '</ul>';
+      employeesContainer.innerHTML = html;
+      
+      // Set up employee filters
+      document.getElementById('employeeStatusFilter').addEventListener('change', function() {
+        filterEmployees();
+      });
+      
+      document.getElementById('employeeRoleFilter').addEventListener('change', function() {
+        filterEmployees();
+      });
+    }
+    
+    // Filter employees
+    function filterEmployees() {
+      const statusFilter = document.getElementById('employeeStatusFilter').value;
+      const roleFilter = document.getElementById('employeeRoleFilter').value;
+      
+      fetchEmployees().then(employees => {
+        // Sort employees by name
+        employees.sort((a, b) => a.fullName.localeCompare(b.fullName));
+        
+        // Apply filters
+        let filteredEmployees = employees;
+        
+        if (statusFilter === 'active') {
+          filteredEmployees = filteredEmployees.filter(emp => emp.isActive);
+        } else if (statusFilter === 'inactive') {
+          filteredEmployees = filteredEmployees.filter(emp => !emp.isActive);
+        }
+        
+        if (roleFilter === 'leader') {
+          filteredEmployees = filteredEmployees.filter(emp => emp.isShiftLeader);
+        } else if (roleFilter === 'valet') {
+          filteredEmployees = filteredEmployees.filter(emp => !emp.isShiftLeader);
+        }
+        
+        // Update the list
+        const employeesContainer = document.getElementById('employeesList');
+        
+        if (filteredEmployees.length === 0) {
+          employeesContainer.innerHTML = '<div class="empty-state">No employees found</div>';
+          return;
+        }
+        
+        let html = '<ul class="data-list">';
+        
+        filteredEmployees.forEach(employee => {
+          const statusClass = employee.isActive ? 'text-green-500' : 'text-red-500';
+          const statusText = employee.isActive ? 'Active' : 'Inactive';
+          
+          html += `
+            <li class="data-item">
+              <div class="data-title">${employee.fullName}</div>
+              <div class="data-subtitle">ID: ${employee.key} · <span class="${statusClass}">${statusText}</span></div>
+              <div class="data-grid">
+                <div>
+                  <div class="data-label">Role</div>
+                  <div class="data-value">${employee.isShiftLeader ? 'Shift Leader' : 'Valet'}</div>
+                </div>
+                <div>
+                  <div class="data-label">Status</div>
+                  <div class="data-value">${statusText}</div>
+                </div>
+              </div>
+            </li>
+          `;
+        });
+        
+        html += '</ul>';
+        employeesContainer.innerHTML = html;
+      });
+    }
+    
+    // Initialize all tabs
+    window.addEventListener('DOMContentLoaded', () => {
+      // Initialize the dashboard
+      initDashboard();
+      
+      // Initialize other tabs (they'll load data when selected)
+      initReports();
+      initTickets();
+      initEmployees();
+    });
+  </script>
+</body>
+</html>
