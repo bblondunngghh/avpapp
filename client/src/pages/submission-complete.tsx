@@ -272,42 +272,84 @@ export default function SubmissionComplete() {
               </div>
             )}
             
-            {/* Tax Summary Section */}
+            {/* Employee Earnings & Tax Summary Section */}
             <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
-              <div className="flex items-center mb-2">
-                {taxSummary.isCovered ? (
-                  <Shield className="h-4 w-4 text-green-600 mr-2" />
-                ) : (
-                  <AlertTriangle className="h-4 w-4 text-amber-600 mr-2" />
-                )}
-                <h4 className={`font-medium ${taxSummary.isCovered ? 'text-green-800' : 'text-amber-800'}`}>
-                  Tax Summary
+              <div className="flex items-center mb-3">
+                <Shield className="h-4 w-4 text-purple-600 mr-2" />
+                <h4 className="font-medium text-purple-800">
+                  Employee Earnings & Tax Summary
                 </h4>
               </div>
-              <div className="space-y-1 pl-6">
-                <p className="text-sm text-gray-700 flex justify-between">
-                  <span>Total Earnings:</span> <strong>{formatCurrency(taxSummary.moneyOwed)}</strong>
-                </p>
-                <p className="text-sm text-gray-700 flex justify-between">
-                  <span>Tax (22%):</span> <strong>{formatCurrency(taxSummary.totalTax)}</strong>
-                </p>
-                <p className="text-sm text-gray-700 flex justify-between">
-                  <span>Cash Paid In:</span> <strong>{formatCurrency(taxSummary.cashPaid)}</strong>
-                </p>
-                <p className="text-sm flex justify-between font-medium">
-                  <span>Expected Amount:</span> <strong>{formatCurrency(taxSummary.expectedAmount)}</strong>
-                </p>
-                <div className={`mt-2 p-2 rounded ${taxSummary.isCovered ? 'bg-green-50' : 'bg-amber-50'}`}>
-                  {taxSummary.isCovered ? (
-                    <p className="text-sm text-green-800 font-medium flex items-center">
-                      <Shield className="h-4 w-4 mr-1" /> All Taxes Covered
-                    </p>
-                  ) : (
-                    <p className="text-sm text-amber-800 font-medium flex items-center">
-                      <AlertTriangle className="h-4 w-4 mr-1" /> 
-                      Cash for Taxes: <span className="ml-1">{formatCurrency(Math.max(0, taxSummary.expectedAmount - taxSummary.cashPaid))}</span> needed
-                    </p>
-                  )}
+              
+              {/* Employee Totals Summary */}
+              <div className="bg-gray-50 p-3 mb-3 rounded border border-gray-100">
+                <h5 className="text-sm font-medium text-gray-700 mb-2">Shift Employee Totals</h5>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Total Hours:</span> <strong>{safeNumber(report.totalJobHours)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Total Cars:</span> <strong>{safeNumber(report.totalCars)}</strong>
+                  </p>
+                  
+                  {/* Location-specific commission rates */}
+                  {(() => {
+                    let commissionRate = 4; // Default (Capital Grille)
+                    if (report.locationId === 2) commissionRate = 9; // Bob's Steak
+                    else if (report.locationId === 3) commissionRate = 7; // Truluck's
+                    else if (report.locationId === 4) commissionRate = 6; // BOA
+                    
+                    return (
+                      <p className="text-sm text-gray-700 flex justify-between">
+                        <span>Commission Rate:</span> <strong>${commissionRate} per car</strong>
+                      </p>
+                    );
+                  })()}
+                  
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Total Earnings:</span> <strong>{formatCurrency(taxSummary.moneyOwed)}</strong>
+                  </p>
+                </div>
+              </div>
+              
+              {/* Tax Breakdown */}
+              <div className="bg-blue-50 p-3 rounded border border-blue-100">
+                <h5 className="text-sm font-medium text-blue-700 mb-2">Tax Information</h5>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Taxable Earnings:</span> <strong>{formatCurrency(taxSummary.moneyOwed)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Tax Rate:</span> <strong>22%</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Tax Amount:</span> <strong>{formatCurrency(taxSummary.totalTax)}</strong>
+                  </p>
+                  <div className="my-2 border-t border-blue-200"></div>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Expected Cash for Taxes:</span> <strong>{formatCurrency(taxSummary.expectedAmount)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Cash Paid By Employees:</span> <strong>{formatCurrency(taxSummary.cashPaid)}</strong>
+                  </p>
+                  
+                  {/* Tax Status */}
+                  <div className={`mt-3 p-2 rounded ${taxSummary.isCovered ? 'bg-green-100 border border-green-200' : 'bg-amber-100 border border-amber-200'}`}>
+                    {taxSummary.isCovered ? (
+                      <p className="text-sm text-green-800 font-medium flex items-center">
+                        <Shield className="h-4 w-4 mr-1" /> All Taxes Covered
+                      </p>
+                    ) : (
+                      <div>
+                        <p className="text-sm text-amber-800 font-medium flex items-center mb-1">
+                          <AlertTriangle className="h-4 w-4 mr-1" /> Additional Tax Payment Required
+                        </p>
+                        <p className="text-xs text-amber-700 pl-5">
+                          Cash Needed: <span className="font-medium">{formatCurrency(Math.max(0, taxSummary.expectedAmount - taxSummary.cashPaid))}</span>
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
