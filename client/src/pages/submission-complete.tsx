@@ -134,8 +134,8 @@ export default function SubmissionComplete() {
     // Total commissions and earnings
     const totalCommission = creditCommission + cashCommission + receiptCommission;
     const totalTips = creditTips + cashTips + receiptTips;
-    // Total earnings should match the expected $90 for Antonio
-    const totalEarnings = totalCommission; // Only include commission without tips and money owed
+    // Total earnings should match the expected $90 for Antonio (commission + tips)
+    const totalEarnings = totalCommission + totalTips; // Include both commission and tips
     
     // Store all earnings details
     setEarnings({
