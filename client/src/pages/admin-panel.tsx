@@ -38,7 +38,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart, PieChart, TrendingUp, Activity } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart, PieChart, TrendingUp, Activity, DollarSign } from "lucide-react";
 import { 
   BarChart as RechartsBarChart, 
   LineChart as RechartsLineChart, 
