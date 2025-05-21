@@ -151,7 +151,10 @@ export default function SubmissionComplete() {
     
     // Calculate tax (22% of total earnings)
     const totalTax = totalEarnings * 0.22;
-    const expectedAmount = Math.ceil(totalTax);
+    
+    // Calculate expected amount (tax amount minus money owed, rounded up)
+    const moneyOwedTaxDeduction = Math.min(totalTax, moneyOwed);
+    const expectedAmount = Math.ceil(totalTax - moneyOwedTaxDeduction);
     
     // Update tax summary state
     setTaxSummary({
