@@ -949,10 +949,26 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       </div>
                       
                       <div className="space-y-3">
-                        {(form.watch('employees') || []).map((employee, index) => {
-                          const totalHours = Number(form.watch("totalJobHours") || 0);
-                          const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
-                          const hourPercentage = (hoursPercent * 100).toFixed(1);
+                        {(() => {
+                          const employeesField = form.watch('employees');
+                          // Handle various possible types for employees data
+                          let employees = [];
+                          
+                          if (Array.isArray(employeesField)) {
+                            employees = employeesField;
+                          } else if (typeof employeesField === 'string' && employeesField) {
+                            try {
+                              employees = JSON.parse(employeesField);
+                              if (!Array.isArray(employees)) employees = [];
+                            } catch (e) {
+                              console.warn("Failed to parse employees JSON:", e);
+                            }
+                          }
+                          
+                          return employees.map((employee, index) => {
+                            const totalHours = Number(form.watch("totalJobHours") || 0);
+                            const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
+                            const hourPercentage = (hoursPercent * 100).toFixed(1);
                           
                           return (
                             <div key={index} className="flex items-center gap-2 p-2 rounded bg-gray-50 border border-gray-100">
@@ -1043,13 +1059,34 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               </Button>
                             </div>
                           );
-                        })}
+                        });
+                        })()}
                         
-                        {(form.watch('employees') || []).length === 0 && (
-                          <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
-                            Add employees to distribute hours
-                          </div>
-                        )}
+                        {(() => {
+                          const employeesField = form.watch('employees');
+                          // Handle various possible types for employees data
+                          let employees = [];
+                          
+                          if (Array.isArray(employeesField)) {
+                            employees = employeesField;
+                          } else if (typeof employeesField === 'string' && employeesField) {
+                            try {
+                              employees = JSON.parse(employeesField);
+                              if (!Array.isArray(employees)) employees = [];
+                            } catch (e) {
+                              console.warn("Failed to parse employees JSON:", e);
+                            }
+                          }
+                          
+                          if (employees.length === 0) {
+                            return (
+                              <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
+                                Add employees to distribute hours
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
                     </div>
                     
