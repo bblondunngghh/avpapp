@@ -6,6 +6,7 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { parseEmployeesData } from "@/lib/form-helpers";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 // Import types from schema
 import { ShiftReport, EmployeeWithCashPaid } from "@shared/schema";
@@ -939,7 +940,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const currentEmployees = form.watch('employees') || [];
+                            const currentEmployees = parseEmployeesData(form.watch('employees'));
                             form.setValue('employees', [...currentEmployees, { name: '', hours: 0 }]);
                           }}
                           className="text-xs h-8"
@@ -950,20 +951,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       
                       <div className="space-y-3">
                         {(() => {
-                          const employeesField = form.watch('employees');
-                          // Handle various possible types for employees data
-                          let employees = [];
-                          
-                          if (Array.isArray(employeesField)) {
-                            employees = employeesField;
-                          } else if (typeof employeesField === 'string' && employeesField) {
-                            try {
-                              employees = JSON.parse(employeesField);
-                              if (!Array.isArray(employees)) employees = [];
-                            } catch (e) {
-                              console.warn("Failed to parse employees JSON:", e);
-                            }
-                          }
+                          const employees = parseEmployeesData(form.watch('employees'));
                           
                           return employees.map((employee, index) => {
                             const totalHours = Number(form.watch("totalJobHours") || 0);
@@ -976,7 +964,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 <Select 
                                   value={employee.name || ''}
                                   onValueChange={(value) => {
-                                    const newEmployees = [...(form.watch('employees') || [])];
+                                    const newEmployees = parseEmployeesData(form.watch('employees'));
                                     newEmployees[index] = { 
                                       ...newEmployees[index], 
                                       name: value 
@@ -1063,21 +1051,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         })()}
                         
                         {(() => {
-                          const employeesField = form.watch('employees');
-                          // Handle various possible types for employees data
-                          let employees = [];
-                          
-                          if (Array.isArray(employeesField)) {
-                            employees = employeesField;
-                          } else if (typeof employeesField === 'string' && employeesField) {
-                            try {
-                              employees = JSON.parse(employeesField);
-                              if (!Array.isArray(employees)) employees = [];
-                            } catch (e) {
-                              console.warn("Failed to parse employees JSON:", e);
-                            }
-                          }
-                          
+                          const employees = parseEmployeesData(form.watch('employees'));
                           if (employees.length === 0) {
                             return (
                               <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
