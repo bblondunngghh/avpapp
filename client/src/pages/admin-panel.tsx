@@ -1351,7 +1351,7 @@ export default function AdminPanel() {
                       <p className="text-sm text-muted-foreground mb-4">Breakdown of car volume by restaurant</p>
                       <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
-                          <RechartsPieChart>
+                          <PieChart>
                             <Pie
                               data={carDistributionByLocation}
                               dataKey="value"
@@ -1368,7 +1368,7 @@ export default function AdminPanel() {
                             </Pie>
                             <Tooltip formatter={(value) => [`${value} cars`, 'Volume']} />
                             <Legend />
-                          </RechartsPieChart>
+                          </PieChart>
                         </ResponsiveContainer>
                       </div>
                     </div>
@@ -1379,7 +1379,7 @@ export default function AdminPanel() {
                       <p className="text-sm text-muted-foreground mb-4">Average car volume by day of the week</p>
                       <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
-                          <RechartsBarChart
+                          <BarChart
                             data={dailyCarVolume}
                             margin={{
                               top: 20,
@@ -1402,7 +1402,7 @@ export default function AdminPanel() {
                               radius={[4, 4, 0, 0]}
                               barSize={30}
                             />
-                          </RechartsBarChart>
+                          </BarChart>
                         </ResponsiveContainer>
                       </div>
                     </div>
@@ -2473,7 +2473,7 @@ export default function AdminPanel() {
                     
                     <div className="w-full h-[400px] mb-6">
                       <ResponsiveContainer width="100%" height="100%">
-                        <RechartsBarChart
+                        <BarChart
                           data={monthlyData}
                           margin={{
                             top: 20,
@@ -2497,7 +2497,7 @@ export default function AdminPanel() {
                             radius={[4, 4, 0, 0]}
                             barSize={30}
                           />
-                        </RechartsBarChart>
+                        </BarChart>
                       </ResponsiveContainer>
                     </div>
                     
