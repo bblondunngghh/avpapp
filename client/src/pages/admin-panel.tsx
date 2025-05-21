@@ -1025,6 +1025,14 @@ export default function AdminPanel() {
             CSV Upload
           </Button>
           <Button 
+            variant="default"
+            onClick={() => navigate("/reports")}
+            className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+            View All Reports
+          </Button>
+          <Button 
             variant="outline" 
             onClick={() => navigate("/admin/tax-payments")}
             className="flex items-center gap-1 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
