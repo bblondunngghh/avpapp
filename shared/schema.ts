@@ -220,3 +220,31 @@ export const updateTicketDistributionSchema = createInsertSchema(ticketDistribut
 export type InsertTicketDistribution = z.infer<typeof insertTicketDistributionSchema>;
 export type UpdateTicketDistribution = z.infer<typeof updateTicketDistributionSchema>;
 export type TicketDistribution = typeof ticketDistributions.$inferSelect;
+
+// Employee Tax Payments schema
+export const employeeTaxPayments = pgTable("employee_tax_payments", {
+  id: serial("id").primaryKey(),
+  employeeId: integer("employee_id").notNull().references(() => employees.id),
+  reportId: integer("report_id").notNull().references(() => shiftReports.id),
+  locationId: integer("location_id").notNull(),
+  totalEarnings: numeric("total_earnings").notNull(),
+  taxAmount: numeric("tax_amount").notNull(),
+  paidAmount: numeric("paid_amount").notNull().default("0"),
+  remainingAmount: numeric("remaining_amount").notNull(),
+  paymentDate: timestamp("payment_date").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertEmployeeTaxPaymentSchema = createInsertSchema(employeeTaxPayments).omit({
+  id: true,
+  createdAt: true
+});
+
+export const updateEmployeeTaxPaymentSchema = createInsertSchema(employeeTaxPayments).omit({
+  id: true,
+  createdAt: true
+});
+
+export type InsertEmployeeTaxPayment = z.infer<typeof insertEmployeeTaxPaymentSchema>;
+export type UpdateEmployeeTaxPayment = z.infer<typeof updateEmployeeTaxPaymentSchema>;
+export type EmployeeTaxPayment = typeof employeeTaxPayments.$inferSelect;

@@ -47,6 +47,15 @@ export interface IStorage {
   createTicketDistribution(distribution: InsertTicketDistribution): Promise<TicketDistribution>;
   updateTicketDistribution(id: number, distribution: UpdateTicketDistribution): Promise<TicketDistribution | undefined>;
   deleteTicketDistribution(id: number): Promise<boolean>;
+  
+  // Employee Tax Payment methods
+  getEmployeeTaxPayments(): Promise<EmployeeTaxPayment[]>;
+  getEmployeeTaxPayment(id: number): Promise<EmployeeTaxPayment | undefined>;
+  getEmployeeTaxPaymentsByEmployee(employeeId: number): Promise<EmployeeTaxPayment[]>;
+  getEmployeeTaxPaymentsByReport(reportId: number): Promise<EmployeeTaxPayment[]>;
+  createEmployeeTaxPayment(payment: InsertEmployeeTaxPayment): Promise<EmployeeTaxPayment>;
+  updateEmployeeTaxPayment(id: number, payment: UpdateEmployeeTaxPayment): Promise<EmployeeTaxPayment | undefined>;
+  deleteEmployeeTaxPayment(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
