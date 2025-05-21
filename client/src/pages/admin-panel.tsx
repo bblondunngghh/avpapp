@@ -288,11 +288,15 @@ export default function AdminPanel() {
         const janProfit = manualRevenue['2025-01'] - janExpenses;
         
         if (janProfit > 0) {
+          const brandonShare = janProfit * 0.5;
+          const ryanShare = janProfit * 0.4;
+          const daveShare = janProfit * 0.1;
           historyData.push({
             month: 'Jan 2025',
-            brandon: janProfit * 0.5,
-            ryan: janProfit * 0.4,
-            dave: janProfit * 0.1
+            brandon: brandonShare,
+            ryan: ryanShare,
+            dave: daveShare,
+            total: brandonShare + ryanShare + daveShare
           });
         }
       }
@@ -303,11 +307,15 @@ export default function AdminPanel() {
         const febProfit = manualRevenue['2025-02'] - febExpenses;
         
         if (febProfit > 0) {
+          const brandonShare = febProfit * 0.5;
+          const ryanShare = febProfit * 0.4;
+          const daveShare = febProfit * 0.1;
           historyData.push({
             month: 'Feb 2025',
-            brandon: febProfit * 0.5,
-            ryan: febProfit * 0.4,
-            dave: febProfit * 0.1
+            brandon: brandonShare,
+            ryan: ryanShare,
+            dave: daveShare,
+            total: brandonShare + ryanShare + daveShare
           });
         }
       }
