@@ -214,7 +214,8 @@ export default function AdminPanel() {
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
   const [expensesPassword, setExpensesPassword] = useState<string>("");
   const [manualRevenue, setManualRevenue] = useState<Record<string, number>>({
-    // Pre-set February 2025 revenue
+    // Pre-set monthly revenue values
+    "2025-01": 17901,
     "2025-02": 27556
   });
   const EXPENSES_EDIT_PASSWORD = "bblonly";
