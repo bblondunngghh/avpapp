@@ -998,7 +998,15 @@ export default function AdminPanel() {
           </Button>
           <Button 
             variant="outline" 
-            onClick={() => navigate("/admin/csv-upload")}
+            onClick={() => {
+              const password = prompt("Please enter the password to access CSV Upload:");
+              if (password === "bbonly") {
+                navigate("/admin/csv-upload");
+              } else if (password !== null) {
+                // Only show error if user didn't cancel
+                alert("Incorrect password. Access denied.");
+              }
+            }}
             className="flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
           >
             <FileSpreadsheet className="h-4 w-4" />
