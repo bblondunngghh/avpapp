@@ -380,7 +380,17 @@ export default function CSVUploader() {
               {pendingUploads.length > 0 && (
                 <div className="border border-amber-200 bg-amber-50 rounded-md p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-amber-800">Pending Uploads</h3>
+                    <div className="flex items-center">
+                      <h3 className="font-medium text-amber-800">Pending Uploads</h3>
+                      <Button 
+                        size="sm" 
+                        variant="destructive"
+                        onClick={clearAllPendingUploads}
+                        className="text-xs ml-3 h-7 py-0"
+                      >
+                        Clear All
+                      </Button>
+                    </div>
                     <div className="flex items-center">
                       <span className="text-xs mr-2">Database connection:</span>
                       {connectionStatus === 'checking' && (
