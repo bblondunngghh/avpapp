@@ -82,8 +82,8 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh]">
-      <div className="flex w-full max-w-md justify-end mb-4">
+    <div className="flex flex-col items-center justify-center min-h-[80vh] auth-container">
+      <div className="flex w-full max-w-md justify-end mb-4 px-4">
         <Button 
           variant="outline"
           size="sm"
@@ -94,7 +94,7 @@ export default function AdminLogin() {
           Return to Home
         </Button>
       </div>
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
           <div className="mx-auto bg-blue-100 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
             <Lock className="h-7 w-7 text-blue-700" />

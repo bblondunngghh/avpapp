@@ -15,34 +15,35 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check authentication status
-    const checkAuth = () => {
-      const isAdmin = localStorage.getItem("admin_authenticated") === "true";
-      const authTime = Number(localStorage.getItem("admin_auth_time") || "0");
-      const currentTime = Date.now();
-      const fourHoursInMs = 4 * 60 * 60 * 1000;
-      
-      // If session expired (4 hours), clear auth
-      if (currentTime - authTime > fourHoursInMs) {
-        localStorage.removeItem("admin_authenticated");
-        localStorage.removeItem("admin_auth_time");
-        setIsAuthenticated(false);
-        return false;
+    // Async function to import auth utilities and check authentication
+    const checkAuthentication = async () => {
+      try {
+        // Import the auth utilities
+        const { isAdminAuthenticated } = await import("@/lib/admin-auth");
+        
+        // Check if admin is authenticated
+        const isAuth = isAdminAuthenticated();
+        
+        // Update state
+        setIsAuthenticated(isAuth);
+        setIsCheckingAuth(false);
+        
+        // Redirect to login if not authenticated
+        if (!isAuth) {
+          navigate("/admin-login");
+        }
+      } catch (error) {
+        console.error("Error checking admin authentication:", error);
+        setIsCheckingAuth(false);
+        navigate("/admin-login");
       }
-
-      setIsAuthenticated(isAdmin);
-      return isAdmin;
     };
-
-    const isAuth = checkAuth();
-    setIsCheckingAuth(false);
-
-    // Redirect to login if not authenticated
-    if (!isAuth) {
-      navigate("/admin-login");
-    }
+    
+    // Run the authentication check
+    checkAuthentication();
   }, [navigate]);
 
+  // Show loading indicator while checking authentication
   if (isCheckingAuth) {
     return (
       <div className="flex items-center justify-center min-h-screen">

@@ -129,40 +129,64 @@ export default function AdminPanel() {
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   
-  // Set up activity tracking to refresh admin session on user interaction
+  // Initial setup - check authentication and adapt UI for mobile
   useEffect(() => {
-    // Import admin auth utility
-    let refreshAdminSession: () => void;
-    
-    const setupActivityTracking = async () => {
-      const adminAuth = await import("@/lib/admin-auth");
-      refreshAdminSession = adminAuth.refreshAdminSession;
-      
-      // Add event listeners for user activity
-      const activityEvents = ["mousedown", "keydown", "touchstart", "scroll"];
-      
-      const handleUserActivity = () => {
-        refreshAdminSession();
-      };
-      
-      // Add event listeners
-      activityEvents.forEach(event => {
-        window.addEventListener(event, handleUserActivity);
-      });
-      
-      // Return cleanup function
-      return () => {
+    const initializeAdmin = async () => {
+      try {
+        // Check if we need to adapt UI for mobile
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+          // Apply mobile-specific styles if needed
+          document.body.classList.add('mobile-admin');
+        }
+        
+        // Import admin auth utility
+        const adminAuth = await import("@/lib/admin-auth");
+        
+        // Double check authentication status
+        if (!adminAuth.isAdminAuthenticated()) {
+          // If not authenticated, redirect to login
+          navigate("/admin-login");
+          return;
+        }
+        
+        // Set up session refresh
+        const refreshAdminSession = adminAuth.refreshAdminSession;
+        
+        // Add event listeners for user activity
+        const activityEvents = ["mousedown", "keydown", "touchstart", "scroll"];
+        
+        const handleUserActivity = () => {
+          refreshAdminSession();
+        };
+        
+        // Add event listeners
         activityEvents.forEach(event => {
-          window.removeEventListener(event, handleUserActivity);
+          window.addEventListener(event, handleUserActivity);
         });
-      };
+        
+        // Return cleanup function
+        return () => {
+          activityEvents.forEach(event => {
+            window.removeEventListener(event, handleUserActivity);
+          });
+          document.body.classList.remove('mobile-admin');
+        };
+      } catch (error) {
+        console.error("Error in admin panel initialization:", error);
+        // If there's an error, redirect to login as a fallback
+        navigate("/admin-login");
+        return () => {};
+      }
     };
     
-    const cleanup = setupActivityTracking();
+    const cleanup = initializeAdmin();
     return () => {
-      cleanup.then(cleanupFn => cleanupFn && cleanupFn());
+      if (cleanup instanceof Promise) {
+        cleanup.then(cleanupFn => cleanupFn && cleanupFn());
+      }
     };
-  }, []);
+  }, [navigate]);
   
   // Statistics state
   const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
