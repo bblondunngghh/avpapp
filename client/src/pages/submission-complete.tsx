@@ -3,10 +3,12 @@ import { useLocation, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Car, DollarSign, Users, AlertTriangle, Shield } from "lucide-react";
 import { LOCATIONS } from "@/lib/constants";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { ShiftReport } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import RestaurantIcon from "@/components/restaurant-icon";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface EmployeeWithCashPaid {
   name: string;
@@ -25,6 +27,7 @@ interface TaxSummary {
 export default function SubmissionComplete() {
   const [, navigate] = useLocation();
   const [, params] = useRoute<{ reportId?: string }>("/submission-complete/:reportId?");
+  const { toast } = useToast();
   const [taxSummary, setTaxSummary] = useState<TaxSummary>({
     totalTax: 0,
     moneyOwed: 0,
@@ -44,6 +47,7 @@ export default function SubmissionComplete() {
     moneyOwed: 0,
     totalEarnings: 0
   });
+  const [taxPaymentsSaved, setTaxPaymentsSaved] = useState(false);
 
   // Fetch the submitted report
   const { data: report, isLoading, error } = useQuery<ShiftReport>({
@@ -56,6 +60,30 @@ export default function SubmissionComplete() {
       });
     },
     enabled: !!params?.reportId
+  });
+  
+  // Mutation to save tax payment data
+  const { mutate: saveTaxPayment } = useMutation({
+    mutationFn: async (paymentData: any) => {
+      const res = await apiRequest('POST', '/api/tax-payments', paymentData);
+      return res.json();
+    },
+    onSuccess: () => {
+      setTaxPaymentsSaved(true);
+      toast({
+        title: "Tax payment recorded",
+        description: "The tax payment information has been saved successfully.",
+        variant: "success",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Failed to save tax payment:", error);
+      toast({
+        title: "Error saving tax payment",
+        description: error.message || "Failed to save tax payment data.",
+        variant: "destructive",
+      });
+    }
   });
 
   // Redirect to home if accessed directly without submission
@@ -171,7 +199,48 @@ export default function SubmissionComplete() {
     console.log("Tax Summary - Cash Paid:", totalCashPaid);
     console.log("Tax Summary - Expected Amount:", expectedAmount);
     
-  }, [report]);
+    // If we haven't already saved tax payments for this report, save them now
+    if (report && !taxPaymentsSaved) {
+      // Save tax payments for each employee
+      parsedEmployees.forEach(emp => {
+        const totalHours = parsedEmployees.reduce((sum, e) => sum + safeNumber(e.hours), 0);
+        const hoursProportion = totalHours > 0 ? safeNumber(emp.hours) / totalHours : 0;
+        
+        // Calculate this employee's portion of earnings and tax
+        const empTotalEarnings = totalEarnings * hoursProportion;
+        const taxAmount = empTotalEarnings * 0.22;
+        
+        // Default paidAmount to 0 - employee has not paid taxes yet
+        const paidAmount = "0";
+        
+        // Calculate remaining amount (tax minus any money already paid)
+        const remainingAmount = taxAmount.toFixed(2);
+        
+        // Create tax payment record for this employee
+        const paymentData = {
+          employeeId: getEmployeeIdByName(emp.name),
+          reportId: report.id,
+          locationId: report.locationId,
+          totalEarnings: empTotalEarnings.toFixed(2),
+          taxAmount: taxAmount.toFixed(2),
+          paidAmount,
+          remainingAmount
+        };
+        
+        // Save the tax payment record to the database
+        saveTaxPayment(paymentData);
+      });
+    }
+    
+  }, [report, taxPaymentsSaved, saveTaxPayment]);
+  
+  // Helper function to get employee ID by name
+  const getEmployeeIdByName = (name: string): number => {
+    // This is a placeholder. In a real app, you would look up the employee ID
+    // by their name in your employees database
+    // For now, we'll return 1 as a placeholder ID
+    return 1;
+  };
 
   const handleViewReports = () => {
     navigate("/");

@@ -308,16 +308,16 @@ export default function TaxPaymentsPage() {
                         </TableCell>
                         <TableCell>{payment.reportId}</TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(payment.totalEarnings)}
+                          {formatCurrency(Number(payment.totalEarnings))}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(payment.taxAmount)}
+                          {formatCurrency(Number(payment.taxAmount))}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(payment.paidAmount)}
+                          {formatCurrency(Number(payment.paidAmount))}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(payment.remainingAmount)}
+                          {formatCurrency(Number(payment.remainingAmount))}
                         </TableCell>
                         <TableCell>
                           {formatDate(payment.paymentDate || payment.createdAt)}
