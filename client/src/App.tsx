@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route, useLocation, RouteComponentProps } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,6 +11,7 @@ import Reports from "@/pages/reports";
 import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
+import AdminAuthGuard from "@/pages/admin-auth-guard";
 import CSVUploadPage from "@/pages/csv-upload-page";
 import IncidentReport from "@/pages/incident-report";
 import IncidentSubmitted from "@/pages/incident-submitted";
@@ -23,7 +24,7 @@ import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 
 function Router() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   
   // Determine if we're on an admin or employee page to show/hide normal navigation
   const isAdminPage = location.startsWith('/admin');
@@ -52,7 +53,16 @@ function Router() {
           <Route path="/admin" component={AdminPanel} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/admin/tax-payments" component={AccountantPage} />
-          <Route path="/reports" component={Reports} />
+          <Route path="/reports">
+            {() => {
+              const isAdmin = localStorage.getItem("admin_authenticated") === "true";
+              if (!isAdmin) {
+                window.location.href = "/admin-login";
+                return null;
+              }
+              return <Reports />;
+            }}
+          </Route>
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
           <Route component={NotFound} />

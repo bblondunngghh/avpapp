@@ -321,10 +321,9 @@ input[type="date"].paperform-input {
     /* Ensure full height on iOS */
     min-height: -webkit-fill-available;
     
-    /* Modern valet parking themed background - sleek black */
-    background-color: #111111; /* Fallback - deep black */
-    /* Simpler gradient background instead of SVG for better compatibility */
-    background-image: linear-gradient(135deg, #111111, #1a1a1a);
+    /* Modern valet parking themed background */
+    background-color: #1a5f7a; /* Fallback - lighter shade */
+    background-image: url('@assets/valet-bg.svg');
     background-size: cover;
     background-position: center center;
     background-attachment: fixed;
