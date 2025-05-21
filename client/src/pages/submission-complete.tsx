@@ -406,8 +406,7 @@ export default function SubmissionComplete() {
                         <span>{formatCurrency(
                           earnings.creditTips + 
                           earnings.cashTips + 
-                          earnings.receiptTips +
-                          earnings.moneyOwed
+                          earnings.receiptTips
                         )}</span>
                       </p>
                     </div>
