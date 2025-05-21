@@ -34,13 +34,15 @@ export default function AdminLogin() {
   });
 
   // Handle form submission
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     
-    // Simple password check
-    if (data.password === ADMIN_PASSWORD) {
-      // Import admin auth utility
-      import("@/lib/admin-auth").then(({ loginAdmin }) => {
+    try {
+      // Simple password check
+      if (data.password === ADMIN_PASSWORD) {
+        // Import admin auth utility
+        const { loginAdmin } = await import("@/lib/admin-auth");
+        
         // Set admin session
         loginAdmin();
         
@@ -51,22 +53,32 @@ export default function AdminLogin() {
           variant: "default",
         });
         
-        // Redirect to admin dashboard
-        navigate("/admin");
-      });
-    } else {
-      // Show error toast
+        // Short delay to ensure localStorage is set before navigation
+        setTimeout(() => {
+          // Redirect to admin dashboard
+          navigate("/admin");
+        }, 100);
+      } else {
+        // Show error toast
+        toast({
+          title: "Authentication failed",
+          description: "The password you entered is incorrect",
+          variant: "destructive",
+        });
+        
+        // Reset form
+        form.reset();
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       toast({
-        title: "Authentication failed",
-        description: "The password you entered is incorrect",
+        title: "Authentication error",
+        description: "There was a problem processing your login. Please try again.",
         variant: "destructive",
       });
-      
-      // Reset form
-      form.reset();
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
