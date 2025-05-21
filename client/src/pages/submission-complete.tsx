@@ -300,7 +300,7 @@ export default function SubmissionComplete() {
                         <th className="text-right p-2">Hours</th>
                         <th className="text-right p-2">Total Earnings</th>
                         <th className="text-right p-2">Tax (22%)</th>
-                        <th className="text-right p-2">Cash Paid</th>
+                        <th className="text-right p-2">Advance</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -319,7 +319,10 @@ export default function SubmissionComplete() {
                             <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
                             <td className="text-right p-2">{formatCurrency(taxAmount)}</td>
                             <td className="text-right p-2">
-                              {emp.cashPaid ? formatCurrency(emp.cashPaid) : '-'}
+                              {formatCurrency((earnings.creditCommission + earnings.cashCommission + 
+                                earnings.receiptCommission + earnings.creditTips + 
+                                earnings.cashTips + earnings.receiptTips - 
+                                earnings.moneyOwed) * hoursProportion)}
                             </td>
                           </tr>
                         );
