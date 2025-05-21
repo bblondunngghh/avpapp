@@ -213,6 +213,10 @@ export default function AdminPanel() {
   const [isEditingExpenses, setIsEditingExpenses] = useState<boolean>(false);
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
   const [expensesPassword, setExpensesPassword] = useState<string>("");
+  const [manualRevenue, setManualRevenue] = useState<Record<string, number>>({
+    // Pre-set February 2025 revenue
+    "2025-02": 27556
+  });
   const EXPENSES_EDIT_PASSWORD = "bblonly";
   
   // Load saved expenses from localStorage on initial render
