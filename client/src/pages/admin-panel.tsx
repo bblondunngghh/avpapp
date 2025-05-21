@@ -208,6 +208,20 @@ export default function AdminPanel() {
   // Partner pay state
   const [monthlyRevenue, setMonthlyRevenue] = useState<number>(0);
   const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
+  const [currentMonth, setCurrentMonth] = useState<string>("");
+  const [savedExpenses, setSavedExpenses] = useState<Record<string, number>>({});
+  
+  // Load saved expenses from localStorage on initial render
+  useEffect(() => {
+    try {
+      const savedExpensesFromStorage = localStorage.getItem('savedMonthlyExpenses');
+      if (savedExpensesFromStorage) {
+        setSavedExpenses(JSON.parse(savedExpensesFromStorage));
+      }
+    } catch (error) {
+      console.error("Error loading saved expenses:", error);
+    }
+  }, []);
   
   // Date filter state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -1800,8 +1814,13 @@ export default function AdminPanel() {
                               id="month-selector"
                               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                               onChange={(e) => {
+                                const selectedMonth = e.target.value;
+                                if (!selectedMonth) return;
+                                
+                                setCurrentMonth(selectedMonth);
+                                
                                 // Get monthly data for the selected month
-                                const [year, month] = e.target.value.split('-');
+                                const [year, month] = selectedMonth.split('-');
                                 
                                 // Calculate total sales for the selected month across all locations
                                 let totalMonthlyIncome = 0;
@@ -1842,6 +1861,13 @@ export default function AdminPanel() {
                                 
                                 // Update state with the monthly revenue
                                 setMonthlyRevenue(totalMonthlyIncome);
+                                
+                                // Set saved expenses for this month if they exist
+                                if (savedExpenses[selectedMonth]) {
+                                  setMonthlyExpenses(savedExpenses[selectedMonth]);
+                                } else {
+                                  setMonthlyExpenses(0);
+                                }
                               }}
                             >
                               <option value="">Select a month</option>
@@ -1886,6 +1912,62 @@ export default function AdminPanel() {
                                   onChange={(e) => setMonthlyExpenses(parseFloat(e.target.value) || 0)}
                                 />
                               </div>
+                              
+                              {/* Save expenses button */}
+                              {currentMonth && (
+                                <div className="mt-2 flex gap-2">
+                                  <Button 
+                                    size="sm" 
+                                    className="bg-green-600 hover:bg-green-700"
+                                    onClick={() => {
+                                      if (!currentMonth) return;
+                                      
+                                      // Save the expenses for this month in state
+                                      setSavedExpenses(prev => ({
+                                        ...prev,
+                                        [currentMonth]: monthlyExpenses
+                                      }));
+                                      
+                                      // Also persist to localStorage for persistence across sessions
+                                      try {
+                                        // Get existing saved expenses
+                                        const existingSavedExpenses = localStorage.getItem('savedMonthlyExpenses');
+                                        const parsedExpenses = existingSavedExpenses ? 
+                                          JSON.parse(existingSavedExpenses) : {};
+                                        
+                                        // Update with new value
+                                        parsedExpenses[currentMonth] = monthlyExpenses;
+                                        
+                                        // Save back to localStorage
+                                        localStorage.setItem('savedMonthlyExpenses', 
+                                          JSON.stringify(parsedExpenses));
+                                          
+                                        toast({
+                                          title: "Expenses saved",
+                                          description: `Monthly expenses for ${new Date(parseInt(currentMonth.split('-')[0]), 
+                                            parseInt(currentMonth.split('-')[1])-1).toLocaleString('default', 
+                                            { month: 'long', year: 'numeric' })} saved successfully.`,
+                                        });
+                                      } catch (error) {
+                                        console.error("Error saving expenses:", error);
+                                        toast({
+                                          title: "Error saving expenses",
+                                          description: "There was a problem saving your expenses data.",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    Save Expenses
+                                  </Button>
+                                  
+                                  {savedExpenses[currentMonth] !== undefined && (
+                                    <div className="text-sm self-center text-green-600 ml-2">
+                                      ✓ Expenses saved
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                             
                             <div>
