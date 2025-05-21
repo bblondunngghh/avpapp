@@ -246,24 +246,51 @@ export default function SubmissionComplete() {
                       <tr className="bg-gray-50">
                         <th className="text-left p-2">Name</th>
                         <th className="text-right p-2">Hours</th>
+                        <th className="text-right p-2">Earnings</th>
+                        <th className="text-right p-2">Tax (22%)</th>
                         <th className="text-right p-2">Cash Paid</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {employees.map((emp, index) => (
-                        <tr key={index} className="border-t border-gray-100">
-                          <td className="p-2">{emp.name}</td>
-                          <td className="text-right p-2">{safeNumber(emp.hours)}</td>
-                          <td className="text-right p-2">
-                            {emp.cashPaid ? formatCurrency(emp.cashPaid) : '-'}
-                          </td>
-                        </tr>
-                      ))}
+                      {(() => {
+                        const totalHours = employees.reduce((sum, emp) => sum + safeNumber(emp.hours), 0);
+                        const totalCars = safeNumber(report.totalCars);
+                        
+                        // Calculate commission rate based on location
+                        let commissionRate = 4; // Default (Capital Grille)
+                        if (report.locationId === 2) commissionRate = 9; // Bob's Steak
+                        else if (report.locationId === 3) commissionRate = 7; // Truluck's
+                        else if (report.locationId === 4) commissionRate = 6; // BOA
+                        
+                        // Total earnings from all cars
+                        const totalEarnings = totalCars * commissionRate;
+                        
+                        return employees.map((emp, index) => {
+                          // Calculate earnings proportional to hours worked
+                          const hoursProportion = totalHours > 0 ? safeNumber(emp.hours) / totalHours : 0;
+                          const earnings = totalEarnings * hoursProportion;
+                          const taxAmount = earnings * 0.22;
+                          
+                          return (
+                            <tr key={index} className="border-t border-gray-100">
+                              <td className="p-2">{emp.name}</td>
+                              <td className="text-right p-2">{safeNumber(emp.hours)}</td>
+                              <td className="text-right p-2">{formatCurrency(earnings)}</td>
+                              <td className="text-right p-2">{formatCurrency(taxAmount)}</td>
+                              <td className="text-right p-2">
+                                {emp.cashPaid ? formatCurrency(emp.cashPaid) : '-'}
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })()}
                     </tbody>
                     <tfoot>
                       <tr className="border-t border-gray-200 font-medium">
                         <td className="p-2">Total</td>
                         <td className="text-right p-2">{safeNumber(report.totalJobHours)}</td>
+                        <td className="text-right p-2">{formatCurrency(taxSummary.moneyOwed)}</td>
+                        <td className="text-right p-2">{formatCurrency(taxSummary.totalTax)}</td>
                         <td className="text-right p-2">{formatCurrency(taxSummary.cashPaid)}</td>
                       </tr>
                     </tfoot>
