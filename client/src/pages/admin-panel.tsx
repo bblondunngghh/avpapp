@@ -205,6 +205,10 @@ export default function AdminPanel() {
     locationId: number;
   }[]>([]);
   
+  // Partner pay state
+  const [monthlyRevenue, setMonthlyRevenue] = useState<number>(0);
+  const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
+  
   // Date filter state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
@@ -1780,6 +1784,149 @@ export default function AdminPanel() {
                     })}
                   </div>
                   
+                  {/* Partner Pay Calculator */}
+                  <div className="mb-8 border p-4 rounded-lg bg-white shadow">
+                    <h3 className="text-lg font-medium mb-4">Partner Pay Distribution Calculator</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-md font-medium mb-3 text-gray-700">Monthly Revenue</h4>
+                        
+                        <div className="space-y-4">
+                          {/* Month Selector */}
+                          <div className="grid grid-cols-1 gap-2">
+                            <Label htmlFor="month-selector">Select Month</Label>
+                            <select 
+                              id="month-selector"
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                              onChange={(e) => {
+                                // Get monthly data for the selected month
+                                const [year, month] = e.target.value.split('-');
+                                
+                                // Calculate total sales for the selected month across all locations
+                                let totalMonthlyIncome = 0;
+                                
+                                // Filter reports by selected month
+                                const monthlyReports = reports.filter(report => {
+                                  const reportDate = new Date(report.date);
+                                  return reportDate.getFullYear().toString() === year && 
+                                         (reportDate.getMonth() + 1).toString().padStart(2, '0') === month;
+                                });
+                                
+                                // Calculate total income from company turn-ins for the month
+                                monthlyReports.forEach(report => {
+                                  totalMonthlyIncome += report.totalTurnIn;
+                                });
+                                
+                                // Update state with the monthly revenue
+                                setMonthlyRevenue(totalMonthlyIncome);
+                              }}
+                            >
+                              <option value="">Select a month</option>
+                              {Array.from({ length: 12 }).map((_, i) => {
+                                const currentYear = new Date().getFullYear();
+                                const month = i + 1;
+                                const monthStr = month.toString().padStart(2, '0');
+                                
+                                // Create options for current year and previous year
+                                return [
+                                  <option key={`${currentYear}-${monthStr}`} value={`${currentYear}-${monthStr}`}>
+                                    {new Date(currentYear, i).toLocaleString('default', { month: 'long' })} {currentYear}
+                                  </option>,
+                                  <option key={`${currentYear-1}-${monthStr}`} value={`${currentYear-1}-${monthStr}`}>
+                                    {new Date(currentYear-1, i).toLocaleString('default', { month: 'long' })} {currentYear-1}
+                                  </option>
+                                ];
+                              }).flat()}
+                            </select>
+                          </div>
+                          
+                          {/* Monthly Revenue and Expenses */}
+                          <div className="grid grid-cols-1 gap-4">
+                            <div>
+                              <Label htmlFor="monthly-revenue">Total Monthly Revenue</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-blue-50 px-3 font-medium">
+                                ${monthlyRevenue.toFixed(2)}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="monthly-expenses">Monthly Expenses</Label>
+                              <div className="flex h-10 w-full rounded-md border border-input">
+                                <span className="flex items-center px-3 text-gray-500 border-r">$</span>
+                                <input
+                                  id="monthly-expenses"
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  className="w-full h-full px-3 py-2 rounded-r-md focus:outline-none"
+                                  value={monthlyExpenses}
+                                  onChange={(e) => setMonthlyExpenses(parseFloat(e.target.value) || 0)}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="distributable-income">Distributable Income</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-green-50 px-3 font-medium text-green-800">
+                                ${(monthlyRevenue - monthlyExpenses).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-md font-medium mb-3 text-gray-700">Partner Distribution</h4>
+                        
+                        <div className="space-y-4">
+                          {/* Fixed Partner Shares */}
+                          <div className="border border-blue-100 rounded-md p-3 bg-blue-50">
+                            <p className="mb-2 text-sm">Fixed Partner Shares:</p>
+                            <ul className="space-y-1">
+                              <li className="flex justify-between items-center">
+                                <span>Brandon:</span> 
+                                <span className="font-medium">50%</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Ryan:</span> 
+                                <span className="font-medium">40%</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Dave:</span> 
+                                <span className="font-medium">10%</span>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                          {/* Calculated Distributions */}
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-blue-800">Brandon (50%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-blue-300 bg-blue-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.5).toFixed(2)}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label className="text-indigo-800">Ryan (40%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-indigo-300 bg-indigo-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.4).toFixed(2)}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label className="text-teal-800">Dave (10%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-teal-300 bg-teal-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.1).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
                   {/* Detailed Performance Table */}
                   <div className="overflow-x-auto">
                     <Table>
