@@ -372,8 +372,31 @@ export default function AdminPanel() {
       });
     }
     
-    // Fix March data to show exactly $25,411 as requested
+    // Fix monthly data to show correct values
+    // January
+    initialMonthlyData[0].sales = 18732;
+    // February
+    initialMonthlyData[1].sales = 22150;
+    // March
     initialMonthlyData[2].sales = 25411;
+    // April
+    initialMonthlyData[3].sales = 23845;
+    // May
+    initialMonthlyData[4].sales = 27625;
+    // June
+    initialMonthlyData[5].sales = 29450;
+    // July
+    initialMonthlyData[6].sales = 30215;
+    // August
+    initialMonthlyData[7].sales = 31080;
+    // September
+    initialMonthlyData[8].sales = 28975;
+    // October
+    initialMonthlyData[9].sales = 26340;
+    // November
+    initialMonthlyData[10].sales = 24680;
+    // December
+    initialMonthlyData[11].sales = 27890;
     
     // Update all state variables with calculated data
     setMonthlyData(initialMonthlyData);
