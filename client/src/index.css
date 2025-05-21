@@ -315,19 +315,11 @@ input[type="date"].paperform-input {
   }
 
   body {
-    @apply font-sans antialiased text-foreground;
+    @apply font-sans antialiased bg-background text-foreground;
     /* Prevent overscroll behavior */
     overscroll-behavior: none;
     /* Ensure full height on iOS */
     min-height: -webkit-fill-available;
-    
-    /* Modern valet parking themed background */
-    background-color: #1a5f7a; /* Fallback - lighter shade */
-    background-image: url('@assets/valet-bg.svg');
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
   }
   
   /* iPad specific styles */

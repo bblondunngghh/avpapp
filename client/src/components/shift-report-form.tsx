@@ -6,7 +6,6 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { parseEmployeesData } from "@/lib/form-helpers";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 // Import types from schema
 import { ShiftReport, EmployeeWithCashPaid } from "@shared/schema";
@@ -146,27 +145,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         setSelectedLocationId(data.locationId);
       }
       
-      // Handle employees data properly to avoid form.watch() issues
-      let parsedEmployees = [];
-      if (typeof data.employees === 'string' && data.employees) {
-        try {
-          parsedEmployees = JSON.parse(data.employees);
-          if (!Array.isArray(parsedEmployees)) parsedEmployees = [];
-        } catch (e) {
-          console.warn("Failed to parse employees data:", e);
-        }
-      } else if (Array.isArray(data.employees)) {
-        parsedEmployees = data.employees;
-      }
-      
-      // Create a processed version of the data with properly handled employees
-      const processedData = {
-        ...data,
-        employees: parsedEmployees
-      };
-      
-      // Set all form values
-      Object.entries(processedData).forEach(([key, value]) => {
+      // Set all other form values
+      Object.entries(data).forEach(([key, value]) => {
         // @ts-ignore
         if (key in form.getValues()) {
           // @ts-ignore
@@ -959,7 +939,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const currentEmployees = parseEmployeesData(form.watch('employees'));
+                            const currentEmployees = form.watch('employees') || [];
                             form.setValue('employees', [...currentEmployees, { name: '', hours: 0 }]);
                           }}
                           className="text-xs h-8"
@@ -969,13 +949,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       </div>
                       
                       <div className="space-y-3">
-                        {(() => {
-                          const employees = parseEmployeesData(form.watch('employees'));
-                          
-                          return employees.map((employee, index) => {
-                            const totalHours = Number(form.watch("totalJobHours") || 0);
-                            const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
-                            const hourPercentage = (hoursPercent * 100).toFixed(1);
+                        {(form.watch('employees') || []).map((employee, index) => {
+                          const totalHours = Number(form.watch("totalJobHours") || 0);
+                          const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
+                          const hourPercentage = (hoursPercent * 100).toFixed(1);
                           
                           return (
                             <div key={index} className="flex items-center gap-2 p-2 rounded bg-gray-50 border border-gray-100">
@@ -983,7 +960,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 <Select 
                                   value={employee.name || ''}
                                   onValueChange={(value) => {
-                                    const newEmployees = parseEmployeesData(form.watch('employees'));
+                                    const newEmployees = [...(form.watch('employees') || [])];
                                     newEmployees[index] = { 
                                       ...newEmployees[index], 
                                       name: value 
@@ -1025,7 +1002,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   className="h-9 text-center text-sm"
                                   value={employee.hours === 0 ? '' : employee.hours}
                                   onChange={(e) => {
-                                    const newEmployees = parseEmployeesData(form.watch('employees'));
+                                    const newEmployees = [...(form.watch('employees') || [])];
                                     const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                                     newEmployees[index] = { 
                                       ...newEmployees[index], 
@@ -1053,7 +1030,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                 size="icon"
                                 className="h-8 w-8 text-gray-400 hover:text-red-500"
                                 onClick={() => {
-                                  const newEmployees = parseEmployeesData(form.watch('employees'));
+                                  const newEmployees = [...(form.watch('employees') || [])];
                                   newEmployees.splice(index, 1);
                                   form.setValue('employees', newEmployees);
                                   
@@ -1066,20 +1043,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               </Button>
                             </div>
                           );
-                        });
-                        })()}
+                        })}
                         
-                        {(() => {
-                          const employees = parseEmployeesData(form.watch('employees'));
-                          if (employees.length === 0) {
-                            return (
-                              <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
-                                Add employees to distribute hours
-                              </div>
-                            );
-                          }
-                          return null;
-                        })()}
+                        {(form.watch('employees') || []).length === 0 && (
+                          <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
+                            Add employees to distribute hours
+                          </div>
+                        )}
                       </div>
                     </div>
                     

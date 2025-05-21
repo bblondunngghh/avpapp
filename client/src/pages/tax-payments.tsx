@@ -252,11 +252,6 @@ export default function AccountantPage() {
       'Employee', 
       'Report ID', 
       'Location ID', 
-      'Commission', 
-      'Tips',
-      'Money Owed',
-      'Advance',
-      'Tax Contribution',
       'Total Earnings', 
       'Tax Amount', 
       'Paid Amount', 
@@ -264,29 +259,16 @@ export default function AccountantPage() {
       'Date'
     ];
     
-    const rows = filteredPayments.map(p => {
-      const commission = calculateCommission(p);
-      const tips = calculateTips(p);
-      const moneyOwed = calculateMoneyOwed(p);
-      const advance = calculateAdvance(p);
-      const taxContribution = Number(p.paidAmount) - moneyOwed;
-      
-      return [
-        getEmployeeName(p.employeeId),
-        p.reportId,
-        p.locationId,
-        commission.toFixed(2),
-        tips.toFixed(2),
-        moneyOwed.toFixed(2),
-        advance.toFixed(2),
-        taxContribution.toFixed(2),
-        Number(p.totalEarnings).toFixed(2),
-        Number(p.taxAmount).toFixed(2),
-        Number(p.paidAmount).toFixed(2),
-        Number(p.remainingAmount).toFixed(2),
-        formatDate(p.paymentDate || p.createdAt)
-      ];
-    });
+    const rows = filteredPayments.map(p => [
+      getEmployeeName(p.employeeId),
+      p.reportId,
+      p.locationId,
+      Number(p.totalEarnings).toFixed(2),
+      Number(p.taxAmount).toFixed(2),
+      Number(p.paidAmount).toFixed(2),
+      Number(p.remainingAmount).toFixed(2),
+      formatDate(p.paymentDate || p.createdAt)
+    ]);
     
     const csvContent = [
       headers.join(','),

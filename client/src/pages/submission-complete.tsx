@@ -150,30 +150,13 @@ export default function SubmissionComplete() {
     const cashCommission = calculatedCashCars * commissionRate;
     const receiptCommission = totalReceipts * commissionRate;
     
-    // Calculate tips amounts to match the expected totals for different locations
-    let creditTipRate = 0;
-    let cashTipRate = 0;
-    let receiptTipRate = 3; // Keep receipt tips at $3 per receipt
-    
-    // Set tip rates based on location
-    if (report.locationId === 1) { // Capital Grille
-      creditTipRate = 6.45; // Approximately $58 for 9 transactions
-      cashTipRate = 2; // Approximately $30 for 15 cash cars
-    } else if (report.locationId === 2) { // Bob's
-      creditTipRate = 5;
-      cashTipRate = 3;
-    } else if (report.locationId === 3) { // Truluck's
-      creditTipRate = 5;
-      cashTipRate = 3;
-    } else if (report.locationId === 4) { // BOA
-      creditTipRate = 4;
-      cashTipRate = 2;
-    }
-    
-    // Calculate tips based on rates and transaction counts
-    const creditTips = creditTransactions * creditTipRate;
-    const cashTips = calculatedCashCars * cashTipRate;
-    const receiptTips = totalReceipts * receiptTipRate;
+    // Fixed tips calculations (using fixed amounts per transaction type)
+    // Credit tips - $10 flat per location
+    const creditTips = 10;
+    // Cash tips - $10 flat per location
+    const cashTips = 10;
+    // Receipt tips - $3 per receipt
+    const receiptTips = totalReceipts * 3;
     
     // Calculate money owed
     const receiptSales = totalReceipts * 18; // $18 per receipt
