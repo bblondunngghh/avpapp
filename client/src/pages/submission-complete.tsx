@@ -72,8 +72,7 @@ export default function SubmissionComplete() {
       setTaxPaymentsSaved(true);
       toast({
         title: "Tax payment recorded",
-        description: "The tax payment information has been saved successfully.",
-        variant: "success",
+        description: "The tax payment information has been saved successfully."
       });
     },
     onError: (error: any) => {
