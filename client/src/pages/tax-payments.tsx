@@ -305,7 +305,7 @@ export default function AccountantPage() {
           <h1 className="text-3xl font-bold text-gray-900">Accountant Section</h1>
           <p className="text-gray-600">Track employee commissions, tips, advances, and tax contributions</p>
         </div>
-        <Button variant="outline" onClick={() => navigate("/admin-panel")}>
+        <Button variant="outline" onClick={() => navigate("/admin")}>
           Back to Admin Panel
         </Button>
       </div>
