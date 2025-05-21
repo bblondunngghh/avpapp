@@ -75,8 +75,8 @@ export default function AdminLogin() {
         setTimeout(() => {
           // Redirect based on device type
           if (isIPad) {
-            console.log("Redirecting to mobile admin panel for iPad");
-            navigate("/mobile-admin");
+            console.log("Redirecting to simplified admin panel for iPad");
+            navigate("/simple-admin");
           } else {
             console.log("Redirecting to standard admin panel");
             navigate("/admin");

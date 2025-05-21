@@ -13,6 +13,7 @@ import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
 import MobileAdminPanel from "@/pages/mobile-admin-panel"; // Mobile-friendly version
+import SimpleMobileAdmin from "@/pages/simple-mobile-admin"; // Super-simplified mobile admin for iOS
 import AdminAuthGuard from "@/pages/admin-auth-guard";
 import CSVUploadPage from "@/pages/csv-upload-page";
 import IncidentReport from "@/pages/incident-report";
@@ -89,6 +90,7 @@ function Router() {
           <Route path="/regulations" component={Regulations} />
           <Route path="/admin-login" component={AdminLogin} />
           <Route path="/mobile-admin" component={MobileAdminPanel} />
+          <Route path="/simple-admin" component={SimpleMobileAdmin} />
           <Route path="/admin-redirect" component={() => import("@/pages/mobile-redirect").then(module => <module.default />)} />
           <Route path="/admin" component={AdminPanel} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
