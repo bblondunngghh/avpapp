@@ -2294,6 +2294,40 @@ export default function AdminPanel() {
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Partner Payment Distribution History Table */}
+                    <div className="mt-8 border border-gray-200 rounded-lg p-4 bg-white">
+                      <h3 className="text-lg font-semibold mb-4">Partner Payment Distribution History</h3>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Month</TableHead>
+                            <TableHead className="text-right">Brandon (50%)</TableHead>
+                            <TableHead className="text-right">Ryan (40%)</TableHead>
+                            <TableHead className="text-right">Dave (10%)</TableHead>
+                            <TableHead className="text-right">Total</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {/* January 2025 Entry */}
+                          <TableRow>
+                            <TableCell className="font-medium">Jan 2025</TableCell>
+                            <TableCell className="text-right">${((17901 - 5000) * 0.5).toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${((17901 - 5000) * 0.4).toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${((17901 - 5000) * 0.1).toFixed(2)}</TableCell>
+                            <TableCell className="text-right font-semibold">${(17901 - 5000).toFixed(2)}</TableCell>
+                          </TableRow>
+                          {/* February 2025 Entry */}
+                          <TableRow>
+                            <TableCell className="font-medium">Feb 2025</TableCell>
+                            <TableCell className="text-right">${((27556 - 6500) * 0.5).toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${((27556 - 6500) * 0.4).toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${((27556 - 6500) * 0.1).toFixed(2)}</TableCell>
+                            <TableCell className="text-right font-semibold">${(27556 - 6500).toFixed(2)}</TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
                 
                   {/* Detailed Performance Table */}
