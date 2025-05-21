@@ -456,6 +456,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.post('/upload/employee-payroll', processEmployeePayrollCSV);
   apiRouter.post('/upload/shift-reports', processShiftReportsCSV);
   apiRouter.post('/upload/ticket-distributions', processTicketDistributionsCSV);
+  
+  // Special route to remove duplicate BOA Steakhouse reports
+  apiRouter.get('/remove-boa-duplicates', async (req, res) => {
+    try {
+      const locationId = 4; // BOA Steakhouse
+      
+      // Get all reports for BOA
+      const reports = await storage.getShiftReportsByLocation(locationId);
+      
+      // Sort reports by ID (newest first)
+      reports.sort((a, b) => Number(b.id) - Number(a.id));
+      
+      console.log(`Found ${reports.length} BOA Steakhouse reports`);
+      
+      // Track seen dates to find duplicates
+      const seenDates = new Map();
+      const duplicatesToRemove = [];
+      
+      // Identify duplicates - keep the first occurrence (lower ID), remove newer ones
+      for (const report of reports) {
+        const dateShiftKey = `${report.date}_${report.shift}`;
+        
+        if (seenDates.has(dateShiftKey)) {
+          // This is a duplicate, mark for removal
+          duplicatesToRemove.push(report);
+        } else {
+          // First time seeing this date+shift combination
+          seenDates.set(dateShiftKey, report);
+        }
+      }
+      
+      console.log(`Found ${duplicatesToRemove.length} duplicate reports to remove`);
+      
+      // Remove duplicates
+      let deletedCount = 0;
+      const deletedReports = [];
+      
+      for (const report of duplicatesToRemove) {
+        await storage.deleteShiftReport(report.id);
+        deletedCount++;
+        deletedReports.push({
+          id: report.id,
+          date: report.date,
+          shift: report.shift
+        });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: `Removed ${deletedCount} duplicate BOA Steakhouse reports`,
+        deletedReports
+      });
+    } catch (error) {
+      console.error('Error removing duplicates:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to remove duplicate reports',
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
 
   // Register API routes
   app.use('/api', apiRouter);
