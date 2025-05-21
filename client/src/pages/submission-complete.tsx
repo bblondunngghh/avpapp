@@ -62,6 +62,12 @@ export default function SubmissionComplete() {
     enabled: !!params?.reportId
   });
   
+  // Fetch all employees to map employee keys to full names
+  const { data: allEmployees = [] } = useQuery<Employee[]>({
+    queryKey: ['/api/employees'],
+    enabled: !!params?.reportId
+  });
+  
   // Mutation to save tax payment data
   const { mutate: saveTaxPayment } = useMutation({
     mutationFn: async (paymentData: any) => {
@@ -409,7 +415,22 @@ export default function SubmissionComplete() {
                         
                         return (
                           <tr key={`employee-${index}`} className="border-t border-gray-100">
-                            <td className="p-2">{emp.name}</td>
+                            <td className="p-2">
+                              {/* Use the employee's full name from the database if available */}
+                              {(() => {
+                                // Check if this employee name is a key (like "8366")
+                                const isEmployeeKey = !isNaN(Number(emp.name)) || 
+                                  (typeof emp.name === 'string' && emp.name.length <= 5 && !emp.name.includes(' '));
+                                
+                                if (isEmployeeKey) {
+                                  // Try to find the employee by key
+                                  const matchingEmployee = allEmployees.find(e => e.key === emp.name);
+                                  return matchingEmployee ? matchingEmployee.fullName : emp.name;
+                                }
+                                
+                                return emp.name;
+                              })()}
+                            </td>
                             <td className="text-right p-2">{safeNumber(emp.hours)}</td>
                             <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
                             <td className="text-right p-2">{formatCurrency(taxAmount)}</td>
@@ -606,7 +627,22 @@ export default function SubmissionComplete() {
                         
                         return (
                           <div key={`tax-${index}`} className="flex justify-between text-xs">
-                            <span className="text-gray-700">{emp.name}:</span>
+                            <span className="text-gray-700">
+                              {/* Use the employee's full name from the database if available */}
+                              {(() => {
+                                // Check if this employee name is a key (like "8366")
+                                const isEmployeeKey = !isNaN(Number(emp.name)) || 
+                                  (typeof emp.name === 'string' && emp.name.length <= 5 && !emp.name.includes(' '));
+                                
+                                if (isEmployeeKey) {
+                                  // Try to find the employee by key
+                                  const matchingEmployee = allEmployees.find(e => e.key === emp.name);
+                                  return matchingEmployee ? matchingEmployee.fullName : emp.name;
+                                }
+                                
+                                return emp.name;
+                              })()}:
+                            </span>
                             <span className="font-medium">
                               {empNeeded > 0 
                                 ? `Needs to pay ${formatCurrency(empNeeded)}`
