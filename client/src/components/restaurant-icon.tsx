@@ -1,10 +1,10 @@
-import { FaUtensils } from "react-icons/fa";
 import { 
-  GiCow, 
-  GiShrimp, 
-  GiSteakKnife,
-  GiRoastChicken 
-} from "react-icons/gi";
+  FaUtensils,
+  FaHamburger,
+  FaFish,
+  FaWineGlassAlt,
+  FaDrumstickBite
+} from "react-icons/fa";
 
 interface RestaurantIconProps {
   locationId: number;
@@ -19,19 +19,19 @@ export default function RestaurantIcon({ locationId, size = 16, className = "" }
   let textColorClass = "text-blue-600";
   
   if (locationId === 1) { // Capital Grille
-    Icon = GiSteakKnife;
+    Icon = FaWineGlassAlt;
     bgColorClass = "bg-blue-100";
     textColorClass = "text-blue-700";
   } else if (locationId === 2) { // Bob's
-    Icon = GiCow;
+    Icon = FaHamburger;
     bgColorClass = "bg-red-100";
     textColorClass = "text-red-700";
   } else if (locationId === 3) { // Truluck's
-    Icon = GiShrimp;
+    Icon = FaFish;
     bgColorClass = "bg-teal-100";
     textColorClass = "text-teal-700";
   } else if (locationId === 4) { // BOA
-    Icon = GiRoastChicken;
+    Icon = FaDrumstickBite;
     bgColorClass = "bg-amber-100";
     textColorClass = "text-amber-700";
   }
