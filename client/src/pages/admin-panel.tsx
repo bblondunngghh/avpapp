@@ -181,8 +181,13 @@ export default function AdminPanel() {
     locationId: number;
   }[]>([]);
   
-  // Date filter state
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  // Date filter state - initialize start date to first day of current month
+  const getCurrentMonthStartDate = (): Date => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  };
+  
+  const [startDate, setStartDate] = useState<Date | undefined>(getCurrentMonthStartDate());
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   
   // Employee management state is defined below
