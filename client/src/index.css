@@ -323,7 +323,8 @@ input[type="date"].paperform-input {
     
     /* Modern valet parking themed background - sleek black */
     background-color: #111111; /* Fallback - deep black */
-    background-image: url('@assets/valet-bg.svg');
+    /* Simpler gradient background instead of SVG for better compatibility */
+    background-image: linear-gradient(135deg, #111111, #1a1a1a);
     background-size: cover;
     background-position: center center;
     background-attachment: fixed;
