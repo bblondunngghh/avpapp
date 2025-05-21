@@ -1034,14 +1034,6 @@ export default function AdminPanel() {
           </Button>
           <Button 
             variant="outline" 
-            onClick={() => navigate("/admin/tax-payments")}
-            className="flex items-center gap-1 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-          >
-            <DollarSign className="h-4 w-4" />
-            Tax Payments
-          </Button>
-          <Button 
-            variant="outline" 
             onClick={() => navigate("/")}
             className="flex items-center gap-1"
           >
