@@ -981,6 +981,14 @@ export default function AdminPanel() {
         <h1 className="text-3xl text-indigo-700">Admin Panel</h1>
         <div className="flex gap-2">
           <Button 
+            variant="default" 
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => navigate("/admin/tax-payments")}
+          >
+            <DollarSign className="mr-2 h-4 w-4" />
+            Accountant Section
+          </Button>
+          <Button 
             variant="outline" 
             onClick={() => navigate("/admin/csv-upload")}
             className="flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
