@@ -37,9 +37,15 @@ export default function SubmissionComplete() {
   const [cashCars, setCashCars] = useState<number>(0);
 
   // Fetch the submitted report
-  const { data: report, isLoading, error } = useQuery({
+  const { data: report, isLoading, error } = useQuery<ShiftReport>({
     queryKey: ['/api/shift-reports', params?.reportId],
-    queryFn: getQueryFn(),
+    queryFn: () => {
+      if (!params?.reportId) return Promise.resolve(undefined as any);
+      return fetch(`/api/shift-reports/${params.reportId}`).then(res => {
+        if (!res.ok) throw new Error('Failed to load report');
+        return res.json();
+      });
+    },
     enabled: !!params?.reportId
   });
 
