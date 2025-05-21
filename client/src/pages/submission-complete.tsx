@@ -226,9 +226,36 @@ export default function SubmissionComplete() {
                   <p className="text-sm text-gray-700 flex justify-between">
                     <span>Cash Collected:</span> <strong>{formatCurrency(report.totalCashCollected)}</strong>
                   </p>
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Total Turn-in:</span> <strong className="text-green-700">{formatCurrency(report.totalTurnIn)}</strong>
-                  </p>
+                  
+                  {/* Calculate total expected revenue */}
+                  {(() => {
+                    const totalReceiptSales = safeNumber(report.totalReceiptSales);
+                    const totalCreditSales = safeNumber(report.totalCreditSales);
+                    const totalRevenue = totalReceiptSales + totalCreditSales;
+                    const totalTurnIn = safeNumber(report.totalTurnIn);
+                    
+                    // Calculate money owed (when credit + receipt exceeds turn-in)
+                    const moneyOwed = Math.max(0, totalRevenue - totalTurnIn);
+                    
+                    return (
+                      <>
+                        <p className="text-sm text-gray-700 flex justify-between">
+                          <span>Total Turn-in:</span> <strong className="text-green-700">{formatCurrency(report.totalTurnIn)}</strong>
+                        </p>
+                        
+                        {moneyOwed > 0 && (
+                          <div className="mt-2 pt-2 border-t border-gray-100">
+                            <p className="text-sm text-gray-700 flex justify-between">
+                              <span>Total Credit + Receipt Sales:</span> <strong>{formatCurrency(totalRevenue)}</strong>
+                            </p>
+                            <p className="text-sm text-red-700 flex justify-between font-medium">
+                              <span>Money Owed to Employees:</span> <strong>{formatCurrency(moneyOwed)}</strong>
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
