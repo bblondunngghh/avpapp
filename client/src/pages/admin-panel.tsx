@@ -1813,9 +1813,31 @@ export default function AdminPanel() {
                                          (reportDate.getMonth() + 1).toString().padStart(2, '0') === month;
                                 });
                                 
-                                // Calculate total income from company turn-ins for the month
+                                // Calculate total income based on cars parked * turn-in rate for each location
                                 monthlyReports.forEach(report => {
-                                  totalMonthlyIncome += report.totalTurnIn;
+                                  // Get the appropriate turn-in rate based on location
+                                  let turnInRate = 0;
+                                  
+                                  // Set turn-in rates for each location
+                                  switch(report.locationId) {
+                                    case 1: // Capital Grille: $11 per car
+                                      turnInRate = 11;
+                                      break;
+                                    case 2: // Bob's Steak and Chop House: $6 per car
+                                      turnInRate = 6;
+                                      break;
+                                    case 3: // Truluck's: $8 per car
+                                      turnInRate = 8;
+                                      break;
+                                    case 4: // BOA Steakhouse: $7 per car
+                                      turnInRate = 7;
+                                      break;
+                                    default:
+                                      turnInRate = 0;
+                                  }
+                                  
+                                  // Calculate revenue: number of cars × location-specific turn-in rate
+                                  totalMonthlyIncome += report.totalCars * turnInRate;
                                 });
                                 
                                 // Update state with the monthly revenue
