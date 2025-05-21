@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1440" height="800" viewBox="0 0 1440 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient Background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c2d48" stop-opacity="1" />
+      <stop offset="100%" stop-color="#134074" stop-opacity="1" />
+    </linearGradient>
+    
+    <!-- Car silhouette path -->
+    <path id="carPath" d="M50,30 C55,25 65,25 70,30 L80,40 C85,45 90,45 95,40 L105,30 C110,25 120,25 125,30 L140,45 C145,50 150,50 155,45 L165,35 C170,30 175,30 180,35 L190,45 C190,45 195,50 195,55 L195,65 C195,70 190,75 185,75 L65,75 C60,75 55,70 55,65 L55,55 C55,50 55,45 60,40 L50,30 Z" />
+    
+    <!-- Key silhouette -->
+    <path id="keyPath" d="M20,40 C9,40 0,31 0,20 C0,9 9,0 20,0 C31,0 40,9 40,20 C40,31 31,40 20,40 Z M30,20 L90,20 L90,30 L80,30 L80,40 L70,40 L70,30 L60,30 L60,40 L50,40 L50,20 Z" />
+  </defs>
+  
+  <!-- Main Background -->
+  <rect width="100%" height="100%" fill="url(#bgGradient)" />
+  
+  <!-- Decorative grid patterns -->
+  <g opacity="0.05">
+    <!-- Horizontal lines -->
+    <line x1="0" y1="100" x2="1440" y2="100" stroke="#ffffff" stroke-width="1" />
+    <line x1="0" y1="200" x2="1440" y2="200" stroke="#ffffff" stroke-width="1" />
+    <line x1="0" y1="300" x2="1440" y2="300" stroke="#ffffff" stroke-width="1" />
+    <line x1="0" y1="400" x2="1440" y2="400" stroke="#ffffff" stroke-width="1" />
+    <line x1="0" y1="500" x2="1440" y2="500" stroke="#ffffff" stroke-width="1" />
+    <line x1="0" y1="600" x2="1440" y2="600" stroke="#ffffff" stroke-width="1" />
+    <line x1="0" y1="700" x2="1440" y2="700" stroke="#ffffff" stroke-width="1" />
+    
+    <!-- Vertical lines -->
+    <line x1="100" y1="0" x2="100" y2="800" stroke="#ffffff" stroke-width="1" />
+    <line x1="300" y1="0" x2="300" y2="800" stroke="#ffffff" stroke-width="1" />
+    <line x1="500" y1="0" x2="500" y2="800" stroke="#ffffff" stroke-width="1" />
+    <line x1="700" y1="0" x2="700" y2="800" stroke="#ffffff" stroke-width="1" />
+    <line x1="900" y1="0" x2="900" y2="800" stroke="#ffffff" stroke-width="1" />
+    <line x1="1100" y1="0" x2="1100" y2="800" stroke="#ffffff" stroke-width="1" />
+    <line x1="1300" y1="0" x2="1300" y2="800" stroke="#ffffff" stroke-width="1" />
+  </g>
+  
+  <!-- Car silhouettes scattered around -->
+  <g opacity="0.1">
+    <!-- Top left cars -->
+    <use href="#carPath" x="100" y="50" fill="#ffffff" transform="scale(0.7)" />
+    <use href="#carPath" x="300" y="150" fill="#ffffff" transform="scale(0.5) rotate(45)" />
+    
+    <!-- Top right cars -->
+    <use href="#carPath" x="800" y="100" fill="#ffffff" transform="scale(0.8) rotate(-20)" />
+    <use href="#carPath" x="1200" y="50" fill="#ffffff" transform="scale(0.6)" />
+    
+    <!-- Bottom left cars -->
+    <use href="#carPath" x="150" y="550" fill="#ffffff" transform="scale(0.5) rotate(15)" />
+    <use href="#carPath" x="350" y="650" fill="#ffffff" transform="scale(0.7) rotate(-10)" />
+    
+    <!-- Bottom right cars -->
+    <use href="#carPath" x="900" y="600" fill="#ffffff" transform="scale(0.6) rotate(30)" />
+    <use href="#carPath" x="1100" y="500" fill="#ffffff" transform="scale(0.8) rotate(-15)" />
+    
+    <!-- Center cars -->
+    <use href="#carPath" x="500" y="300" fill="#ffffff" transform="scale(1) rotate(5)" />
+    <use href="#carPath" x="700" y="400" fill="#ffffff" transform="scale(0.9) rotate(-5)" />
+  </g>
+  
+  <!-- Key silhouettes -->
+  <g opacity="0.08">
+    <use href="#keyPath" x="200" y="200" fill="#ffffff" transform="scale(0.6)" />
+    <use href="#keyPath" x="1000" y="300" fill="#ffffff" transform="scale(0.5) rotate(45)" />
+    <use href="#keyPath" x="400" y="500" fill="#ffffff" transform="scale(0.7) rotate(-30)" />
+    <use href="#keyPath" x="900" y="650" fill="#ffffff" transform="scale(0.8) rotate(15)" />
+  </g>
+  
+  <!-- Parking lines pattern -->
+  <g opacity="0.05">
+    <rect x="200" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
+    <rect x="400" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
+    <rect x="600" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
+    <rect x="800" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
+    <rect x="1000" y="250" width="150" height="300" stroke="#ffffff" fill="none" stroke-width="2" />
+    
+    <!-- Parking lot lines -->
+    <line x1="200" y1="250" x2="1150" y2="250" stroke="#ffffff" stroke-width="3" />
+    <line x1="200" y1="550" x2="1150" y2="550" stroke="#ffffff" stroke-width="3" />
+  </g>
+  
+  <!-- Abstract light streaks to represent car lights -->
+  <g opacity="0.2">
+    <path d="M100,700 Q500,620 900,700" stroke="#ffcc00" stroke-width="5" fill="none" />
+    <path d="M150,720 Q550,640 950,720" stroke="#ffcc00" stroke-width="3" fill="none" />
+    
+    <path d="M1300,200 Q900,280 500,200" stroke="#ff3333" stroke-width="5" fill="none" />
+    <path d="M1250,220 Q850,300 450,220" stroke="#ff3333" stroke-width="3" fill="none" />
+  </g>
+  
+  <!-- Subtle glow effects -->
+  <g opacity="0.1">
+    <circle cx="300" cy="400" r="100" fill="url(#bgGradient)" filter="blur(40px)" />
+    <circle cx="800" cy="300" r="150" fill="url(#bgGradient)" filter="blur(40px)" />
+    <circle cx="1100" cy="500" r="120" fill="url(#bgGradient)" filter="blur(40px)" />
+    <circle cx="500" cy="600" r="80" fill="url(#bgGradient)" filter="blur(40px)" />
+  </g>
+</svg>
