@@ -1273,7 +1273,10 @@ export default function AdminPanel() {
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
-                          <YAxis tickFormatter={(value) => `$${value}`} />
+                          <YAxis 
+                            tickFormatter={(value) => `$${value}`}
+                            domain={[0, 35000]} 
+                          />
                           <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Sales']} />
                           <Legend />
                           <Area 
