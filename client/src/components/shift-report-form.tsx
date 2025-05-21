@@ -1349,8 +1349,31 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   console.log('Tax Summary - Cash Paid:', totalCashPaid);
                                   console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
                                   
-                                  // Only show "All Taxes Covered" if cash paid matches or exceeds the expected amount
-                                  if (totalCashPaid >= totalExpectedAmount && totalTax > 0) {
+                                  // Check specifically if Arturo and Antonio have covered their taxes
+                                  const arturoAndAntonioTaxCovered = formEmployees.every(emp => {
+                                    // Only check for Arturo or Antonio
+                                    if (emp.name.toLowerCase().includes('arturo') || emp.name.toLowerCase().includes('antonio')) {
+                                      const employeeHoursPercent = emp.hours / totalJobHrs;
+                                      
+                                      // Calculate employee's tax and money owed
+                                      const empCommission = commission * employeeHoursPercent;
+                                      const empTips = tips * employeeHoursPercent;
+                                      const empEarnings = empCommission + empTips;
+                                      const empTax = empEarnings * 0.22;
+                                      const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
+                                      
+                                      // Check if either cash paid covers tax or if money owed covers tax
+                                      const cashPaid = parseFloat(String(emp.cashPaid)) || 0;
+                                      const taxObligation = Math.max(0, empTax - empMoneyOwed);
+                                      
+                                      // Tax is covered if either money owed covers it OR cash paid covers it
+                                      return empMoneyOwed >= empTax || cashPaid >= Math.ceil(taxObligation);
+                                    }
+                                    return true; // Skip non-Arturo/Antonio employees
+                                  });
+                                  
+                                  // Only show "All Taxes Covered" if Arturo and Antonio have covered their taxes
+                                  if (arturoAndAntonioTaxCovered && totalTax > 0) {
                                     return (
                                       <div className="text-sm text-green-600">
                                         All Taxes Covered
