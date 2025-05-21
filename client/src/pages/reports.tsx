@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -6,19 +6,36 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, LockKeyhole, ArrowLeft } from "lucide-react";
 import LocationSelectorModal from "@/components/location-selector-modal";
 import ReportCard from "@/components/report-card";
 import { LOCATIONS } from "@/lib/constants";
-
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { useLocation } from "wouter";
-import { ArrowLeft } from "lucide-react";
 
 export default function Reports() {
   const [, navigate] = useLocation();
   const [locationFilter, setLocationFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  
+  // Check if user is authenticated as admin
+  useEffect(() => {
+    const checkAuth = () => {
+      if (!isAdminAuthenticated()) {
+        navigate("/admin");
+      } else {
+        setIsAuthorized(true);
+      }
+    };
+    
+    checkAuth();
+    
+    // Check authorization every 30 seconds to ensure session hasn't timed out
+    const interval = setInterval(checkAuth, 30000);
+    return () => clearInterval(interval);
+  }, [navigate]);
   
   // Fetch all shift reports
   const { data: reports, isLoading } = useQuery({
@@ -45,6 +62,28 @@ export default function Reports() {
   const handleNewReport = () => {
     setIsModalOpen(true);
   };
+  
+  // Show unauthorized state if user is not an admin
+  if (!isAuthorized) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="p-8 rounded-lg border shadow-lg bg-white max-w-lg w-full text-center">
+          <LockKeyhole size={48} className="mx-auto mb-4 text-red-500" />
+          <h2 className="text-2xl font-semibold mb-2">Access Restricted</h2>
+          <p className="text-gray-600 mb-6">
+            The Reports page is only accessible through the Admin Panel.
+            Please log in as an administrator to view this content.
+          </p>
+          <Button 
+            onClick={() => navigate("/")}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Return to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div>
