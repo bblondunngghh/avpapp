@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -23,7 +23,25 @@ type FormValues = z.infer<typeof formSchema>;
 export default function AdminLogin() {
   const [, navigate] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
   const { toast } = useToast();
+  
+  // Check if device is iPad on mount
+  useEffect(() => {
+    const checkIPad = () => {
+      const iPadDevice = /iPad/i.test(navigator.userAgent) || 
+                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      setIsIPad(iPadDevice);
+      console.log("iPad detection:", { 
+        iPadDevice, 
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        touchPoints: navigator.maxTouchPoints
+      });
+    };
+    
+    checkIPad();
+  }, []);
 
   // Initialize form
   const form = useForm<FormValues>({
@@ -55,8 +73,14 @@ export default function AdminLogin() {
         
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
-          // Redirect to admin dashboard
-          navigate("/admin");
+          // Redirect based on device type
+          if (isIPad) {
+            console.log("Redirecting to mobile admin panel for iPad");
+            navigate("/mobile-admin");
+          } else {
+            console.log("Redirecting to standard admin panel");
+            navigate("/admin");
+          }
         }, 100);
       } else {
         // Show error toast
