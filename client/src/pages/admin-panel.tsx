@@ -39,7 +39,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock } from "lucide-react";
 import { 
   BarChart, 
   LineChart, 
@@ -1227,6 +1227,10 @@ export default function AdminPanel() {
           <TabsTrigger value="employee-accounting" className="flex-shrink-0 flex items-center">
             <DollarSign className="h-4 w-4 mr-2" />
             Employee Accounting
+          </TabsTrigger>
+          <TabsTrigger value="hours-tracker" className="flex-shrink-0 flex items-center">
+            <Clock className="h-4 w-4 mr-2" />
+            Hours Tracker
           </TabsTrigger>
         </TabsList>
         
@@ -3857,6 +3861,203 @@ export default function AdminPanel() {
                           </div>
                         </CardContent>
                       </Card>
+                    </div>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="hours-tracker">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Weekly Hours Tracker
+              </CardTitle>
+              <CardDescription>
+                Monitor employee weekly hours and receive alerts when approaching 40-hour limit
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                // Calculate weekly hours for each employee
+                const weeklyHours: Record<string, { 
+                  employee: any, 
+                  totalHours: number, 
+                  weeklyBreakdown: Record<string, number>,
+                  status: 'safe' | 'warning' | 'critical'
+                }> = {};
+
+                // Get current week start (Sunday)
+                const today = new Date();
+                const currentWeekStart = new Date(today);
+                currentWeekStart.setDate(today.getDate() - today.getDay());
+                currentWeekStart.setHours(0, 0, 0, 0);
+
+                const currentWeekEnd = new Date(currentWeekStart);
+                currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+                currentWeekEnd.setHours(23, 59, 59, 999);
+
+                // Process reports for current week
+                reports.forEach((report: any) => {
+                  const reportDate = new Date(report.date);
+                  if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
+                    let employees = [];
+                    try {
+                      if (typeof report.employees === 'string') {
+                        employees = JSON.parse(report.employees);
+                      } else if (Array.isArray(report.employees)) {
+                        employees = report.employees;
+                      }
+                    } catch (e) {
+                      employees = [];
+                    }
+
+                    employees.forEach((emp: any) => {
+                      if (!weeklyHours[emp.key]) {
+                        weeklyHours[emp.key] = {
+                          employee: emp,
+                          totalHours: 0,
+                          weeklyBreakdown: {},
+                          status: 'safe'
+                        };
+                      }
+                      
+                      const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
+                      weeklyHours[emp.key].weeklyBreakdown[dayName] = (weeklyHours[emp.key].weeklyBreakdown[dayName] || 0) + emp.hours;
+                      weeklyHours[emp.key].totalHours += emp.hours;
+                      
+                      // Determine status
+                      if (weeklyHours[emp.key].totalHours >= 38) {
+                        weeklyHours[emp.key].status = 'critical';
+                      } else if (weeklyHours[emp.key].totalHours >= 35) {
+                        weeklyHours[emp.key].status = 'warning';
+                      }
+                    });
+                  }
+                });
+
+                const weeklyData = Object.values(weeklyHours);
+                const criticalEmployees = weeklyData.filter(emp => emp.status === 'critical');
+                const warningEmployees = weeklyData.filter(emp => emp.status === 'warning');
+
+                return (
+                  <div className="space-y-6">
+                    {/* Alert Summary */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Card className="border-red-200 bg-red-50">
+                        <CardContent className="pt-4">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-red-100 p-2 rounded-full">
+                              <Clock className="h-4 w-4 text-red-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-red-800">Critical (38+ hours)</p>
+                              <p className="text-2xl font-bold text-red-900">{criticalEmployees.length}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-4">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-yellow-100 p-2 rounded-full">
+                              <Clock className="h-4 w-4 text-yellow-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-yellow-800">Warning (35+ hours)</p>
+                              <p className="text-2xl font-bold text-yellow-900">{warningEmployees.length}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="border-green-200 bg-green-50">
+                        <CardContent className="pt-4">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-green-100 p-2 rounded-full">
+                              <Clock className="h-4 w-4 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-green-800">Total Employees</p>
+                              <p className="text-2xl font-bold text-green-900">{weeklyData.length}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Weekly Hours Table */}
+                    <div className="border rounded-lg">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Employee</TableHead>
+                            <TableHead className="text-center">Sun</TableHead>
+                            <TableHead className="text-center">Mon</TableHead>
+                            <TableHead className="text-center">Tue</TableHead>
+                            <TableHead className="text-center">Wed</TableHead>
+                            <TableHead className="text-center">Thu</TableHead>
+                            <TableHead className="text-center">Fri</TableHead>
+                            <TableHead className="text-center">Sat</TableHead>
+                            <TableHead className="text-right">Total Hours</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {weeklyData.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={10} className="text-center py-8 text-gray-500">
+                                No employee hours recorded for this week yet
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            weeklyData.map((empData) => (
+                              <TableRow key={empData.employee.key} className={
+                                empData.status === 'critical' ? 'bg-red-50' :
+                                empData.status === 'warning' ? 'bg-yellow-50' : ''
+                              }>
+                                <TableCell className="font-medium">{empData.employee.name}</TableCell>
+                                <TableCell className="text-center">{empData.weeklyBreakdown['Sun'] || '-'}</TableCell>
+                                <TableCell className="text-center">{empData.weeklyBreakdown['Mon'] || '-'}</TableCell>
+                                <TableCell className="text-center">{empData.weeklyBreakdown['Tue'] || '-'}</TableCell>
+                                <TableCell className="text-center">{empData.weeklyBreakdown['Wed'] || '-'}</TableCell>
+                                <TableCell className="text-center">{empData.weeklyBreakdown['Thu'] || '-'}</TableCell>
+                                <TableCell className="text-center">{empData.weeklyBreakdown['Fri'] || '-'}</TableCell>
+                                <TableCell className="text-center">{empData.weeklyBreakdown['Sat'] || '-'}</TableCell>
+                                <TableCell className="text-right font-bold">
+                                  {empData.totalHours.toFixed(1)}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  {empData.status === 'critical' && (
+                                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                                      Critical
+                                    </span>
+                                  )}
+                                  {empData.status === 'warning' && (
+                                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                                      Warning
+                                    </span>
+                                  )}
+                                  {empData.status === 'safe' && (
+                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                                      Safe
+                                    </span>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+
+                    {/* Weekly Period Info */}
+                    <div className="text-sm text-gray-600 text-center">
+                      Current week: {currentWeekStart.toLocaleDateString()} - {currentWeekEnd.toLocaleDateString()}
                     </div>
                   </div>
                 );
