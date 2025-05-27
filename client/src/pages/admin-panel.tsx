@@ -1851,37 +1851,37 @@ export default function AdminPanel() {
               
               <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900">
                 <div className="space-y-2">
-                  <Label htmlFor="loc-start-date">Start Date</Label>
-                  <div className="relative">
-                    <input
-                      id="loc-start-date"
-                      type="date"
-                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
-                      value={startDate ? startDate.toISOString().substring(0, 10) : ""}
-                      onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="loc-end-date">End Date</Label>
-                  <div className="relative">
-                    <input
-                      id="loc-end-date"
-                      type="date"
-                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
-                      value={endDate ? endDate.toISOString().substring(0, 10) : ""}
-                      onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
-                    />
-                  </div>
+                  <Label htmlFor="month-filter">Filter by Month</Label>
+                  <Select
+                    value={selectedMonth || "all"}
+                    onValueChange={(value) => setSelectedMonth(value === "all" ? null : value)}
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="All Months" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Months</SelectItem>
+                      <SelectItem value="2025-01">January 2025</SelectItem>
+                      <SelectItem value="2025-02">February 2025</SelectItem>
+                      <SelectItem value="2025-03">March 2025</SelectItem>
+                      <SelectItem value="2025-04">April 2025</SelectItem>
+                      <SelectItem value="2025-05">May 2025</SelectItem>
+                      <SelectItem value="2025-06">June 2025</SelectItem>
+                      <SelectItem value="2025-07">July 2025</SelectItem>
+                      <SelectItem value="2025-08">August 2025</SelectItem>
+                      <SelectItem value="2025-09">September 2025</SelectItem>
+                      <SelectItem value="2025-10">October 2025</SelectItem>
+                      <SelectItem value="2025-11">November 2025</SelectItem>
+                      <SelectItem value="2025-12">December 2025</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <Button 
                   variant="secondary" 
                   size="sm"
                   onClick={() => {
-                    setStartDate(undefined);
-                    setEndDate(undefined);
+                    setSelectedMonth(null);
                   }}
                 >
                   Clear Filter
