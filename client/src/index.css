@@ -37,6 +37,25 @@
     height: 100%;
     width: 100%;
     overflow-x: hidden;
+    padding-bottom: 80px; /* Add space for bottom navigation */
+  }
+  
+  /* Fix header positioning on mobile - ensure content doesn't appear under navigation */
+  main {
+    position: relative;
+    z-index: 1;
+    padding-bottom: 80px; /* Space for bottom navigation */
+  }
+  
+  /* Fix for page headers appearing under navigation */
+  .form-header-container,
+  .page-header,
+  h1:first-child,
+  .card:first-child {
+    margin-top: 0;
+    padding-top: 1rem;
+    position: relative;
+    z-index: 5;
   }
 }
 
@@ -382,10 +401,12 @@ input[type="date"].paperform-input {
 
 /* Bottom navigation styles */
 .bottom-nav {
-  @apply fixed inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around z-10 md:hidden;
+  @apply fixed inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around md:hidden;
   /* Position for iPhone - closer to bottom but still avoiding swipe-up */
   bottom: 0;
   padding-bottom: env(safe-area-inset-bottom, 8px);
+  z-index: 50; /* Higher z-index to ensure it stays on top */
+  height: 70px; /* Fixed height for consistent spacing */
 }
 
 .bottom-nav-item {
