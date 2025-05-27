@@ -1185,7 +1185,7 @@ export default function AdminPanel() {
             className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white"
           >
             <FileSpreadsheet className="h-4 w-4" />
-            View All Reports
+            Edit Reports
           </Button>
           <Button 
             variant="outline" 
