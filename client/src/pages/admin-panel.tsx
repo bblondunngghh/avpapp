@@ -1205,14 +1205,7 @@ export default function AdminPanel() {
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Reports
           </TabsTrigger>
-          <TabsTrigger value="statistics" className="flex-shrink-0 flex items-center">
-            <Activity className="h-4 w-4 mr-2" />
-            Stats
-          </TabsTrigger>
-          <TabsTrigger value="payroll" className="flex-shrink-0 flex items-center">
-            <Users className="h-4 w-4 mr-2" />
-            Payroll
-          </TabsTrigger>
+
           <TabsTrigger value="locations" className="flex-shrink-0 flex items-center">
             <MapPin className="h-4 w-4 mr-2" />
             Locations
@@ -1233,13 +1226,13 @@ export default function AdminPanel() {
         
 
         
-        <TabsContent value="statistics">
+        <TabsContent value="reports">
           <Card>
             <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <CardTitle>Business Statistics & Analytics</CardTitle>
+                <CardTitle>Shift Reports</CardTitle>
                 <CardDescription>
-                  Comprehensive visualizations of your business performance metrics
+                  View all shift reports across all locations
                 </CardDescription>
               </div>
               <div className="flex flex-wrap items-end gap-4">
