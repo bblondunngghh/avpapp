@@ -640,6 +640,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Credit Card Sales</FormLabel>
                     <FormControl>
                       <InputMoney 
+                        inputMode="decimal"
                         className="paperform-input" 
                         {...field}
                         value={field.value === 0 ? '' : field.value}
@@ -666,6 +667,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormControl>
                       <Input 
                         type="number" 
+                        inputMode="numeric"
                         min="0" 
                         className="paperform-input" 
                         {...field}
@@ -689,6 +691,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Receipt Sales</FormLabel>
                     <FormControl>
                       <InputMoney 
+                        inputMode="decimal"
                         className="paperform-input" 
                         {...field}
                         value={field.value === 0 ? '' : field.value}
@@ -715,6 +718,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormLabel className="text-gray-700 font-medium text-sm">Total Cash Collected</FormLabel>
                     <FormControl>
                       <InputMoney 
+                        inputMode="decimal"
                         className="paperform-input" 
                         {...field} 
                         value={field.value === 0 ? '' : field.value}
