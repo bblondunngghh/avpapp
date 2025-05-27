@@ -1956,10 +1956,10 @@ export default function AdminPanel() {
                               <p className="text-xl">{location.reports}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500">Avg $ Per Car</p>
+                              <p className="text-sm text-gray-500">Daily Revenue Average</p>
                               <p className="text-xl">
-                                ${location.totalCars > 0 
-                                  ? (location.totalIncome / location.totalCars).toFixed(2) 
+                                ${location.reports > 0 
+                                  ? (location.totalIncome / location.reports).toFixed(2) 
                                   : '0.00'}
                               </p>
                             </div>
