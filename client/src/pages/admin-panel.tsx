@@ -3657,16 +3657,69 @@ export default function AdminPanel() {
                   });
 
                   const moneyOwedAfterTax = Math.max(0, totalTax - totalAdditionalTaxPayments);
+                  
+                  // Calculate totals for commission and tips separately
+                  let totalCommissionOnly = 0;
+                  let totalTipsOnly = 0;
+                  
+                  employeeReports.forEach((report: any) => {
+                    let employees = [];
+                    try {
+                      if (typeof report.employees === 'string') {
+                        employees = JSON.parse(report.employees);
+                      } else if (Array.isArray(report.employees)) {
+                        employees = report.employees;
+                      }
+                    } catch (e) {
+                      employees = [];
+                    }
+
+                    const employeeData = employees.find((emp: any) => 
+                      emp.name?.toLowerCase() === employee.key?.toLowerCase()
+                    );
+
+                    if (employeeData) {
+                      const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
+                      const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+
+                      // Commission calculation
+                      const locationId = report.locationId;
+                      let commissionRate = 4;
+                      if (locationId === 1) commissionRate = 4;
+                      else if (locationId === 2) commissionRate = 9;
+                      else if (locationId === 3) commissionRate = 7;
+                      else if (locationId === 4) commissionRate = 6;
+
+                      const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+                      const totalCommission = (report.creditTransactions * commissionRate) + 
+                                             (cashCars * commissionRate) + 
+                                             (report.totalReceipts * commissionRate);
+                      
+                      // Tips calculations
+                      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
+                      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+                      const receiptTips = report.totalReceipts * 3;
+                      const totalTips = creditCardTips + cashTips + receiptTips;
+
+                      totalCommissionOnly += totalCommission * hoursPercent;
+                      totalTipsOnly += totalTips * hoursPercent;
+                    }
+                  });
+
+                  const advance = totalCommissionOnly + totalTipsOnly - totalMoneyOwed;
 
                   return {
                     name: employee.fullName,
                     key: employee.key,
                     totalHours,
+                    totalCommission: totalCommissionOnly,
+                    totalTips: totalTipsOnly,
                     totalEarnings,
                     totalTax,
                     totalMoneyOwed,
                     totalAdditionalTaxPayments,
                     moneyOwedAfterTax,
+                    advance,
                     shiftsWorked: employeeReports.length
                   };
                 });
@@ -3681,9 +3734,12 @@ export default function AdminPanel() {
                             <TableHead>Employee</TableHead>
                             <TableHead className="text-right">Hours</TableHead>
                             <TableHead className="text-right">Shifts</TableHead>
+                            <TableHead className="text-right">Commission</TableHead>
+                            <TableHead className="text-right">Tips</TableHead>
                             <TableHead className="text-right">Total Earnings</TableHead>
-                            <TableHead className="text-right">Tax Obligation (22%)</TableHead>
                             <TableHead className="text-right">Money Owed</TableHead>
+                            <TableHead className="text-right">Advance</TableHead>
+                            <TableHead className="text-right">Tax Obligation (22%)</TableHead>
                             <TableHead className="text-right">Additional Tax Payments</TableHead>
                             <TableHead className="text-right">Money After Tax Coverage</TableHead>
                           </TableRow>
@@ -3694,11 +3750,20 @@ export default function AdminPanel() {
                               <TableCell className="font-medium">{employee.name}</TableCell>
                               <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
                               <TableCell className="text-right">{employee.shiftsWorked}</TableCell>
+                              <TableCell className="text-right text-blue-600 font-medium">
+                                ${employee.totalCommission.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right text-green-600 font-medium">
+                                ${employee.totalTips.toFixed(2)}
+                              </TableCell>
                               <TableCell className="text-right">${employee.totalEarnings.toFixed(2)}</TableCell>
-                              <TableCell className="text-right">${employee.totalTax.toFixed(2)}</TableCell>
                               <TableCell className="text-right text-green-600 font-medium">
                                 ${employee.totalMoneyOwed.toFixed(2)}
                               </TableCell>
+                              <TableCell className="text-right text-orange-600 font-bold">
+                                ${employee.advance.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right">${employee.totalTax.toFixed(2)}</TableCell>
                               <TableCell className="text-right text-blue-600">
                                 ${employee.totalAdditionalTaxPayments.toFixed(2)}
                               </TableCell>
@@ -3715,14 +3780,23 @@ export default function AdminPanel() {
                             <TableCell className="text-right">
                               {employeeAccountingData.reduce((sum, emp) => sum + emp.shiftsWorked, 0)}
                             </TableCell>
+                            <TableCell className="text-right text-blue-600">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalCommission, 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right text-green-600">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTips, 0).toFixed(2)}
+                            </TableCell>
                             <TableCell className="text-right">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalEarnings, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
-                            </TableCell>
                             <TableCell className="text-right text-green-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right text-orange-600">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.advance, 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-right text-blue-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalAdditionalTaxPayments, 0).toFixed(2)}
