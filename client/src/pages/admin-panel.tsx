@@ -741,7 +741,7 @@ export default function AdminPanel() {
       setEmployeeStats(employeeStatsArray);
       setLocationStats(locationStatsArray);
     }
-  }, [reports, startDate, endDate]);
+  }, [reports, selectedMonth]);
 
   // Handle logout
   const handleLogout = () => {
