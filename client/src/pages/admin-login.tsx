@@ -86,12 +86,9 @@ export default function AdminLogin() {
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
           // Redirect based on device type
-          if (isIOS) {
-            console.log("Redirecting to basic admin panel for iOS devices");
-            navigate("/basic-admin");
-          } else if (isIPad) {
-            console.log("Redirecting to simplified admin panel for iPad");
-            navigate("/simple-admin");
+          if (isIOS || isIPad) {
+            console.log("Redirecting to pure HTML admin panel for mobile devices");
+            window.location.href = "/mobile-admin.html";
           } else {
             console.log("Redirecting to standard admin panel");
             navigate("/admin");

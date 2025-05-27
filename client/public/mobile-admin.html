@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Admin - Access Valet Parking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+            -webkit-text-size-adjust: 100%;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 16px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 16px;
+            margin: -16px -16px 20px -16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        
+        .logout-btn:active {
+            background: #c82333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .item {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .item-title {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .item-subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .item-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .detail-label {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #dc3545;
+        }
+        
+        .refresh-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 10px;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        
+        .refresh-btn:active {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mobile Admin</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Reports</div>
+                <div class="stat-value" id="reports-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Tickets</div>
+                <div class="stat-value" id="tickets-count">-</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('reports')">Reports</button>
+                <button class="tab" onclick="switchTab('performance')">Performance</button>
+            </div>
+            
+            <div id="reports-tab" class="tab-content active">
+                <div class="loading" id="reports-loading">Loading reports...</div>
+                <div id="reports-content"></div>
+            </div>
+            
+            <div id="performance-tab" class="tab-content">
+                <div class="loading" id="performance-loading">Loading performance data...</div>
+                <div id="performance-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication on page load
+        function checkAuth() {
+            const isAuthenticated = localStorage.getItem("admin_authenticated") === "true";
+            if (!isAuthenticated) {
+                window.location.href = "/admin-login";
+                return false;
+            }
+            return true;
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem("admin_authenticated");
+            localStorage.removeItem("admin_auth_time");
+            window.location.href = "/admin-login";
+        }
+        
+        // Tab switching
+        function switchTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(amount || 0);
+        }
+        
+        // Format date
+        function formatDate(dateStr) {
+            if (!dateStr) return "Unknown";
+            try {
+                const date = new Date(dateStr);
+                return new Intl.DateTimeFormat('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                }).format(date);
+            } catch (e) {
+                return dateStr;
+            }
+        }
+        
+        // Get location name
+        function getLocationName(locationId) {
+            const locations = {
+                1: "The Capital Grille",
+                2: "Bob's Steak & Chop House",
+                3: "Truluck's",
+                4: "BOA Steakhouse"
+            };
+            return locations[locationId] || "Unknown";
+        }
+        
+        // Load data
+        async function loadData() {
+            if (!checkAuth()) return;
+            
+            try {
+                // Load reports
+                const reportsResponse = await fetch('/api/shift-reports');
+                const reports = reportsResponse.ok ? await reportsResponse.json() : [];
+                
+                // Load tickets
+                const ticketsResponse = await fetch('/api/ticket-distributions');
+                const tickets = ticketsResponse.ok ? await ticketsResponse.json() : [];
+                
+                // Update stats
+                document.getElementById('reports-count').textContent = reports.length;
+                document.getElementById('tickets-count').textContent = tickets.length;
+                
+                // Render reports
+                renderReports(reports);
+                
+                // Render performance
+                renderPerformance(reports);
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('reports-content').innerHTML = '<div class="error">Error loading data<br><button class="refresh-btn" onclick="loadData()">Retry</button></div>';
+                document.getElementById('performance-content').innerHTML = '<div class="error">Error loading data<br><button class="refresh-btn" onclick="loadData()">Retry</button></div>';
+            }
+        }
+        
+        // Render reports
+        function renderReports(reports) {
+            const content = document.getElementById('reports-content');
+            const loading = document.getElementById('reports-loading');
+            
+            loading.style.display = 'none';
+            
+            if (reports.length === 0) {
+                content.innerHTML = '<div class="item">No reports available</div>';
+                return;
+            }
+            
+            // Sort by date (newest first) and take last 10
+            const sortedReports = reports
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 10);
+            
+            let html = '';
+            sortedReports.forEach(report => {
+                html += `
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">${getLocationName(report.locationId)}</div>
+                            <div class="item-subtitle">${formatDate(report.date)} - ${report.shift}</div>
+                        </div>
+                        <div class="item-details">
+                            <div>
+                                <div class="detail-label">Total Cars</div>
+                                <div class="detail-value">${report.totalCars || 0}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Cash Collected</div>
+                                <div class="detail-value">${formatCurrency(report.totalCashCollected)}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Credit Sales</div>
+                                <div class="detail-value">${formatCurrency(report.totalCreditSales)}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Turn-In</div>
+                                <div class="detail-value">${formatCurrency(report.totalTurnIn)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+        
+        // Render performance
+        function renderPerformance(reports) {
+            const content = document.getElementById('performance-content');
+            const loading = document.getElementById('performance-loading');
+            
+            loading.style.display = 'none';
+            
+            // Calculate performance by location
+            const locationStats = {
+                1: { name: "The Capital Grille", cars: 0, revenue: 0 },
+                2: { name: "Bob's Steak & Chop House", cars: 0, revenue: 0 },
+                3: { name: "Truluck's", cars: 0, revenue: 0 },
+                4: { name: "BOA Steakhouse", cars: 0, revenue: 0 }
+            };
+            
+            reports.forEach(report => {
+                if (locationStats[report.locationId]) {
+                    locationStats[report.locationId].cars += Number(report.totalCars) || 0;
+                    locationStats[report.locationId].revenue += Number(report.totalTurnIn) || 0;
+                }
+            });
+            
+            let html = '';
+            Object.values(locationStats).forEach(location => {
+                html += `
+                    <div class="item">
+                        <div class="item-title" style="margin-bottom: 8px;">${location.name}</div>
+                        <div class="item-details">
+                            <div>
+                                <div class="detail-label">Total Cars</div>
+                                <div class="detail-value">${location.cars}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Revenue</div>
+                                <div class="detail-value">${formatCurrency(location.revenue)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadData, 30000);
+        });
+    </script>
+</body>
+</html>
