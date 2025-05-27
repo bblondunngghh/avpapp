@@ -569,7 +569,12 @@ export default function EmployeeDashboard() {
                       ).map((shift: any) => (
                         <TableRow key={`${shift.id}-${shift.date}-${shift.shift}`}>
                           <TableCell>
-                            {new Date(shift.date).toLocaleDateString()}
+                            {(() => {
+                              // Parse date safely without timezone conversion
+                              const [year, month, day] = shift.date.split('-');
+                              const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                              return date.toLocaleDateString();
+                            })()}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center">
@@ -593,7 +598,7 @@ export default function EmployeeDashboard() {
                           <TableCell>{shift.hours.toFixed(1)}</TableCell>
                           <TableCell className="text-right">${shift.commission.toFixed(2)}</TableCell>
                           <TableCell className="text-right">${shift.tips.toFixed(2)}</TableCell>
-                          <TableCell className="text-right text-blue-700">${shift.moneyOwed.toFixed(2)}</TableCell>
+                          <TableCell className="text-right text-green-700 font-medium">${shift.moneyOwed.toFixed(2)}</TableCell>
                           <TableCell className="text-right font-medium">${shift.earnings.toFixed(2)}</TableCell>
                         </TableRow>
                       ))}
