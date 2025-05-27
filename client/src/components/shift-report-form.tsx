@@ -263,9 +263,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       hours: employee.hours || 0
     }));
     
-    // Ensure all required fields are included
+    // Ensure all required fields are included and preserve date format
     const formData = {
       ...values,
+      // Ensure date stays as string to prevent timezone conversion
+      date: values.date,
       // Include employees data
       employees,
       // Add these fields if they're not already included
