@@ -34,11 +34,13 @@ export default function AdminLogin() {
       const iPadDevice = /iPad/i.test(navigator.userAgent) || 
                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       
-      // Check for iPhone or iOS device
+      // Check for iPhone or iOS device (including mobile simulators)
       const isIOSDevice = /iPhone|iPod/i.test(navigator.userAgent) || 
-                       (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
+                       (/iPad|iPhone|iPod/.test(navigator.userAgent)) ||
                        (navigator.platform === 'iPhone') ||
-                       (/iPad|iPhone|iPod/.test(navigator.platform));
+                       (/iPad|iPhone|iPod/.test(navigator.platform)) ||
+                       // Also detect mobile simulators in desktop browsers
+                       (/Android.*Mobile|Mobile.*Safari/i.test(navigator.userAgent) && window.innerWidth <= 768);
       
       setIsIPad(iPadDevice);
       setIsIOS(isIOSDevice);
@@ -178,6 +180,15 @@ export default function AdminLogin() {
           <p className="w-full">
             This area is restricted to authorized personnel only.
           </p>
+          <div className="w-full mt-3">
+            <a 
+              href="/mobile-admin.html" 
+              className="text-blue-600 hover:text-blue-800 text-xs underline"
+              target="_blank"
+            >
+              Preview Mobile Admin Panel
+            </a>
+          </div>
         </CardFooter>
       </Card>
     </div>
