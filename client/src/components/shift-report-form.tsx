@@ -149,8 +149,24 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       Object.entries(data).forEach(([key, value]) => {
         // @ts-ignore
         if (key in form.getValues()) {
-          // @ts-ignore
-          form.setValue(key, value);
+          // Special handling for employees field to ensure it's always an array
+          if (key === 'employees') {
+            let employeesArray = [];
+            if (typeof value === 'string') {
+              try {
+                employeesArray = JSON.parse(value);
+              } catch (e) {
+                employeesArray = [];
+              }
+            } else if (Array.isArray(value)) {
+              employeesArray = value;
+            }
+            // @ts-ignore
+            form.setValue(key, employeesArray);
+          } else {
+            // @ts-ignore
+            form.setValue(key, value);
+          }
         }
       });
     }
@@ -958,7 +974,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       </div>
                       
                       <div className="space-y-3">
-                        {(form.watch('employees') || []).map((employee, index) => {
+                        {(Array.isArray(form.watch('employees')) ? form.watch('employees') : []).map((employee, index) => {
                           const totalHours = Number(form.watch("totalJobHours") || 0);
                           const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
                           const hourPercentage = (hoursPercent * 100).toFixed(1);
