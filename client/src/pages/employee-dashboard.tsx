@@ -182,11 +182,11 @@ export default function EmployeeDashboard() {
       const totalMoneyOwedOnShift = Math.max(0, totalCollections - report.totalTurnIn);
       const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
       
-      // Additional tax payments (credit toward tax obligations)
-      const additionalTaxPayments = moneyOwed; // This serves as credit toward taxes
-      
-      // Calculate tax
+      // Calculate tax obligation
       const tax = empEarnings * 0.22;
+      
+      // Additional tax payments = cash needed when money owed doesn't cover full tax obligation
+      const additionalTaxPayments = Math.max(0, tax - moneyOwed);
       
       // Update summary
       summary.totalHours += employeeData.hours;
