@@ -572,6 +572,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormControl>
                       <Input 
                         type="number" 
+                        inputMode="numeric"
                         min="0" 
                         className="paperform-input" 
                         {...field}
@@ -615,6 +616,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormControl>
                       <Input 
                         type="number" 
+                        inputMode="numeric"
                         min="0" 
                         className="paperform-input" 
                         {...field}
