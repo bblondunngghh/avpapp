@@ -646,14 +646,15 @@
             
             // Process filtered reports
             filteredReports.forEach(report => {
-                if (locationStats[report.locationId]) {
-                    const cars = Number(report.totalCars) || 0;
-                    locationStats[report.locationId].cars += cars;
+                const locationId = report.locationId || report.location_id;
+                if (locationStats[locationId]) {
+                    const cars = Number(report.totalCars || report.total_cars) || 0;
+                    locationStats[locationId].cars += cars;
                     
                     // Calculate revenue: use reported turn-in or calculate from cars * turn-in rate
-                    const reportedRevenue = Number(report.totalTurnIn) || 0;
-                    const calculatedRevenue = cars * locationStats[report.locationId].turnInRate;
-                    locationStats[report.locationId].revenue += reportedRevenue > 0 ? reportedRevenue : calculatedRevenue;
+                    const reportedRevenue = Number(report.totalTurnIn || report.total_turn_in) || 0;
+                    const calculatedRevenue = cars * locationStats[locationId].turnInRate;
+                    locationStats[locationId].revenue += reportedRevenue > 0 ? reportedRevenue : calculatedRevenue;
                 }
             });
             
