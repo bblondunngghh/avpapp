@@ -1225,6 +1225,10 @@ export default function AdminPanel() {
             <Users className="h-4 w-4 mr-2" />
             Employees
           </TabsTrigger>
+          <TabsTrigger value="employee-accounting" className="flex-shrink-0 flex items-center">
+            <DollarSign className="h-4 w-4 mr-2" />
+            Employee Accounting
+          </TabsTrigger>
         </TabsList>
         
 
@@ -3496,6 +3500,236 @@ export default function AdminPanel() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="employee-accounting">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Employee Accounting Overview
+              </CardTitle>
+              <CardDescription>
+                Comprehensive financial breakdown for all employees including earnings, taxes, and money owed calculations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                // Calculate employee accounting data
+                const employeeAccountingData = employees.map(employee => {
+                  const employeeReports = reports.filter((report: any) => {
+                    let reportEmployees = [];
+                    try {
+                      if (typeof report.employees === 'string') {
+                        reportEmployees = JSON.parse(report.employees);
+                      } else if (Array.isArray(report.employees)) {
+                        reportEmployees = report.employees;
+                      } else {
+                        console.warn("employees is not an array, converting to empty array:", report.employees);
+                        reportEmployees = [];
+                      }
+                    } catch (e) {
+                      console.warn("Failed to parse employees:", e);
+                      reportEmployees = [];
+                    }
+                    
+                    return reportEmployees.some((emp: any) => 
+                      emp.name?.toLowerCase() === employee.key?.toLowerCase()
+                    );
+                  });
+
+                  // Calculate totals for this employee
+                  let totalEarnings = 0;
+                  let totalTax = 0;
+                  let totalMoneyOwed = 0;
+                  let totalAdditionalTaxPayments = 0;
+                  let totalHours = 0;
+
+                  employeeReports.forEach((report: any) => {
+                    let employees = [];
+                    try {
+                      if (typeof report.employees === 'string') {
+                        employees = JSON.parse(report.employees);
+                      } else if (Array.isArray(report.employees)) {
+                        employees = report.employees;
+                      }
+                    } catch (e) {
+                      employees = [];
+                    }
+
+                    const employeeData = employees.find((emp: any) => 
+                      emp.name?.toLowerCase() === employee.key?.toLowerCase()
+                    );
+
+                    if (employeeData) {
+                      const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
+                      const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+
+                      // Commission calculation
+                      const locationId = report.locationId;
+                      let commissionRate = 4;
+                      if (locationId === 1) commissionRate = 4;
+                      else if (locationId === 2) commissionRate = 9;
+                      else if (locationId === 3) commissionRate = 7;
+                      else if (locationId === 4) commissionRate = 6;
+
+                      const totalCommission = report.totalCars * commissionRate;
+                      const totalTips = 40; // $10 per location × 4 locations
+                      const empCommission = totalCommission * hoursPercent;
+                      const empTips = totalTips * hoursPercent;
+                      const empEarnings = empCommission + empTips;
+
+                      // Money owed calculation
+                      const receiptSales = report.totalReceipts * 18;
+                      const totalCollections = report.totalCreditSales + receiptSales;
+                      const totalMoneyOwedOnShift = Math.max(0, totalCollections - report.totalTurnIn);
+                      const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
+
+                      // Tax calculations
+                      const tax = empEarnings * 0.22;
+                      const additionalTaxPayments = Math.max(0, tax - moneyOwed);
+
+                      totalEarnings += empEarnings;
+                      totalTax += tax;
+                      totalMoneyOwed += moneyOwed;
+                      totalAdditionalTaxPayments += additionalTaxPayments;
+                      totalHours += employeeData.hours;
+                    }
+                  });
+
+                  const moneyOwedAfterTax = Math.max(0, totalTax - totalAdditionalTaxPayments);
+
+                  return {
+                    name: employee.fullName,
+                    key: employee.key,
+                    totalHours,
+                    totalEarnings,
+                    totalTax,
+                    totalMoneyOwed,
+                    totalAdditionalTaxPayments,
+                    moneyOwedAfterTax,
+                    shiftsWorked: employeeReports.length
+                  };
+                });
+
+                return (
+                  <div className="space-y-6">
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableCaption>Employee Financial Summary - All Periods</TableCaption>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Employee</TableHead>
+                            <TableHead className="text-right">Hours</TableHead>
+                            <TableHead className="text-right">Shifts</TableHead>
+                            <TableHead className="text-right">Total Earnings</TableHead>
+                            <TableHead className="text-right">Tax Obligation (22%)</TableHead>
+                            <TableHead className="text-right">Money Owed</TableHead>
+                            <TableHead className="text-right">Additional Tax Payments</TableHead>
+                            <TableHead className="text-right">Money After Tax Coverage</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {employeeAccountingData.map((employee) => (
+                            <TableRow key={employee.key}>
+                              <TableCell className="font-medium">{employee.name}</TableCell>
+                              <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
+                              <TableCell className="text-right">{employee.shiftsWorked}</TableCell>
+                              <TableCell className="text-right">${employee.totalEarnings.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">${employee.totalTax.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-green-600 font-medium">
+                                ${employee.totalMoneyOwed.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right text-blue-600">
+                                ${employee.totalAdditionalTaxPayments.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right text-purple-600 font-medium">
+                                ${employee.moneyOwedAfterTax.toFixed(2)}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                          <TableRow className="bg-muted/50 font-bold">
+                            <TableCell>TOTALS</TableCell>
+                            <TableCell className="text-right">
+                              {employeeAccountingData.reduce((sum, emp) => sum + emp.totalHours, 0).toFixed(1)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {employeeAccountingData.reduce((sum, emp) => sum + emp.shiftsWorked, 0)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalEarnings, 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right text-green-600">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right text-blue-600">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalAdditionalTaxPayments, 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right text-purple-600">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.moneyOwedAfterTax, 0).toFixed(2)}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-green-100 p-3 rounded-full">
+                              <DollarSign className="h-6 w-6 text-green-700" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Total Money Owed to Employees</p>
+                              <h3 className="text-2xl font-bold text-green-700">
+                                ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
+                              </h3>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-blue-100 p-3 rounded-full">
+                              <FileSpreadsheet className="h-6 w-6 text-blue-700" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Additional Tax Payments Needed</p>
+                              <h3 className="text-2xl font-bold text-blue-700">
+                                ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalAdditionalTaxPayments, 0).toFixed(2)}
+                              </h3>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-purple-100 p-3 rounded-full">
+                              <Users className="h-6 w-6 text-purple-700" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Total Tax Obligations</p>
+                              <h3 className="text-2xl font-bold text-purple-700">
+                                ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
+                              </h3>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                );
+              })()}
             </CardContent>
           </Card>
         </TabsContent>
