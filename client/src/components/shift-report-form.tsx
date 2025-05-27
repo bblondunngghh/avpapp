@@ -185,6 +185,19 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     },
   });
 
+  // Fetch employees for the dropdown
+  const { data: employees = [] } = useQuery<any[]>({
+    queryKey: ["/api/employees"],
+    queryFn: async () => {
+      const response = await fetch('/api/employees');
+      if (!response.ok) {
+        if (response.status === 401) return null;
+        throw new Error('Failed to fetch employees');
+      }
+      return response.json();
+    },
+  });
+
   // Create mutation for submitting new reports
   const createMutation = useMutation({
     mutationFn: async (data: FormValues) => {
