@@ -426,7 +426,10 @@ input[type="date"].paperform-input {
 }
 
 .bottom-nav-icon {
-  @apply text-2xl;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 .bottom-nav-label {
