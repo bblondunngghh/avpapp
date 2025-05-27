@@ -44,6 +44,7 @@
   main {
     position: relative;
     z-index: 1;
+    padding-top: 80px; /* Space for top header */
     padding-bottom: 80px; /* Space for bottom navigation */
   }
   
