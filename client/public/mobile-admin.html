@@ -230,6 +230,24 @@
             
             <div id="tickets-tab" class="tab-content">
                 <div class="loading" id="tickets-loading">Loading ticket data...</div>
+                
+                <!-- Add Ticket Distribution Form -->
+                <div id="add-ticket-form" style="padding: 16px; border-bottom: 1px solid #eee; background: #f8f9fa;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #333;">Add Ticket Batch</h3>
+                    <form onsubmit="addTicketBatch(event)" style="display: grid; gap: 8px;">
+                        <select id="location-select" required style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">Select Location</option>
+                            <option value="1">The Capital Grille</option>
+                            <option value="2">Bob's Steak & Chop House</option>
+                            <option value="3">Truluck's</option>
+                            <option value="4">BOA Steakhouse</option>
+                        </select>
+                        <input type="text" id="batch-number" placeholder="Batch Number (e.g. BATCH-001)" required style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <input type="number" id="total-tickets" placeholder="Total Tickets" required min="1" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <button type="submit" style="background: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; font-size: 14px; font-weight: 500;">Add Batch</button>
+                    </form>
+                </div>
+                
                 <div id="tickets-content"></div>
             </div>
             
@@ -298,6 +316,54 @@
             // Add active class to selected tab and content
             event.target.classList.add('active');
             document.getElementById(tabName + '-tab').classList.add('active');
+        }
+        
+        // Add ticket batch function
+        async function addTicketBatch(event) {
+            event.preventDefault();
+            
+            const locationId = document.getElementById('location-select').value;
+            const batchNumber = document.getElementById('batch-number').value;
+            const totalTickets = document.getElementById('total-tickets').value;
+            
+            if (!locationId || !batchNumber || !totalTickets) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/ticket-distributions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        locationId: parseInt(locationId),
+                        batchNumber: batchNumber,
+                        totalTickets: parseInt(totalTickets),
+                        usedTickets: 0
+                    })
+                });
+                
+                if (response.ok) {
+                    // Clear form
+                    document.getElementById('location-select').value = '';
+                    document.getElementById('batch-number').value = '';
+                    document.getElementById('total-tickets').value = '';
+                    
+                    // Show success message
+                    alert('Ticket batch added successfully!');
+                    
+                    // Reload data to show the new batch
+                    loadData();
+                } else {
+                    const errorData = await response.json();
+                    alert('Error adding ticket batch: ' + (errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error adding ticket batch:', error);
+                alert('Failed to add ticket batch. Please try again.');
+            }
         }
         
         // Format currency
@@ -472,6 +538,10 @@
                                 <div style="background: #f0f0f0; border-radius: 4px; height: 6px; overflow: hidden;">
                                     <div style="background: ${percentage > 80 ? '#dc3545' : percentage > 60 ? '#ff9800' : '#28a745'}; height: 100%; width: ${percentage}%; transition: width 0.3s ease;"></div>
                                 </div>
+                            </div>
+                            <div style="margin-top: 8px; display: flex; gap: 4px; align-items: center;">
+                                <input type="number" id="used-tickets-${ticket.id}" value="${usedTickets}" min="0" max="${totalTickets}" style="flex: 1; padding: 4px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                                <button onclick="updateTicketUsage(${ticket.id}, ${totalTickets})" style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap;">Update</button>
                             </div>
                         ` : ''}
                     </div>
