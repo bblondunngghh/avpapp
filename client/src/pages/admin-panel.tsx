@@ -4065,7 +4065,7 @@ export default function AdminPanel() {
                                 empData.status === 'critical' ? 'bg-red-50' :
                                 empData.status === 'warning' ? 'bg-yellow-50' : ''
                               }>
-                                <TableCell className="font-medium">{empData.employee.name}</TableCell>
+                                <TableCell className="font-medium">{empData.employee.fullName}</TableCell>
                                 <TableCell className="text-center">{empData.weeklyBreakdown['Sun'] || '-'}</TableCell>
                                 <TableCell className="text-center">{empData.weeklyBreakdown['Mon'] || '-'}</TableCell>
                                 <TableCell className="text-center">{empData.weeklyBreakdown['Tue'] || '-'}</TableCell>
