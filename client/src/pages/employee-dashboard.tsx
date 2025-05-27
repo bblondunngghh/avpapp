@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Dialog, 
   DialogContent, 
@@ -24,10 +25,10 @@ import { useToast } from "@/hooks/use-toast";
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
-  );
-  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
 
   const employeeId = localStorage.getItem("employee_id");
   const employeeName = localStorage.getItem("employee_name");
@@ -57,22 +58,14 @@ export default function EmployeeDashboard() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  // Filter reports by date range and employee
+  // Filter reports by selected month and employee
   const filteredReports = allReports.filter((report: any) => {
     const reportDate = new Date(report.date);
+    const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
     
-    // Apply start date filter if set
-    if (startDate && reportDate < startDate) {
+    // Apply month filter if set
+    if (selectedMonth && reportMonth !== selectedMonth) {
       return false;
-    }
-    
-    // Apply end date filter if set
-    if (endDate) {
-      const endOfDay = new Date(endDate);
-      endOfDay.setHours(23, 59, 59, 999);
-      if (reportDate > endOfDay) {
-        return false;
-      }
     }
     
     // Filter reports where this employee worked
@@ -384,40 +377,37 @@ export default function EmployeeDashboard() {
 
       <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 mb-6">
         <div className="space-y-2">
-          <label htmlFor="start-date" className="text-sm font-medium">Start Date</label>
-          <div className="relative">
-            <input
-              id="start-date"
-              type="date"
-              className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
-              value={startDate ? startDate.toISOString().substring(0, 10) : ""}
-              onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
-            />
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <label htmlFor="end-date" className="text-sm font-medium">End Date</label>
-          <div className="relative">
-            <input
-              id="end-date"
-              type="date"
-              className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
-              value={endDate ? endDate.toISOString().substring(0, 10) : ""}
-              onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
-            />
-          </div>
+          <label htmlFor="month-select" className="text-sm font-medium">Filter by Month</label>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Select a month" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="2025-01">January 2025</SelectItem>
+              <SelectItem value="2025-02">February 2025</SelectItem>
+              <SelectItem value="2025-03">March 2025</SelectItem>
+              <SelectItem value="2025-04">April 2025</SelectItem>
+              <SelectItem value="2025-05">May 2025</SelectItem>
+              <SelectItem value="2025-06">June 2025</SelectItem>
+              <SelectItem value="2025-07">July 2025</SelectItem>
+              <SelectItem value="2025-08">August 2025</SelectItem>
+              <SelectItem value="2025-09">September 2025</SelectItem>
+              <SelectItem value="2025-10">October 2025</SelectItem>
+              <SelectItem value="2025-11">November 2025</SelectItem>
+              <SelectItem value="2025-12">December 2025</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         
         <Button 
           variant="secondary" 
           size="sm"
           onClick={() => {
-            setStartDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1));
-            setEndDate(new Date());
+            const now = new Date();
+            setSelectedMonth(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`);
           }}
         >
-          Reset Filter
+          Current Month
         </Button>
       </div>
 
