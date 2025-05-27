@@ -253,6 +253,27 @@
             
             <div id="performance-tab" class="tab-content">
                 <div class="loading" id="performance-loading">Loading performance data...</div>
+                
+                <!-- Month Filter -->
+                <div style="padding: 16px; border-bottom: 1px solid #eee; background: #f8f9fa;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #333;">Filter by Month</h3>
+                    <select id="month-filter" onchange="filterPerformanceByMonth()" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 100%;">
+                        <option value="all">All Time</option>
+                        <option value="2025-01">January 2025</option>
+                        <option value="2025-02">February 2025</option>
+                        <option value="2025-03">March 2025</option>
+                        <option value="2025-04">April 2025</option>
+                        <option value="2025-05">May 2025</option>
+                        <option value="2025-06">June 2025</option>
+                        <option value="2025-07">July 2025</option>
+                        <option value="2025-08">August 2025</option>
+                        <option value="2025-09">September 2025</option>
+                        <option value="2025-10">October 2025</option>
+                        <option value="2025-11">November 2025</option>
+                        <option value="2025-12">December 2025</option>
+                    </select>
+                </div>
+                
                 <div id="performance-content"></div>
             </div>
         </div>
@@ -386,7 +407,8 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        usedTickets: newUsedTickets
+                        usedTickets: newUsedTickets,
+                        allocatedTickets: totalTickets
                     })
                 });
                 
@@ -589,25 +611,49 @@
             content.innerHTML = html;
         }
         
+        // Store all reports globally for filtering
+        let allReports = [];
+        
         // Render performance
         function renderPerformance(reports) {
+            allReports = reports; // Store for filtering
+            
             const content = document.getElementById('performance-content');
             const loading = document.getElementById('performance-loading');
             
             loading.style.display = 'none';
             
-            // Calculate performance by location
+            // Get selected month filter
+            const monthFilter = document.getElementById('month-filter')?.value || 'all';
+            
+            // Filter reports by month if selected
+            let filteredReports = reports;
+            if (monthFilter !== 'all') {
+                filteredReports = reports.filter(report => {
+                    if (!report.date) return false;
+                    const reportMonth = report.date.substring(0, 7); // Get YYYY-MM format
+                    return reportMonth === monthFilter;
+                });
+            }
+            
+            // Calculate performance by location using turn-in rates
             const locationStats = {
-                1: { name: "The Capital Grille", cars: 0, revenue: 0 },
-                2: { name: "Bob's Steak & Chop House", cars: 0, revenue: 0 },
-                3: { name: "Truluck's", cars: 0, revenue: 0 },
-                4: { name: "BOA Steakhouse", cars: 0, revenue: 0 }
+                1: { name: "The Capital Grille", cars: 0, revenue: 0, turnInRate: 11 },
+                2: { name: "Bob's Steak & Chop House", cars: 0, revenue: 0, turnInRate: 6 },
+                3: { name: "Truluck's", cars: 0, revenue: 0, turnInRate: 8 },
+                4: { name: "BOA Steakhouse", cars: 0, revenue: 0, turnInRate: 7 }
             };
             
-            reports.forEach(report => {
+            // Process filtered reports
+            filteredReports.forEach(report => {
                 if (locationStats[report.locationId]) {
-                    locationStats[report.locationId].cars += Number(report.totalCars) || 0;
-                    locationStats[report.locationId].revenue += Number(report.totalTurnIn) || 0;
+                    const cars = Number(report.totalCars) || 0;
+                    locationStats[report.locationId].cars += cars;
+                    
+                    // Calculate revenue: use reported turn-in or calculate from cars * turn-in rate
+                    const reportedRevenue = Number(report.totalTurnIn) || 0;
+                    const calculatedRevenue = cars * locationStats[report.locationId].turnInRate;
+                    locationStats[report.locationId].revenue += reportedRevenue > 0 ? reportedRevenue : calculatedRevenue;
                 }
             });
             
@@ -631,6 +677,11 @@
             });
             
             content.innerHTML = html;
+        }
+        
+        // Filter performance by month
+        function filterPerformanceByMonth() {
+            renderPerformance(allReports);
         }
         
         // Initialize on page load
