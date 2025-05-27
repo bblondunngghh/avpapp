@@ -174,9 +174,22 @@ export default function EmployeeDashboard() {
       const empTips = totalTips * hoursPercent;
       const empEarnings = empCommission + empTips;
       
-      // Calculate money owed (when credit/receipt sales exceed turn-in - company owes employee)
-      const expectedCompanyCashTurnIn = report.totalTurnIn - report.totalCreditSales - (report.totalReceiptSales || 0);
-      const moneyOwed = expectedCompanyCashTurnIn < 0 ? Math.abs(expectedCompanyCashTurnIn) * hoursPercent : 0;
+      // Calculate money owed using the same logic as the shift report form
+      // Money owed = max(0, employee earnings - their share of company cash turn-in)
+      const locationId = report.locationId;
+      let perCarRate = 4; // Default rate
+      if (locationId === 1) { // Capital Grille
+        perCarRate = 11;
+      } else if (locationId === 2) { // Bob's
+        perCarRate = 6;
+      } else if (locationId === 3) { // Truluck's
+        perCarRate = 8;
+      } else if (locationId === 4) { // BOA
+        perCarRate = 7;
+      }
+      const companyCashTurnIn = report.totalCars * perCarRate - report.totalCreditSales;
+      const employeeShareOfCashTurnIn = companyCashTurnIn > 0 ? companyCashTurnIn * hoursPercent : 0;
+      const moneyOwed = Math.max(0, empEarnings - employeeShareOfCashTurnIn);
       
       // Additional tax payments (credit toward tax obligations)
       const additionalTaxPayments = moneyOwed; // This serves as credit toward taxes
