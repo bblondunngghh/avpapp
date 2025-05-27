@@ -3567,21 +3567,28 @@ export default function AdminPanel() {
                       const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
                       const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
 
-                      // Commission calculation
+                      // Commission calculation - using exact same logic as employee dashboard
                       const locationId = report.locationId;
-                      let commissionRate = 4;
-                      if (locationId === 1) commissionRate = 4;
-                      else if (locationId === 2) commissionRate = 9;
-                      else if (locationId === 3) commissionRate = 7;
-                      else if (locationId === 4) commissionRate = 6;
+                      let commissionRate = 4; // Default rate
+                      if (locationId === 1) { // Capital Grille
+                        commissionRate = 4;
+                      } else if (locationId === 2) { // Bob's
+                        commissionRate = 9;
+                      } else if (locationId === 3) { // Truluck's
+                        commissionRate = 7;
+                      } else if (locationId === 4) { // BOA
+                        commissionRate = 6;
+                      }
 
-                      const totalCommission = report.totalCars * commissionRate;
+                      const totalCommission = (report.creditTransactions * commissionRate) + 
+                                             (report.totalReceipts * commissionRate) + 
+                                             ((report.totalCars - report.creditTransactions - report.totalReceipts) * commissionRate);
                       const totalTips = 40; // $10 per location × 4 locations
                       const empCommission = totalCommission * hoursPercent;
                       const empTips = totalTips * hoursPercent;
                       const empEarnings = empCommission + empTips;
 
-                      // Money owed calculation
+                      // Money owed calculation - using exact same logic as employee dashboard
                       const receiptSales = report.totalReceipts * 18;
                       const totalCollections = report.totalCreditSales + receiptSales;
                       const totalMoneyOwedOnShift = Math.max(0, totalCollections - report.totalTurnIn);
