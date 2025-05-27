@@ -1027,6 +1027,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               <div className="w-20">
                                 <Input 
                                   type="number" 
+                                  inputMode="decimal"
                                   min="0" 
                                   step="0.01" 
                                   className="h-9 text-center text-sm"
