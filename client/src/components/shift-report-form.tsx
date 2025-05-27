@@ -105,7 +105,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalReceiptSales: 0,
       totalReceiptCompany: 0,
       totalCashCollected: 0,
-      companyCashTurnIn: "",
+      companyCashTurnIn: 0,
       totalTurnIn: 0,
       overShort: 0,
       // Commission fields
@@ -778,7 +778,15 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormItem>
                       <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
                       <FormControl>
-                        <InputMoney className="paperform-input" {...field} />
+                        <InputMoney 
+                          className="paperform-input" 
+                          {...field}
+                          value={field.value === 0 ? '' : field.value}
+                          onChange={(e) => {
+                            const value = e.target.value === '' ? 0 : Number(e.target.value);
+                            field.onChange(value);
+                          }}
+                        />
                       </FormControl>
                       <div className="flex justify-between text-xs text-gray-600 mt-1">
                         <span>Expected: ${expectedCompanyCashTurnIn.toFixed(2)}</span>
@@ -1035,20 +1043,28 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   onChange={(e) => {
                                     const newEmployees = [...(form.watch('employees') || [])];
                                     const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
-                                    newEmployees[index] = { 
-                                      ...newEmployees[index], 
-                                      hours: value
-                                    };
-                                    form.setValue('employees', newEmployees);
+                                    const totalJobHours = Number(form.watch("totalJobHours") || 0);
                                     
-                                    // Calculate total employee hours and update the total job hours
-                                    const totalEmployeeHours = newEmployees.reduce(
-                                      (sum, emp) => sum + (parseFloat(String(emp.hours)) || 0), 
+                                    // Calculate current total hours for other employees (excluding this one)
+                                    const otherEmployeesHours = newEmployees.reduce(
+                                      (sum, emp, empIndex) => {
+                                        if (empIndex !== index) {
+                                          return sum + (parseFloat(String(emp.hours)) || 0);
+                                        }
+                                        return sum;
+                                      }, 
                                       0
                                     );
                                     
-                                    // Update total job hours to match employee hours distribution
-                                    form.setValue('totalJobHours', totalEmployeeHours);
+                                    // Check if the new value would exceed total job hours
+                                    const maxAllowedHours = Math.max(0, totalJobHours - otherEmployeesHours);
+                                    const finalValue = Math.min(value, maxAllowedHours);
+                                    
+                                    newEmployees[index] = { 
+                                      ...newEmployees[index], 
+                                      hours: finalValue
+                                    };
+                                    form.setValue('employees', newEmployees);
                                   }}
                                 />
                               </div>
