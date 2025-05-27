@@ -729,7 +729,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       />
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
-                      <span>Expected: ${(cashCars * 15).toFixed(2)}</span>
+                      <span>Expected: ${(cashCars * (form.watch("locationId") === 4 ? 13 : 15)).toFixed(2)}</span>
                     </div>
                     <FormMessage />
                   </FormItem>
