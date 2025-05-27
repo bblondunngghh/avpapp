@@ -3567,9 +3567,18 @@ export default function AdminPanel() {
                       const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
                       const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
 
-                      // Commission calculation - exact same logic as employee dashboard
+                      // Commission calculation - correct rates for each location
                       const locationId = report.locationId;
-                      const commissionRate = locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
+                      let commissionRate = 4; // Default
+                      if (locationId === 1) { // Capital Grille
+                        commissionRate = 4;
+                      } else if (locationId === 2) { // Bob's
+                        commissionRate = 9;
+                      } else if (locationId === 3) { // Truluck's
+                        commissionRate = 7;
+                      } else if (locationId === 4) { // BOA
+                        commissionRate = 6;
+                      }
                       const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
                       
                       const totalCommission = (report.creditTransactions * commissionRate) + 
