@@ -364,11 +364,11 @@ export default function EmployeeDashboard() {
                 <AlertCircle className="h-6 w-6 text-purple-700" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Net Tax Obligation</p>
+                <p className="text-sm text-gray-500">Money Owed After Tax Coverage</p>
                 <h3 className="text-2xl font-bold text-purple-700">
                   ${Math.max(0, paySummary.totalTax - paySummary.totalAdditionalTaxPayments).toFixed(2)}
                 </h3>
-                <p className="text-xs text-purple-500 mt-1">Tax owed after credits</p>
+                <p className="text-xs text-purple-500 mt-1">Amount owed after covering tax obligations</p>
               </div>
             </div>
           </CardContent>
