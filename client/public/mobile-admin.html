@@ -676,10 +676,17 @@
             });
             
             let html = '';
+            let totalCars = 0;
+            let totalRevenue = 0;
+            
             Object.values(locationStats).forEach(location => {
                 const hasData = location.cars > 0 || location.revenue > 0;
                 const opacity = hasData ? '1' : '0.6';
                 const dataNote = hasData ? '' : '<div style="font-size: 12px; color: #666; margin-top: 4px;">No data for selected period</div>';
+                
+                // Add to totals
+                totalCars += location.cars;
+                totalRevenue += location.revenue;
                 
                 html += `
                     <div class="item" style="opacity: ${opacity};">
@@ -698,6 +705,23 @@
                     </div>
                 `;
             });
+            
+            // Add totals section
+            html += `
+                <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white;">
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 12px; text-align: center;">Combined Totals</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size: 14px; opacity: 0.9;">Total Cars</div>
+                            <div style="font-size: 24px; font-weight: bold;">${totalCars.toLocaleString()}</div>
+                        </div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size: 14px; opacity: 0.9;">Total Revenue</div>
+                            <div style="font-size: 24px; font-weight: bold;">${formatCurrency(totalRevenue)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
             
             content.innerHTML = html;
         }
