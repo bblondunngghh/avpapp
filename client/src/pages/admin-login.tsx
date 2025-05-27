@@ -182,7 +182,7 @@ export default function AdminLogin() {
           </p>
           <div className="w-full mt-3">
             <a 
-              href="/mobile-admin.html" 
+              href="/mobile-admin.html?preview=true" 
               className="text-blue-600 hover:text-blue-800 text-xs underline"
               target="_blank"
             >

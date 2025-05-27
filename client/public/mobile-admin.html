@@ -239,10 +239,41 @@
         function checkAuth() {
             const isAuthenticated = localStorage.getItem("admin_authenticated") === "true";
             if (!isAuthenticated) {
+                // Check if this is a preview mode (opened from the login page)
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('preview') === 'true') {
+                    // Show preview mode banner
+                    showPreviewBanner();
+                    return true;
+                }
                 window.location.href = "/admin-login";
                 return false;
             }
             return true;
+        }
+        
+        // Show preview mode banner
+        function showPreviewBanner() {
+            const banner = document.createElement('div');
+            banner.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #ff9800;
+                color: white;
+                text-align: center;
+                padding: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            `;
+            banner.textContent = '👀 PREVIEW MODE - This is how the mobile admin will look';
+            document.body.insertBefore(banner, document.body.firstChild);
+            
+            // Adjust container padding to account for banner
+            document.querySelector('.container').style.paddingTop = '56px';
         }
         
         // Logout function
