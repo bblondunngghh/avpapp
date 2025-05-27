@@ -105,7 +105,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalReceiptSales: 0,
       totalReceiptCompany: 0,
       totalCashCollected: 0,
-      companyCashTurnIn: 0,
+      companyCashTurnIn: "",
       totalTurnIn: 0,
       overShort: 0,
       // Commission fields
