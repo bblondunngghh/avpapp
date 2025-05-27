@@ -1530,7 +1530,22 @@ export default function AdminPanel() {
                     </TableHeader>
                     <TableBody>
                       {reports.map((report) => {
-                        const date = new Date(report.date);
+                        // Parse date safely to avoid timezone issues
+                        let date;
+                        try {
+                          if (report.date.includes('-')) {
+                            const [year, month, day] = report.date.split('-');
+                            date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                          } else if (report.date.includes('/')) {
+                            const parts = report.date.split('/');
+                            date = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+                          } else {
+                            date = new Date(report.date);
+                          }
+                        } catch {
+                          date = new Date(report.date);
+                        }
+                        
                         const submittedDate = new Date(report.createdAt);
                         const turnInRate = report.locationId === 2 ? 6 : 11;
                         const expectedTurnIn = report.totalCars * turnInRate;
