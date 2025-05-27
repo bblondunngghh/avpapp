@@ -3567,23 +3567,20 @@ export default function AdminPanel() {
                       const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
                       const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
 
-                      // Commission calculation - using exact same logic as employee dashboard
+                      // Commission calculation - exact same logic as employee dashboard
                       const locationId = report.locationId;
-                      let commissionRate = 4; // Default rate
-                      if (locationId === 1) { // Capital Grille
-                        commissionRate = 4;
-                      } else if (locationId === 2) { // Bob's
-                        commissionRate = 9;
-                      } else if (locationId === 3) { // Truluck's
-                        commissionRate = 7;
-                      } else if (locationId === 4) { // BOA
-                        commissionRate = 6;
-                      }
-
+                      const commissionRate = locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
+                      const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+                      
                       const totalCommission = (report.creditTransactions * commissionRate) + 
-                                             (report.totalReceipts * commissionRate) + 
-                                             ((report.totalCars - report.creditTransactions - report.totalReceipts) * commissionRate);
-                      const totalTips = 40; // $10 per location × 4 locations
+                                             (cashCars * commissionRate) + 
+                                             (report.totalReceipts * commissionRate);
+                      
+                      // Tips calculations - exact same logic as employee dashboard
+                      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
+                      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+                      const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
+                      const totalTips = creditCardTips + cashTips + receiptTips;
                       const empCommission = totalCommission * hoursPercent;
                       const empTips = totalTips * hoursPercent;
                       const empEarnings = empCommission + empTips;
