@@ -1228,9 +1228,51 @@ export default function AdminPanel() {
             <DollarSign className="h-4 w-4 mr-2" />
             Employee Accounting
           </TabsTrigger>
-          <TabsTrigger value="hours-tracker" className="flex-shrink-0 flex items-center">
+          <TabsTrigger value="hours-tracker" className="flex-shrink-0 flex items-center relative">
             <Clock className="h-4 w-4 mr-2" />
             Hours Tracker
+            {(() => {
+              // Calculate badge count for critical/warning employees
+              const weeklyHours: Record<string, { totalHours: number }> = {};
+              const today = new Date();
+              const currentWeekStart = new Date(today);
+              currentWeekStart.setDate(today.getDate() - today.getDay());
+              currentWeekStart.setHours(0, 0, 0, 0);
+              const currentWeekEnd = new Date(currentWeekStart);
+              currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+              currentWeekEnd.setHours(23, 59, 59, 999);
+
+              reports.forEach((report: any) => {
+                const reportDate = new Date(report.date);
+                if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
+                  let employees = [];
+                  try {
+                    if (typeof report.employees === 'string') {
+                      employees = JSON.parse(report.employees);
+                    } else if (Array.isArray(report.employees)) {
+                      employees = report.employees;
+                    }
+                  } catch (e) {
+                    employees = [];
+                  }
+
+                  employees.forEach((emp: any) => {
+                    if (!weeklyHours[emp.key]) {
+                      weeklyHours[emp.key] = { totalHours: 0 };
+                    }
+                    weeklyHours[emp.key].totalHours += emp.hours;
+                  });
+                }
+              });
+
+              const alertCount = Object.values(weeklyHours).filter(emp => emp.totalHours >= 35).length;
+              
+              return alertCount > 0 ? (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {alertCount}
+                </span>
+              ) : null;
+            })()}
           </TabsTrigger>
         </TabsList>
         
