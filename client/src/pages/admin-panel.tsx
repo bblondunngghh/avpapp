@@ -3535,7 +3535,7 @@ export default function AdminPanel() {
                       reportEmployees = [];
                     }
                     
-                    return reportEmployees.some((emp: any) => 
+                    return Array.isArray(reportEmployees) && reportEmployees.some((emp: any) => 
                       emp.name?.toLowerCase() === employee.key?.toLowerCase()
                     );
                   });
