@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import ReportForm from "@/pages/report-form";
 import Reports from "@/pages/reports";
+import ReportsWrapper from "@/pages/reports-wrapper";
 import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
@@ -96,38 +97,7 @@ function Router() {
           <Route path="/admin" component={AdminPanel} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/admin/tax-payments" component={AccountantPage} />
-          <Route path="/reports">
-            {() => {
-              // Use our storage wrapper instead of directly accessing localStorage
-              const checkAuth = async () => {
-                try {
-                  const { isAdminAuthenticated } = await import("@/lib/admin-auth");
-                  return isAdminAuthenticated();
-                } catch (err) {
-                  console.error("Auth check error:", err);
-                  return false;
-                }
-              };
-              
-              const [isAuthenticated, setIsAuthenticated] = useState(false);
-              const [isChecking, setIsChecking] = useState(true);
-              
-              useEffect(() => {
-                checkAuth().then(isAuth => {
-                  setIsAuthenticated(isAuth);
-                  setIsChecking(false);
-                  
-                  if (!isAuth) {
-                    // Use navigate instead of directly changing window.location
-                    setLocation("/admin-login");
-                  }
-                });
-              }, [setLocation]);
-              
-              if (isChecking) return <div>Checking authentication...</div>;
-              return isAuthenticated ? <Reports /> : null;
-            }}
-          </Route>
+          <Route path="/reports" component={ReportsWrapper} />
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
           <Route component={NotFound} />

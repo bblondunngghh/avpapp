@@ -87,7 +87,7 @@ export default function AdminLogin() {
         
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
-          // Redirect based on device type
+          // Always redirect mobile devices to the working HTML admin panel
           if (isIOS || isIPad) {
             console.log("Redirecting to pure HTML admin panel for mobile devices");
             window.location.href = "/mobile-admin.html";
