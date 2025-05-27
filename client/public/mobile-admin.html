@@ -342,8 +342,9 @@
                     body: JSON.stringify({
                         locationId: parseInt(locationId),
                         batchNumber: batchNumber,
-                        totalTickets: parseInt(totalTickets),
-                        usedTickets: 0
+                        allocatedTickets: parseInt(totalTickets),
+                        usedTickets: 0,
+                        notes: null
                     })
                 });
                 
@@ -541,7 +542,7 @@
             sortedTickets.forEach(ticket => {
                 const locationName = getLocationName(ticket.locationId);
                 const batchNumber = ticket.batchNumber || 'N/A';
-                const totalTickets = ticket.totalTickets || 0;
+                const totalTickets = ticket.allocatedTickets || 0;
                 const usedTickets = ticket.usedTickets || 0;
                 const remainingTickets = totalTickets - usedTickets;
                 const percentage = totalTickets > 0 ? Math.round((usedTickets / totalTickets) * 100) : 0;
