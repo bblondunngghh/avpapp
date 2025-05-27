@@ -980,7 +980,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   <SelectTrigger className="h-9 w-full text-sm">
                                     <SelectValue placeholder="Select employee..." />
                                   </SelectTrigger>
-                                  <SelectContent className="text-xs">
+                                  <SelectContent className="text-xs max-h-48 overflow-y-auto" position="popper" side="bottom" align="start">
                                     <SelectItem value="antonio" className="text-xs py-1">Antonio Martinez</SelectItem>
                                     <SelectItem value="arturo" className="text-xs py-1">Arturo Sanchez</SelectItem>
                                     <SelectItem value="brandon" className="text-xs py-1">Brandon Blond</SelectItem>
