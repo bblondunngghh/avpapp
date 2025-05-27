@@ -1,5 +1,5 @@
 import { useLocation, useRoute } from "wouter";
-import { ClipboardList, Home, PlusCircle } from "lucide-react";
+import { ClipboardList, Home, PlusCircle, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function BottomNavigation() {
@@ -7,6 +7,7 @@ export default function BottomNavigation() {
   const [isHome] = useRoute("/");
   const [isReports] = useRoute("/reports");
   const [isReportSelection] = useRoute("/report-selection");
+  const [isEmployeeDashboard] = useRoute("/employee-dashboard");
   const [isAdmin, setIsAdmin] = useState(false);
   
   // Check if user is logged in as admin
@@ -61,6 +62,14 @@ export default function BottomNavigation() {
       >
         <PlusCircle className="bottom-nav-icon" size={20} />
         <span className="bottom-nav-label">New Report</span>
+      </button>
+
+      <button 
+        className={`bottom-nav-item ${isEmployeeDashboard ? 'active' : ''}`}
+        onClick={() => navigate('/employee-dashboard')}
+      >
+        <User className="bottom-nav-icon" size={20} />
+        <span className="bottom-nav-label">Employee</span>
       </button>
     </nav>
   );
