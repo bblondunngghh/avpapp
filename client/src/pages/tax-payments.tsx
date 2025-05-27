@@ -451,97 +451,75 @@ export default function AccountantPage() {
                 </TableHeader>
                 <TableBody>
                   {employees && employees.length > 0 ? (
-                    // Display all employees, even if they don't have payment records
+                    // Display each employee once with combined totals
                     employees.map(employee => {
-                      // Find payments for this employee
+                      // Find all payments for this employee
                       const employeePayments = filteredPayments?.filter(
                         payment => payment.employeeId === employee.id
                       ) || [];
                       
-                      // If employee has payments, show them
-                      if (employeePayments.length > 0) {
-                        return employeePayments.map(payment => (
-                          <TableRow key={`payment-${payment.id}`}>
-                            <TableCell className="font-medium">
-                              {employee.fullName}
-                            </TableCell>
-                            <TableCell>{payment.reportId || "N/A"}</TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(calculateCommission(payment))}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(calculateTips(payment))}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(calculateMoneyOwed(payment))}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(calculateAdvance(payment))}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(Number(payment.paidAmount || 0) - calculateMoneyOwed(payment))}
-                            </TableCell>
-                            <TableCell>
-                              {formatDate(payment.paymentDate || payment.createdAt)}
-                            </TableCell>
-                            <TableCell>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem>
-                                    View Details
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    Record Payment
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ));
-                      } else {
-                        // If employee has no payments, display a row with zeros
-                        return (
-                          <TableRow key={`employee-${employee.id}`}>
-                            <TableCell className="font-medium">
-                              {employee.fullName}
-                            </TableCell>
-                            <TableCell>N/A</TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(0)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(0)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(0)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(0)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatCurrency(0)}
-                            </TableCell>
-                            <TableCell>
-                              N/A
-                            </TableCell>
-                            <TableCell>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem>
+                      // Calculate combined totals for this employee
+                      const totalCommission = employeePayments.reduce((sum, payment) => 
+                        sum + calculateCommission(payment), 0);
+                      const totalTips = employeePayments.reduce((sum, payment) => 
+                        sum + calculateTips(payment), 0);
+                      const totalMoneyOwed = employeePayments.reduce((sum, payment) => 
+                        sum + calculateMoneyOwed(payment), 0);
+                      const totalAdvance = employeePayments.reduce((sum, payment) => 
+                        sum + calculateAdvance(payment), 0);
+                      const totalTaxContribution = employeePayments.reduce((sum, payment) => 
+                        sum + (Number(payment.paidAmount || 0) - calculateMoneyOwed(payment)), 0);
+                      
+                      // Get most recent payment date
+                      const mostRecentDate = employeePayments.length > 0 
+                        ? employeePayments.reduce((latest, payment) => {
+                            const paymentDate = new Date(payment.paymentDate || payment.createdAt);
+                            const latestDate = new Date(latest);
+                            return paymentDate > latestDate ? (payment.paymentDate || payment.createdAt) : latest;
+                          }, employeePayments[0].paymentDate || employeePayments[0].createdAt)
+                        : null;
+                      
+                      // Get report IDs for this employee
+                      const reportIds = [...new Set(employeePayments.map(p => p.reportId).filter(Boolean))];
+                      
+                      return (
+                        <TableRow key={`employee-${employee.id}`}>
+                          <TableCell className="font-medium">
+                            {employee.fullName}
+                          </TableCell>
+                          <TableCell>{reportIds.length > 0 ? reportIds.join(', ') : "N/A"}</TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(totalCommission)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(totalTips)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(totalMoneyOwed)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(totalAdvance)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(totalTaxContribution)}
+                          </TableCell>
+                          <TableCell>
+                            {mostRecentDate ? formatDate(mostRecentDate) : 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                  View Details
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
                                     Record Payment
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -549,7 +527,6 @@ export default function AccountantPage() {
                             </TableCell>
                           </TableRow>
                         );
-                      }
                     })
                   ) : (
                     <TableRow>
