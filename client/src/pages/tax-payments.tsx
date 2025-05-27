@@ -43,7 +43,7 @@ import { useLocation } from "wouter";
 export default function AccountantPage() {
   const [, navigate] = useLocation();
   const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
-  const [filterDate, setFilterDate] = useState<string>('');
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   
   // Check if admin is authenticated
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function AccountantPage() {
   
   // Fetch tax payments and ensure all employees have records
   const { data: taxPayments, isLoading } = useQuery<EmployeeTaxPayment[]>({
-    queryKey: ['/api/tax-payments', selectedEmployee, filterDate, employees],
+    queryKey: ['/api/tax-payments', selectedEmployee, selectedMonth, employees],
     queryFn: async () => {
       try {
         // First fetch all employees to ensure we have records for each
@@ -170,8 +170,8 @@ export default function AccountantPage() {
     setSelectedEmployee(value);
   };
   
-  const handleDateFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterDate(e.target.value);
+  const handleMonthFilterChange = (value: string) => {
+    setSelectedMonth(value === "all" ? null : value);
   };
   
   // Format currency
@@ -193,17 +193,20 @@ export default function AccountantPage() {
     });
   };
   
-  // Filter tax payments by date if filterDate is set
+  // Filter tax payments by month if selectedMonth is set
   const filteredPayments = taxPayments?.filter(payment => {
-    if (!filterDate) return true;
+    if (!selectedMonth) return true;
     
     const paymentDate = payment.paymentDate || payment.createdAt;
     if (!paymentDate) return false;
     
     const paymentDateObj = new Date(paymentDate);
-    const filterDateObj = new Date(filterDate);
+    const paymentYear = paymentDateObj.getFullYear();
+    const paymentMonth = paymentDateObj.getMonth() + 1; // JavaScript months are 0-based
+    const filterYear = parseInt(selectedMonth.split('-')[0]);
+    const filterMonth = parseInt(selectedMonth.split('-')[1]);
     
-    return paymentDateObj.toDateString() === filterDateObj.toDateString();
+    return paymentYear === filterYear && paymentMonth === filterMonth;
   });
   
   // Calculate commission, tips, money owed and advance
@@ -387,13 +390,30 @@ export default function AccountantPage() {
             </div>
             
             <div className="w-full md:w-1/3">
-              <Label htmlFor="date-filter">Filter by Date</Label>
-              <Input
-                id="date-filter"
-                type="date"
-                value={filterDate}
-                onChange={handleDateFilterChange}
-              />
+              <Label htmlFor="month-filter">Filter by Month</Label>
+              <Select
+                value={selectedMonth || "all"}
+                onValueChange={handleMonthFilterChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All Months" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Months</SelectItem>
+                  <SelectItem value="2025-01">January 2025</SelectItem>
+                  <SelectItem value="2025-02">February 2025</SelectItem>
+                  <SelectItem value="2025-03">March 2025</SelectItem>
+                  <SelectItem value="2025-04">April 2025</SelectItem>
+                  <SelectItem value="2025-05">May 2025</SelectItem>
+                  <SelectItem value="2025-06">June 2025</SelectItem>
+                  <SelectItem value="2025-07">July 2025</SelectItem>
+                  <SelectItem value="2025-08">August 2025</SelectItem>
+                  <SelectItem value="2025-09">September 2025</SelectItem>
+                  <SelectItem value="2025-10">October 2025</SelectItem>
+                  <SelectItem value="2025-11">November 2025</SelectItem>
+                  <SelectItem value="2025-12">December 2025</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <div className="w-full md:w-1/3 flex items-end">
