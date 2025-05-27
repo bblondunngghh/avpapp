@@ -3932,6 +3932,16 @@ export default function AdminPanel() {
                   status: 'safe' | 'warning' | 'critical'
                 }> = {};
 
+                // Initialize all employees with 0 hours
+                employees.forEach((emp: any) => {
+                  weeklyHours[emp.key] = {
+                    employee: emp,
+                    totalHours: 0,
+                    weeklyBreakdown: {},
+                    status: 'safe'
+                  };
+                });
+
                 // Get current week start (Sunday)
                 const today = new Date();
                 const currentWeekStart = new Date(today);
@@ -3946,42 +3956,35 @@ export default function AdminPanel() {
                 reports.forEach((report: any) => {
                   const reportDate = new Date(report.date);
                   if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
-                    let employees = [];
+                    let reportEmployees = [];
                     try {
                       if (typeof report.employees === 'string') {
-                        employees = JSON.parse(report.employees);
+                        reportEmployees = JSON.parse(report.employees);
                       } else if (Array.isArray(report.employees)) {
-                        employees = report.employees;
+                        reportEmployees = report.employees;
                       }
                     } catch (e) {
-                      employees = [];
+                      reportEmployees = [];
                     }
 
-                    employees.forEach((emp: any) => {
-                      if (!weeklyHours[emp.key]) {
-                        weeklyHours[emp.key] = {
-                          employee: emp,
-                          totalHours: 0,
-                          weeklyBreakdown: {},
-                          status: 'safe'
-                        };
-                      }
-                      
-                      const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
-                      weeklyHours[emp.key].weeklyBreakdown[dayName] = (weeklyHours[emp.key].weeklyBreakdown[dayName] || 0) + emp.hours;
-                      weeklyHours[emp.key].totalHours += emp.hours;
-                      
-                      // Determine status
-                      if (weeklyHours[emp.key].totalHours >= 38) {
-                        weeklyHours[emp.key].status = 'critical';
-                      } else if (weeklyHours[emp.key].totalHours >= 35) {
-                        weeklyHours[emp.key].status = 'warning';
+                    reportEmployees.forEach((emp: any) => {
+                      if (weeklyHours[emp.key]) {
+                        const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
+                        weeklyHours[emp.key].weeklyBreakdown[dayName] = (weeklyHours[emp.key].weeklyBreakdown[dayName] || 0) + emp.hours;
+                        weeklyHours[emp.key].totalHours += emp.hours;
+                        
+                        // Determine status
+                        if (weeklyHours[emp.key].totalHours >= 38) {
+                          weeklyHours[emp.key].status = 'critical';
+                        } else if (weeklyHours[emp.key].totalHours >= 35) {
+                          weeklyHours[emp.key].status = 'warning';
+                        }
                       }
                     });
                   }
                 });
 
-                const weeklyData = Object.values(weeklyHours);
+                const weeklyData = Object.values(weeklyHours).sort((a, b) => a.employee.fullName.localeCompare(b.employee.fullName));
                 const criticalEmployees = weeklyData.filter(emp => emp.status === 'critical');
                 const warningEmployees = weeklyData.filter(emp => emp.status === 'warning');
 
