@@ -174,9 +174,12 @@ export default function EmployeeDashboard() {
       const empTips = totalTips * hoursPercent;
       const empEarnings = empCommission + empTips;
       
-      // Calculate money owed (if negative company cash turn-in)
+      // Calculate money owed (when credit/receipt sales exceed turn-in - company owes employee)
       const expectedCompanyCashTurnIn = report.totalTurnIn - report.totalCreditSales - (report.totalReceiptSales || 0);
       const moneyOwed = expectedCompanyCashTurnIn < 0 ? Math.abs(expectedCompanyCashTurnIn) * hoursPercent : 0;
+      
+      // Additional tax payments (credit toward tax obligations)
+      const additionalTaxPayments = moneyOwed; // This serves as credit toward taxes
       
       // Calculate tax
       const tax = empEarnings * 0.22;
@@ -187,6 +190,7 @@ export default function EmployeeDashboard() {
       summary.totalTips += empTips;
       summary.totalEarnings += empEarnings;
       summary.totalMoneyOwed += moneyOwed;
+      summary.totalAdditionalTaxPayments += additionalTaxPayments;
       summary.totalTax += tax;
       summary.count += 1;
       
@@ -202,6 +206,7 @@ export default function EmployeeDashboard() {
         tips: empTips,
         earnings: empEarnings,
         moneyOwed,
+        additionalTaxPayments,
         tax,
         cashPaid: employeeData.cashPaid || 0
       });
@@ -214,6 +219,7 @@ export default function EmployeeDashboard() {
     totalTips: 0,
     totalEarnings: 0,
     totalMoneyOwed: 0,
+    totalAdditionalTaxPayments: 0,
     totalTax: 0,
     count: 0,
     shifts: []
@@ -271,7 +277,7 @@ export default function EmployeeDashboard() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -300,27 +306,46 @@ export default function EmployeeDashboard() {
           </CardContent>
         </Card>
         
-        <Card className={paySummary.totalMoneyOwed > 0 ? "border-2 border-orange-300 shadow-md" : ""}>
+        <Card className={paySummary.totalMoneyOwed > 0 ? "border-2 border-green-300 shadow-md" : ""}>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className={`p-3 rounded-full ${paySummary.totalMoneyOwed > 0 ? 'bg-orange-100' : 'bg-green-100'}`}>
-                <AlertCircle className={`h-6 w-6 ${paySummary.totalMoneyOwed > 0 ? 'text-orange-700' : 'text-green-700'}`} />
+              <div className={`p-3 rounded-full ${paySummary.totalMoneyOwed > 0 ? 'bg-green-100' : 'bg-gray-100'}`}>
+                <DollarSign className={`h-6 w-6 ${paySummary.totalMoneyOwed > 0 ? 'text-green-700' : 'text-gray-500'}`} />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Money Owed</p>
-                <h3 className={`text-2xl font-bold ${paySummary.totalMoneyOwed > 0 ? 'text-orange-700' : 'text-green-700'}`}>
+                <p className="text-sm text-gray-500">Money Owed to You</p>
+                <h3 className={`text-2xl font-bold ${paySummary.totalMoneyOwed > 0 ? 'text-green-700' : 'text-gray-500'}`}>
                   ${paySummary.totalMoneyOwed.toFixed(2)}
                 </h3>
                 {paySummary.totalMoneyOwed > 0 ? (
-                  <p className="text-xs text-orange-600 mt-1">Amount you owe the company</p>
+                  <p className="text-xs text-green-600 mt-1">Company owes you this amount</p>
                 ) : (
-                  <p className="text-xs text-green-600 mt-1">No money owed</p>
+                  <p className="text-xs text-gray-500 mt-1">No money owed to you</p>
                 )}
               </div>
             </div>
           </CardContent>
         </Card>
         
+        <Card className={paySummary.totalAdditionalTaxPayments > 0 ? "border-2 border-blue-300 shadow-md" : ""}>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-3 rounded-full">
+                <FileText className="h-6 w-6 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Additional Tax Payments</p>
+                <h3 className="text-2xl font-bold text-blue-700">${paySummary.totalAdditionalTaxPayments.toFixed(2)}</h3>
+                {paySummary.totalAdditionalTaxPayments > 0 && (
+                  <p className="text-xs text-blue-500 mt-1">Credit for tax obligations</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -330,6 +355,23 @@ export default function EmployeeDashboard() {
               <div>
                 <p className="text-sm text-gray-500">Total Shifts</p>
                 <h3 className="text-2xl font-bold">{paySummary.shifts.length}</h3>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-purple-100 p-3 rounded-full">
+                <AlertCircle className="h-6 w-6 text-purple-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Net Tax Obligation</p>
+                <h3 className="text-2xl font-bold text-purple-700">
+                  ${Math.max(0, paySummary.totalTax - paySummary.totalAdditionalTaxPayments).toFixed(2)}
+                </h3>
+                <p className="text-xs text-purple-500 mt-1">Tax owed after credits</p>
               </div>
             </div>
           </CardContent>
