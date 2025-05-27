@@ -559,7 +559,21 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium text-sm">Shift Leader</FormLabel>
                     <Select 
-                      onValueChange={field.onChange} 
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        
+                        // Auto-populate shift leader as first employee if not already present
+                        const currentEmployees = form.watch('employees') || [];
+                        const isShiftLeaderAlreadyAdded = currentEmployees.some((emp: any) => emp.name === value);
+                        
+                        if (!isShiftLeaderAlreadyAdded && value) {
+                          const updatedEmployees = [
+                            { name: value, hours: 0 },
+                            ...currentEmployees
+                          ];
+                          form.setValue('employees', updatedEmployees);
+                        }
+                      }} 
                       value={field.value}
                     >
                       <FormControl>
