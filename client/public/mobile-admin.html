@@ -219,12 +219,18 @@
         <div class="section">
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('reports')">Reports</button>
+                <button class="tab" onclick="switchTab('tickets')">Tickets</button>
                 <button class="tab" onclick="switchTab('performance')">Performance</button>
             </div>
             
             <div id="reports-tab" class="tab-content active">
                 <div class="loading" id="reports-loading">Loading reports...</div>
                 <div id="reports-content"></div>
+            </div>
+            
+            <div id="tickets-tab" class="tab-content">
+                <div class="loading" id="tickets-loading">Loading ticket data...</div>
+                <div id="tickets-content"></div>
             </div>
             
             <div id="performance-tab" class="tab-content">
@@ -349,6 +355,9 @@
                 // Render reports
                 renderReports(reports);
                 
+                // Render tickets
+                renderTickets(tickets);
+                
                 // Render performance
                 renderPerformance(reports);
                 
@@ -402,6 +411,69 @@
                                 <div class="detail-value">${formatCurrency(report.totalTurnIn)}</div>
                             </div>
                         </div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+        
+        // Render tickets
+        function renderTickets(tickets) {
+            const content = document.getElementById('tickets-content');
+            const loading = document.getElementById('tickets-loading');
+            
+            loading.style.display = 'none';
+            
+            if (tickets.length === 0) {
+                content.innerHTML = '<div class="item">No ticket distributions available</div>';
+                return;
+            }
+            
+            // Sort by date (newest first)
+            const sortedTickets = tickets
+                .sort((a, b) => new Date(b.date || b.createdAt || 0) - new Date(a.date || a.createdAt || 0));
+            
+            let html = '';
+            sortedTickets.forEach(ticket => {
+                const locationName = getLocationName(ticket.locationId);
+                const batchNumber = ticket.batchNumber || 'N/A';
+                const totalTickets = ticket.totalTickets || 0;
+                const usedTickets = ticket.usedTickets || 0;
+                const remainingTickets = totalTickets - usedTickets;
+                const percentage = totalTickets > 0 ? Math.round((usedTickets / totalTickets) * 100) : 0;
+                
+                html += `
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-title">${locationName}</div>
+                            <div class="item-subtitle">Batch: ${batchNumber}</div>
+                        </div>
+                        <div class="item-details">
+                            <div>
+                                <div class="detail-label">Total Tickets</div>
+                                <div class="detail-value">${totalTickets}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Used</div>
+                                <div class="detail-value">${usedTickets}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Remaining</div>
+                                <div class="detail-value">${remainingTickets}</div>
+                            </div>
+                            <div>
+                                <div class="detail-label">Usage</div>
+                                <div class="detail-value">${percentage}%</div>
+                            </div>
+                        </div>
+                        ${totalTickets > 0 ? `
+                            <div style="margin-top: 8px;">
+                                <div style="background: #f0f0f0; border-radius: 4px; height: 6px; overflow: hidden;">
+                                    <div style="background: ${percentage > 80 ? '#dc3545' : percentage > 60 ? '#ff9800' : '#28a745'}; height: 100%; width: ${percentage}%; transition: width 0.3s ease;"></div>
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             });
