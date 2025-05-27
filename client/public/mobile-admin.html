@@ -234,18 +234,18 @@
                 <!-- Add Ticket Distribution Form -->
                 <div id="add-ticket-form" style="padding: 16px; border-bottom: 1px solid #eee; background: #f8f9fa;">
                     <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #333;">Add Ticket Batch</h3>
-                    <form onsubmit="addTicketBatch(event)" style="display: grid; gap: 8px;">
-                        <select id="location-select" required style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <div style="display: grid; gap: 8px;">
+                        <select id="location-select" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
                             <option value="">Select Location</option>
                             <option value="1">The Capital Grille</option>
                             <option value="2">Bob's Steak & Chop House</option>
                             <option value="3">Truluck's</option>
                             <option value="4">BOA Steakhouse</option>
                         </select>
-                        <input type="text" id="batch-number" placeholder="Batch Number (e.g. BATCH-001)" required style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                        <input type="number" id="total-tickets" placeholder="Total Tickets" required min="1" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                        <button type="submit" style="background: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; font-size: 14px; font-weight: 500;">Add Batch</button>
-                    </form>
+                        <input type="text" id="batch-number" placeholder="Batch Number (e.g. BATCH-001)" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <input type="number" id="total-tickets" placeholder="Total Tickets" min="1" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <button type="button" onclick="addTicketBatch()" style="background: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; font-size: 14px; font-weight: 500;">Add Batch</button>
+                    </div>
                 </div>
                 
                 <div id="tickets-content"></div>
@@ -319,12 +319,14 @@
         }
         
         // Add ticket batch function
-        async function addTicketBatch(event) {
-            event.preventDefault();
+        async function addTicketBatch() {
+            console.log('Add batch button clicked - addTicketBatch called');
             
             const locationId = document.getElementById('location-select').value;
             const batchNumber = document.getElementById('batch-number').value;
             const totalTickets = document.getElementById('total-tickets').value;
+            
+            console.log('Form values:', { locationId, batchNumber, totalTickets });
             
             if (!locationId || !batchNumber || !totalTickets) {
                 alert('Please fill in all fields');
