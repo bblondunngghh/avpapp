@@ -129,6 +129,7 @@ export default function AdminPanel() {
   const [isAddingEmployees, setIsAddingEmployees] = useState(false);
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   
   // Initial setup - check authentication and adapt UI for mobile
   useEffect(() => {
@@ -549,7 +550,7 @@ export default function AdminPanel() {
     setSalesTrendData(salesTrend);
     setReportsByDay(dayReportCounts);
     
-  }, [reports, startDate, endDate, selectedLocation]);
+  }, [reports, selectedMonth, selectedLocation]);
   
   // Set initial employees data
   useEffect(() => {
@@ -599,21 +600,17 @@ export default function AdminPanel() {
         });
       });
       
-      // Filter reports by date range if filters are set
+      // Filter reports by month if filter is set
       const filteredReports = reports.filter(report => {
-        const reportDate = new Date(report.date);
-        
-        // Apply start date filter if set
-        if (startDate && reportDate < startDate) {
-          return false;
-        }
-        
-        // Apply end date filter if set
-        if (endDate) {
-          // Set to end of day for the end date to include the entire day
-          const endOfDay = new Date(endDate);
-          endOfDay.setHours(23, 59, 59, 999);
-          if (reportDate > endOfDay) {
+        // Apply month filter if set
+        if (selectedMonth) {
+          const reportDate = new Date(report.date);
+          const reportYear = reportDate.getFullYear();
+          const reportMonth = reportDate.getMonth() + 1; // JavaScript months are 0-based
+          const filterYear = parseInt(selectedMonth.split('-')[0]);
+          const filterMonth = parseInt(selectedMonth.split('-')[1]);
+          
+          if (reportYear !== filterYear || reportMonth !== filterMonth) {
             return false;
           }
         }
