@@ -300,17 +300,21 @@ export default function EmployeeDashboard() {
           </CardContent>
         </Card>
         
-        <Card className={paySummary.totalMoneyOwed > 0 ? "border-2 border-blue-300 shadow-md" : ""}>
+        <Card className={paySummary.totalMoneyOwed > 0 ? "border-2 border-orange-300 shadow-md" : ""}>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="bg-blue-100 p-3 rounded-full">
-                <DollarSign className="h-6 w-6 text-blue-700" />
+              <div className={`p-3 rounded-full ${paySummary.totalMoneyOwed > 0 ? 'bg-orange-100' : 'bg-green-100'}`}>
+                <AlertCircle className={`h-6 w-6 ${paySummary.totalMoneyOwed > 0 ? 'text-orange-700' : 'text-green-700'}`} />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Additional Tax Payments</p>
-                <h3 className="text-2xl font-bold text-blue-700">${paySummary.totalMoneyOwed.toFixed(2)}</h3>
-                {paySummary.totalMoneyOwed > 0 && (
-                  <p className="text-xs text-blue-500 mt-1">Credit for tax obligations</p>
+                <p className="text-sm text-gray-500">Money Owed</p>
+                <h3 className={`text-2xl font-bold ${paySummary.totalMoneyOwed > 0 ? 'text-orange-700' : 'text-green-700'}`}>
+                  ${paySummary.totalMoneyOwed.toFixed(2)}
+                </h3>
+                {paySummary.totalMoneyOwed > 0 ? (
+                  <p className="text-xs text-orange-600 mt-1">Amount you owe the company</p>
+                ) : (
+                  <p className="text-xs text-green-600 mt-1">No money owed</p>
                 )}
               </div>
             </div>
