@@ -366,6 +366,41 @@
             }
         }
         
+        // Update ticket usage function
+        async function updateTicketUsage(ticketId, totalTickets) {
+            const usedTicketsInput = document.getElementById(`used-tickets-${ticketId}`);
+            const newUsedTickets = parseInt(usedTicketsInput.value);
+            
+            if (isNaN(newUsedTickets) || newUsedTickets < 0 || newUsedTickets > totalTickets) {
+                alert(`Please enter a valid number between 0 and ${totalTickets}`);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/ticket-distributions/${ticketId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        usedTickets: newUsedTickets
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('Ticket usage updated successfully!');
+                    // Reload data to show updated values
+                    loadData();
+                } else {
+                    const errorData = await response.json();
+                    alert('Error updating ticket usage: ' + (errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error updating ticket usage:', error);
+                alert('Failed to update ticket usage. Please try again.');
+            }
+        }
+        
         // Format currency
         function formatCurrency(amount) {
             return new Intl.NumberFormat('en-US', {
