@@ -228,6 +228,12 @@ export default function AdminPanel() {
     dave: number;
     total: number;
   }>>([]);
+
+  // Employee accounting month filter
+  const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
   const EXPENSES_EDIT_PASSWORD = "bblonly";
   
   // Load saved expenses from localStorage on initial render
@@ -3509,10 +3515,55 @@ export default function AdminPanel() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 mb-6">
+                <div className="space-y-2">
+                  <label htmlFor="accounting-month-select" className="text-sm font-medium">Filter by Month</label>
+                  <Select value={selectedAccountingMonth} onValueChange={setSelectedAccountingMonth}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Select a month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2025-01">January 2025</SelectItem>
+                      <SelectItem value="2025-02">February 2025</SelectItem>
+                      <SelectItem value="2025-03">March 2025</SelectItem>
+                      <SelectItem value="2025-04">April 2025</SelectItem>
+                      <SelectItem value="2025-05">May 2025</SelectItem>
+                      <SelectItem value="2025-06">June 2025</SelectItem>
+                      <SelectItem value="2025-07">July 2025</SelectItem>
+                      <SelectItem value="2025-08">August 2025</SelectItem>
+                      <SelectItem value="2025-09">September 2025</SelectItem>
+                      <SelectItem value="2025-10">October 2025</SelectItem>
+                      <SelectItem value="2025-11">November 2025</SelectItem>
+                      <SelectItem value="2025-12">December 2025</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={() => {
+                    const now = new Date();
+                    setSelectedAccountingMonth(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`);
+                  }}
+                >
+                  Current Month
+                </Button>
+              </div>
+
               {(() => {
-                // Calculate employee accounting data
+                // Calculate employee accounting data with month filtering
                 const employeeAccountingData = employees.map(employee => {
                   const employeeReports = reports.filter((report: any) => {
+                    // Apply month filter first
+                    const reportDate = new Date(report.date);
+                    const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+                    
+                    if (selectedAccountingMonth && reportMonth !== selectedAccountingMonth) {
+                      return false;
+                    }
+
+                    // Then filter by employee participation
                     let reportEmployees = [];
                     try {
                       if (typeof report.employees === 'string') {
