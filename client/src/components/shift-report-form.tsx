@@ -568,25 +568,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="antonio">Antonio Martinez</SelectItem>
-                        <SelectItem value="arturo">Arturo Sanchez</SelectItem>
-                        <SelectItem value="brandon">Brandon Blond</SelectItem>
-                        <SelectItem value="brett">Brett Willson</SelectItem>
-                        <SelectItem value="dave">Dave Roehm</SelectItem>
-                        <SelectItem value="devin">Devin Bean</SelectItem>
-                        <SelectItem value="dylan">Dylan McMullen</SelectItem>
-                        <SelectItem value="elijah">Elijah Aguilar</SelectItem>
-                        <SelectItem value="ethan">Ethan Walker</SelectItem>
-                        <SelectItem value="gabe">Gabe Ott</SelectItem>
-                        <SelectItem value="jacob">Jacob Weldon</SelectItem>
-                        <SelectItem value="joe">Joe Albright</SelectItem>
-                        <SelectItem value="jonathan">Jonathan Zaccheo</SelectItem>
-                        <SelectItem value="kevin">Kevin Hanrahan</SelectItem>
-                        <SelectItem value="melvin">Melvin Lobos</SelectItem>
-                        <SelectItem value="noe">Noe Coronado</SelectItem>
-                        <SelectItem value="riley">Riley McIntyre</SelectItem>
-                        <SelectItem value="ryan">Ryan Hocevar</SelectItem>
-                        <SelectItem value="zane">Zane Springer</SelectItem>
+                        {employees
+                          .filter((emp: any) => emp.isActive && emp.isShiftLeader)
+                          .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName))
+                          .map((emp: any) => (
+                            <SelectItem key={emp.id} value={emp.key}>
+                              {emp.fullName}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
