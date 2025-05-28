@@ -215,22 +215,13 @@ export default function AccountantPage() {
     return paymentYear === filterYear && paymentMonth === filterMonth;
   });
   
-  // Calculate commission, tips, money owed and advance
+  // Calculate actual commission, tips, money owed from shift report data
   const calculateCommission = (payment: EmployeeTaxPayment) => {
     const report = shiftReports?.find(r => r.id === payment.reportId);
-    if (!report) {
-      console.log('No report found for payment:', payment.reportId);
-      return 0;
-    }
+    if (!report) return 0;
 
     const employee = employees?.find(e => e.id === payment.employeeId);
-    if (!employee) {
-      console.log('No employee found for payment:', payment.employeeId);
-      return 0;
-    }
-
-    console.log('Report employees data:', report.employees);
-    console.log('Looking for employee:', employee.fullName);
+    if (!employee) return 0;
 
     try {
       let reportEmployees = [];
@@ -238,18 +229,33 @@ export default function AccountantPage() {
         reportEmployees = JSON.parse(report.employees);
       } else if (Array.isArray(report.employees)) {
         reportEmployees = report.employees;
-      } else {
-        console.log('Employees data is neither string nor array:', typeof report.employees);
-        return 0;
       }
 
-      console.log('Parsed employees:', reportEmployees);
-      const employeeData = reportEmployees.find((emp: any) => emp.name === employee.fullName);
-      console.log('Found employee data:', employeeData);
+      // Find employee using lowercase name matching
+      const employeeData = reportEmployees.find((emp: any) => 
+        emp.name?.toLowerCase() === employee.key?.toLowerCase()
+      );
       
-      return employeeData ? Number(employeeData.commission || 0) : 0;
+      if (!employeeData) return 0;
+
+      // Calculate commission based on location rates
+      let commissionRate = 4; // Default
+      if (report.locationId === 1) commissionRate = 4; // Capital Grille
+      else if (report.locationId === 2) commissionRate = 9; // Bob's
+      else if (report.locationId === 3) commissionRate = 7; // Truluck's
+      else if (report.locationId === 4) commissionRate = 6; // BOA
+
+      const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+      const totalCommission = (report.creditTransactions * commissionRate) + 
+                             (cashCars * commissionRate) + 
+                             (report.totalReceipts * commissionRate);
+
+      // Calculate employee's share based on hours worked
+      const totalJobHours = reportEmployees.reduce((sum: number, emp: any) => sum + Number(emp.hours || 0), 0);
+      const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+      
+      return totalCommission * hoursPercent;
     } catch (e) {
-      console.error('Error parsing commission:', e, report.employees);
       return 0;
     }
   };
@@ -269,10 +275,27 @@ export default function AccountantPage() {
         reportEmployees = report.employees;
       }
 
-      const employeeData = reportEmployees.find((emp: any) => emp.name === employee.fullName);
-      return employeeData ? Number(employeeData.tips || 0) : 0;
+      // Find employee using lowercase name matching
+      const employeeData = reportEmployees.find((emp: any) => 
+        emp.name?.toLowerCase() === employee.key?.toLowerCase()
+      );
+      
+      if (!employeeData) return 0;
+
+      // Calculate tips based on actual shift report logic
+      const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+      
+      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
+      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+      const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
+      const totalTips = creditCardTips + cashTips + receiptTips;
+
+      // Calculate employee's share based on hours worked
+      const totalJobHours = reportEmployees.reduce((sum: number, emp: any) => sum + Number(emp.hours || 0), 0);
+      const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+      
+      return totalTips * hoursPercent;
     } catch (e) {
-      console.error('Error parsing tips:', e);
       return 0;
     }
   };
@@ -292,10 +315,23 @@ export default function AccountantPage() {
         reportEmployees = report.employees;
       }
 
-      const employeeData = reportEmployees.find((emp: any) => emp.name === employee.fullName);
-      return employeeData ? Number(employeeData.moneyOwed || 0) : 0;
+      // Find employee using lowercase name matching
+      const employeeData = reportEmployees.find((emp: any) => 
+        emp.name?.toLowerCase() === employee.key?.toLowerCase()
+      );
+      
+      if (!employeeData) return 0;
+
+      // Calculate money owed: (Credit Card Sales + Receipt Sales) - Total Turn In
+      const receiptSales = report.totalReceipts * 18; // $18 per receipt
+      const moneyOwed = (report.totalCreditSales + receiptSales) - report.totalTurnIn;
+
+      // Calculate employee's share based on hours worked
+      const totalJobHours = reportEmployees.reduce((sum: number, emp: any) => sum + Number(emp.hours || 0), 0);
+      const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+      
+      return Math.max(0, moneyOwed * hoursPercent);
     } catch (e) {
-      console.error('Error parsing money owed:', e);
       return 0;
     }
   };
