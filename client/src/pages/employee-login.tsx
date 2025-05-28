@@ -110,6 +110,9 @@ export default function EmployeeLogin() {
                         {...field}
                         placeholder="e.g. antonio, brett, dave"
                         disabled={isLoading}
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                       />
                     </FormControl>
                     <FormMessage />
