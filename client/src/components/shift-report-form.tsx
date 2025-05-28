@@ -481,7 +481,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           ) : (
             <div className="form-header-content">
               <div className="restaurant-image relative">
-                <RestaurantIcon locationId={4} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src={boaImg} 
                   alt="BOA Steakhouse" 
