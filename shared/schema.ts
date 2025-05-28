@@ -87,7 +87,8 @@ export const updateEmployeeSchema = createInsertSchema(employees)
     phone: z.string().optional(),
     email: z.string().optional(),
     notes: z.string().optional(),
-  });
+  })
+  .partial();
 
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
 export type UpdateEmployee = z.infer<typeof updateEmployeeSchema>;
