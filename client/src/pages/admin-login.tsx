@@ -87,9 +87,12 @@ export default function AdminLogin() {
         
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
-          // Always redirect mobile devices to the React mobile admin panel
-          if (isIOS || isIPad) {
-            console.log("Redirecting to React mobile admin panel for mobile devices");
+          // iPad gets desktop admin panel, only iPhone gets mobile admin
+          if (isIPad) {
+            console.log("Redirecting iPad to desktop admin panel");
+            navigate("/admin");
+          } else if (isIOS) {
+            console.log("Redirecting iPhone to mobile admin panel");
             navigate("/mobile-admin");
           } else {
             console.log("Redirecting to standard admin panel");
