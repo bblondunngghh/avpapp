@@ -1,4 +1,4 @@
-import { GiMeat, GiSteak, GiWineGlass } from "react-icons/gi";
+import { GiSteak, GiWineGlass, GiKnifeFork } from "react-icons/gi";
 import { FaFish } from "react-icons/fa";
 
 interface LocationIconProps {
@@ -17,7 +17,7 @@ export function getLocationIconDetails(locationId: number) {
     bgColorClass = "bg-red-100";
     textColorClass = "text-red-800";
   } else if (locationId === 2) { // Bob's Steak - Steakhouse
-    Icon = GiMeat;
+    Icon = GiKnifeFork;
     bgColorClass = "bg-orange-100";
     textColorClass = "text-orange-800";
   } else if (locationId === 3) { // Truluck's - Seafood
