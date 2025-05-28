@@ -14,13 +14,20 @@ export default function MobileRedirect() {
     const isiPadOS = /Macintosh/.test(navigator.userAgent) && 
                    navigator.maxTouchPoints > 1;
     
-    // If we're on an iPad, redirect to mobile admin panel
+    // Force desktop admin panel for iPads
     if (isIPad || isiPadOS) {
-      console.log("iPad detected, redirecting to mobile admin panel");
-      navigate('/mobile-admin');
-    } else {
-      // If not iPad, go to regular admin
+      console.log("iPad detected, redirecting to desktop admin panel");
       navigate('/admin');
+    } else {
+      // Check if iPhone for mobile admin
+      const isIPhone = /iPhone/i.test(navigator.userAgent);
+      if (isIPhone) {
+        console.log("iPhone detected, redirecting to mobile admin panel");
+        navigate('/mobile-admin');
+      } else {
+        // Desktop or other devices go to regular admin
+        navigate('/admin');
+      }
     }
   }, [navigate]);
   
