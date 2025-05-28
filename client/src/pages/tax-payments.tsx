@@ -217,18 +217,72 @@ export default function AccountantPage() {
   
   // Calculate commission, tips, money owed and advance
   const calculateCommission = (payment: EmployeeTaxPayment) => {
-    // Use total earnings as commission for now
-    return Number(payment.totalEarnings || 0) * 0.6913;
+    const report = shiftReports?.find(r => r.id === payment.reportId);
+    if (!report) return 0;
+
+    const employee = employees?.find(e => e.id === payment.employeeId);
+    if (!employee) return 0;
+
+    try {
+      let reportEmployees = [];
+      if (typeof report.employees === 'string') {
+        reportEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        reportEmployees = report.employees;
+      }
+
+      const employeeData = reportEmployees.find((emp: any) => emp.name === employee.fullName);
+      return employeeData ? Number(employeeData.commission || 0) : 0;
+    } catch (e) {
+      console.error('Error parsing commission:', e);
+      return 0;
+    }
   };
   
   const calculateTips = (payment: EmployeeTaxPayment) => {
-    // Use total earnings to calculate tips for now
-    return Number(payment.totalEarnings || 0) * 0.3087;
+    const report = shiftReports?.find(r => r.id === payment.reportId);
+    if (!report) return 0;
+
+    const employee = employees?.find(e => e.id === payment.employeeId);
+    if (!employee) return 0;
+
+    try {
+      let reportEmployees = [];
+      if (typeof report.employees === 'string') {
+        reportEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        reportEmployees = report.employees;
+      }
+
+      const employeeData = reportEmployees.find((emp: any) => emp.name === employee.fullName);
+      return employeeData ? Number(employeeData.tips || 0) : 0;
+    } catch (e) {
+      console.error('Error parsing tips:', e);
+      return 0;
+    }
   };
   
   const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
-    // Use remaining amount as money owed
-    return Number(payment.remainingAmount || 0);
+    const report = shiftReports?.find(r => r.id === payment.reportId);
+    if (!report) return 0;
+
+    const employee = employees?.find(e => e.id === payment.employeeId);
+    if (!employee) return 0;
+
+    try {
+      let reportEmployees = [];
+      if (typeof report.employees === 'string') {
+        reportEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        reportEmployees = report.employees;
+      }
+
+      const employeeData = reportEmployees.find((emp: any) => emp.name === employee.fullName);
+      return employeeData ? Number(employeeData.moneyOwed || 0) : 0;
+    } catch (e) {
+      console.error('Error parsing money owed:', e);
+      return 0;
+    }
   };
   
   const calculateAdvance = (payment: EmployeeTaxPayment) => {
