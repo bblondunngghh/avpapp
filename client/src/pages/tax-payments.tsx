@@ -577,7 +577,7 @@ export default function AccountantPage() {
                     })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-6 text-gray-500">
+                      <TableCell colSpan={7} className="text-center py-6 text-gray-500">
                         No employees found. Please add employees first.
                       </TableCell>
                     </TableRow>
