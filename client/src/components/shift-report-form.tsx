@@ -439,7 +439,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           {form.watch('locationId') === 1 ? (
             <div className="form-header-content">
               <div className="restaurant-image relative">
-                <RestaurantIcon locationId={1} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src={capitalGrilleImg} 
                   alt="The Capital Grille" 
@@ -454,7 +453,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           ) : form.watch('locationId') === 2 ? (
             <div className="form-header-content">
               <div className="restaurant-image relative">
-                <RestaurantIcon locationId={2} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src={bobsImg} 
                   alt="Bob's Steak and Chop House" 
@@ -469,7 +467,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           ) : form.watch('locationId') === 3 ? (
             <div className="form-header-content">
               <div className="restaurant-image relative">
-                <RestaurantIcon locationId={3} size={28} className="absolute -top-2 -right-2 z-10" />
                 <img 
                   src={trulucksImg} 
                   alt="Truluck's" 
@@ -899,12 +896,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 </div>
               </div>
               
-              <div className="flex justify-between bg-blue-100 p-4 rounded-md border border-blue-200 pt-[2px] pb-[2px] mt-[9px] mb-[9px]">
+              <div className="flex justify-between bg-blue-100 p-4 rounded-md border border-blue-200 mt-[9px] mb-[9px] pt-[8px] pb-[8px]">
                 <div className="text-blue-800 text-[13px] font-semibold">Total Commission and Tips</div>
                 <div className="font-bold text-blue-800 text-[14px]">${totalCommissionAndTips.toFixed(2)}</div>
               </div>
               
-              <div className="flex justify-between bg-gray-100 p-4 rounded-md border border-gray-200 pt-[2px] pb-[2px] mt-[7px] mb-[7px]">
+              <div className="flex justify-between bg-gray-100 p-4 rounded-md border border-gray-200 mt-[7px] mb-[7px] pt-[8px] pb-[8px]">
                 <div className="text-[14px] font-semibold">
                   {moneyOwed === 0 ? "Company Cash Turn-In" : "Money Owed"}
                 </div>
@@ -919,7 +916,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               )}
 
               {/* Total Bank Calculation (Cars x Turn-in Rate) */}
-              <div className="flex justify-between bg-blue-50 p-4 rounded-md border border-blue-200 mt-3 pt-[2px] pb-[2px]">
+              <div className="flex justify-between bg-blue-50 p-4 rounded-md border border-blue-200 mt-3 pt-[8px] pb-[8px]">
                 <div className="text-blue-800 text-[14px] font-semibold">
                   Total Bank (Cars × Turn-in Rate)
                 </div>
