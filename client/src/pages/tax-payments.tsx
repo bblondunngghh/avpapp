@@ -218,12 +218,12 @@ export default function AccountantPage() {
   // Calculate commission, tips, money owed and advance
   const calculateCommission = (payment: EmployeeTaxPayment) => {
     // Use total earnings as commission for now
-    return Number(payment.totalEarnings || 0) * 0.69;
+    return Number(payment.totalEarnings || 0) * 0.6913;
   };
   
   const calculateTips = (payment: EmployeeTaxPayment) => {
     // Use total earnings to calculate tips for now
-    return Number(payment.totalEarnings || 0) * 0.31;
+    return Number(payment.totalEarnings || 0) * 0.3087;
   };
   
   const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
