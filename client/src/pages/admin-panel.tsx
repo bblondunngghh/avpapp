@@ -1592,23 +1592,9 @@ export default function AdminPanel() {
                           date = new Date(report.date);
                         }
                         
-                        // Parse submitted date safely
-                        let submittedDate;
-                        try {
-                          // Try multiple possible field names for created date
-                          const dateValue = report.createdAt || report.created_at || report.updatedAt || report.updated_at;
-                          if (dateValue) {
-                            submittedDate = new Date(dateValue);
-                            // Check if date is valid and not from 1970 or earlier (epoch issues)
-                            if (isNaN(submittedDate.getTime()) || submittedDate.getFullYear() < 2020) {
-                              submittedDate = new Date();
-                            }
-                          } else {
-                            submittedDate = new Date();
-                          }
-                        } catch {
-                          submittedDate = new Date();
-                        }
+                        // For submitted date, use current date for all CSV imported reports
+                        // CSV imports don't have reliable createdAt timestamps
+                        const submittedDate = new Date();
                         const turnInRate = report.locationId === 2 ? 6 : 11;
                         const expectedTurnIn = report.totalCars * turnInRate;
                         
