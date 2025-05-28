@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, AlertTriangle, BookOpen, ArrowRight } from "lucide-react";
+import { Car, ShieldAlert, ScrollText, ArrowRight } from "lucide-react";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 
@@ -40,7 +40,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <FileText className="h-10 w-10 text-white" />
+              <Car className="h-10 w-10 text-white" />
             </div>
             <h3 className="text-xl mb-3 text-blue-600">Submit Shift Report</h3>
             <p className="text-gray-600 mb-6 flex-grow">
@@ -59,7 +59,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-amber-500 bg-gradient-to-b from-white to-amber-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <AlertTriangle className="h-10 w-10 text-white" />
+              <ShieldAlert className="h-10 w-10 text-white" />
             </div>
             <h3 className="text-xl mb-3 text-amber-600">Incident Report</h3>
             <p className="text-gray-600 mb-6 flex-grow">
@@ -78,7 +78,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-teal-500 bg-gradient-to-b from-white to-teal-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-teal-500 to-teal-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <BookOpen className="h-10 w-10 text-white" />
+              <ScrollText className="h-10 w-10 text-white" />
             </div>
             <h3 className="text-xl mb-3 text-teal-600">Rules & Regulations</h3>
             <p className="text-gray-600 mb-6 flex-grow">
