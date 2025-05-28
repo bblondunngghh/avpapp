@@ -1580,16 +1580,31 @@ export default function AdminPanel() {
                         let date;
                         try {
                           if (report.date.includes('-')) {
-                            const [year, month, day] = report.date.split('-');
-                            date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                            const parts = report.date.split('-');
+                            // Check if it's MM-DD-YYYY or YYYY-MM-DD format
+                            if (parts[0].length === 4) {
+                              // YYYY-MM-DD format
+                              const [year, month, day] = parts;
+                              date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                            } else {
+                              // MM-DD-YYYY format
+                              const [month, day, year] = parts;
+                              date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                            }
                           } else if (report.date.includes('/')) {
                             const parts = report.date.split('/');
+                            // MM/DD/YYYY format
                             date = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
                           } else {
                             date = new Date(report.date);
                           }
+                          
+                          // Validate the parsed date
+                          if (isNaN(date.getTime()) || date.getFullYear() < 2020 || date.getFullYear() > 2030) {
+                            date = new Date();
+                          }
                         } catch {
-                          date = new Date(report.date);
+                          date = new Date();
                         }
                         
                         // For submitted date, use current date for all CSV imported reports
