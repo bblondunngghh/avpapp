@@ -293,6 +293,112 @@ export default function MobileAdminPanel() {
     notes: ''
   });
 
+  // New state for employee form
+  const [newEmployeeForm, setNewEmployeeForm] = useState({
+    fullName: '',
+    key: '',
+    phoneNumber: '',
+    hourlyRate: 0,
+    isShiftLeader: false,
+    isActive: true
+  });
+
+  // Handle new employee creation
+  const handleCreateEmployee = async () => {
+    if (!newEmployeeForm.fullName || !newEmployeeForm.key) {
+      toast({
+        title: "Missing information",
+        description: "Please enter both name and login key",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Create new employee
+      await apiRequest("POST", "/api/employees", {
+        fullName: newEmployeeForm.fullName,
+        key: newEmployeeForm.key,
+        phoneNumber: newEmployeeForm.phoneNumber || null,
+        hourlyRate: newEmployeeForm.hourlyRate || null,
+        isShiftLeader: newEmployeeForm.isShiftLeader,
+        isActive: newEmployeeForm.isActive
+      });
+      
+      // Show success message
+      toast({
+        title: "Employee added",
+        description: `${newEmployeeForm.fullName} has been added successfully`,
+        variant: "default",
+      });
+      
+      // Reset form
+      setNewEmployeeForm({
+        fullName: '',
+        key: '',
+        phoneNumber: '',
+        hourlyRate: 0,
+        isShiftLeader: false,
+        isActive: true
+      });
+      
+      // Refresh employees data
+      const employeesResponse = await fetch('/api/employees');
+      if (employeesResponse.ok) {
+        const employeesData = await employeesResponse.json();
+        setEmployees(Array.isArray(employeesData) ? employeesData : []);
+      }
+    } catch (error) {
+      console.error("Error creating employee:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add employee",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle employee deletion
+  const handleDeleteEmployee = async (employeeId: number) => {
+    if (!window.confirm("Are you sure you want to delete this employee?")) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Delete employee
+      await apiRequest("DELETE", `/api/employees/${employeeId}`);
+      
+      // Show success message
+      toast({
+        title: "Employee deleted",
+        description: "Employee has been removed successfully",
+        variant: "default",
+      });
+      
+      // Refresh employees data
+      const employeesResponse = await fetch('/api/employees');
+      if (employeesResponse.ok) {
+        const employeesData = await employeesResponse.json();
+        setEmployees(Array.isArray(employeesData) ? employeesData : []);
+      }
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete employee",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Handle new ticket distribution creation
   const handleCreateTicketDistribution = async () => {
     if (!newTicketForm.batchNumber) {
@@ -802,9 +908,99 @@ export default function MobileAdminPanel() {
         
         {/* Employees Tab */}
         <TabsContent value="employees" className="space-y-4">
+          {/* Add New Employee Card */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">All Employees</CardTitle>
+              <CardTitle className="text-lg flex items-center">
+                <PlusCircle className="h-5 w-5 mr-2" />
+                Add New Employee
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor="newEmployeeName">Full Name</Label>
+                    <Input 
+                      id="newEmployeeName"
+                      placeholder="Employee name"
+                      value={newEmployeeForm.fullName}
+                      onChange={(e) => setNewEmployeeForm({...newEmployeeForm, fullName: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="newEmployeeKey">Login Key</Label>
+                    <Input 
+                      id="newEmployeeKey"
+                      placeholder="Unique key"
+                      value={newEmployeeForm.key}
+                      onChange={(e) => setNewEmployeeForm({...newEmployeeForm, key: e.target.value.toLowerCase()})}
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor="newEmployeePhone">Phone Number</Label>
+                    <Input 
+                      id="newEmployeePhone"
+                      placeholder="Phone number"
+                      value={newEmployeeForm.phoneNumber}
+                      onChange={(e) => setNewEmployeeForm({...newEmployeeForm, phoneNumber: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="newEmployeeRate">Hourly Rate</Label>
+                    <Input 
+                      id="newEmployeeRate"
+                      type="number"
+                      step="0.25"
+                      placeholder="Rate"
+                      value={newEmployeeForm.hourlyRate}
+                      onChange={(e) => setNewEmployeeForm({...newEmployeeForm, hourlyRate: parseFloat(e.target.value) || 0})}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={newEmployeeForm.isShiftLeader}
+                      onChange={(e) => setNewEmployeeForm({...newEmployeeForm, isShiftLeader: e.target.checked})}
+                      className="rounded"
+                    />
+                    <span className="text-sm">Shift Leader</span>
+                  </label>
+                  
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={newEmployeeForm.isActive}
+                      onChange={(e) => setNewEmployeeForm({...newEmployeeForm, isActive: e.target.checked})}
+                      className="rounded"
+                    />
+                    <span className="text-sm">Active</span>
+                  </label>
+                </div>
+                
+                <Button 
+                  onClick={handleCreateEmployee}
+                  disabled={isLoading || !newEmployeeForm.fullName || !newEmployeeForm.key}
+                  className="w-full"
+                >
+                  {isLoading ? "Adding..." : "Add Employee"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* All Employees List */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">All Employees ({employees.length})</CardTitle>
             </CardHeader>
             <CardContent>
               {employees.length === 0 ? (
@@ -818,19 +1014,29 @@ export default function MobileAdminPanel() {
                           <p className="font-medium">{emp.fullName}</p>
                           <p className="text-sm text-gray-500">Key: {emp.key}</p>
                         </div>
-                        <div className="flex flex-col items-end space-y-1">
-                          {emp.isShiftLeader && (
-                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                              Shift Leader
+                        <div className="flex items-center space-x-2">
+                          <div className="flex flex-col items-end space-y-1">
+                            {emp.isShiftLeader && (
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                Shift Leader
+                              </span>
+                            )}
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              emp.isActive 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {emp.isActive ? 'Active' : 'Inactive'}
                             </span>
-                          )}
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            emp.isActive 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {emp.isActive ? 'Active' : 'Inactive'}
-                          </span>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            className="h-8 w-8 p-0 ml-2" 
+                            onClick={() => handleDeleteEmployee(emp.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
                         </div>
                       </div>
                       
