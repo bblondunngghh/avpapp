@@ -568,15 +568,11 @@ export default function AdminPanel() {
     // The calculation is now done dynamically based on actual car counts and 
     // turn-in rates for each location in the code above
     
-    // Group by date and day of week to get total cars across all locations per day
-    const dateGroups = new Map<string, {dayOfWeek: number, totalCars: number}>();
+    // Calculate combined total cars per day of week across all 4 locations
+    // Group by unique date and combine all locations for that date
+    const dailyTotals = new Map<string, {dayOfWeek: number, totalCars: number}>();
     
-    // Use the same filtered reports as above
-    const reportsToProcess = selectedLocation 
-      ? reports.filter(report => report.locationId === selectedLocation)
-      : reports;
-    
-    reportsToProcess.forEach(report => {
+    reports.forEach(report => {
       // Parse date correctly
       let reportDate;
       try {
@@ -602,26 +598,26 @@ export default function AdminPanel() {
       const dayOfWeek = reportDate.getDay();
       const dateKey = report.date;
       
-      if (!dateGroups.has(dateKey)) {
-        dateGroups.set(dateKey, {dayOfWeek, totalCars: 0});
+      if (!dailyTotals.has(dateKey)) {
+        dailyTotals.set(dateKey, {dayOfWeek, totalCars: 0});
       }
       
-      const existing = dateGroups.get(dateKey)!;
+      const existing = dailyTotals.get(dateKey)!;
       existing.totalCars += report.totalCars;
     });
     
-    // Calculate average cars per day of week across all dates
-    const dayTotals = new Array(7).fill(0);
-    const dayCounts = new Array(7).fill(0);
+    // Calculate average total cars per day of week (combining all 4 locations)
+    const dayOfWeekTotals = new Array(7).fill(0);
+    const dayOfWeekCounts = new Array(7).fill(0);
     
-    dateGroups.forEach(({dayOfWeek, totalCars}) => {
-      dayTotals[dayOfWeek] += totalCars;
-      dayCounts[dayOfWeek] += 1;
+    dailyTotals.forEach(({dayOfWeek, totalCars}) => {
+      dayOfWeekTotals[dayOfWeek] += totalCars;
+      dayOfWeekCounts[dayOfWeek] += 1;
     });
     
     const avgDailyData = initialDailyData.map((day, index) => ({
       name: day.name,
-      cars: dayCounts[index] > 0 ? Math.round(dayTotals[index] / dayCounts[index]) : 0
+      cars: dayOfWeekCounts[index] > 0 ? Math.round(dayOfWeekTotals[index] / dayOfWeekCounts[index]) : 0
     }));
     
     // Update all state variables with calculated data
