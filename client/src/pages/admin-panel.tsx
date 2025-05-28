@@ -1592,13 +1592,18 @@ export default function AdminPanel() {
                           date = new Date(report.date);
                         }
                         
-                        // Parse submitted date safely - handle both camelCase and snake_case
+                        // Parse submitted date safely
                         let submittedDate;
                         try {
-                          const dateValue = report.createdAt || report.created_at;
-                          submittedDate = dateValue ? new Date(dateValue) : new Date();
-                          // Check if date is valid
-                          if (isNaN(submittedDate.getTime())) {
+                          // Try multiple possible field names for created date
+                          const dateValue = report.createdAt || report.created_at || report.updatedAt || report.updated_at;
+                          if (dateValue) {
+                            submittedDate = new Date(dateValue);
+                            // Check if date is valid and not from 1970 or earlier (epoch issues)
+                            if (isNaN(submittedDate.getTime()) || submittedDate.getFullYear() < 2020) {
+                              submittedDate = new Date();
+                            }
+                          } else {
                             submittedDate = new Date();
                           }
                         } catch {
