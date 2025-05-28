@@ -482,7 +482,10 @@ export default function MobileAdminPanel() {
                 <p className="text-gray-500 text-sm">No reports available</p>
               ) : (
                 <div className="space-y-3">
-                  {reports.slice(0, 10).map((report: any) => (
+                  {reports
+                    .sort((a: any, b: any) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime())
+                    .slice(0, 15)
+                    .map((report: any) => (
                     <div key={report.id} className="border rounded p-3">
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -742,8 +745,16 @@ export default function MobileAdminPanel() {
                 reports.forEach((report) => {
                   const reportDate = new Date(report.date);
                   if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
-                    if (report.employeeHours && Array.isArray(report.employeeHours)) {
-                      report.employeeHours.forEach((empHour) => {
+                    // Parse employees field which contains JSON string
+                    let employees = [];
+                    try {
+                      employees = typeof report.employees === 'string' ? JSON.parse(report.employees) : report.employees || [];
+                    } catch (e) {
+                      employees = [];
+                    }
+                    
+                    if (Array.isArray(employees)) {
+                      employees.forEach((empHour) => {
                         if (!weeklyHours[empHour.name]) {
                           weeklyHours[empHour.name] = { totalHours: 0 };
                         }
