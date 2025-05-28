@@ -455,10 +455,12 @@ export default function MobileAdminPanel() {
       
       {/* Tabbed Interface */}
       <Tabs defaultValue="reports" className="mb-6">
-        <TabsList className="grid grid-cols-3 mb-4">
+        <TabsList className="grid grid-cols-5 mb-4 text-xs">
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="tickets">Tickets</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="hours">Hours</TabsTrigger>
+          <TabsTrigger value="employees">Employees</TabsTrigger>
         </TabsList>
         
         {/* Reports Tab */}
@@ -706,6 +708,124 @@ export default function MobileAdminPanel() {
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Hours Tracker Tab */}
+        <TabsContent value="hours" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Weekly Hours Tracker</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                // Calculate weekly hours for each employee
+                const weeklyHours = {};
+                const today = new Date();
+                const currentWeekStart = new Date(today);
+                currentWeekStart.setDate(today.getDate() - today.getDay());
+                currentWeekStart.setHours(0, 0, 0, 0);
+                const currentWeekEnd = new Date(currentWeekStart);
+                currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+                currentWeekEnd.setHours(23, 59, 59, 999);
+
+                // Calculate hours from shift reports
+                reports.forEach((report) => {
+                  const reportDate = new Date(report.date);
+                  if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
+                    if (report.employeeHours && Array.isArray(report.employeeHours)) {
+                      report.employeeHours.forEach((empHour) => {
+                        if (!weeklyHours[empHour.name]) {
+                          weeklyHours[empHour.name] = { totalHours: 0 };
+                        }
+                        weeklyHours[empHour.name].totalHours += empHour.hours || 0;
+                      });
+                    }
+                  }
+                });
+
+                // Add employees with 0 hours
+                employees.forEach((emp) => {
+                  if (!weeklyHours[emp.fullName]) {
+                    weeklyHours[emp.fullName] = { totalHours: 0 };
+                  }
+                });
+
+                const hoursEntries = Object.entries(weeklyHours).sort((a, b) => b[1].totalHours - a[1].totalHours);
+
+                return hoursEntries.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No hours data available for this week</p>
+                ) : (
+                  <div className="space-y-3">
+                    {hoursEntries.map(([name, data]) => (
+                      <div key={name} className="border rounded p-3 flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{name}</p>
+                          <p className="text-sm text-gray-500">This week</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg font-bold">{data.totalHours}h</span>
+                          {data.totalHours >= 35 && (
+                            <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                              {data.totalHours >= 40 ? 'OVERTIME' : 'WARNING'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Employees Tab */}
+        <TabsContent value="employees" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">All Employees</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {employees.length === 0 ? (
+                <p className="text-gray-500 text-sm">No employees available</p>
+              ) : (
+                <div className="space-y-3">
+                  {employees.map((emp) => (
+                    <div key={emp.id} className="border rounded p-3">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-medium">{emp.fullName}</p>
+                          <p className="text-sm text-gray-500">Key: {emp.key}</p>
+                        </div>
+                        <div className="flex flex-col items-end space-y-1">
+                          {emp.isShiftLeader && (
+                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              Shift Leader
+                            </span>
+                          )}
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            emp.isActive 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {emp.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {emp.phoneNumber && (
+                        <p className="text-sm text-gray-600">Phone: {emp.phoneNumber}</p>
+                      )}
+                      
+                      {emp.hourlyRate && (
+                        <p className="text-sm text-gray-600">Rate: ${emp.hourlyRate}/hr</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
