@@ -568,9 +568,15 @@ export default function AdminPanel() {
     // The calculation is now done dynamically based on actual car counts and 
     // turn-in rates for each location in the code above
     
+    // Calculate average cars per day of week instead of total
+    const avgDailyData = initialDailyData.map((day, index) => ({
+      name: day.name,
+      cars: dayReportCounts[index].reports > 0 ? Math.round(day.cars / dayReportCounts[index].reports) : 0
+    }));
+    
     // Update all state variables with calculated data
     setMonthlyData(initialMonthlyData);
-    setDailyCarVolume(initialDailyData);
+    setDailyCarVolume(avgDailyData);
     setCarDistributionByLocation(locationDistribution);
     setSalesTrendData(salesTrend);
     setReportsByDay(dayReportCounts);
