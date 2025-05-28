@@ -569,12 +569,12 @@ export default function MobileAdminPanel() {
       
       {/* Tabbed Interface */}
       <Tabs defaultValue="reports" className="mb-6">
-        <TabsList className="grid grid-cols-5 mb-4 text-xs">
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-          <TabsTrigger value="tickets">Tickets</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="hours">Hours</TabsTrigger>
-          <TabsTrigger value="employees">Employees</TabsTrigger>
+        <TabsList className="grid grid-cols-5 mb-4 text-xs w-full overflow-x-auto">
+          <TabsTrigger value="reports" className="min-w-0 flex-shrink-0">Reports</TabsTrigger>
+          <TabsTrigger value="tickets" className="min-w-0 flex-shrink-0">Tickets</TabsTrigger>
+          <TabsTrigger value="performance" className="min-w-0 flex-shrink-0">Performance</TabsTrigger>
+          <TabsTrigger value="hours" className="min-w-0 flex-shrink-0">Hours</TabsTrigger>
+          <TabsTrigger value="employees" className="min-w-0 flex-shrink-0">Employees</TabsTrigger>
         </TabsList>
         
         {/* Reports Tab */}
