@@ -66,10 +66,40 @@ export default function EmployeeDashboard() {
   // Mutation to update employee key
   const updateEmployeeKeyMutation = useMutation({
     mutationFn: async (newKey: string) => {
-      const response = await apiRequest("POST", `/api/employees/${employeeId}/update-key`, {
-        key: newKey
-      });
-      return response.json();
+      try {
+        const response = await apiRequest("POST", `/api/employees/${employeeId}/update-key`, {
+          key: newKey
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        
+        if (!responseText.trim()) {
+          // Empty response, treat as success
+          return { key: newKey, success: true };
+        }
+        
+        try {
+          return JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError);
+          console.error('Response that failed to parse:', responseText);
+          // If response isn't JSON but request was successful, assume the key was updated
+          return { key: newKey, success: true };
+        }
+      } catch (error) {
+        console.error('Full error in mutation:', error);
+        throw error;
+      }
     },
     onSuccess: (updatedEmployee) => {
       // Update localStorage with new key
