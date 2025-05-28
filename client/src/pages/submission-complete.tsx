@@ -157,10 +157,15 @@ export default function SubmissionComplete() {
     else if (report.locationId === 3) turnInRate = 8; // Truluck's
     else if (report.locationId === 4) turnInRate = 7; // BOA
     
-    // Credit tips = total credit sales - (credit transactions × turn-in rate)
-    const creditTips = Math.max(0, Number(report.totalCreditSales || 0) - (creditTransactions * turnInRate));
-    // Cash tips = cash collected - (cash cars × turn-in rate)  
-    const cashTips = Math.max(0, Number(report.totalCashCollected || 0) - (calculatedCashCars * turnInRate));
+    // Credit tips = absolute difference between what should be collected and what was collected
+    const creditExpected = creditTransactions * 15;
+    const creditActual = Number(report.totalCreditSales || 0);
+    const creditTips = Math.abs(creditExpected - creditActual);
+    
+    // Cash tips = absolute difference between what should be collected and what was collected  
+    const cashExpected = calculatedCashCars * 15;
+    const cashActual = Number(report.totalCashCollected || 0);
+    const cashTips = Math.abs(cashExpected - cashActual);
     // Receipt tips = receipts × $3 (standard)
     const receiptTips = totalReceipts * 3;
     
