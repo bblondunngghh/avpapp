@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { getQueryFn } from "@/lib/queryClient";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getQueryFn, apiRequest } from "@/lib/queryClient";
 import { LOCATIONS } from "@/lib/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -25,10 +27,13 @@ import { useToast } from "@/hooks/use-toast";
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
+  const [newEmployeeKey, setNewEmployeeKey] = useState("");
+  const [isChangingKey, setIsChangingKey] = useState(false);
 
   const employeeId = localStorage.getItem("employee_id");
   const employeeName = localStorage.getItem("employee_name");
@@ -57,6 +62,56 @@ export default function EmployeeDashboard() {
     queryKey: ["/api/shift-reports"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Mutation to update employee key
+  const updateEmployeeKeyMutation = useMutation({
+    mutationFn: async (newKey: string) => {
+      const response = await apiRequest("PATCH", `/api/employees/${employeeId}`, {
+        key: newKey
+      });
+      return response.json();
+    },
+    onSuccess: (updatedEmployee) => {
+      // Update localStorage with new key
+      localStorage.setItem("employee_key", updatedEmployee.key);
+      setNewEmployeeKey("");
+      setIsChangingKey(false);
+      toast({
+        title: "Success",
+        description: "Your login key has been updated successfully!",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/employees"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update your login key",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleKeyChange = () => {
+    if (!newEmployeeKey.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a new login key",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (newEmployeeKey.length < 3) {
+      toast({
+        title: "Error",
+        description: "Login key must be at least 3 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    updateEmployeeKeyMutation.mutate(newEmployeeKey.toLowerCase().trim());
+  };
 
   // Filter reports by selected month and employee
   const filteredReports = allReports.filter((report: any) => {
