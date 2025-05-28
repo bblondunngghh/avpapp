@@ -520,7 +520,7 @@ export default function AccountantPage() {
                       const totalAdvance = employeePayments.reduce((sum, payment) => 
                         sum + calculateAdvance(payment), 0);
                       const totalCashPaid = employeePayments.reduce((sum, payment) => 
-                        sum + (payment.paidAmount || 0), 0);
+                        sum + (Number(payment.paidAmount) || 0), 0);
                       const totalTaxContribution = employeePayments.reduce((sum, payment) => 
                         sum + (Number(payment.paidAmount || 0) - calculateMoneyOwed(payment)), 0);
                       
@@ -552,6 +552,9 @@ export default function AccountantPage() {
                           </TableCell>
                           <TableCell className="text-right w-[100px]">
                             {formatCurrency(totalAdvance)}
+                          </TableCell>
+                          <TableCell className="text-right w-[100px]">
+                            {formatCurrency(totalCashPaid)}
                           </TableCell>
                           <TableCell className="text-center w-[120px]">
                             {mostRecentDate ? formatDate(mostRecentDate) : 'N/A'}
