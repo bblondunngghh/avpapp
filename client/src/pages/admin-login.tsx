@@ -100,13 +100,9 @@ export default function AdminLogin() {
           
           console.log("Device classification:", { isOnlyIPhone, isIPad });
           
-          if (isOnlyIPhone) {
-            console.log("iPhone detected - redirecting to mobile admin panel");
-            navigate("/mobile-admin");
-          } else {
-            console.log("iPad/Desktop detected - redirecting to desktop admin panel");
-            navigate("/admin");
-          }
+          // For now, send everyone to desktop admin panel to fix iPad issue
+          console.log("Sending all devices to desktop admin panel");
+          navigate("/admin");
         }, 100);
       } else {
         // Show error toast
