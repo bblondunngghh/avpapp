@@ -491,13 +491,13 @@ export default function AccountantPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead className="text-right">Commission</TableHead>
-                    <TableHead className="text-right">Tips</TableHead>
-                    <TableHead className="text-right">Money Owed</TableHead>
-                    <TableHead className="text-right">Advance</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead></TableHead>
+                    <TableHead className="w-[200px]">Employee</TableHead>
+                    <TableHead className="text-right w-[120px]">Commission</TableHead>
+                    <TableHead className="text-right w-[100px]">Tips</TableHead>
+                    <TableHead className="text-right w-[120px]">Money Owed</TableHead>
+                    <TableHead className="text-right w-[100px]">Advance</TableHead>
+                    <TableHead className="text-center w-[120px]">Date</TableHead>
+                    <TableHead className="text-center w-[80px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -535,25 +535,25 @@ export default function AccountantPage() {
                       
                       return (
                         <TableRow key={`employee-${employee.id}`}>
-                          <TableCell className="font-medium">
+                          <TableCell className="font-medium w-[200px]">
                             {employee.fullName}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right w-[120px] font-mono">
                             {formatCurrency(totalCommission)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right w-[100px] font-mono">
                             {formatCurrency(totalTips)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right w-[120px] font-mono">
                             {formatCurrency(totalMoneyOwed)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right w-[100px] font-mono">
                             {formatCurrency(totalAdvance)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-center w-[120px]">
                             {mostRecentDate ? formatDate(mostRecentDate) : 'N/A'}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-center w-[80px]">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="h-8 w-8 p-0">
