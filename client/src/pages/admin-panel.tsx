@@ -1592,10 +1592,11 @@ export default function AdminPanel() {
                           date = new Date(report.date);
                         }
                         
-                        // Parse submitted date safely
+                        // Parse submitted date safely - handle both camelCase and snake_case
                         let submittedDate;
                         try {
-                          submittedDate = report.createdAt ? new Date(report.createdAt) : new Date();
+                          const dateValue = report.createdAt || report.created_at;
+                          submittedDate = dateValue ? new Date(dateValue) : new Date();
                           // Check if date is valid
                           if (isNaN(submittedDate.getTime())) {
                             submittedDate = new Date();
