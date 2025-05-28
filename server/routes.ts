@@ -372,16 +372,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PATCH endpoint for partial employee updates (like key changes)
   apiRouter.patch('/employees/:id', async (req, res) => {
     try {
+      console.log('PATCH /employees/:id called with ID:', req.params.id, 'Body:', req.body);
+      
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
+        console.log('Invalid employee ID:', req.params.id);
         return res.status(400).json({ message: 'Invalid employee ID' });
       }
       
       // Check if employee exists
       const existingEmployee = await storage.getEmployee(id);
       if (!existingEmployee) {
+        console.log('Employee not found:', id);
         return res.status(404).json({ message: 'Employee not found' });
       }
+      
+      console.log('Existing employee:', existingEmployee);
       
       // For PATCH, we only validate the fields that are provided
       const allowedFields = ['key', 'fullName', 'isActive', 'isShiftLeader', 'hireDate', 'terminationDate', 'phone', 'email', 'notes'];
@@ -393,17 +399,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
+      console.log('Update data:', updateData);
+      
       // If key is being changed, check if the new key is already in use
       if (updateData.key && updateData.key !== existingEmployee.key) {
         const employeeWithSameKey = await storage.getEmployeeByKey(updateData.key);
         if (employeeWithSameKey && employeeWithSameKey.id !== id) {
+          console.log('Key already in use:', updateData.key);
           return res.status(400).json({ message: 'Another employee with this key already exists' });
         }
       }
       
       const updatedEmployee = await storage.updateEmployee(id, updateData);
+      console.log('Updated employee:', updatedEmployee);
+      
+      res.setHeader('Content-Type', 'application/json');
       res.json(updatedEmployee);
     } catch (error) {
+      console.error('Error in PATCH /employees/:id:', error);
       res.status(500).json({ message: 'Failed to update employee' });
     }
   });
