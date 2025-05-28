@@ -571,7 +571,12 @@ export default function AdminPanel() {
     // Group by date and day of week to get total cars across all locations per day
     const dateGroups = new Map<string, {dayOfWeek: number, totalCars: number}>();
     
-    filteredReports.forEach(report => {
+    // Use the same filtered reports as above
+    const reportsToProcess = selectedLocation 
+      ? reports.filter(report => report.locationId === selectedLocation)
+      : reports;
+    
+    reportsToProcess.forEach(report => {
       // Parse date correctly
       let reportDate;
       try {
