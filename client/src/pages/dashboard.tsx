@@ -15,7 +15,7 @@ export default function Dashboard() {
   };
   
   return (
-    <div className="max-w-4xl mx-auto px-4 mt-4 md:mt-0">
+    <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0">
       <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden">
         <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
           style={{ 

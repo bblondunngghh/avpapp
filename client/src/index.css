@@ -44,7 +44,7 @@
   main {
     position: relative;
     z-index: 1;
-    padding-top: 60px; /* Reduced space for smaller top header */
+    padding-top: 72px; /* Extra space to clear header on iPhone */
     padding-bottom: 100px; /* Increased space for taller bottom navigation */
   }
   
