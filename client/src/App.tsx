@@ -31,30 +31,34 @@ function Router() {
   const [location, setLocation] = useLocation();
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   
-  // Enhanced detection for mobile devices and iPads
+  // Enhanced detection for mobile devices - iPhone only for mobile admin
   useEffect(() => {
     const checkMobile = () => {
       // Specific iPad detection (including newer models)
       const isIPad = /iPad/i.test(navigator.userAgent) || 
                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
                     
-      // Broader mobile device detection
-      const isMobile = 
-        /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-        (window.innerWidth <= 768);
+      // iPhone specific detection
+      const isIPhone = /iPhone/i.test(navigator.userAgent);
+      
+      // Other mobile device detection (excluding iPad)
+      const isOtherMobile = 
+        /Android|webOS|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+        (window.innerWidth <= 480 && !isIPad); // Smaller screen threshold excluding iPad
         
-      // Consider iPads as mobile devices for admin panel
-      setIsMobileDevice(isMobile || isIPad);
+      // Only use mobile admin for iPhones and other small mobile devices, NOT iPads
+      setIsMobileDevice(isIPhone || isOtherMobile);
       
       // Debug info to console
       console.log("Device detection:", { 
         isIPad, 
-        isMobile, 
+        isIPhone,
+        isOtherMobile,
         userAgent: navigator.userAgent, 
         platform: navigator.platform,
         touchPoints: navigator.maxTouchPoints,
         width: window.innerWidth,
-        usingMobile: isMobile || isIPad
+        usingMobile: isIPhone || isOtherMobile
       });
     };
     
