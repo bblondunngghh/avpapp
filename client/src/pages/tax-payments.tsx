@@ -57,6 +57,12 @@ export default function AccountantPage() {
     queryKey: ['/api/employees'],
     enabled: isAdminAuthenticated()
   });
+
+  // Fetch shift reports to get actual commission, tips, and money owed data
+  const { data: shiftReports } = useQuery({
+    queryKey: ['/api/shift-reports'],
+    enabled: isAdminAuthenticated()
+  });
   
 
   
@@ -257,7 +263,26 @@ export default function AccountantPage() {
   };
   
   const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
-    return Number(payment.remainingAmount) * 0.5;
+    // Get actual money owed from shift report data
+    const report = shiftReports?.find(r => r.id === payment.reportId);
+    if (!report) return 0;
+
+    try {
+      let reportEmployees = [];
+      if (typeof report.employees === 'string') {
+        reportEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        reportEmployees = report.employees;
+      }
+
+      const employee = employees?.find(e => e.id === payment.employeeId);
+      if (!employee) return 0;
+
+      const employeeData = reportEmployees.find(emp => emp.name === employee.fullName);
+      return employeeData ? (Number(employeeData.moneyOwed) || 0) : 0;
+    } catch (e) {
+      return 0;
+    }
   };
   
   const calculateAdvance = (payment: EmployeeTaxPayment) => {
