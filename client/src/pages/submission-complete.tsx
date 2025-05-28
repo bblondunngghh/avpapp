@@ -157,13 +157,17 @@ export default function SubmissionComplete() {
     else if (report.locationId === 3) turnInRate = 8; // Truluck's
     else if (report.locationId === 4) turnInRate = 7; // BOA
     
+    // Get the correct price per car based on location
+    let pricePerCar = 15; // Default for most locations
+    if (report.locationId === 4) pricePerCar = 13; // BOA uses $13
+    
     // Credit tips = absolute difference between what should be collected and what was collected
-    const creditExpected = creditTransactions * 15;
+    const creditExpected = creditTransactions * pricePerCar;
     const creditActual = Number(report.totalCreditSales || 0);
     const creditTips = Math.abs(creditExpected - creditActual);
     
     // Cash tips = absolute difference between what should be collected and what was collected  
-    const cashExpected = calculatedCashCars * 15;
+    const cashExpected = calculatedCashCars * pricePerCar;
     const cashActual = Number(report.totalCashCollected || 0);
     const cashTips = Math.abs(cashExpected - cashActual);
     // Receipt tips = receipts × $3 (standard)
