@@ -1592,7 +1592,17 @@ export default function AdminPanel() {
                           date = new Date(report.date);
                         }
                         
-                        const submittedDate = new Date(report.createdAt);
+                        // Parse submitted date safely
+                        let submittedDate;
+                        try {
+                          submittedDate = report.createdAt ? new Date(report.createdAt) : new Date();
+                          // Check if date is valid
+                          if (isNaN(submittedDate.getTime())) {
+                            submittedDate = new Date();
+                          }
+                        } catch {
+                          submittedDate = new Date();
+                        }
                         const turnInRate = report.locationId === 2 ? 6 : 11;
                         const expectedTurnIn = report.totalCars * turnInRate;
                         

@@ -570,7 +570,7 @@ export default function SubmissionComplete() {
                     )}
                     <div className="pt-1 mt-1 border-t border-gray-200">
                       <p className="flex justify-between font-medium">
-                        <span>Total Additional:</span> 
+                        <span>Total Tips:</span> 
                         <span>{formatCurrency(
                           earnings.creditTips + 
                           earnings.cashTips + 
