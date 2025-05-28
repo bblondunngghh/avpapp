@@ -402,7 +402,7 @@ input[type="date"].paperform-input {
 
 /* Bottom navigation styles */
 .bottom-nav {
-  @apply fixed inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around md:hidden;
+  @apply fixed inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around lg:hidden;
   /* Position for iPhone - closer to bottom but still avoiding swipe-up */
   bottom: 0;
   padding-bottom: env(safe-area-inset-bottom, 20px);
