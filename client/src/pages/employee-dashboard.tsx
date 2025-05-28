@@ -69,7 +69,24 @@ export default function EmployeeDashboard() {
       const response = await apiRequest("PATCH", `/api/employees/${employeeId}`, {
         key: newKey
       });
-      return response.json();
+      
+      // Check if response is ok and has content
+      if (!response.ok) {
+        throw new Error(`Failed to update employee key: ${response.status}`);
+      }
+      
+      const text = await response.text();
+      if (!text) {
+        // If empty response, assume success and return a simple object
+        return { key: newKey, success: true };
+      }
+      
+      try {
+        return JSON.parse(text);
+      } catch (error) {
+        console.error('Failed to parse response:', text);
+        throw new Error('Invalid response from server');
+      }
     },
     onSuccess: (updatedEmployee) => {
       // Update localStorage with new key
