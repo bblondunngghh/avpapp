@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog";
-import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info } from "lucide-react";
+import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function EmployeeDashboard() {
@@ -486,6 +486,10 @@ export default function EmployeeDashboard() {
             <FileText className="h-4 w-4 mr-2" />
             Shift Details
           </TabsTrigger>
+          <TabsTrigger value="settings">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="earnings">
@@ -665,6 +669,117 @@ export default function EmployeeDashboard() {
                   </Table>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Account Settings
+              </CardTitle>
+              <CardDescription>
+                Manage your account preferences and login credentials
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Login Credentials</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="current-name" className="text-sm font-medium">
+                          Full Name
+                        </Label>
+                        <Input
+                          id="current-name"
+                          value={employeeName || ""}
+                          disabled
+                          className="bg-white"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Contact your manager to change your name
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor="current-key" className="text-sm font-medium">
+                          Current Login Key
+                        </Label>
+                        <Input
+                          id="current-key"
+                          value={employeeKey || ""}
+                          disabled
+                          className="bg-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4">
+                  <h4 className="text-md font-medium mb-3">Change Login Key</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="new-key" className="text-sm font-medium">
+                        New Login Key
+                      </Label>
+                      <Input
+                        id="new-key"
+                        type="text"
+                        placeholder="Enter a new login key (minimum 3 characters)"
+                        value={newEmployeeKey}
+                        onChange={(e) => setNewEmployeeKey(e.target.value)}
+                        className="max-w-md"
+                        disabled={updateEmployeeKeyMutation.isPending}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Your login key should be easy to remember but unique to you
+                      </p>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleKeyChange}
+                        disabled={updateEmployeeKeyMutation.isPending || !newEmployeeKey.trim()}
+                        className="bg-indigo-600 hover:bg-indigo-700"
+                      >
+                        {updateEmployeeKeyMutation.isPending ? "Updating..." : "Update Login Key"}
+                      </Button>
+                      
+                      {isChangingKey && (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setNewEmployeeKey("");
+                            setIsChangingKey(false);
+                          }}
+                          disabled={updateEmployeeKeyMutation.isPending}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-blue-800">
+                      <p className="font-medium mb-1">Important Security Information</p>
+                      <ul className="space-y-1 text-blue-700">
+                        <li>• Your login key is case-insensitive and will be converted to lowercase</li>
+                        <li>• Use a key that's easy for you to remember but hard for others to guess</li>
+                        <li>• You'll need your new key to log in next time</li>
+                        <li>• If you forget your key, contact your manager for assistance</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
