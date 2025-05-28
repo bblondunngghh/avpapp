@@ -211,12 +211,49 @@ export default function AccountantPage() {
   
   // Calculate commission, tips, money owed and advance
   const calculateCommission = (payment: EmployeeTaxPayment) => {
-    // Simple calculation based on earnings
-    return Number(payment.totalEarnings) * 0.7;
+    // Get actual commission from shift report data
+    const report = shiftReports?.find(r => r.id === payment.reportId);
+    if (!report) return 0;
+
+    try {
+      let reportEmployees = [];
+      if (typeof report.employees === 'string') {
+        reportEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        reportEmployees = report.employees;
+      }
+
+      const employee = employees?.find(e => e.id === payment.employeeId);
+      if (!employee) return 0;
+
+      const employeeData = reportEmployees.find(emp => emp.name === employee.fullName);
+      return employeeData ? (Number(employeeData.commission) || 0) : 0;
+    } catch (e) {
+      return 0;
+    }
   };
   
   const calculateTips = (payment: EmployeeTaxPayment) => {
-    return Number(payment.totalEarnings) * 0.3;
+    // Get actual tips from shift report data
+    const report = shiftReports?.find(r => r.id === payment.reportId);
+    if (!report) return 0;
+
+    try {
+      let reportEmployees = [];
+      if (typeof report.employees === 'string') {
+        reportEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        reportEmployees = report.employees;
+      }
+
+      const employee = employees?.find(e => e.id === payment.employeeId);
+      if (!employee) return 0;
+
+      const employeeData = reportEmployees.find(emp => emp.name === employee.fullName);
+      return employeeData ? (Number(employeeData.tips) || 0) : 0;
+    } catch (e) {
+      return 0;
+    }
   };
   
   const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
