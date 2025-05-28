@@ -50,14 +50,22 @@ export default function MobileAdminPanel() {
         const reportsResponse = await fetch('/api/shift-reports');
         if (reportsResponse.ok) {
           const reportsData = await reportsResponse.json();
-          setReports(reportsData);
+          console.log('Reports fetched:', reportsData.length);
+          setReports(Array.isArray(reportsData) ? reportsData : []);
+        } else {
+          console.error('Failed to fetch reports');
+          setReports([]);
         }
         
         // Fetch employees
         const employeesResponse = await fetch('/api/employees');
         if (employeesResponse.ok) {
           const employeesData = await employeesResponse.json();
-          setEmployees(employeesData);
+          console.log('Employees fetched:', employeesData.length);
+          setEmployees(Array.isArray(employeesData) ? employeesData : []);
+        } else {
+          console.error('Failed to fetch employees');
+          setEmployees([]);
         }
         
         // Fetch ticket distributions
