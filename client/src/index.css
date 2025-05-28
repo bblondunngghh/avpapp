@@ -37,7 +37,7 @@
     height: 100%;
     width: 100%;
     overflow-x: hidden;
-    padding-bottom: 80px; /* Add space for bottom navigation */
+    padding-bottom: 100px; /* Increased space for taller bottom navigation */
   }
   
   /* Fix header positioning on mobile - ensure content doesn't appear under navigation */
@@ -45,7 +45,7 @@
     position: relative;
     z-index: 1;
     padding-top: 80px; /* Space for top header */
-    padding-bottom: 80px; /* Space for bottom navigation */
+    padding-bottom: 100px; /* Increased space for taller bottom navigation */
   }
   
   /* Fix for page headers appearing under navigation */
@@ -405,16 +405,17 @@ input[type="date"].paperform-input {
   @apply fixed inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around md:hidden;
   /* Position for iPhone - closer to bottom but still avoiding swipe-up */
   bottom: 0;
-  padding-bottom: env(safe-area-inset-bottom, 8px);
+  padding-bottom: env(safe-area-inset-bottom, 20px);
   z-index: 50; /* Higher z-index to ensure it stays on top */
-  height: 70px; /* Fixed height for consistent spacing */
+  height: 90px; /* Increased height for better spacing */
+  padding-top: 12px; /* Add more top padding */
 }
 
 .bottom-nav-item {
-  @apply flex flex-col items-center justify-center flex-1 py-2;
-  /* Add a bit more padding to make touch targets larger but keep the nav compact */
-  padding-top: 8px;
-  padding-bottom: 8px;
+  @apply flex flex-col items-center justify-center flex-1;
+  /* Increased padding to prevent cut-off on iPhone */
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
 .bottom-nav-item.active {
