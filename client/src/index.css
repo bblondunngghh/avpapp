@@ -44,7 +44,7 @@
   main {
     position: relative;
     z-index: 1;
-    padding-top: 80px; /* Space for top header */
+    padding-top: 60px; /* Reduced space for smaller top header */
     padding-bottom: 100px; /* Increased space for taller bottom navigation */
   }
   
@@ -449,7 +449,8 @@ input[type="date"].paperform-input {
 }
 
 .app-header-content {
-  @apply container mx-auto px-4 py-4 flex justify-between items-center;
+  @apply container mx-auto px-4 py-2 flex justify-between items-center;
+  height: 56px; /* Fixed height for consistency */
 }
 
 .app-title {
