@@ -3982,16 +3982,18 @@ export default function AdminPanel() {
                     }
 
                     reportEmployees.forEach((emp: any) => {
-                      if (weeklyHours[emp.key]) {
+                      // Find employee by name since shift reports store employee.name, not employee.key
+                      const employee = employees.find((e: any) => e.fullName === emp.name || e.key === emp.name);
+                      if (employee && weeklyHours[employee.key]) {
                         const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
-                        weeklyHours[emp.key].weeklyBreakdown[dayName] = (weeklyHours[emp.key].weeklyBreakdown[dayName] || 0) + emp.hours;
-                        weeklyHours[emp.key].totalHours += emp.hours;
+                        weeklyHours[employee.key].weeklyBreakdown[dayName] = (weeklyHours[employee.key].weeklyBreakdown[dayName] || 0) + emp.hours;
+                        weeklyHours[employee.key].totalHours += emp.hours;
                         
                         // Determine status
-                        if (weeklyHours[emp.key].totalHours >= 38) {
-                          weeklyHours[emp.key].status = 'critical';
-                        } else if (weeklyHours[emp.key].totalHours >= 35) {
-                          weeklyHours[emp.key].status = 'warning';
+                        if (weeklyHours[employee.key].totalHours >= 38) {
+                          weeklyHours[employee.key].status = 'critical';
+                        } else if (weeklyHours[employee.key].totalHours >= 35) {
+                          weeklyHours[employee.key].status = 'warning';
                         }
                       }
                     });
