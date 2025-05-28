@@ -82,6 +82,10 @@ export const updateEmployeeSchema = createInsertSchema(employees)
     createdAt: true
   })
   .extend({
+    key: z.string().optional(),
+    fullName: z.string().optional(),
+    isActive: z.boolean().optional(),
+    isShiftLeader: z.boolean().optional(),
     hireDate: z.string().optional(),
     terminationDate: z.string().optional().nullable(),
     phone: z.string().optional(),

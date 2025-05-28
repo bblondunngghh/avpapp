@@ -368,6 +368,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to update employee' });
     }
   });
+
+  // PATCH endpoint for partial employee updates (like key changes)
+  apiRouter.patch('/employees/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid employee ID' });
+      }
+      
+      // Check if employee exists
+      const existingEmployee = await storage.getEmployee(id);
+      if (!existingEmployee) {
+        return res.status(404).json({ message: 'Employee not found' });
+      }
+      
+      // For PATCH, we only validate the fields that are provided
+      const allowedFields = ['key', 'fullName', 'isActive', 'isShiftLeader', 'hireDate', 'terminationDate', 'phone', 'email', 'notes'];
+      const updateData: any = {};
+      
+      for (const field of allowedFields) {
+        if (req.body[field] !== undefined) {
+          updateData[field] = req.body[field];
+        }
+      }
+      
+      // If key is being changed, check if the new key is already in use
+      if (updateData.key && updateData.key !== existingEmployee.key) {
+        const employeeWithSameKey = await storage.getEmployeeByKey(updateData.key);
+        if (employeeWithSameKey && employeeWithSameKey.id !== id) {
+          return res.status(400).json({ message: 'Another employee with this key already exists' });
+        }
+      }
+      
+      const updatedEmployee = await storage.updateEmployee(id, updateData);
+      res.json(updatedEmployee);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to update employee' });
+    }
+  });
   
   // Employee login API endpoint
   apiRouter.post('/employee-login', async (req, res) => {
