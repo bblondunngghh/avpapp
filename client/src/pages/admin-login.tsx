@@ -87,10 +87,10 @@ export default function AdminLogin() {
         
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
-          // Always redirect mobile devices to the working HTML admin panel
+          // Always redirect mobile devices to the React mobile admin panel
           if (isIOS || isIPad) {
-            console.log("Redirecting to pure HTML admin panel for mobile devices");
-            window.location.href = "/mobile-admin.html";
+            console.log("Redirecting to React mobile admin panel for mobile devices");
+            navigate("/mobile-admin");
           } else {
             console.log("Redirecting to standard admin panel");
             navigate("/admin");
