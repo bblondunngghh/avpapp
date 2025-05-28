@@ -69,14 +69,30 @@ export default function ReportCard({
   try {
     // Handle different date formats safely without timezone conversion
     if (date.includes('-')) {
-      const [year, month, day] = date.split('-');
-      const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      formattedDate = format(dateObj, 'MMM d, yyyy');
+      const parts = date.split('-');
+      let dateObj;
+      // Check if it's MM-DD-YYYY or YYYY-MM-DD format
+      if (parts[0].length === 4) {
+        // YYYY-MM-DD format
+        const [year, month, day] = parts;
+        dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      } else {
+        // MM-DD-YYYY format
+        const [month, day, year] = parts;
+        dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+      
+      // Validate the parsed date
+      if (!isNaN(dateObj.getTime()) && dateObj.getFullYear() >= 2020 && dateObj.getFullYear() <= 2030) {
+        formattedDate = format(dateObj, 'MMM d, yyyy');
+      }
     } else if (date.includes('/')) {
       // Handle M/D/YYYY format
       const parts = date.split('/');
       const dateObj = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
-      formattedDate = format(dateObj, 'MMM d, yyyy');
+      if (!isNaN(dateObj.getTime()) && dateObj.getFullYear() >= 2020 && dateObj.getFullYear() <= 2030) {
+        formattedDate = format(dateObj, 'MMM d, yyyy');
+      }
     }
   } catch (error) {
     // If date parsing fails, use the original date string
