@@ -596,7 +596,8 @@ export default function AdminPanel() {
       }
       
       const dayOfWeek = reportDate.getDay();
-      const dateKey = report.date;
+      // Use normalized date as key to group same dates with different formats
+      const dateKey = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}-${String(reportDate.getDate()).padStart(2, '0')}`;
       
       if (!dailyTotals.has(dateKey)) {
         dailyTotals.set(dateKey, {dayOfWeek, totalCars: 0});
