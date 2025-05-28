@@ -150,11 +150,11 @@ export default function SubmissionComplete() {
     const cashCommission = calculatedCashCars * commissionRate;
     const receiptCommission = totalReceipts * commissionRate;
     
-    // Fixed tips calculations (using fixed amounts per transaction type)
-    // Credit tips - $10 flat per location
-    const creditTips = 10;
-    // Cash tips - $10 flat per location
-    const cashTips = 10;
+    // Tips calculations based on actual transactions
+    // Credit tips - $3 per credit transaction
+    const creditTips = creditTransactions * 3;
+    // Cash tips - $3 per cash car
+    const cashTips = calculatedCashCars * 3;
     // Receipt tips - $3 per receipt
     const receiptTips = totalReceipts * 3;
     
@@ -409,8 +409,12 @@ export default function SubmissionComplete() {
                         const totalHours = employees.reduce((sum, e) => sum + safeNumber(e.hours), 0);
                         const hoursProportion = totalHours > 0 ? safeNumber(emp.hours) / totalHours : 0;
                         
-                        // Calculate this employee's portion of earnings
-                        const empTotalEarnings = earnings.totalEarnings * hoursProportion;
+                        // Calculate this employee's actual earnings based on their hours
+                        const totalCommission = earnings.creditCommission + earnings.cashCommission + earnings.receiptCommission;
+                        const totalTips = earnings.creditTips + earnings.cashTips + earnings.receiptTips;
+                        const empCommission = totalCommission * hoursProportion;
+                        const empTips = totalTips * hoursProportion;
+                        const empTotalEarnings = empCommission + empTips;
                         const taxAmount = empTotalEarnings * 0.22;
                         
                         return (
@@ -463,10 +467,7 @@ export default function SubmissionComplete() {
                             <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
                             <td className="text-right p-2">{formatCurrency(taxAmount)}</td>
                             <td className="text-right p-2">
-                              {formatCurrency((earnings.creditCommission + earnings.cashCommission + 
-                                earnings.receiptCommission + earnings.creditTips + 
-                                earnings.cashTips + earnings.receiptTips - 
-                                earnings.moneyOwed) * hoursProportion)}
+                              {formatCurrency(empCommission + empTips - (earnings.moneyOwed * hoursProportion))}
                             </td>
                           </tr>
                         );
