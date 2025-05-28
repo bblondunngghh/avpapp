@@ -104,15 +104,23 @@ function Router() {
               const isIPad = /iPad/i.test(navigator.userAgent) || 
                             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
               
+              // Check if iPhone (not iPad)
+              const isIPhone = /iPhone/i.test(navigator.userAgent);
+              
+              // Force desktop admin panel for iPads
               if (isIPad) {
+                console.log("iPad detected - using desktop admin panel");
                 return <AdminPanel />;
               }
               
-              // For iPhone and other mobile devices, check if should use mobile
-              if (isMobileDevice) {
+              // Use mobile admin panel only for iPhones
+              if (isIPhone) {
+                console.log("iPhone detected - using mobile admin panel");
                 return <MobileAdminPanel />;
               }
               
+              // Default to desktop admin panel for all other devices
+              console.log("Desktop/other device - using desktop admin panel");
               return <AdminPanel />;
             }}
           </Route>
