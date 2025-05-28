@@ -568,10 +568,55 @@ export default function AdminPanel() {
     // The calculation is now done dynamically based on actual car counts and 
     // turn-in rates for each location in the code above
     
-    // Calculate average cars per day of week instead of total
+    // Group by date and day of week to get total cars across all locations per day
+    const dateGroups = new Map<string, {dayOfWeek: number, totalCars: number}>();
+    
+    filteredReports.forEach(report => {
+      // Parse date correctly
+      let reportDate;
+      try {
+        if (report.date.includes('-')) {
+          const parts = report.date.split('-');
+          if (parts[0].length === 4) {
+            const [year, month, day] = parts;
+            reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          } else {
+            const [month, day, year] = parts;
+            reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          }
+        } else if (report.date.includes('/')) {
+          const parts = report.date.split('/');
+          reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+        } else {
+          reportDate = new Date(report.date);
+        }
+      } catch {
+        reportDate = new Date(report.date);
+      }
+      
+      const dayOfWeek = reportDate.getDay();
+      const dateKey = report.date;
+      
+      if (!dateGroups.has(dateKey)) {
+        dateGroups.set(dateKey, {dayOfWeek, totalCars: 0});
+      }
+      
+      const existing = dateGroups.get(dateKey)!;
+      existing.totalCars += report.totalCars;
+    });
+    
+    // Calculate average cars per day of week across all dates
+    const dayTotals = new Array(7).fill(0);
+    const dayCounts = new Array(7).fill(0);
+    
+    dateGroups.forEach(({dayOfWeek, totalCars}) => {
+      dayTotals[dayOfWeek] += totalCars;
+      dayCounts[dayOfWeek] += 1;
+    });
+    
     const avgDailyData = initialDailyData.map((day, index) => ({
       name: day.name,
-      cars: dayReportCounts[index].reports > 0 ? Math.round(day.cars / dayReportCounts[index].reports) : 0
+      cars: dayCounts[index] > 0 ? Math.round(dayTotals[index] / dayCounts[index]) : 0
     }));
     
     // Update all state variables with calculated data
