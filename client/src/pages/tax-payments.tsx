@@ -218,10 +218,19 @@ export default function AccountantPage() {
   // Calculate commission, tips, money owed and advance
   const calculateCommission = (payment: EmployeeTaxPayment) => {
     const report = shiftReports?.find(r => r.id === payment.reportId);
-    if (!report) return 0;
+    if (!report) {
+      console.log('No report found for payment:', payment.reportId);
+      return 0;
+    }
 
     const employee = employees?.find(e => e.id === payment.employeeId);
-    if (!employee) return 0;
+    if (!employee) {
+      console.log('No employee found for payment:', payment.employeeId);
+      return 0;
+    }
+
+    console.log('Report employees data:', report.employees);
+    console.log('Looking for employee:', employee.fullName);
 
     try {
       let reportEmployees = [];
@@ -229,12 +238,18 @@ export default function AccountantPage() {
         reportEmployees = JSON.parse(report.employees);
       } else if (Array.isArray(report.employees)) {
         reportEmployees = report.employees;
+      } else {
+        console.log('Employees data is neither string nor array:', typeof report.employees);
+        return 0;
       }
 
+      console.log('Parsed employees:', reportEmployees);
       const employeeData = reportEmployees.find((emp: any) => emp.name === employee.fullName);
+      console.log('Found employee data:', employeeData);
+      
       return employeeData ? Number(employeeData.commission || 0) : 0;
     } catch (e) {
-      console.error('Error parsing commission:', e);
+      console.error('Error parsing commission:', e, report.employees);
       return 0;
     }
   };
