@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClipboardCheck, AlertTriangle, ChevronLeft } from "lucide-react";
+import { Car, ShieldAlert, ChevronLeft } from "lucide-react";
 import { LOCATIONS } from "@/lib/constants";
 import RestaurantIcon from "@/components/restaurant-icon";
 
