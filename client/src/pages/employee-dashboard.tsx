@@ -66,7 +66,7 @@ export default function EmployeeDashboard() {
   // Mutation to update employee key
   const updateEmployeeKeyMutation = useMutation({
     mutationFn: async (newKey: string) => {
-      const response = await apiRequest("PATCH", `/api/employees/${employeeId}`, {
+      const response = await apiRequest("PUT", `/api/employees/${employeeId}`, {
         key: newKey
       });
       return response.json();
