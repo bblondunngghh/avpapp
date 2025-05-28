@@ -150,12 +150,18 @@ export default function SubmissionComplete() {
     const cashCommission = calculatedCashCars * commissionRate;
     const receiptCommission = totalReceipts * commissionRate;
     
-    // Tips calculations based on actual transactions
-    // Credit tips - $3 per credit transaction
-    const creditTips = creditTransactions * 3;
-    // Cash tips - $3 per cash car
-    const cashTips = calculatedCashCars * 3;
-    // Receipt tips - $3 per receipt
+    // Tips calculations based on collection vs turn-in difference
+    // Get turn-in rate for this location
+    let turnInRate = 11; // Default (Capital Grille)
+    if (report.locationId === 2) turnInRate = 6; // Bob's Steak
+    else if (report.locationId === 3) turnInRate = 8; // Truluck's
+    else if (report.locationId === 4) turnInRate = 7; // BOA
+    
+    // Credit tips = (credit transactions × $15) - total credit sales
+    const creditTips = Math.max(0, (creditTransactions * 15) - Number(report.totalCreditSales || 0));
+    // Cash tips = (cash cars × $15) - cash collected
+    const cashTips = Math.max(0, (calculatedCashCars * 15) - Number(report.totalCashCollected || 0));
+    // Receipt tips = receipts × $3 (standard)
     const receiptTips = totalReceipts * 3;
     
     // Calculate money owed
