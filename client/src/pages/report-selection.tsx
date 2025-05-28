@@ -26,14 +26,14 @@ export default function ReportSelection() {
         
         <div className="grid md:grid-cols-2 gap-8 mt-10">
           {/* Shift Report Card */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-l-4 border-blue-500">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30">
             <div className="p-6">
               <div className="flex items-center mb-4">
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <ClipboardCheck className="h-8 w-8 text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-full shadow-md">
+                  <Car className="h-8 w-8 text-white" />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-xl font-medium text-blue-500">Shift Report</h2>
+                  <h2 className="text-xl font-medium text-blue-600">Shift Report</h2>
                   <p className="text-gray-500">Track sales, tips, hours & more</p>
                 </div>
               </div>
@@ -64,16 +64,16 @@ export default function ReportSelection() {
           
           {/* Incident Report Card */}
           <div 
-            className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-l-4 border-blue-500 cursor-pointer" 
+            className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-xl border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30 cursor-pointer" 
             onClick={() => navigate("/incident-report")}
           >
             <div className="p-6">
               <div className="flex items-center mb-4">
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <AlertTriangle className="h-8 w-8 text-blue-500" />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-full shadow-md">
+                  <ShieldAlert className="h-8 w-8 text-white" />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-xl font-medium text-blue-500">Incident Report</h2>
+                  <h2 className="text-xl font-medium text-blue-600">Incident Report</h2>
                   <p className="text-gray-500">Document issues & accidents</p>
                 </div>
               </div>
