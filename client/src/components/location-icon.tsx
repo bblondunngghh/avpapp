@@ -1,8 +1,5 @@
-import { ImOffice } from "react-icons/im";
-import { BiBuildingHouse } from "react-icons/bi";
-import { MdBusinessCenter, MdCorporateFare } from "react-icons/md";
-import { FaHotel } from "react-icons/fa";
-import { TbBuildingSkyscraper } from "react-icons/tb";
+import { GiMeat, GiSteak, GiWineGlass } from "react-icons/gi";
+import { FaFish } from "react-icons/fa";
 
 interface LocationIconProps {
   locationId: number;
@@ -11,26 +8,26 @@ interface LocationIconProps {
 }
 
 export function getLocationIconDetails(locationId: number) {
-  let Icon = TbBuildingSkyscraper;
+  let Icon = GiSteak;
   let bgColorClass = "bg-zinc-100";
   let textColorClass = "text-zinc-800";
   
-  if (locationId === 1) { // Capital Grille
-    Icon = MdCorporateFare;
-    bgColorClass = "bg-zinc-100";
-    textColorClass = "text-zinc-800";
-  } else if (locationId === 2) { // Bob's
-    Icon = FaHotel;
-    bgColorClass = "bg-zinc-100";
-    textColorClass = "text-zinc-800";
-  } else if (locationId === 3) { // Truluck's
-    Icon = MdBusinessCenter;
-    bgColorClass = "bg-zinc-100";
-    textColorClass = "text-zinc-800";
-  } else if (locationId === 4) { // BOA
-    Icon = BiBuildingHouse;
-    bgColorClass = "bg-zinc-100";
-    textColorClass = "text-zinc-800";
+  if (locationId === 1) { // Capital Grille - Steakhouse
+    Icon = GiSteak;
+    bgColorClass = "bg-red-100";
+    textColorClass = "text-red-800";
+  } else if (locationId === 2) { // Bob's Steak - Steakhouse
+    Icon = GiMeat;
+    bgColorClass = "bg-orange-100";
+    textColorClass = "text-orange-800";
+  } else if (locationId === 3) { // Truluck's - Seafood
+    Icon = FaFish;
+    bgColorClass = "bg-blue-100";
+    textColorClass = "text-blue-800";
+  } else if (locationId === 4) { // BOA - Steakhouse & Wine Bar
+    Icon = GiWineGlass;
+    bgColorClass = "bg-purple-100";
+    textColorClass = "text-purple-800";
   }
   
   return { Icon, bgColorClass, textColorClass };
