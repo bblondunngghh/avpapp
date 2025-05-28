@@ -1364,7 +1364,7 @@ export default function AdminPanel() {
                             label={{ value: 'Cars', angle: -90, position: 'insideRight' }}
                           />
                           <Tooltip formatter={(value, name) => {
-                            if (name === 'sales') return [`$${Number(value).toFixed(2)}`, 'Sales'];
+                            if (name === 'Sales ($)') return [`$${Number(value).toFixed(2)}`, 'Sales'];
                             return [value, 'Cars'];
                           }} />
                           <Legend />
