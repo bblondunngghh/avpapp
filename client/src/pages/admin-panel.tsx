@@ -604,7 +604,32 @@ export default function AdminPanel() {
       const filteredReports = reports.filter(report => {
         // Apply month filter if set
         if (selectedMonth) {
-          const reportDate = new Date(report.date);
+          // Parse date correctly to avoid timezone issues
+          let reportDate;
+          try {
+            if (report.date.includes('-')) {
+              const parts = report.date.split('-');
+              // Check if it's MM-DD-YYYY or YYYY-MM-DD format
+              if (parts[0].length === 4) {
+                // YYYY-MM-DD format
+                const [year, month, day] = parts;
+                reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+              } else {
+                // MM-DD-YYYY format
+                const [month, day, year] = parts;
+                reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+              }
+            } else if (report.date.includes('/')) {
+              const parts = report.date.split('/');
+              // MM/DD/YYYY format
+              reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+            } else {
+              reportDate = new Date(report.date);
+            }
+          } catch {
+            reportDate = new Date(report.date);
+          }
+          
           const reportYear = reportDate.getFullYear();
           const reportMonth = reportDate.getMonth() + 1; // JavaScript months are 0-based
           const filterYear = parseInt(selectedMonth.split('-')[0]);
