@@ -496,7 +496,6 @@ export default function AccountantPage() {
                     <TableHead className="text-right">Tips</TableHead>
                     <TableHead className="text-right">Money Owed</TableHead>
                     <TableHead className="text-right">Advance</TableHead>
-                    <TableHead className="text-right">Tax Contribution</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
@@ -550,9 +549,6 @@ export default function AccountantPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             {formatCurrency(totalAdvance)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {formatCurrency(totalTaxContribution)}
                           </TableCell>
                           <TableCell>
                             {mostRecentDate ? formatDate(mostRecentDate) : 'N/A'}
