@@ -439,7 +439,6 @@ export default function AccountantPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Employee</TableHead>
-                    <TableHead>Report ID</TableHead>
                     <TableHead className="text-right">Commission</TableHead>
                     <TableHead className="text-right">Tips</TableHead>
                     <TableHead className="text-right">Money Owed</TableHead>
@@ -487,7 +486,6 @@ export default function AccountantPage() {
                           <TableCell className="font-medium">
                             {employee.fullName}
                           </TableCell>
-                          <TableCell>{reportIds.length > 0 ? reportIds.join(', ') : "N/A"}</TableCell>
                           <TableCell className="text-right">
                             {formatCurrency(totalCommission)}
                           </TableCell>
@@ -530,7 +528,7 @@ export default function AccountantPage() {
                     })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-6 text-gray-500">
+                      <TableCell colSpan={8} className="text-center py-6 text-gray-500">
                         No employees found. Please add employees first.
                       </TableCell>
                     </TableRow>
