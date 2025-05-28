@@ -538,16 +538,16 @@ export default function AccountantPage() {
                           <TableCell className="font-medium w-[200px]">
                             {employee.fullName}
                           </TableCell>
-                          <TableCell className="text-right w-[120px] font-mono">
+                          <TableCell className="text-right w-[120px]">
                             {formatCurrency(totalCommission)}
                           </TableCell>
-                          <TableCell className="text-right w-[100px] font-mono">
+                          <TableCell className="text-right w-[100px]">
                             {formatCurrency(totalTips)}
                           </TableCell>
-                          <TableCell className="text-right w-[120px] font-mono">
+                          <TableCell className="text-right w-[120px]">
                             {formatCurrency(totalMoneyOwed)}
                           </TableCell>
-                          <TableCell className="text-right w-[100px] font-mono">
+                          <TableCell className="text-right w-[100px]">
                             {formatCurrency(totalAdvance)}
                           </TableCell>
                           <TableCell className="text-center w-[120px]">
