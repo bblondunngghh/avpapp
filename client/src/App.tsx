@@ -98,7 +98,24 @@ function Router() {
           <Route path="/simple-admin" component={SimpleMobileAdmin} />
           <Route path="/basic-admin" component={SimpleMobileAdmin} />
           <Route path="/admin-redirect" component={SimpleMobileAdmin} />
-          <Route path="/admin" component={AdminPanel} />
+          <Route path="/admin">
+            {() => {
+              // Check if iPad - force desktop admin panel
+              const isIPad = /iPad/i.test(navigator.userAgent) || 
+                            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+              
+              if (isIPad) {
+                return <AdminPanel />;
+              }
+              
+              // For iPhone and other mobile devices, check if should use mobile
+              if (isMobileDevice) {
+                return <MobileAdminPanel />;
+              }
+              
+              return <AdminPanel />;
+            }}
+          </Route>
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/admin/tax-payments" component={AccountantPage} />
           <Route path="/reports" component={ReportsWrapper} />

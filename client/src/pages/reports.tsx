@@ -24,7 +24,7 @@ export default function Reports() {
   useEffect(() => {
     const checkAuth = () => {
       if (!isAdminAuthenticated()) {
-        navigate("/admin");
+        navigate("/admin-login");
       } else {
         setIsAuthorized(true);
       }
