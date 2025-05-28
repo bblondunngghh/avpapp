@@ -87,8 +87,18 @@ export default function AdminLogin() {
         
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
+          // Detailed device detection for debugging
+          const userAgent = navigator.userAgent;
+          const platform = navigator.platform;
+          const touchPoints = navigator.maxTouchPoints;
+          
+          console.log("Login device detection:", { userAgent, platform, touchPoints });
+          
           // Only iPhone goes to mobile admin, everything else goes to desktop
-          const isOnlyIPhone = /iPhone/i.test(navigator.userAgent) && !/iPad/i.test(navigator.userAgent);
+          const isOnlyIPhone = /iPhone/i.test(userAgent) && !/iPad/i.test(userAgent);
+          const isIPad = /iPad/i.test(userAgent) || (platform === 'MacIntel' && touchPoints > 1);
+          
+          console.log("Device classification:", { isOnlyIPhone, isIPad });
           
           if (isOnlyIPhone) {
             console.log("iPhone detected - redirecting to mobile admin panel");
