@@ -1251,18 +1251,6 @@ export default function AdminPanel() {
         <h1 className="text-3xl text-blue-600">Admin Panel</h1>
         <div className="flex gap-2">
           <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {
-              refetchReports();
-              window.location.reload();
-            }}
-            className="flex items-center gap-1"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Refresh Data
-          </Button>
-          <Button 
             variant="default" 
             className="bg-blue-600 hover:bg-blue-700"
             onClick={() => {
