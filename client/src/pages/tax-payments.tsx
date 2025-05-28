@@ -290,9 +290,9 @@ export default function AccountantPage() {
   };
   
   return (
-    <div className="container py-8">
+    <div className="max-w-7xl mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
-        <div>
+        <div className="text-center flex-1">
           <h1 className="text-3xl font-bold text-gray-900">Accountant Section</h1>
           <p className="text-gray-600">Track employee commissions, tips, advances, and tax contributions</p>
         </div>
