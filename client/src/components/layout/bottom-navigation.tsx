@@ -48,7 +48,7 @@ export default function BottomNavigation() {
       
       <button 
         className={`bottom-nav-item ${isReports ? 'active' : ''}`}
-        onClick={() => navigate('/admin-login')}
+        onClick={() => navigate('/reports')}
       >
         <ClipboardList className="bottom-nav-icon" size={20} />
         <span className="bottom-nav-label">Reports</span>

@@ -87,9 +87,16 @@ export default function AdminLogin() {
         
         // Short delay to ensure localStorage is set before navigation
         setTimeout(() => {
-          // Force all devices to desktop admin panel for now to fix iPad issue
-          console.log("Redirecting to desktop admin panel for all devices");
-          navigate("/admin");
+          // Only iPhone goes to mobile admin, everything else goes to desktop
+          const isOnlyIPhone = /iPhone/i.test(navigator.userAgent) && !/iPad/i.test(navigator.userAgent);
+          
+          if (isOnlyIPhone) {
+            console.log("iPhone detected - redirecting to mobile admin panel");
+            navigate("/mobile-admin");
+          } else {
+            console.log("iPad/Desktop detected - redirecting to desktop admin panel");
+            navigate("/admin");
+          }
         }, 100);
       } else {
         // Show error toast
