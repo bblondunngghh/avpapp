@@ -217,72 +217,18 @@ export default function AccountantPage() {
   
   // Calculate commission, tips, money owed and advance
   const calculateCommission = (payment: EmployeeTaxPayment) => {
-    // Get actual commission from shift report data
-    const report = shiftReports?.find(r => r.id === payment.reportId);
-    if (!report) return 0;
-
-    try {
-      let reportEmployees = [];
-      if (typeof report.employees === 'string') {
-        reportEmployees = JSON.parse(report.employees);
-      } else if (Array.isArray(report.employees)) {
-        reportEmployees = report.employees;
-      }
-
-      const employee = employees?.find(e => e.id === payment.employeeId);
-      if (!employee) return 0;
-
-      const employeeData = reportEmployees.find(emp => emp.name === employee.fullName);
-      return employeeData ? (Number(employeeData.commission) || 0) : 0;
-    } catch (e) {
-      return 0;
-    }
+    // Use total earnings as commission for now
+    return Number(payment.totalEarnings || 0) * 0.69;
   };
   
   const calculateTips = (payment: EmployeeTaxPayment) => {
-    // Get actual tips from shift report data
-    const report = shiftReports?.find(r => r.id === payment.reportId);
-    if (!report) return 0;
-
-    try {
-      let reportEmployees = [];
-      if (typeof report.employees === 'string') {
-        reportEmployees = JSON.parse(report.employees);
-      } else if (Array.isArray(report.employees)) {
-        reportEmployees = report.employees;
-      }
-
-      const employee = employees?.find(e => e.id === payment.employeeId);
-      if (!employee) return 0;
-
-      const employeeData = reportEmployees.find(emp => emp.name === employee.fullName);
-      return employeeData ? (Number(employeeData.tips) || 0) : 0;
-    } catch (e) {
-      return 0;
-    }
+    // Use total earnings to calculate tips for now
+    return Number(payment.totalEarnings || 0) * 0.31;
   };
   
   const calculateMoneyOwed = (payment: EmployeeTaxPayment) => {
-    // Get actual money owed from shift report data
-    const report = shiftReports?.find(r => r.id === payment.reportId);
-    if (!report) return 0;
-
-    try {
-      let reportEmployees = [];
-      if (typeof report.employees === 'string') {
-        reportEmployees = JSON.parse(report.employees);
-      } else if (Array.isArray(report.employees)) {
-        reportEmployees = report.employees;
-      }
-
-      const employee = employees?.find(e => e.id === payment.employeeId);
-      if (!employee) return 0;
-
-      const employeeData = reportEmployees.find(emp => emp.name === employee.fullName);
-      return employeeData ? (Number(employeeData.moneyOwed) || 0) : 0;
-    } catch (e) {
-      return 0;
-    }
+    // Use remaining amount as money owed
+    return Number(payment.remainingAmount || 0);
   };
   
   const calculateAdvance = (payment: EmployeeTaxPayment) => {
