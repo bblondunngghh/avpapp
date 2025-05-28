@@ -496,6 +496,7 @@ export default function AccountantPage() {
                     <TableHead className="text-right w-[100px]">Tips</TableHead>
                     <TableHead className="text-right w-[120px]">Money Owed</TableHead>
                     <TableHead className="text-right w-[100px]">Advance</TableHead>
+                    <TableHead className="text-right w-[100px]">Cash Paid</TableHead>
                     <TableHead className="text-center w-[120px]">Date</TableHead>
                     <TableHead className="text-center w-[80px]">Actions</TableHead>
                   </TableRow>
@@ -518,6 +519,8 @@ export default function AccountantPage() {
                         sum + calculateMoneyOwed(payment), 0);
                       const totalAdvance = employeePayments.reduce((sum, payment) => 
                         sum + calculateAdvance(payment), 0);
+                      const totalCashPaid = employeePayments.reduce((sum, payment) => 
+                        sum + (payment.paidAmount || 0), 0);
                       const totalTaxContribution = employeePayments.reduce((sum, payment) => 
                         sum + (Number(payment.paidAmount || 0) - calculateMoneyOwed(payment)), 0);
                       
