@@ -1269,7 +1269,6 @@ export default function AdminPanel() {
           </Button>
         </div>
       </div>
-
       <Tabs defaultValue="reports" className="w-full">
         <TabsList className="mb-6 flex flex-wrap overflow-x-auto no-scrollbar pb-1">
           <TabsTrigger value="reports" className="flex-shrink-0 flex items-center">
@@ -2222,7 +2221,7 @@ export default function AdminPanel() {
                                 <div className="mt-2 flex gap-2">
                                   {savedExpenses[currentMonth] === undefined ? (
                                     // Save button - only shown for new expenses
-                                    <Button 
+                                    (<Button 
                                       size="sm" 
                                       className="bg-green-600 hover:bg-green-700"
                                       onClick={() => {
@@ -2266,12 +2265,11 @@ export default function AdminPanel() {
                                           });
                                         }
                                       }}
-                                    >
-                                      Save Expenses
-                                    </Button>
+                                    >Save Expenses
+                                                                          </Button>)
                                   ) : isEditingExpenses ? (
                                     // Update button - shown when editing existing expenses
-                                    <>
+                                    (<>
                                       <Button 
                                         size="sm" 
                                         className="bg-amber-600 hover:bg-amber-700"
@@ -2319,7 +2317,6 @@ export default function AdminPanel() {
                                       >
                                         Update Expenses
                                       </Button>
-                                      
                                       <Button 
                                         size="sm" 
                                         variant="outline"
@@ -2331,19 +2328,18 @@ export default function AdminPanel() {
                                       >
                                         Cancel
                                       </Button>
-                                    </>
+                                    </>)
                                   ) : (
                                     // Edit button - shown for saved expenses
-                                    <Button 
+                                    (<Button 
                                       size="sm" 
                                       variant="outline"
                                       onClick={() => {
                                         // Show password modal
                                         setShowPasswordModal(true);
                                       }}
-                                    >
-                                      Edit Expenses
-                                    </Button>
+                                    >Edit Expenses
+                                                                          </Button>)
                                   )}
                                   
                                   {savedExpenses[currentMonth] !== undefined && !isEditingExpenses && (
@@ -2486,7 +2482,7 @@ export default function AdminPanel() {
                             <TableHead className="text-right">Brandon (50%)</TableHead>
                             <TableHead className="text-right">Ryan (40%)</TableHead>
                             <TableHead className="text-right">Dave (10%)</TableHead>
-                            <TableHead className="text-right">Total</TableHead>
+                            <TableHead className="text-right">Total After Expenses</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
