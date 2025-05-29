@@ -214,16 +214,9 @@ export default function PermitsPage() {
   const handleViewPDF = (permit: any) => {
     if (permit.pdfData) {
       try {
-        // Convert base64 data to blob URL for in-app viewing
-        const byteCharacters = atob(permit.pdfData);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        setViewingPDF(url);
+        // Use data URL approach which Chrome allows
+        const dataUrl = `data:application/pdf;base64,${permit.pdfData}`;
+        setViewingPDF(dataUrl);
         setIsPDFViewerOpen(true);
       } catch (error) {
         toast({
