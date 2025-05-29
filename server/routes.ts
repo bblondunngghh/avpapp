@@ -680,6 +680,138 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Permits endpoints
+  apiRouter.get('/permits', async (req, res) => {
+    try {
+      const permits = await storage.getPermits();
+      res.json(permits);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch permits' });
+    }
+  });
+
+  apiRouter.get('/permits/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid permit ID' });
+      }
+      
+      const permit = await storage.getPermit(id);
+      if (!permit) {
+        return res.status(404).json({ message: 'Permit not found' });
+      }
+      
+      res.json(permit);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch permit' });
+    }
+  });
+
+  apiRouter.post('/permits', async (req, res) => {
+    try {
+      const permitData = insertPermitSchema.parse(req.body);
+      const permit = await storage.createPermit(permitData);
+      res.status(201).json(permit);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid permit data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to create permit' });
+    }
+  });
+
+  apiRouter.put('/permits/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid permit ID' });
+      }
+      
+      const permitData = updatePermitSchema.parse(req.body);
+      const updatedPermit = await storage.updatePermit(id, permitData);
+      
+      if (!updatedPermit) {
+        return res.status(404).json({ message: 'Permit not found' });
+      }
+      
+      res.json(updatedPermit);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid permit data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to update permit' });
+    }
+  });
+
+  apiRouter.delete('/permits/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid permit ID' });
+      }
+      
+      const deleted = await storage.deletePermit(id);
+      if (!deleted) {
+        return res.status(404).json({ message: 'Permit not found' });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete permit' });
+    }
+  });
+
+  // Incident Reports endpoints
+  apiRouter.get('/incident-reports', async (req, res) => {
+    try {
+      const reports = await storage.getIncidentReports();
+      res.json(reports);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch incident reports' });
+    }
+  });
+
+  apiRouter.post('/incident-reports', async (req, res) => {
+    try {
+      const reportData = insertIncidentReportSchema.parse(req.body);
+      const report = await storage.createIncidentReport(reportData);
+      res.status(201).json(report);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid incident report data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to create incident report' });
+    }
+  });
+
+  apiRouter.delete('/incident-reports/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid report ID' });
+      }
+      
+      const deleted = await storage.deleteIncidentReport(id);
+      if (!deleted) {
+        return res.status(404).json({ message: 'Incident report not found' });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete incident report' });
+    }
+  });
+
   // CSV Upload Routes
   apiRouter.post('/upload/employees', processEmployeeCSV);
   apiRouter.post('/upload/employee-payroll', processEmployeePayrollCSV);
