@@ -2490,8 +2490,8 @@ export default function AdminPanel() {
                             <TableRow key={index}>
                               <TableCell className="font-medium">{entry.month}</TableCell>
                               <TableCell className="text-blue-800 font-medium text-center">${entry.brandon.toFixed(2)}</TableCell>
-                              <TableCell className="text-right text-indigo-800 font-medium">${entry.ryan.toFixed(2)}</TableCell>
-                              <TableCell className="text-right text-teal-800 font-medium">${entry.dave.toFixed(2)}</TableCell>
+                              <TableCell className="text-indigo-800 font-medium text-center">${entry.ryan.toFixed(2)}</TableCell>
+                              <TableCell className="text-teal-800 font-medium text-center">${entry.dave.toFixed(2)}</TableCell>
                               <TableCell className="text-right font-semibold">${entry.total.toFixed(2)}</TableCell>
                             </TableRow>
                           ))}
