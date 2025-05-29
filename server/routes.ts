@@ -22,6 +22,8 @@ import {
   processShiftReportsCSV, 
   processTicketDistributionsCSV 
 } from "./csv-upload";
+import { sendIncidentNotification, type IncidentEmailData } from "./email";
+import multer from "multer";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create API routes
@@ -737,6 +739,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         message: 'Failed to remove duplicate reports',
         error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // Setup multer for file uploads
+  const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+  });
+
+  // Incident report submission endpoint
+  apiRouter.post('/incident-reports', upload.array('photos', 10), async (req, res) => {
+    try {
+      console.log('Incident report submission received');
+      
+      const {
+        customerName,
+        customerEmail,
+        customerPhone,
+        incidentDate,
+        incidentTime,
+        incidentLocation,
+        employeeId,
+        incidentDescription,
+        witnessName,
+        witnessPhone,
+        vehicleMake,
+        vehicleModel,
+        vehicleYear,
+        vehicleColor,
+        vehicleLicensePlate,
+        damageDescription,
+        additionalNotes
+      } = req.body;
+
+      // Get employee name from ID
+      const employee = await storage.getEmployee(parseInt(employeeId));
+      const employeeName = employee ? employee.fullName : 'Unknown Employee';
+
+      // Prepare email data
+      const emailData: IncidentEmailData = {
+        customerName,
+        customerEmail,
+        customerPhone,
+        incidentDate,
+        incidentTime,
+        incidentLocation,
+        employeeName,
+        incidentDescription,
+        witnessName,
+        witnessPhone,
+        vehicleMake,
+        vehicleModel,
+        vehicleYear,
+        vehicleColor,
+        vehicleLicensePlate,
+        damageDescription,
+        additionalNotes
+      };
+
+      // Send email notification
+      const emailSent = await sendIncidentNotification(emailData);
+      
+      if (!emailSent) {
+        console.warn('Failed to send incident notification email');
+      }
+
+      res.status(201).json({ 
+        success: true, 
+        message: 'Incident report submitted successfully',
+        emailSent
+      });
+    } catch (error) {
+      console.error('Error processing incident report:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to submit incident report' 
       });
     }
   });
