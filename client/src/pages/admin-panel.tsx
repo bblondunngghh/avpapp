@@ -218,7 +218,10 @@ export default function AdminPanel() {
   const [manualRevenue, setManualRevenue] = useState<Record<string, number>>({
     // Pre-set monthly revenue values
     "2025-01": 17901,
-    "2025-02": 27556
+    "2025-02": 27556,
+    "2025-03": 25411,
+    "2025-04": 20974,
+    "2025-05": 19431
   });
   
   // Partner pay history data for table display
