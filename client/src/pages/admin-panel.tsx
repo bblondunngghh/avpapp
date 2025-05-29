@@ -1490,8 +1490,8 @@ export default function AdminPanel() {
                               cx="50%"
                               cy="50%"
                               outerRadius={90}
-                              label={(entry) => `${entry.name}: ${entry.value} cars`}
-                              labelLine={true}
+                              label={(entry) => `${entry.value}`}
+                              labelLine={false}
                             >
                               {carDistributionByLocation.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
