@@ -289,7 +289,7 @@ export default function IncidentReport() {
                   name="employeeId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Employee</FormLabel>
+                      <FormLabel>Employee Involved</FormLabel>
                       <FormControl>
                         <Select 
                           onValueChange={field.onChange} 
