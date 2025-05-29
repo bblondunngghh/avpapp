@@ -683,7 +683,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Permits endpoints
   apiRouter.get('/permits', async (req, res) => {
     try {
-      const permits = await storage.getPermits();
+      let permits = await storage.getPermits();
+      
+      // If no permits exist, initialize with default data
+      if (permits.length === 0) {
+        const defaultPermits = [
+          {
+            name: "Business License",
+            type: "General Business",
+            issueDate: "2024-01-15",
+            expirationDate: "2025-01-15",
+            status: "Active",
+            location: "All Locations",
+            permitNumber: "BL-2024-0485",
+            pdfFileName: null,
+            pdfData: null
+          },
+          {
+            name: "Valet Parking Permit",
+            type: "Parking Operations",
+            issueDate: "2024-02-01",
+            expirationDate: "2025-02-01",
+            status: "Active",
+            location: "The Capital Grille",
+            permitNumber: "VP-CG-2024-001",
+            pdfFileName: null,
+            pdfData: null
+          },
+          {
+            name: "Valet Parking Permit",
+            type: "Parking Operations",
+            issueDate: "2024-02-05",
+            expirationDate: "2025-02-05",
+            status: "Active",
+            location: "Bob's Steak and Chop House",
+            permitNumber: "VP-BSC-2024-002",
+            pdfFileName: null,
+            pdfData: null
+          },
+          {
+            name: "Valet Parking Permit",
+            type: "Parking Operations",
+            issueDate: "2024-02-10",
+            expirationDate: "2025-02-10",
+            status: "Active",
+            location: "Truluck's",
+            permitNumber: "VP-TRU-2024-003",
+            pdfFileName: null,
+            pdfData: null
+          },
+          {
+            name: "Valet Parking Permit",
+            type: "Parking Operations",
+            issueDate: "2024-02-15",
+            expirationDate: "2025-02-15",
+            status: "Active",
+            location: "BOA Steakhouse",
+            permitNumber: "VP-BOA-2024-004",
+            pdfFileName: null,
+            pdfData: null
+          }
+        ];
+        
+        // Create all default permits
+        for (const permitData of defaultPermits) {
+          await storage.createPermit(permitData);
+        }
+        
+        // Fetch the newly created permits
+        permits = await storage.getPermits();
+      }
+      
       res.json(permits);
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch permits' });
