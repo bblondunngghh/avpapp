@@ -981,6 +981,74 @@ export class DatabaseStorage implements IStorage {
       return false;
     }
   }
+
+  // Permit methods
+  async getPermits(): Promise<Permit[]> {
+    try {
+      return await db.select().from(permits).orderBy(desc(permits.createdAt));
+    } catch (error) {
+      console.error("Error getting permits:", error);
+      return [];
+    }
+  }
+
+  async getPermit(id: number): Promise<Permit | undefined> {
+    try {
+      const [permit] = await db.select().from(permits).where(eq(permits.id, id));
+      return permit || undefined;
+    } catch (error) {
+      console.error("Error getting permit:", error);
+      return undefined;
+    }
+  }
+
+  async createPermit(permitData: InsertPermit): Promise<Permit> {
+    try {
+      const [permit] = await db
+        .insert(permits)
+        .values({
+          ...permitData,
+          pdfFileName: permitData.pdfFileName || null,
+          pdfData: permitData.pdfData || null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return permit;
+    } catch (error) {
+      console.error("Error creating permit:", error);
+      throw new Error("Failed to create permit");
+    }
+  }
+
+  async updatePermit(id: number, permitData: UpdatePermit): Promise<Permit | undefined> {
+    try {
+      const [updatedPermit] = await db
+        .update(permits)
+        .set({
+          ...permitData,
+          pdfFileName: permitData.pdfFileName !== undefined ? permitData.pdfFileName : undefined,
+          pdfData: permitData.pdfData !== undefined ? permitData.pdfData : undefined,
+          updatedAt: new Date()
+        })
+        .where(eq(permits.id, id))
+        .returning();
+      return updatedPermit || undefined;
+    } catch (error) {
+      console.error("Error updating permit:", error);
+      throw new Error("Failed to update permit");
+    }
+  }
+
+  async deletePermit(id: number): Promise<boolean> {
+    try {
+      await db.delete(permits).where(eq(permits.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting permit:", error);
+      return false;
+    }
+  }
 }
 
 // Use the Database Storage

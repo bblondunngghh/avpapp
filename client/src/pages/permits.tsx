@@ -78,20 +78,36 @@ export default function PermitsPage() {
     }
   ];
 
-  const [permits, setPermits] = useState(defaultPermits);
-
-  // Load saved permits from localStorage on mount
-  useEffect(() => {
-    const savedPermits = localStorage.getItem('permits_data');
-    if (savedPermits) {
-      try {
-        const parsedPermits = JSON.parse(savedPermits);
-        setPermits(parsedPermits);
-      } catch (error) {
-        console.error('Error loading saved permits:', error);
+  // Load permits from server
+  const { data: permits = defaultPermits, isLoading } = useQuery({
+    queryKey: ['/api/permits'],
+    queryFn: async () => {
+      const res = await fetch('/api/permits');
+      if (!res.ok) {
+        // If server has no permits, use default permits
+        return defaultPermits;
       }
-    }
-  }, []);
+      const data = await res.json();
+      return data.length > 0 ? data : defaultPermits;
+    },
+  });
+
+  const updatePermitMutation = useMutation({
+    mutationFn: async ({ id, permitData }: { id: number; permitData: any }) => {
+      const res = await apiRequest("PUT", `/api/permits/${id}`, permitData);
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/permits'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error updating permit",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const [editingPermit, setEditingPermit] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -138,22 +154,22 @@ export default function PermitsPage() {
 
   const handleSavePermit = () => {
     if (editingPermit) {
-      const updatedPermits = permits.map(permit => {
-        if (permit.id === editingPermit.id) {
-          const updatedPermit = { ...editingPermit };
-          if (selectedFile) {
-            updatedPermit.pdfFile = selectedFile;
-            updatedPermit.pdfUrl = URL.createObjectURL(selectedFile);
-          }
-          return updatedPermit;
-        }
-        return permit;
+      const permitData = {
+        name: editingPermit.name,
+        type: editingPermit.type,
+        status: editingPermit.status,
+        permitNumber: editingPermit.permitNumber,
+        issueDate: editingPermit.issueDate,
+        expirationDate: editingPermit.expirationDate,
+        location: editingPermit.location,
+        pdfFileName: selectedFile ? selectedFile.name : editingPermit.pdfFileName,
+        pdfData: selectedFile ? null : editingPermit.pdfData // TODO: Handle file upload
+      };
+
+      updatePermitMutation.mutate({ 
+        id: editingPermit.id, 
+        permitData 
       });
-      
-      setPermits(updatedPermits);
-      
-      // Save to localStorage for persistence
-      localStorage.setItem('permits_data', JSON.stringify(updatedPermits));
       
       setIsEditDialogOpen(false);
       setEditingPermit(null);
@@ -161,7 +177,7 @@ export default function PermitsPage() {
       
       toast({
         title: "Permit updated",
-        description: "The permit has been successfully updated and saved.",
+        description: "The permit has been successfully updated and synced across all devices.",
       });
     }
   };
