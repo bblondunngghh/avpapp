@@ -2126,11 +2126,12 @@ export default function AdminPanel() {
                                          (reportDate.getMonth() + 1).toString().padStart(2, '0') === month;
                                 });
                                 
-                                // Check if we have a manual revenue entry for this month
-                                if (manualRevenue[selectedMonth]) {
-                                  // Use the manually set revenue
-                                  setMonthlyRevenue(manualRevenue[selectedMonth]);
-                                } else {
+                                // Check if this is June 2025 or later - use calculated revenue from cars parked
+                                const selectedDate = new Date(selectedMonth + '-01');
+                                const juneThreshold = new Date('2025-06-01');
+                                
+                                if (selectedDate >= juneThreshold) {
+                                  // For June 2025 onwards: calculate revenue from actual cars parked data
                                   // Calculate total income based on cars parked * turn-in rate for each location
                                   monthlyReports.forEach(report => {
                                     // Get the appropriate turn-in rate based on location
