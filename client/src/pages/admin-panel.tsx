@@ -258,68 +258,39 @@ export default function AdminPanel() {
         total: number;
       }> = [];
       
-      // Process each month with saved expenses
-      Object.keys(expensesData).forEach(month => {
-        const expenses = expensesData[month];
-        let revenue = 0;
-        
-        // Use manual revenue if available, otherwise calculate from reports
-        if (manualRevenue[month]) {
-          revenue = manualRevenue[month];
-        } else {
-          // Use a placeholder for now (this would ideally be calculated from reports)
-          revenue = 0;
-        }
+      // Process all months with manual revenue (Jan-May 2025)
+      Object.keys(manualRevenue).forEach(month => {
+        const revenue = manualRevenue[month];
+        const expenses = expensesData[month] || 0; // Use saved expenses or 0 if not set
         
         if (revenue > 0) {
           const profit = revenue - expenses;
-          if (profit > 0) {
-            // Format month for display (e.g., "2025-01" -> "Jan 2025")
-            const [year, monthNum] = month.split('-');
-            const monthDate = new Date(parseInt(year), parseInt(monthNum) - 1);
-            const monthDisplay = monthDate.toLocaleString('default', { month: 'short', year: 'numeric' });
-            
-            historyData.push({
-              month: monthDisplay,
-              brandon: profit * 0.5, // 50%
-              ryan: profit * 0.4,    // 40%
-              dave: profit * 0.1,    // 10%
-              total: profit
-            });
-          }
-        }
-      });
-      
-      // Add manual entries for all months with manual revenue (Jan-May 2025)
-      const monthsToAdd = [
-        { key: '2025-01', display: 'Jan 2025', defaultExpenses: 5000 },
-        { key: '2025-02', display: 'Feb 2025', defaultExpenses: 6500 },
-        { key: '2025-03', display: 'Mar 2025', defaultExpenses: 7000 },
-        { key: '2025-04', display: 'Apr 2025', defaultExpenses: 6000 },
-        { key: '2025-05', display: 'May 2025', defaultExpenses: 6500 }
-      ];
-      
-      monthsToAdd.forEach(monthInfo => {
-        const hasMonth = historyData.some(item => item.month === monthInfo.display);
-        
-        if (!hasMonth && manualRevenue[monthInfo.key]) {
-          const monthExpenses = expensesData[monthInfo.key] || monthInfo.defaultExpenses;
-          const monthProfit = manualRevenue[monthInfo.key] - monthExpenses;
+          // Show entry even if profit is 0 or negative to display expenses effect
+          const [year, monthNum] = month.split('-');
+          const monthDate = new Date(parseInt(year), parseInt(monthNum) - 1);
+          const monthDisplay = monthDate.toLocaleString('default', { month: 'short', year: 'numeric' });
           
-          if (monthProfit > 0) {
-            const brandonShare = monthProfit * 0.5;
-            const ryanShare = monthProfit * 0.4;
-            const daveShare = monthProfit * 0.1;
-            historyData.push({
-              month: monthInfo.display,
-              brandon: brandonShare,
-              ryan: ryanShare,
-              dave: daveShare,
-              total: monthProfit
-            });
-          }
+          historyData.push({
+            month: monthDisplay,
+            brandon: Math.max(0, profit * 0.5), // 50%, but don't go negative
+            ryan: Math.max(0, profit * 0.4),    // 40%, but don't go negative
+            dave: Math.max(0, profit * 0.1),    // 10%, but don't go negative
+            total: Math.max(0, profit)
+          });
         }
       });
+      
+      // Process any additional months with only saved expenses (for future months)
+      Object.keys(expensesData).forEach(month => {
+        // Skip if already processed above
+        if (manualRevenue[month]) return;
+        
+        const expenses = expensesData[month];
+        // This would be for June 2025 onwards when we calculate from reports
+        // For now, skip these as we don't have the calculation logic yet
+      });
+      
+
       
       // Sort by month
       historyData.sort((a, b) => {
@@ -2519,22 +2490,22 @@ export default function AdminPanel() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {/* January 2025 Entry */}
-                          <TableRow>
-                            <TableCell className="font-medium">Jan 2025</TableCell>
-                            <TableCell className="text-right">${((17901 - 5000) * 0.5).toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${((17901 - 5000) * 0.4).toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${((17901 - 5000) * 0.1).toFixed(2)}</TableCell>
-                            <TableCell className="text-right font-semibold">${(17901 - 5000).toFixed(2)}</TableCell>
-                          </TableRow>
-                          {/* February 2025 Entry */}
-                          <TableRow>
-                            <TableCell className="font-medium">Feb 2025</TableCell>
-                            <TableCell className="text-right">${((27556 - 6500) * 0.5).toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${((27556 - 6500) * 0.4).toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${((27556 - 6500) * 0.1).toFixed(2)}</TableCell>
-                            <TableCell className="text-right font-semibold">${(27556 - 6500).toFixed(2)}</TableCell>
-                          </TableRow>
+                          {partnerPaymentHistory.map((entry, index) => (
+                            <TableRow key={index}>
+                              <TableCell className="font-medium">{entry.month}</TableCell>
+                              <TableCell className="text-right">${entry.brandon.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">${entry.ryan.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">${entry.dave.toFixed(2)}</TableCell>
+                              <TableCell className="text-right font-semibold">${entry.total.toFixed(2)}</TableCell>
+                            </TableRow>
+                          ))}
+                          {partnerPaymentHistory.length === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={5} className="text-center text-gray-500">
+                                No partner payment history available. Select a month and add expenses to generate history.
+                              </TableCell>
+                            </TableRow>
+                          )}
                         </TableBody>
                       </Table>
                     </div>
