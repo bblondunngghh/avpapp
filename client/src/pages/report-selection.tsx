@@ -49,11 +49,8 @@ export default function ReportSelection() {
                     <Button 
                       key={location.id}
                       onClick={() => navigate(`/new-report?locationId=${location.id}`)}
-                      className="relative h-auto py-3 pl-10 w-full bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-800 border-0 shadow-sm hover:shadow group text-left"
+                      className="h-auto py-3 w-full bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-800 border-0 shadow-sm hover:shadow group text-center"
                     >
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <RestaurantIcon locationId={location.id} size={16} />
-                      </span>
                       <span className="font-medium">{location.name}</span>
                     </Button>
                   ))}

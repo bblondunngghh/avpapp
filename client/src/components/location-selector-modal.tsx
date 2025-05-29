@@ -33,13 +33,10 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
             <Button
               key={location.id}
               variant="outline"
-              className="justify-center h-auto py-3 px-4 text-center relative"
+              className="justify-center h-auto py-3 px-4 text-center"
               onClick={() => handleLocationSelect(location.id)}
             >
-              <div className="flex items-center gap-3">
-                <LocationIcon locationId={location.id} size={18} />
-                <span className="font-medium text-primary">{location.name}</span>
-              </div>
+              <span className="font-medium text-primary">{location.name}</span>
             </Button>
           ))}
         </div>
