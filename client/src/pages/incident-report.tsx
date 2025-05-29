@@ -11,9 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Camera, CarFront, ChevronLeft, Plus, Trash2, Upload, X } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import type { Employee } from "@shared/schema";
 
 // Form validation schema
 const formSchema = z.object({
@@ -26,6 +27,7 @@ const formSchema = z.object({
   incidentDate: z.string().min(1, { message: "Date is required" }),
   incidentTime: z.string().min(1, { message: "Time is required" }),
   incidentLocation: z.string().min(1, { message: "Location is required" }),
+  employeeId: z.string().min(1, { message: "Employee is required" }),
   incidentDescription: z.string().min(10, { message: "Please provide a detailed description" }),
   witnessName: z.string().optional(),
   witnessPhone: z.string().optional(),
@@ -50,6 +52,11 @@ export default function IncidentReport() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   
+  // Fetch employees for the dropdown
+  const { data: employees = [] } = useQuery<Employee[]>({
+    queryKey: ["/api/employees"]
+  });
+  
   // Initialize form
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -60,6 +67,7 @@ export default function IncidentReport() {
       incidentDate: new Date().toISOString().split("T")[0],
       incidentTime: "",
       incidentLocation: "",
+      employeeId: "",
       incidentDescription: "",
       witnessName: "",
       witnessPhone: "",
@@ -268,6 +276,34 @@ export default function IncidentReport() {
                             <SelectItem value="trulucks">Truluck's</SelectItem>
                             <SelectItem value="boa-steakhouse">BOA Steakhouse</SelectItem>
                             <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="employeeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Employee</FormLabel>
+                      <FormControl>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Employee" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {employees.map((employee) => (
+                              <SelectItem key={employee.id} value={employee.id.toString()}>
+                                {employee.fullName}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
