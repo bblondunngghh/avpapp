@@ -238,7 +238,7 @@ export default function AdminPanel() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
-  const EXPENSES_EDIT_PASSWORD = "bblonly";
+  const EXPENSES_EDIT_PASSWORD = "bbonly";
   
   // Load saved expenses from localStorage on initial render
   useEffect(() => {
