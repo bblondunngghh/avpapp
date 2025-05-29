@@ -4294,12 +4294,12 @@ export default function AdminPanel() {
               {(() => {
                 const { data: incidentReports, isLoading: incidentReportsLoading } = useQuery({
                   queryKey: ["/api/incident-reports"],
-                  queryFn: getQueryFn(),
+                  queryFn: getQueryFn({ on401: "returnNull" }),
                 });
 
                 const { data: employees } = useQuery({
                   queryKey: ["/api/employees"],
-                  queryFn: getQueryFn(),
+                  queryFn: getQueryFn({ on401: "returnNull" }),
                 });
 
                 const deleteIncidentMutation = useMutation({
