@@ -154,8 +154,38 @@ export default function PermitsPage() {
     }
   };
 
-  const handleSavePermit = () => {
+  const handleSavePermit = async () => {
     if (editingPermit) {
+      let pdfData = editingPermit.pdfData;
+      let pdfFileName = editingPermit.pdfFileName;
+
+      // Convert selected file to base64 if there's a new file
+      if (selectedFile) {
+        try {
+          const base64Data = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              const result = reader.result as string;
+              // Remove the data URL prefix to get just the base64 data
+              const base64 = result.split(',')[1];
+              resolve(base64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(selectedFile);
+          });
+          
+          pdfData = base64Data;
+          pdfFileName = selectedFile.name;
+        } catch (error) {
+          toast({
+            title: "Error processing file",
+            description: "Failed to upload PDF file.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
       const permitData = {
         name: editingPermit.name,
         type: editingPermit.type,
@@ -164,8 +194,8 @@ export default function PermitsPage() {
         issueDate: editingPermit.issueDate,
         expirationDate: editingPermit.expirationDate,
         location: editingPermit.location,
-        pdfFileName: selectedFile ? selectedFile.name : editingPermit.pdfFileName,
-        pdfData: selectedFile ? null : editingPermit.pdfData
+        pdfFileName,
+        pdfData
       };
 
       updatePermitMutation.mutate({ 
@@ -180,8 +210,25 @@ export default function PermitsPage() {
   };
 
   const handleViewPDF = (permit: any) => {
-    if (permit.pdfUrl) {
-      window.open(permit.pdfUrl, '_blank');
+    if (permit.pdfData) {
+      try {
+        // Convert base64 data to blob and open in new window
+        const byteCharacters = atob(permit.pdfData);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      } catch (error) {
+        toast({
+          title: "Error viewing PDF",
+          description: "Unable to open the PDF file.",
+          variant: "destructive",
+        });
+      }
     } else {
       toast({
         title: "No PDF available",
