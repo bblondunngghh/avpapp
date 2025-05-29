@@ -1,7 +1,4 @@
-import { ImOffice } from "react-icons/im";
-import { BiBuildingHouse } from "react-icons/bi";
-import { MdBusinessCenter, MdCorporateFare } from "react-icons/md";
-import { FaHotel } from "react-icons/fa";
+import { GiKnifeFork, GiChefToque, GiFishCooked, GiWineGlass } from "react-icons/gi";
 
 interface RestaurantIconProps {
   locationId: number;
@@ -11,24 +8,24 @@ interface RestaurantIconProps {
 
 export default function RestaurantIcon({ locationId, size = 16, className = "" }: RestaurantIconProps) {
   // Choose icon and colors based on location ID
-  let Icon = ImOffice;
+  let Icon = GiKnifeFork;
   let bgColorClass = "bg-zinc-100";
   let textColorClass = "text-zinc-800";
   
-  if (locationId === 1) { // Capital Grille
-    Icon = MdCorporateFare;
+  if (locationId === 1) { // Capital Grille - Steak focused
+    Icon = GiKnifeFork;
     bgColorClass = "bg-zinc-100";
     textColorClass = "text-zinc-800";
-  } else if (locationId === 2) { // Bob's
-    Icon = FaHotel;
+  } else if (locationId === 2) { // Bob's Steak and Chop House - Steak focused
+    Icon = GiChefToque;
     bgColorClass = "bg-zinc-100";
     textColorClass = "text-zinc-800";
-  } else if (locationId === 3) { // Truluck's
-    Icon = MdBusinessCenter;
+  } else if (locationId === 3) { // Truluck's - Seafood focused
+    Icon = GiFishCooked;
     bgColorClass = "bg-zinc-100";
     textColorClass = "text-zinc-800";
-  } else if (locationId === 4) { // BOA
-    Icon = BiBuildingHouse;
+  } else if (locationId === 4) { // BOA Steakhouse - Wine focused
+    Icon = GiWineGlass;
     bgColorClass = "bg-zinc-100";
     textColorClass = "text-zinc-800";
   }
