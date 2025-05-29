@@ -2512,6 +2512,23 @@ export default function AdminPanel() {
                               </TableCell>
                             </TableRow>
                           )}
+                          {partnerPaymentHistory.length > 0 && (
+                            <TableRow className="bg-muted/50 font-semibold border-t-2">
+                              <TableCell className="font-bold">TOTALS</TableCell>
+                              <TableCell className="text-blue-800 font-bold text-center">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.brandon, 0).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-indigo-800 font-bold text-center">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.ryan, 0).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-teal-800 font-bold text-center">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.dave, 0).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right font-bold">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.total, 0).toFixed(2)}
+                              </TableCell>
+                            </TableRow>
+                          )}
                         </TableBody>
                       </Table>
                     </div>
