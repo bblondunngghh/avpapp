@@ -504,8 +504,11 @@ export default function AdminPanel() {
         // Calculate company earnings (total cars * turn-in rate)
         const companySales = report.totalCars * turnInRate;
         
-        // Add to monthly sales total (company earnings only)
-        initialMonthlyData[month].sales += companySales;
+        // Add to monthly sales total (company earnings only) - but skip if we have manual values
+        const monthName = monthNames[month];
+        if (!["January", "February", "March", "April", "May"].includes(monthName)) {
+          initialMonthlyData[month].sales += companySales;
+        }
         
         // Add to daily car volume
         initialDailyData[dayOfWeek].cars += report.totalCars;
