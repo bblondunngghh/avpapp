@@ -79,16 +79,14 @@ export default function PermitsPage() {
   ];
 
   // Load permits from server
-  const { data: permits = defaultPermits, isLoading } = useQuery({
+  const { data: permits = [], isLoading } = useQuery({
     queryKey: ['/api/permits'],
     queryFn: async () => {
       const res = await fetch('/api/permits');
       if (!res.ok) {
-        // If server has no permits, use default permits
-        return defaultPermits;
+        throw new Error('Failed to fetch permits');
       }
-      const data = await res.json();
-      return data.length > 0 ? data : defaultPermits;
+      return await res.json();
     },
   });
 
@@ -99,6 +97,10 @@ export default function PermitsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/permits'] });
+      toast({
+        title: "Permit updated",
+        description: "The permit has been successfully updated and synced across all devices.",
+      });
     },
     onError: (error) => {
       toast({
@@ -163,7 +165,7 @@ export default function PermitsPage() {
         expirationDate: editingPermit.expirationDate,
         location: editingPermit.location,
         pdfFileName: selectedFile ? selectedFile.name : editingPermit.pdfFileName,
-        pdfData: selectedFile ? null : editingPermit.pdfData // TODO: Handle file upload
+        pdfData: selectedFile ? null : editingPermit.pdfData
       };
 
       updatePermitMutation.mutate({ 
@@ -174,11 +176,6 @@ export default function PermitsPage() {
       setIsEditDialogOpen(false);
       setEditingPermit(null);
       setSelectedFile(null);
-      
-      toast({
-        title: "Permit updated",
-        description: "The permit has been successfully updated and synced across all devices.",
-      });
     }
   };
 
