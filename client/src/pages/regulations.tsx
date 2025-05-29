@@ -32,7 +32,7 @@ export default function Regulations() {
             <div>
               <h3 className="text-base font-medium text-emerald-700 mb-2">Dress Code</h3>
               <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                <li>Black dress pants (no jeans)</li>
+                <li>Black pants or shorts (they must have belt loops for a black belt)</li>
                 <li>Company-issued shirt must be clean and pressed</li>
                 <li>Running shoes</li>
                 <li>Company-issued name tag must be worn at all times</li>
