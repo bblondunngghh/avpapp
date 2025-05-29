@@ -2480,8 +2480,8 @@ export default function AdminPanel() {
                           <TableRow>
                             <TableHead>Month</TableHead>
                             <TableHead className="text-blue-800 text-center">Brandon (50%)</TableHead>
-                            <TableHead className="text-right text-indigo-800">Ryan (40%)</TableHead>
-                            <TableHead className="text-right text-teal-800">Dave (10%)</TableHead>
+                            <TableHead className="text-indigo-800 text-center">Ryan (40%)</TableHead>
+                            <TableHead className="text-teal-800 text-center">Dave (10%)</TableHead>
                             <TableHead className="text-right">Total After Expenses</TableHead>
                           </TableRow>
                         </TableHeader>
