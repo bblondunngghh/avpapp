@@ -103,11 +103,31 @@ export default function PermitsPage() {
   const [editingPermit, setEditingPermit] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [pendingEditPermit, setPendingEditPermit] = useState<any>(null);
 
   const handleEditPermit = (permit: any) => {
-    setEditingPermit({ ...permit });
-    setSelectedFile(null);
-    setIsEditDialogOpen(true);
+    setPendingEditPermit(permit);
+    setPassword("");
+    setIsPasswordDialogOpen(true);
+  };
+
+  const handlePasswordSubmit = () => {
+    if (password === "bbonly") {
+      setEditingPermit({ ...pendingEditPermit });
+      setSelectedFile(null);
+      setIsEditDialogOpen(true);
+      setIsPasswordDialogOpen(false);
+      setPendingEditPermit(null);
+      setPassword("");
+    } else {
+      toast({
+        title: "Incorrect password",
+        description: "Please enter the correct password to edit permits.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -452,6 +472,46 @@ export default function PermitsPage() {
             </Button>
             <Button onClick={handleSavePermit}>
               Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Password Dialog */}
+      <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-black">Enter Password</DialogTitle>
+            <DialogDescription>
+              This action requires authorization. Please enter the password to edit permits.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+                placeholder="Enter password..."
+                autoFocus
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setIsPasswordDialogOpen(false);
+              setPassword("");
+              setPendingEditPermit(null);
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={handlePasswordSubmit}>
+              Continue
             </Button>
           </DialogFooter>
         </DialogContent>
