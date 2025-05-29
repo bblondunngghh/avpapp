@@ -157,14 +157,12 @@ export default function IncidentReport() {
         <ChevronLeft className="h-4 w-4 mr-2" />
         Back to Dashboard
       </Button>
-      
       <div className="mb-8">
         <h1 className="text-2xl text-orange-700 uppercase">Incident Report</h1>
         <p className="text-gray-600 mt-1">
           Please fill out this form to report any incidents or damages.
         </p>
       </div>
-      
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Customer Information */}
@@ -303,7 +301,7 @@ export default function IncidentReport() {
                   name="witnessName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Witness Name (if any)</FormLabel>
+                      <FormLabel>Valet Name (if any)</FormLabel>
                       <FormControl>
                         <Input placeholder="Witness Name" {...field} />
                       </FormControl>
