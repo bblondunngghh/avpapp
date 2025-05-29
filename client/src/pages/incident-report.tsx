@@ -301,7 +301,7 @@ export default function IncidentReport() {
                   name="witnessName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Valet Name (if any)</FormLabel>
+                      <FormLabel>Witness (if any)</FormLabel>
                       <FormControl>
                         <Input placeholder="Witness Name" {...field} />
                       </FormControl>
