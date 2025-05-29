@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Car, ShieldAlert, Construction, ArrowRight } from "lucide-react";
+import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-react";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 
@@ -35,7 +35,7 @@ export default function Dashboard() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Submit Shift Report Card */}
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
@@ -89,6 +89,25 @@ export default function Dashboard() {
               className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white group-hover:shadow-md"
             >
               View Guidelines <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Company Permits Card */}
+        <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-purple-500 bg-gradient-to-b from-white to-purple-50/30">
+          <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
+              <FileText className="h-10 w-10 text-white" />
+            </div>
+            <h3 className="text-xl mb-3 text-purple-600">Company Permits</h3>
+            <p className="text-gray-600 mb-6 flex-grow">
+              View all company permits, licenses, and official documentation for our operations.
+            </p>
+            <Button 
+              onClick={() => navigate("/permits")}
+              className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white group-hover:shadow-md"
+            >
+              View Permits <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </CardContent>
         </Card>
