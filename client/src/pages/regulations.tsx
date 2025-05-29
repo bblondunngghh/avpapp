@@ -18,14 +18,12 @@ export default function Regulations() {
         <ChevronLeft className="h-4 w-4 mr-2" />
         Back to Dashboard
       </Button>
-      
       <div className="mb-8">
         <h1 className="text-2xl text-emerald-700 uppercase">Right of Way Valet Parking Rules & Regulations</h1>
         <p className="text-gray-600 mt-1">
           Standard operating procedures and guidelines for all valet staff members.
         </p>
       </div>
-      
       <Card>
         <CardContent className="pt-6">
           <h2 className="text-lg font-medium mb-4">General Policies</h2>
@@ -36,7 +34,7 @@ export default function Regulations() {
               <ul className="list-disc pl-5 space-y-1 text-gray-700">
                 <li>Black dress pants (no jeans)</li>
                 <li>Company-issued shirt must be clean and pressed</li>
-                <li>Black dress shoes (polished, no sneakers)</li>
+                <li>Running shoes</li>
                 <li>Company-issued name tag must be worn at all times</li>
                 <li>No visible tattoos or excessive jewelry</li>
                 <li>Hair must be neat and well-groomed</li>

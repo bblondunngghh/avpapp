@@ -888,6 +888,49 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Failed to delete ticket distribution");
     }
   }
+
+  // Incident Report methods
+  async getIncidentReports(): Promise<IncidentReport[]> {
+    try {
+      return await db.select().from(incidentReports).orderBy(desc(incidentReports.submittedAt));
+    } catch (error) {
+      console.error("Error getting incident reports:", error);
+      return [];
+    }
+  }
+
+  async getIncidentReport(id: number): Promise<IncidentReport | undefined> {
+    try {
+      const [report] = await db.select().from(incidentReports).where(eq(incidentReports.id, id));
+      return report || undefined;
+    } catch (error) {
+      console.error("Error getting incident report by ID:", error);
+      return undefined;
+    }
+  }
+
+  async createIncidentReport(insertReport: InsertIncidentReport): Promise<IncidentReport> {
+    try {
+      const [report] = await db
+        .insert(incidentReports)
+        .values(insertReport)
+        .returning();
+      return report;
+    } catch (error) {
+      console.error("Error creating incident report:", error);
+      throw new Error("Failed to create incident report");
+    }
+  }
+
+  async deleteIncidentReport(id: number): Promise<boolean> {
+    try {
+      await db.delete(incidentReports).where(eq(incidentReports.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting incident report:", error);
+      return false;
+    }
+  }
 }
 
 // Use the Database Storage
