@@ -2161,6 +2161,40 @@ export default function AdminPanel() {
                                   
                                   // Update state with the calculated monthly revenue
                                   setMonthlyRevenue(totalMonthlyIncome);
+                                } else if (manualRevenue[selectedMonth]) {
+                                  // For January through May 2025: use manually set revenue values
+                                  setMonthlyRevenue(manualRevenue[selectedMonth]);
+                                } else {
+                                  // Default case: calculate from reports if no manual value exists
+                                  // Calculate total income based on cars parked * turn-in rate for each location
+                                  monthlyReports.forEach(report => {
+                                    // Get the appropriate turn-in rate based on location
+                                    let turnInRate = 0;
+                                    
+                                    // Set turn-in rates for each location
+                                    switch(report.locationId) {
+                                      case 1: // Capital Grille: $11 per car
+                                        turnInRate = 11;
+                                        break;
+                                      case 2: // Bob's Steak and Chop House: $6 per car
+                                        turnInRate = 6;
+                                        break;
+                                      case 3: // Truluck's: $8 per car
+                                        turnInRate = 8;
+                                        break;
+                                      case 4: // BOA Steakhouse: $7 per car
+                                        turnInRate = 7;
+                                        break;
+                                      default:
+                                        turnInRate = 0;
+                                    }
+                                    
+                                    // Calculate revenue: number of cars × location-specific turn-in rate
+                                    totalMonthlyIncome += report.totalCars * turnInRate;
+                                  });
+                                  
+                                  // Update state with the calculated monthly revenue
+                                  setMonthlyRevenue(totalMonthlyIncome);
                                 }
                                 
                                 // Set saved expenses for this month if they exist
