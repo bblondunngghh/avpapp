@@ -10,10 +10,14 @@ import {
   updateEmployeeSchema,
   insertEmployeeTaxPaymentSchema,
   updateEmployeeTaxPaymentSchema,
+  insertPermitSchema,
+  updatePermitSchema,
+  insertIncidentReportSchema,
   ShiftReport,
   TicketDistribution,
   Employee,
-  EmployeeTaxPayment
+  EmployeeTaxPayment,
+  Permit
 } from "@shared/schema";
 import { z } from "zod";
 import { 
