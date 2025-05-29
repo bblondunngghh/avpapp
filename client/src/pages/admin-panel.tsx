@@ -4281,6 +4281,224 @@ export default function AdminPanel() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="incident-reports">
+          <Card>
+            <CardHeader>
+              <CardTitle>Incident Reports</CardTitle>
+              <CardDescription>
+                View all submitted incident reports from your locations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                const { data: incidentReports, isLoading: incidentReportsLoading } = useQuery({
+                  queryKey: ["/api/incident-reports"],
+                  queryFn: getQueryFn(),
+                });
+
+                const { data: employees } = useQuery({
+                  queryKey: ["/api/employees"],
+                  queryFn: getQueryFn(),
+                });
+
+                const deleteIncidentMutation = useMutation({
+                  mutationFn: async (id: number) => {
+                    const response = await apiRequest("DELETE", `/api/incident-reports/${id}`);
+                    return response;
+                  },
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/incident-reports"] });
+                    toast({
+                      title: "Success",
+                      description: "Incident report deleted successfully",
+                    });
+                  },
+                  onError: () => {
+                    toast({
+                      title: "Error",
+                      description: "Failed to delete incident report",
+                      variant: "destructive",
+                    });
+                  },
+                });
+
+                if (incidentReportsLoading) {
+                  return <div className="text-center py-8">Loading incident reports...</div>;
+                }
+
+                if (!incidentReports || incidentReports.length === 0) {
+                  return (
+                    <div className="text-center py-8">
+                      <Activity className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No incident reports</h3>
+                      <p className="text-gray-500">No incident reports have been submitted yet.</p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-center gap-3">
+                        <Activity className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <h4 className="font-medium text-blue-900">Total Reports: {incidentReports.length}</h4>
+                          <p className="text-sm text-blue-700">All incident reports are stored here for your review</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Date/Time</TableHead>
+                            <TableHead>Customer</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead>Employee</TableHead>
+                            <TableHead>Vehicle</TableHead>
+                            <TableHead>Description</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {incidentReports.map((report: any) => {
+                            const employee = employees?.find((emp: any) => emp.id === report.employeeId);
+                            
+                            return (
+                              <TableRow key={report.id}>
+                                <TableCell>
+                                  <div className="text-sm">
+                                    <div className="font-medium">{report.incidentDate}</div>
+                                    <div className="text-gray-500">{report.incidentTime}</div>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="text-sm">
+                                    <div className="font-medium">{report.customerName}</div>
+                                    <div className="text-gray-500">{report.customerEmail}</div>
+                                    <div className="text-gray-500">{report.customerPhone}</div>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="font-medium">{report.incidentLocation}</TableCell>
+                                <TableCell>{employee?.fullName || 'Unknown'}</TableCell>
+                                <TableCell>
+                                  <div className="text-sm">
+                                    <div className="font-medium">{report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
+                                    <div className="text-gray-500">{report.vehicleColor}</div>
+                                    <div className="text-gray-500">{report.vehicleLicensePlate}</div>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="max-w-[300px]">
+                                  <div className="text-sm space-y-1">
+                                    <div><strong>Incident:</strong> {report.incidentDescription}</div>
+                                    <div><strong>Damage:</strong> {report.damageDescription}</div>
+                                    {report.witnessName && (
+                                      <div><strong>Witness:</strong> {report.witnessName} ({report.witnessPhone})</div>
+                                    )}
+                                    {report.additionalNotes && (
+                                      <div><strong>Notes:</strong> {report.additionalNotes}</div>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex gap-2">
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm">
+                                          View Details
+                                        </Button>
+                                      </DialogTrigger>
+                                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                        <DialogHeader>
+                                          <DialogTitle>Incident Report Details</DialogTitle>
+                                          <DialogDescription>
+                                            Submitted on {new Date(report.submittedAt).toLocaleString()}
+                                          </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="space-y-4">
+                                          <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                              <Label className="font-medium">Customer Information</Label>
+                                              <div className="text-sm space-y-1 mt-1">
+                                                <div>Name: {report.customerName}</div>
+                                                <div>Email: {report.customerEmail}</div>
+                                                <div>Phone: {report.customerPhone}</div>
+                                              </div>
+                                            </div>
+                                            <div>
+                                              <Label className="font-medium">Incident Details</Label>
+                                              <div className="text-sm space-y-1 mt-1">
+                                                <div>Date: {report.incidentDate}</div>
+                                                <div>Time: {report.incidentTime}</div>
+                                                <div>Location: {report.incidentLocation}</div>
+                                                <div>Employee: {employee?.fullName || 'Unknown'}</div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          
+                                          <div>
+                                            <Label className="font-medium">Vehicle Information</Label>
+                                            <div className="text-sm space-y-1 mt-1">
+                                              <div>Vehicle: {report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
+                                              <div>Color: {report.vehicleColor}</div>
+                                              <div>License Plate: {report.vehicleLicensePlate}</div>
+                                            </div>
+                                          </div>
+                                          
+                                          <div>
+                                            <Label className="font-medium">Incident Description</Label>
+                                            <p className="text-sm mt-1">{report.incidentDescription}</p>
+                                          </div>
+                                          
+                                          <div>
+                                            <Label className="font-medium">Damage Description</Label>
+                                            <p className="text-sm mt-1">{report.damageDescription}</p>
+                                          </div>
+                                          
+                                          {report.witnessName && (
+                                            <div>
+                                              <Label className="font-medium">Witness Information</Label>
+                                              <div className="text-sm space-y-1 mt-1">
+                                                <div>Name: {report.witnessName}</div>
+                                                {report.witnessPhone && <div>Phone: {report.witnessPhone}</div>}
+                                              </div>
+                                            </div>
+                                          )}
+                                          
+                                          {report.additionalNotes && (
+                                            <div>
+                                              <Label className="font-medium">Additional Notes</Label>
+                                              <p className="text-sm mt-1">{report.additionalNotes}</p>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </DialogContent>
+                                    </Dialog>
+                                    
+                                    <Button 
+                                      variant="destructive" 
+                                      size="sm"
+                                      onClick={() => deleteIncidentMutation.mutate(report.id)}
+                                      disabled={deleteIncidentMutation.isPending}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
