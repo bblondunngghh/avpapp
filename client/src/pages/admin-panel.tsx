@@ -406,8 +406,15 @@ export default function AdminPanel() {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     
-    // Initialize data structures
-    const initialMonthlyData = monthNames.map(name => ({ name, sales: 0 }));
+    // Initialize data structures with manual values for Jan and Feb
+    const initialMonthlyData = monthNames.map(name => {
+      if (name === "January") return { name, sales: 17901 };
+      if (name === "February") return { name, sales: 27556 };
+      if (name === "March") return { name, sales: 25411 };
+      if (name === "April") return { name, sales: 20974 };
+      if (name === "May") return { name, sales: 19431 };
+      return { name, sales: 0 };
+    });
     const initialDailyData = dayNames.map(name => ({ name, cars: 0 }));
     const dayReportCounts = dayNames.map(name => ({ name, reports: 0 }));
     
