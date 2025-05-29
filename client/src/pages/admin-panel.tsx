@@ -1287,8 +1287,8 @@ export default function AdminPanel() {
           </TabsTrigger>
 
           <TabsTrigger value="locations" className="flex-shrink-0 flex items-center">
-            <MapPin className="h-4 w-4 mr-2" />
-            Locations
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Partner Distribution
           </TabsTrigger>
           <TabsTrigger value="tickets" className="flex-shrink-0 flex items-center">
             <Ticket className="h-4 w-4 mr-2" />
