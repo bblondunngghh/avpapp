@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function PermitsPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const [permits, setPermits] = useState([
+  const defaultPermits = [
     {
       id: 1,
       name: "Business License",
@@ -74,7 +76,22 @@ export default function PermitsPage() {
       pdfFile: null as File | null,
       pdfUrl: null as string | null
     }
-  ]);
+  ];
+
+  const [permits, setPermits] = useState(defaultPermits);
+
+  // Load saved permits from localStorage on mount
+  useEffect(() => {
+    const savedPermits = localStorage.getItem('permits_data');
+    if (savedPermits) {
+      try {
+        const parsedPermits = JSON.parse(savedPermits);
+        setPermits(parsedPermits);
+      } catch (error) {
+        console.error('Error loading saved permits:', error);
+      }
+    }
+  }, []);
 
   const [editingPermit, setEditingPermit] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -134,13 +151,17 @@ export default function PermitsPage() {
       });
       
       setPermits(updatedPermits);
+      
+      // Save to localStorage for persistence
+      localStorage.setItem('permits_data', JSON.stringify(updatedPermits));
+      
       setIsEditDialogOpen(false);
       setEditingPermit(null);
       setSelectedFile(null);
       
       toast({
         title: "Permit updated",
-        description: "The permit has been successfully updated.",
+        description: "The permit has been successfully updated and saved.",
       });
     }
   };

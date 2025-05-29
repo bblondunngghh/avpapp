@@ -108,6 +108,7 @@ export class MemStorage implements IStorage {
     this.ticketDistributionCurrentId = 1;
     this.employeeTaxPaymentCurrentId = 1;
     this.incidentReportCurrentId = 1;
+    this.permitCurrentId = 1;
     
     // Initialize with default locations
     this.initializeLocations();
