@@ -394,7 +394,7 @@ export default function PermitsPage() {
                         <Edit className="h-3 w-3" />
                         Edit
                       </Button>
-                      {permit.pdfUrl && (
+                      {permit.pdfData && (
                         <Button
                           size="sm"
                           variant="outline"
