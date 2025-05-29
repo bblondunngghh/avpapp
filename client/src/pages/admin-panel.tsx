@@ -1280,7 +1280,7 @@ export default function AdminPanel() {
         </div>
       </div>
       <Tabs defaultValue="reports" className="w-full">
-        <TabsList className="mb-6 flex flex-wrap overflow-x-auto no-scrollbar pb-1">
+        <TabsList className="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:flex lg:flex-wrap gap-1 h-auto">
           <TabsTrigger value="reports" className="flex-shrink-0 flex items-center">
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Reports
