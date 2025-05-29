@@ -774,42 +774,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         additionalNotes
       } = req.body;
 
-      // Get employee name from ID
-      const employee = await storage.getEmployee(parseInt(employeeId));
-      const employeeName = employee ? employee.fullName : 'Unknown Employee';
-
-      // Prepare email data
-      const emailData: IncidentEmailData = {
+      // Save incident report to database
+      const incidentData = {
         customerName,
         customerEmail,
         customerPhone,
         incidentDate,
         incidentTime,
         incidentLocation,
-        employeeName,
+        employeeId: employeeId ? parseInt(employeeId) : null,
         incidentDescription,
-        witnessName,
-        witnessPhone,
+        witnessName: witnessName || null,
+        witnessPhone: witnessPhone || null,
         vehicleMake,
         vehicleModel,
         vehicleYear,
         vehicleColor,
         vehicleLicensePlate,
         damageDescription,
-        additionalNotes
+        additionalNotes: additionalNotes || null,
       };
 
-      // Send email notification
-      const emailSent = await sendIncidentNotification(emailData);
-      
-      if (!emailSent) {
-        console.warn('Failed to send incident notification email');
-      }
+      const report = await storage.createIncidentReport(incidentData);
 
       res.status(201).json({ 
         success: true, 
-        message: 'Incident report submitted successfully',
-        emailSent
+        message: 'Incident report saved successfully',
+        reportId: report.id
       });
     } catch (error) {
       console.error('Error processing incident report:', error);
@@ -817,6 +808,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         message: 'Failed to submit incident report' 
       });
+    }
+  });
+
+  // Get all incident reports
+  apiRouter.get('/incident-reports', async (req, res) => {
+    try {
+      const reports = await storage.getIncidentReports();
+      res.json(reports);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch incident reports' });
+    }
+  });
+
+  // Get incident report by ID
+  apiRouter.get('/incident-reports/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid report ID' });
+      }
+      
+      const report = await storage.getIncidentReport(id);
+      if (!report) {
+        return res.status(404).json({ message: 'Incident report not found' });
+      }
+      
+      res.json(report);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch incident report' });
+    }
+  });
+
+  // Delete incident report
+  apiRouter.delete('/incident-reports/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid report ID' });
+      }
+      
+      const success = await storage.deleteIncidentReport(id);
+      if (!success) {
+        return res.status(404).json({ message: 'Incident report not found' });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete incident report' });
     }
   });
 

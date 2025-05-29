@@ -1348,6 +1348,10 @@ export default function AdminPanel() {
               ) : null;
             })()}
           </TabsTrigger>
+          <TabsTrigger value="incident-reports" className="flex-shrink-0 flex items-center">
+            <Activity className="h-4 w-4 mr-2" />
+            Incident Reports
+          </TabsTrigger>
         </TabsList>
         
 
