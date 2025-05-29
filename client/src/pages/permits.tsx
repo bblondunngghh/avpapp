@@ -1,12 +1,19 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
-import { ArrowLeft, FileText, Calendar, MapPin, CheckCircle } from "lucide-react";
+import { ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Edit, Upload, Eye, Download } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
   const [, navigate] = useLocation();
-
-  const permits = [
+  const { toast } = useToast();
+  const [permits, setPermits] = useState([
     {
       id: 1,
       name: "Business License",
@@ -15,7 +22,9 @@ export default function PermitsPage() {
       expirationDate: "2025-01-15",
       status: "Active",
       location: "All Locations",
-      permitNumber: "BL-2024-0485"
+      permitNumber: "BL-2024-0485",
+      pdfFile: null as File | null,
+      pdfUrl: null as string | null
     },
     {
       id: 2,
@@ -25,7 +34,9 @@ export default function PermitsPage() {
       expirationDate: "2025-02-01",
       status: "Active",
       location: "The Capital Grille",
-      permitNumber: "VP-CG-2024-001"
+      permitNumber: "VP-CG-2024-001",
+      pdfFile: null as File | null,
+      pdfUrl: null as string | null
     },
     {
       id: 3,
@@ -35,7 +46,9 @@ export default function PermitsPage() {
       expirationDate: "2025-02-05",
       status: "Active",
       location: "Bob's Steak and Chop House",
-      permitNumber: "VP-BSC-2024-002"
+      permitNumber: "VP-BSC-2024-002",
+      pdfFile: null as File | null,
+      pdfUrl: null as string | null
     },
     {
       id: 4,
@@ -45,7 +58,9 @@ export default function PermitsPage() {
       expirationDate: "2025-02-10",
       status: "Active",
       location: "Truluck's",
-      permitNumber: "VP-TRU-2024-003"
+      permitNumber: "VP-TRU-2024-003",
+      pdfFile: null as File | null,
+      pdfUrl: null as string | null
     },
     {
       id: 5,
@@ -55,7 +70,9 @@ export default function PermitsPage() {
       expirationDate: "2025-02-15",
       status: "Active",
       location: "BOA Steakhouse",
-      permitNumber: "VP-BOA-2024-004"
+      permitNumber: "VP-BOA-2024-004",
+      pdfFile: null as File | null,
+      pdfUrl: null as string | null
     },
     {
       id: 6,
@@ -65,7 +82,9 @@ export default function PermitsPage() {
       expirationDate: "2025-01-01",
       status: "Active",
       location: "All Locations",
-      permitNumber: "WC-2024-7892"
+      permitNumber: "WC-2024-7892",
+      pdfFile: null as File | null,
+      pdfUrl: null as string | null
     },
     {
       id: 7,
@@ -75,9 +94,72 @@ export default function PermitsPage() {
       expirationDate: "2025-01-01",
       status: "Active",
       location: "All Locations",
-      permitNumber: "GL-2024-4556"
+      permitNumber: "GL-2024-4556",
+      pdfFile: null as File | null,
+      pdfUrl: null as string | null
     }
-  ];
+  ]);
+
+  const [editingPermit, setEditingPermit] = useState<any>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleEditPermit = (permit: any) => {
+    setEditingPermit({ ...permit });
+    setSelectedFile(null);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      setSelectedFile(file);
+    } else {
+      toast({
+        title: "Invalid file type",
+        description: "Please select a PDF file.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSavePermit = () => {
+    if (editingPermit) {
+      const updatedPermits = permits.map(permit => {
+        if (permit.id === editingPermit.id) {
+          const updatedPermit = { ...editingPermit };
+          if (selectedFile) {
+            updatedPermit.pdfFile = selectedFile;
+            updatedPermit.pdfUrl = URL.createObjectURL(selectedFile);
+          }
+          return updatedPermit;
+        }
+        return permit;
+      });
+      
+      setPermits(updatedPermits);
+      setIsEditDialogOpen(false);
+      setEditingPermit(null);
+      setSelectedFile(null);
+      
+      toast({
+        title: "Permit updated",
+        description: "The permit has been successfully updated.",
+      });
+    }
+  };
+
+  const handleViewPDF = (permit: any) => {
+    if (permit.pdfUrl) {
+      window.open(permit.pdfUrl, '_blank');
+    } else {
+      toast({
+        title: "No PDF available",
+        description: "No PDF file has been uploaded for this permit.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -204,12 +286,36 @@ export default function PermitsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end text-sm text-gray-600">
-                    <div className="mb-1">
-                      <span className="font-medium">Issued:</span> {formatDate(permit.issueDate)}
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="text-sm text-gray-600">
+                      <div className="mb-1">
+                        <span className="font-medium">Issued:</span> {formatDate(permit.issueDate)}
+                      </div>
+                      <div>
+                        <span className="font-medium">Expires:</span> {formatDate(permit.expirationDate)}
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-medium">Expires:</span> {formatDate(permit.expirationDate)}
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEditPermit(permit)}
+                        className="flex items-center gap-1"
+                      >
+                        <Edit className="h-3 w-3" />
+                        Edit
+                      </Button>
+                      {permit.pdfUrl && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleViewPDF(permit)}
+                          className="flex items-center gap-1"
+                        >
+                          <Eye className="h-3 w-3" />
+                          View PDF
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -218,6 +324,138 @@ export default function PermitsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit Permit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-black">Edit Permit</DialogTitle>
+            <DialogDescription>
+              Update permit information and upload a PDF document.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {editingPermit && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="permitName">Permit Name</Label>
+                <Input
+                  id="permitName"
+                  value={editingPermit.name}
+                  onChange={(e) => setEditingPermit({...editingPermit, name: e.target.value})}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="permitType">Type</Label>
+                <Input
+                  id="permitType"
+                  value={editingPermit.type}
+                  onChange={(e) => setEditingPermit({...editingPermit, type: e.target.value})}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="permitNumber">Permit Number</Label>
+                <Input
+                  id="permitNumber"
+                  value={editingPermit.permitNumber}
+                  onChange={(e) => setEditingPermit({...editingPermit, permitNumber: e.target.value})}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select 
+                  value={editingPermit.status} 
+                  onValueChange={(value) => setEditingPermit({...editingPermit, status: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Active">Active</SelectItem>
+                    <SelectItem value="Expiring">Expiring</SelectItem>
+                    <SelectItem value="Expired">Expired</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="issueDate">Issue Date</Label>
+                <Input
+                  id="issueDate"
+                  type="date"
+                  value={editingPermit.issueDate}
+                  onChange={(e) => setEditingPermit({...editingPermit, issueDate: e.target.value})}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="expirationDate">Expiration Date</Label>
+                <Input
+                  id="expirationDate"
+                  type="date"
+                  value={editingPermit.expirationDate}
+                  onChange={(e) => setEditingPermit({...editingPermit, expirationDate: e.target.value})}
+                />
+              </div>
+              
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="location">Location</Label>
+                <Select 
+                  value={editingPermit.location} 
+                  onValueChange={(value) => setEditingPermit({...editingPermit, location: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All Locations">All Locations</SelectItem>
+                    <SelectItem value="The Capital Grille">The Capital Grille</SelectItem>
+                    <SelectItem value="Bob's Steak and Chop House">Bob's Steak and Chop House</SelectItem>
+                    <SelectItem value="Truluck's">Truluck's</SelectItem>
+                    <SelectItem value="BOA Steakhouse">BOA Steakhouse</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="pdfUpload">Upload PDF Document</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="pdfUpload"
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileChange}
+                    className="flex-1"
+                  />
+                  {selectedFile && (
+                    <div className="flex items-center gap-1 text-sm text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      {selectedFile.name}
+                    </div>
+                  )}
+                </div>
+                {editingPermit.pdfUrl && !selectedFile && (
+                  <div className="text-sm text-gray-600">
+                    Current PDF: Available for viewing
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSavePermit}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
