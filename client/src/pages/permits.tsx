@@ -73,30 +73,6 @@ export default function PermitsPage() {
       permitNumber: "VP-BOA-2024-004",
       pdfFile: null as File | null,
       pdfUrl: null as string | null
-    },
-    {
-      id: 6,
-      name: "Workers' Compensation Insurance",
-      type: "Insurance",
-      issueDate: "2024-01-01",
-      expirationDate: "2025-01-01",
-      status: "Active",
-      location: "All Locations",
-      permitNumber: "WC-2024-7892",
-      pdfFile: null as File | null,
-      pdfUrl: null as string | null
-    },
-    {
-      id: 7,
-      name: "General Liability Insurance",
-      type: "Insurance",
-      issueDate: "2024-01-01",
-      expirationDate: "2025-01-01",
-      status: "Active",
-      location: "All Locations",
-      permitNumber: "GL-2024-4556",
-      pdfFile: null as File | null,
-      pdfUrl: null as string | null
     }
   ]);
 
