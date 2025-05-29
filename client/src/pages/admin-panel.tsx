@@ -2479,9 +2479,9 @@ export default function AdminPanel() {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Month</TableHead>
-                            <TableHead className="text-right">Brandon (50%)</TableHead>
-                            <TableHead className="text-right">Ryan (40%)</TableHead>
-                            <TableHead className="text-right">Dave (10%)</TableHead>
+                            <TableHead className="text-right text-blue-800">Brandon (50%)</TableHead>
+                            <TableHead className="text-right text-indigo-800">Ryan (40%)</TableHead>
+                            <TableHead className="text-right text-teal-800">Dave (10%)</TableHead>
                             <TableHead className="text-right">Total After Expenses</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -2489,9 +2489,9 @@ export default function AdminPanel() {
                           {partnerPaymentHistory.map((entry, index) => (
                             <TableRow key={index}>
                               <TableCell className="font-medium">{entry.month}</TableCell>
-                              <TableCell className="text-right">${entry.brandon.toFixed(2)}</TableCell>
-                              <TableCell className="text-right">${entry.ryan.toFixed(2)}</TableCell>
-                              <TableCell className="text-right">${entry.dave.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-blue-800 font-medium">${entry.brandon.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-indigo-800 font-medium">${entry.ryan.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-teal-800 font-medium">${entry.dave.toFixed(2)}</TableCell>
                               <TableCell className="text-right font-semibold">${entry.total.toFixed(2)}</TableCell>
                             </TableRow>
                           ))}
