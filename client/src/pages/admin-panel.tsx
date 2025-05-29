@@ -2064,28 +2064,20 @@ export default function AdminPanel() {
                   </div>
                   
                   {/* Partner Pay Calculator */}
-                  <div className="mb-8 bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-200 p-8 rounded-xl shadow-lg">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="p-3 bg-blue-600 rounded-lg shadow-md">
-                        <TrendingUp className="h-6 w-6 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-semibold text-gray-900">Partner Pay Distribution Calculator</h3>
-                    </div>
+                  <div className="mb-8 border p-4 rounded-lg bg-white shadow">
+                    <h3 className="text-lg font-medium mb-4">Partner Pay Distribution Calculator</h3>
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                        <div className="flex items-center gap-2 mb-4">
-                          <BarChartIcon className="h-5 w-5 text-blue-600" />
-                          <h4 className="text-lg font-semibold text-gray-800">Financial Overview</h4>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-md font-medium mb-3 text-gray-700">Monthly Revenue</h4>
                         
-                        <div className="space-y-5">
+                        <div className="space-y-4">
                           {/* Month Selector */}
-                          <div className="space-y-2">
-                            <Label htmlFor="month-selector" className="text-sm font-medium text-gray-700">Select Month</Label>
+                          <div className="grid grid-cols-1 gap-2">
+                            <Label htmlFor="month-selector">Select Month</Label>
                             <select 
                               id="month-selector"
-                              className="flex h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                               onChange={(e) => {
                                 const selectedMonth = e.target.value;
                                 if (!selectedMonth) return;
@@ -2204,27 +2196,23 @@ export default function AdminPanel() {
                           
                           {/* Monthly Revenue and Expenses */}
                           <div className="grid grid-cols-1 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="monthly-revenue" className="text-sm font-medium text-gray-700">Total Monthly Revenue</Label>
-                              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300 rounded-lg px-4 py-3 shadow-sm">
-                                <div className="text-xl font-bold text-green-800">
-                                  ${monthlyRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                                </div>
+                            <div>
+                              <Label htmlFor="monthly-revenue">Total Monthly Revenue</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-blue-50 px-3 font-medium">
+                                ${monthlyRevenue.toFixed(2)}
                               </div>
                             </div>
                             
-                            <div className="space-y-2">
-                              <Label htmlFor="monthly-expenses" className="text-sm font-medium text-gray-700">Monthly Expenses</Label>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                  <span className="text-gray-500 text-lg">$</span>
-                                </div>
+                            <div>
+                              <Label htmlFor="monthly-expenses">Monthly Expenses</Label>
+                              <div className="flex h-10 w-full rounded-md border border-input">
+                                <span className="flex items-center px-3 text-gray-500 border-r">$</span>
                                 <input
                                   id="monthly-expenses"
                                   type="number"
                                   min="0"
                                   step="0.01"
-                                  className="w-full h-11 pl-8 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                  className="w-full h-full px-3 py-2 rounded-r-md focus:outline-none"
                                   value={monthlyExpenses}
                                   onChange={(e) => {
                                     if (savedExpenses[currentMonth] !== undefined && !isEditingExpenses) {
@@ -2235,7 +2223,6 @@ export default function AdminPanel() {
                                     setMonthlyExpenses(parseFloat(e.target.value) || 0);
                                   }}
                                   disabled={savedExpenses[currentMonth] !== undefined && !isEditingExpenses}
-                                  placeholder="0.00"
                                 />
                               </div>
                               
@@ -2435,70 +2422,59 @@ export default function AdminPanel() {
                               )}
                             </div>
                             
-                            <div className="space-y-2">
-                              <Label htmlFor="distributable-income" className="text-sm font-medium text-gray-700">Distributable Income</Label>
-                              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-300 rounded-lg px-4 py-3 shadow-sm">
-                                <div className="text-xl font-bold text-blue-800">
-                                  ${(monthlyRevenue - monthlyExpenses).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                                </div>
+                            <div>
+                              <Label htmlFor="distributable-income">Distributable Income</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-green-50 px-3 font-medium text-green-800">
+                                ${(monthlyRevenue - monthlyExpenses).toFixed(2)}
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                        <div className="flex items-center gap-2 mb-6">
-                          <Users className="h-5 w-5 text-blue-600" />
-                          <h4 className="text-lg font-semibold text-gray-800">Partner Distribution</h4>
-                        </div>
+                      <div>
+                        <h4 className="text-md font-medium mb-3 text-gray-700">Partner Distribution</h4>
                         
-                        <div className="space-y-6">
-                          {/* Fixed Partner Shares Card */}
-                          <div className="bg-gradient-to-r from-gray-50 to-blue-50 border border-blue-200 rounded-xl p-4">
-                            <p className="text-sm font-medium text-gray-700 mb-3">Fixed Partner Shares:</p>
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="text-center p-2 bg-white rounded-lg shadow-sm">
-                                <div className="text-lg font-bold text-blue-800">50%</div>
-                                <div className="text-xs text-gray-600">Brandon</div>
-                              </div>
-                              <div className="text-center p-2 bg-white rounded-lg shadow-sm">
-                                <div className="text-lg font-bold text-indigo-800">40%</div>
-                                <div className="text-xs text-gray-600">Ryan</div>
-                              </div>
-                              <div className="text-center p-2 bg-white rounded-lg shadow-sm">
-                                <div className="text-lg font-bold text-teal-800">10%</div>
-                                <div className="text-xs text-gray-600">Dave</div>
-                              </div>
-                            </div>
+                        <div className="space-y-4">
+                          {/* Fixed Partner Shares */}
+                          <div className="border border-blue-100 rounded-md p-3 bg-blue-50">
+                            <p className="mb-2 text-sm">Fixed Partner Shares:</p>
+                            <ul className="space-y-1">
+                              <li className="flex justify-between items-center">
+                                <span>Brandon:</span> 
+                                <span className="font-medium">50%</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Ryan:</span> 
+                                <span className="font-medium">40%</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Dave:</span> 
+                                <span className="font-medium">10%</span>
+                              </li>
+                            </ul>
                           </div>
                           
                           {/* Calculated Distributions */}
-                          <div className="space-y-4">
-                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300 rounded-lg p-4">
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm font-medium text-blue-800">Brandon (50%)</span>
-                                <span className="text-xl font-bold text-blue-900">
-                                  ${((monthlyRevenue - monthlyExpenses) * 0.5).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                                </span>
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-blue-800">Brandon (50%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-blue-300 bg-blue-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.5).toFixed(2)}
                               </div>
                             </div>
                             
-                            <div className="bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-300 rounded-lg p-4">
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm font-medium text-indigo-800">Ryan (40%)</span>
-                                <span className="text-xl font-bold text-indigo-900">
-                                  ${((monthlyRevenue - monthlyExpenses) * 0.4).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                                </span>
+                            <div>
+                              <Label className="text-indigo-800">Ryan (40%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-indigo-300 bg-indigo-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.4).toFixed(2)}
                               </div>
                             </div>
                             
-                            <div className="bg-gradient-to-r from-teal-50 to-teal-100 border border-teal-300 rounded-lg p-4">
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm font-medium text-teal-800">Dave (10%)</span>
-                                <span className="text-xl font-bold text-teal-900">
-                                  ${((monthlyRevenue - monthlyExpenses) * 0.1).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                                </span>
+                            <div>
+                              <Label className="text-teal-800">Dave (10%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-teal-300 bg-teal-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.1).toFixed(2)}
                               </div>
                             </div>
                           </div>
@@ -2507,24 +2483,18 @@ export default function AdminPanel() {
                     </div>
                     
                     {/* Partner Payment Distribution History Table */}
-                    <div className="mt-8 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-purple-100 rounded-lg">
-                          <Activity className="h-5 w-5 text-purple-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-900">Partner Payment Distribution History</h3>
-                      </div>
-                      <div className="overflow-hidden rounded-lg border border-gray-200">
-                        <Table>
-                          <TableHeader className="bg-gray-50">
-                            <TableRow>
-                              <TableHead className="font-semibold text-gray-900 py-4">Month</TableHead>
-                              <TableHead className="text-blue-800 text-center font-semibold py-4">Brandon (50%)</TableHead>
-                              <TableHead className="text-indigo-800 text-center font-semibold py-4">Ryan (40%)</TableHead>
-                              <TableHead className="text-teal-800 text-center font-semibold py-4">Dave (10%)</TableHead>
-                              <TableHead className="text-right font-semibold text-gray-900 py-4">Total After Expenses</TableHead>
-                            </TableRow>
-                          </TableHeader>
+                    <div className="mt-8 border border-gray-200 rounded-lg p-4 bg-white">
+                      <h3 className="text-lg font-semibold mb-4">Partner Payment Distribution History</h3>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Month</TableHead>
+                            <TableHead className="text-blue-800 text-center">Brandon (50%)</TableHead>
+                            <TableHead className="text-indigo-800 text-center">Ryan (40%)</TableHead>
+                            <TableHead className="text-teal-800 text-center">Dave (10%)</TableHead>
+                            <TableHead className="text-right">Total After Expenses</TableHead>
+                          </TableRow>
+                        </TableHeader>
                         <TableBody>
                           {partnerPaymentHistory.map((entry, index) => (
                             <TableRow key={index}>
@@ -2761,8 +2731,8 @@ export default function AdminPanel() {
                       </Table>
                     </div>
                   </div>
-                );
-              })()}
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
