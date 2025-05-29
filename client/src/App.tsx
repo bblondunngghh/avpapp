@@ -31,6 +31,7 @@ import avpLogo from "@assets/AVP LOGO 2024 - 2 HQ.jpg";
 function Router() {
   const [location, setLocation] = useLocation();
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [wasInProtectedArea, setWasInProtectedArea] = useState(false);
   
   // Enhanced detection for mobile devices - iPhone only for mobile admin
   useEffect(() => {
@@ -70,6 +71,31 @@ function Router() {
       window.removeEventListener('resize', checkMobile);
     };
   }, []);
+
+  // Auto-logout when exiting password-protected areas
+  useEffect(() => {
+    const isCurrentlyInProtectedArea = 
+      location.startsWith('/admin') || 
+      location.startsWith('/admin-login') ||
+      location.startsWith('/reports') ||
+      location === '/mobile-admin' ||
+      location === '/simple-admin' ||
+      location === '/basic-admin' ||
+      location === '/admin-redirect';
+
+    // If user was in a protected area and now isn't, clear auth state
+    if (wasInProtectedArea && !isCurrentlyInProtectedArea) {
+      // Clear any stored admin authentication
+      sessionStorage.removeItem('adminAuthenticated');
+      sessionStorage.removeItem('accountantAuthenticated');
+      localStorage.removeItem('adminAuthenticated');
+      localStorage.removeItem('accountantAuthenticated');
+      
+      console.log('Auto-logout: Exited password-protected area');
+    }
+
+    setWasInProtectedArea(isCurrentlyInProtectedArea);
+  }, [location, wasInProtectedArea]);
   
   // Determine if we're on an admin or employee page to show/hide normal navigation
   const isAdminPage = location.startsWith('/admin');
