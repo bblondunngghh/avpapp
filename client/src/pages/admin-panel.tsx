@@ -1242,8 +1242,8 @@ export default function AdminPanel() {
         </div>
         <div className="flex flex-wrap gap-2 justify-end">
           <Button 
-            variant="default" 
-            className="bg-blue-600 hover:bg-blue-700"
+            variant="outline" 
+            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
             onClick={() => {
               const password = prompt("Please enter the password to access the Accountant Section:");
               if (password === "bbonly") {
@@ -1268,15 +1268,15 @@ export default function AdminPanel() {
                 alert("Incorrect password. Access denied.");
               }
             }}
-            className="flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
           >
             <FileSpreadsheet className="h-4 w-4" />
             CSV Upload
           </Button>
           <Button 
-            variant="default"
+            variant="outline"
             onClick={() => navigate("/reports")}
-            className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white"
+            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
           >
             <FileSpreadsheet className="h-4 w-4" />
             Edit Reports
