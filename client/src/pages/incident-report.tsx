@@ -298,7 +298,7 @@ export default function IncidentReport() {
                           <SelectTrigger>
                             <SelectValue placeholder="Select Employee" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="z-50">
                             {employees.map((employee) => (
                               <SelectItem key={employee.id} value={employee.id.toString()}>
                                 {employee.fullName}
