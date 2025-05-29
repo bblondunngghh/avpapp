@@ -590,11 +590,32 @@ export default function PermitsPage() {
           </DialogHeader>
           <div className="flex-1 h-full">
             {viewingPDF && (
-              <iframe
-                src={viewingPDF}
-                className="w-full h-full border rounded-lg"
-                title="PDF Viewer"
-              />
+              <div className="w-full h-full flex flex-col">
+                <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-2">
+                    If the PDF doesn't display below, you can download it directly:
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = viewingPDF;
+                      link.download = 'permit-document.pdf';
+                      link.click();
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download PDF
+                  </Button>
+                </div>
+                <embed
+                  src={viewingPDF}
+                  type="application/pdf"
+                  className="w-full flex-1 border rounded-lg"
+                  title="PDF Viewer"
+                />
+              </div>
             )}
           </div>
           <DialogFooter>
