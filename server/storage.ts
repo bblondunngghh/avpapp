@@ -6,6 +6,7 @@ import {
   ticketDistributions, type TicketDistribution, type InsertTicketDistribution, type UpdateTicketDistribution,
   employeeTaxPayments, type EmployeeTaxPayment, type InsertEmployeeTaxPayment, type UpdateEmployeeTaxPayment,
   incidentReports, type IncidentReport, type InsertIncidentReport,
+  permits, type Permit, type InsertPermit, type UpdatePermit,
   LOCATIONS
 } from "@shared/schema";
 import { db } from "./db";
@@ -64,6 +65,13 @@ export interface IStorage {
   getIncidentReport(id: number): Promise<IncidentReport | undefined>;
   createIncidentReport(report: InsertIncidentReport): Promise<IncidentReport>;
   deleteIncidentReport(id: number): Promise<boolean>;
+  
+  // Permits methods
+  getPermits(): Promise<Permit[]>;
+  getPermit(id: number): Promise<Permit | undefined>;
+  createPermit(permit: InsertPermit): Promise<Permit>;
+  updatePermit(id: number, permit: UpdatePermit): Promise<Permit | undefined>;
+  deletePermit(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -74,6 +82,7 @@ export class MemStorage implements IStorage {
   private ticketDistributions: Map<number, TicketDistribution>;
   private employeeTaxPayments: Map<number, EmployeeTaxPayment>;
   private incidentReports: Map<number, IncidentReport>;
+  private permits: Map<number, Permit>;
   private userCurrentId: number;
   private employeeCurrentId: number;
   private locationCurrentId: number;
@@ -81,6 +90,7 @@ export class MemStorage implements IStorage {
   private ticketDistributionCurrentId: number;
   private employeeTaxPaymentCurrentId: number;
   private incidentReportCurrentId: number;
+  private permitCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -90,6 +100,7 @@ export class MemStorage implements IStorage {
     this.ticketDistributions = new Map();
     this.employeeTaxPayments = new Map();
     this.incidentReports = new Map();
+    this.permits = new Map();
     this.userCurrentId = 1;
     this.employeeCurrentId = 1;
     this.locationCurrentId = 1;
@@ -428,6 +439,44 @@ export class MemStorage implements IStorage {
 
   async deleteIncidentReport(id: number): Promise<boolean> {
     return this.incidentReports.delete(id);
+  }
+
+  // Permits methods for MemStorage
+  async getPermits(): Promise<Permit[]> {
+    return Array.from(this.permits.values());
+  }
+
+  async getPermit(id: number): Promise<Permit | undefined> {
+    return this.permits.get(id);
+  }
+
+  async createPermit(permit: InsertPermit): Promise<Permit> {
+    const id = ++this.permitCurrentId;
+    const newPermit: Permit = {
+      ...permit,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.permits.set(id, newPermit);
+    return newPermit;
+  }
+
+  async updatePermit(id: number, permitUpdate: UpdatePermit): Promise<Permit | undefined> {
+    const existing = this.permits.get(id);
+    if (!existing) return undefined;
+    
+    const updatedPermit: Permit = {
+      ...existing,
+      ...permitUpdate,
+      updatedAt: new Date(),
+    };
+    this.permits.set(id, updatedPermit);
+    return updatedPermit;
+  }
+
+  async deletePermit(id: number): Promise<boolean> {
+    return this.permits.delete(id);
   }
 }
 

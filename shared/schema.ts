@@ -290,3 +290,35 @@ export const updateIncidentReportSchema = createInsertSchema(incidentReports).om
 export type InsertIncidentReport = z.infer<typeof insertIncidentReportSchema>;
 export type UpdateIncidentReport = z.infer<typeof updateIncidentReportSchema>;
 export type IncidentReport = typeof incidentReports.$inferSelect;
+
+// Permits schema
+export const permits = pgTable("permits", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  type: text("type").notNull(),
+  permitNumber: text("permit_number").notNull(),
+  status: text("status").notNull(),
+  location: text("location").notNull(),
+  issueDate: text("issue_date").notNull(),
+  expirationDate: text("expiration_date").notNull(),
+  pdfFileName: text("pdf_file_name"),
+  pdfData: text("pdf_data"), // Base64 encoded PDF data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertPermitSchema = createInsertSchema(permits).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updatePermitSchema = createInsertSchema(permits).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial();
+
+export type InsertPermit = z.infer<typeof insertPermitSchema>;
+export type UpdatePermit = z.infer<typeof updatePermitSchema>;
+export type Permit = typeof permits.$inferSelect;
