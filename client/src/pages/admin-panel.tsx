@@ -1222,9 +1222,25 @@ export default function AdminPanel() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl text-blue-600">Admin Panel</h1>
-        <div className="flex gap-2">
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl text-blue-600">Admin Panel</h1>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/")}
+              className="flex items-center gap-1"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 justify-end">
           <Button 
             variant="default" 
             className="bg-blue-600 hover:bg-blue-700"
@@ -1264,18 +1280,6 @@ export default function AdminPanel() {
           >
             <FileSpreadsheet className="h-4 w-4" />
             Edit Reports
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/")}
-            className="flex items-center gap-1"
-          >
-            <Home className="h-4 w-4" />
-            Home
-          </Button>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
           </Button>
         </div>
       </div>
