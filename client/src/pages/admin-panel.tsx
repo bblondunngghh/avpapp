@@ -255,6 +255,7 @@ export default function AdminPanel() {
         brandon: number;
         ryan: number;
         dave: number;
+        total: number;
       }> = [];
       
       // Process each month with saved expenses
@@ -282,53 +283,43 @@ export default function AdminPanel() {
               month: monthDisplay,
               brandon: profit * 0.5, // 50%
               ryan: profit * 0.4,    // 40%
-              dave: profit * 0.1     // 10%
+              dave: profit * 0.1,    // 10%
+              total: profit
             });
           }
         }
       });
       
-      // Add manual entries for January and February 2025 if not already included
-      const hasJan = historyData.some(item => item.month === 'Jan 2025');
-      const hasFeb = historyData.some(item => item.month === 'Feb 2025');
+      // Add manual entries for all months with manual revenue (Jan-May 2025)
+      const monthsToAdd = [
+        { key: '2025-01', display: 'Jan 2025', defaultExpenses: 5000 },
+        { key: '2025-02', display: 'Feb 2025', defaultExpenses: 6500 },
+        { key: '2025-03', display: 'Mar 2025', defaultExpenses: 7000 },
+        { key: '2025-04', display: 'Apr 2025', defaultExpenses: 6000 },
+        { key: '2025-05', display: 'May 2025', defaultExpenses: 6500 }
+      ];
       
-      if (!hasJan && manualRevenue['2025-01']) {
-        // Add a default value for expenses if not saved yet
-        const janExpenses = expensesData['2025-01'] || 5000;
-        const janProfit = manualRevenue['2025-01'] - janExpenses;
+      monthsToAdd.forEach(monthInfo => {
+        const hasMonth = historyData.some(item => item.month === monthInfo.display);
         
-        if (janProfit > 0) {
-          const brandonShare = janProfit * 0.5;
-          const ryanShare = janProfit * 0.4;
-          const daveShare = janProfit * 0.1;
-          historyData.push({
-            month: 'Jan 2025',
-            brandon: brandonShare,
-            ryan: ryanShare,
-            dave: daveShare,
-            total: brandonShare + ryanShare + daveShare
-          });
+        if (!hasMonth && manualRevenue[monthInfo.key]) {
+          const monthExpenses = expensesData[monthInfo.key] || monthInfo.defaultExpenses;
+          const monthProfit = manualRevenue[monthInfo.key] - monthExpenses;
+          
+          if (monthProfit > 0) {
+            const brandonShare = monthProfit * 0.5;
+            const ryanShare = monthProfit * 0.4;
+            const daveShare = monthProfit * 0.1;
+            historyData.push({
+              month: monthInfo.display,
+              brandon: brandonShare,
+              ryan: ryanShare,
+              dave: daveShare,
+              total: monthProfit
+            });
+          }
         }
-      }
-      
-      if (!hasFeb && manualRevenue['2025-02']) {
-        // Add a default value for expenses if not saved yet
-        const febExpenses = expensesData['2025-02'] || 6500;
-        const febProfit = manualRevenue['2025-02'] - febExpenses;
-        
-        if (febProfit > 0) {
-          const brandonShare = febProfit * 0.5;
-          const ryanShare = febProfit * 0.4;
-          const daveShare = febProfit * 0.1;
-          historyData.push({
-            month: 'Feb 2025',
-            brandon: brandonShare,
-            ryan: ryanShare,
-            dave: daveShare,
-            total: brandonShare + ryanShare + daveShare
-          });
-        }
-      }
+      });
       
       // Sort by month
       historyData.sort((a, b) => {
