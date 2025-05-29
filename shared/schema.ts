@@ -253,3 +253,40 @@ export const updateEmployeeTaxPaymentSchema = createInsertSchema(employeeTaxPaym
 export type InsertEmployeeTaxPayment = z.infer<typeof insertEmployeeTaxPaymentSchema>;
 export type UpdateEmployeeTaxPayment = z.infer<typeof updateEmployeeTaxPaymentSchema>;
 export type EmployeeTaxPayment = typeof employeeTaxPayments.$inferSelect;
+
+// Incident Reports table
+export const incidentReports = pgTable("incident_reports", {
+  id: serial("id").primaryKey(),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone").notNull(),
+  incidentDate: text("incident_date").notNull(),
+  incidentTime: text("incident_time").notNull(),
+  incidentLocation: text("incident_location").notNull(),
+  employeeId: integer("employee_id").references(() => employees.id),
+  incidentDescription: text("incident_description").notNull(),
+  witnessName: text("witness_name"),
+  witnessPhone: text("witness_phone"),
+  vehicleMake: text("vehicle_make").notNull(),
+  vehicleModel: text("vehicle_model").notNull(),
+  vehicleYear: text("vehicle_year").notNull(),
+  vehicleColor: text("vehicle_color").notNull(),
+  vehicleLicensePlate: text("vehicle_license_plate").notNull(),
+  damageDescription: text("damage_description").notNull(),
+  additionalNotes: text("additional_notes"),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+});
+
+export const insertIncidentReportSchema = createInsertSchema(incidentReports).omit({
+  id: true,
+  submittedAt: true,
+});
+
+export const updateIncidentReportSchema = createInsertSchema(incidentReports).omit({
+  id: true,
+  submittedAt: true,
+}).partial();
+
+export type InsertIncidentReport = z.infer<typeof insertIncidentReportSchema>;
+export type UpdateIncidentReport = z.infer<typeof updateIncidentReportSchema>;
+export type IncidentReport = typeof incidentReports.$inferSelect;

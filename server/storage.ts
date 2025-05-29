@@ -5,6 +5,7 @@ import {
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
   ticketDistributions, type TicketDistribution, type InsertTicketDistribution, type UpdateTicketDistribution,
   employeeTaxPayments, type EmployeeTaxPayment, type InsertEmployeeTaxPayment, type UpdateEmployeeTaxPayment,
+  incidentReports, type IncidentReport, type InsertIncidentReport,
   LOCATIONS
 } from "@shared/schema";
 import { db } from "./db";
@@ -57,6 +58,12 @@ export interface IStorage {
   createEmployeeTaxPayment(payment: InsertEmployeeTaxPayment): Promise<EmployeeTaxPayment>;
   updateEmployeeTaxPayment(id: number, payment: UpdateEmployeeTaxPayment): Promise<EmployeeTaxPayment | undefined>;
   deleteEmployeeTaxPayment(id: number): Promise<boolean>;
+  
+  // Incident Report methods
+  getIncidentReports(): Promise<IncidentReport[]>;
+  getIncidentReport(id: number): Promise<IncidentReport | undefined>;
+  createIncidentReport(report: InsertIncidentReport): Promise<IncidentReport>;
+  deleteIncidentReport(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -66,12 +73,14 @@ export class MemStorage implements IStorage {
   private shiftReports: Map<number, ShiftReport>;
   private ticketDistributions: Map<number, TicketDistribution>;
   private employeeTaxPayments: Map<number, EmployeeTaxPayment>;
+  private incidentReports: Map<number, IncidentReport>;
   private userCurrentId: number;
   private employeeCurrentId: number;
   private locationCurrentId: number;
   private shiftReportCurrentId: number;
   private ticketDistributionCurrentId: number;
   private employeeTaxPaymentCurrentId: number;
+  private incidentReportCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -80,12 +89,14 @@ export class MemStorage implements IStorage {
     this.shiftReports = new Map();
     this.ticketDistributions = new Map();
     this.employeeTaxPayments = new Map();
+    this.incidentReports = new Map();
     this.userCurrentId = 1;
     this.employeeCurrentId = 1;
     this.locationCurrentId = 1;
     this.shiftReportCurrentId = 1;
     this.ticketDistributionCurrentId = 1;
     this.employeeTaxPaymentCurrentId = 1;
+    this.incidentReportCurrentId = 1;
     
     // Initialize with default locations
     this.initializeLocations();
@@ -392,6 +403,31 @@ export class MemStorage implements IStorage {
   
   async deleteEmployeeTaxPayment(id: number): Promise<boolean> {
     return this.employeeTaxPayments.delete(id);
+  }
+
+  // Incident Report methods
+  async getIncidentReports(): Promise<IncidentReport[]> {
+    return Array.from(this.incidentReports.values());
+  }
+
+  async getIncidentReport(id: number): Promise<IncidentReport | undefined> {
+    return this.incidentReports.get(id);
+  }
+
+  async createIncidentReport(insertReport: InsertIncidentReport): Promise<IncidentReport> {
+    const id = this.incidentReportCurrentId++;
+    const report: IncidentReport = {
+      ...insertReport,
+      id,
+      submittedAt: new Date(),
+    };
+    
+    this.incidentReports.set(id, report);
+    return report;
+  }
+
+  async deleteIncidentReport(id: number): Promise<boolean> {
+    return this.incidentReports.delete(id);
   }
 }
 
