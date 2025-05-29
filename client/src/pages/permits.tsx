@@ -114,6 +114,8 @@ export default function PermitsPage() {
   const [editingPermit, setEditingPermit] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [viewingPDF, setViewingPDF] = useState<string | null>(null);
+  const [isPDFViewerOpen, setIsPDFViewerOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [pendingEditPermit, setPendingEditPermit] = useState<any>(null);
@@ -212,7 +214,7 @@ export default function PermitsPage() {
   const handleViewPDF = (permit: any) => {
     if (permit.pdfData) {
       try {
-        // Convert base64 data to blob and open in new window
+        // Convert base64 data to blob URL for in-app viewing
         const byteCharacters = atob(permit.pdfData);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
@@ -221,7 +223,8 @@ export default function PermitsPage() {
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        setViewingPDF(url);
+        setIsPDFViewerOpen(true);
       } catch (error) {
         toast({
           title: "Error viewing PDF",
@@ -581,6 +584,32 @@ export default function PermitsPage() {
             </Button>
             <Button onClick={handlePasswordSubmit}>
               Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* PDF Viewer Modal */}
+      <Dialog open={isPDFViewerOpen} onOpenChange={setIsPDFViewerOpen}>
+        <DialogContent className="max-w-6xl w-full h-[90vh] p-6">
+          <DialogHeader>
+            <DialogTitle className="text-black">View PDF Document</DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 h-full">
+            {viewingPDF && (
+              <iframe
+                src={viewingPDF}
+                className="w-full h-full border rounded-lg"
+                title="PDF Viewer"
+              />
+            )}
+          </div>
+          <DialogFooter>
+            <Button onClick={() => {
+              setIsPDFViewerOpen(false);
+              setViewingPDF(null);
+            }}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
