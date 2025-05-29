@@ -195,12 +195,24 @@ export default function PermitsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // Add one day to account for timezone offset issues
+    const date = new Date(dateString + 'T00:00:00');
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
     });
+  };
+
+  const getExpiringSoonCount = () => {
+    const today = new Date();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(today.getDate() + 30);
+    
+    return permits.filter(permit => {
+      const expirationDate = new Date(permit.expirationDate + 'T00:00:00');
+      return expirationDate <= thirtyDaysFromNow && expirationDate >= today;
+    }).length;
   };
 
   return (
@@ -269,7 +281,7 @@ export default function PermitsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Expiring Soon</p>
-                <p className="text-2xl font-semibold text-amber-600">0</p>
+                <p className="text-2xl font-semibold text-amber-600">{getExpiringSoonCount()}</p>
               </div>
               <Calendar className="h-8 w-8 text-amber-600" />
             </div>
