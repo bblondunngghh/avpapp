@@ -35,7 +35,6 @@ export default function Regulations() {
                 <li>Black pants or shorts (they must have belt loops for a black belt)</li>
                 <li>Company-issued shirt must be clean and pressed</li>
                 <li>Running shoes</li>
-                <li>Company-issued name tag must be worn at all times</li>
                 <li>No visible tattoos or excessive jewelry</li>
                 <li>Hair must be neat and well-groomed</li>
               </ul>
