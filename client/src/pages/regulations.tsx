@@ -57,7 +57,6 @@ export default function Regulations() {
             <div>
               <h3 className="text-base font-medium text-emerald-700 mb-2">Vehicle Handling Procedures</h3>
               <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                <li>Always use seat covers and floor mats</li>
                 <li>Adjust seat and mirrors only when necessary</li>
                 <li>No testing of vehicle features (radio, climate control, etc.)</li>
                 <li>Drive at safe speeds - no more than 5 mph in parking areas</li>
