@@ -26,6 +26,7 @@ import ReportSelection from "@/pages/report-selection";
 import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
+import avpLogo from "@assets/AVP LOGO 2024 - 2 HQ.jpg";
 
 function Router() {
   const [location, setLocation] = useLocation();
@@ -137,13 +138,78 @@ function Router() {
   );
 }
 
+function SplashScreen() {
+  return (
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 flex items-center justify-center z-50">
+      <div className="text-center">
+        {/* Logo with animation */}
+        <div className="mb-8 animate-pulse">
+          <div className="w-40 h-40 mx-auto bg-white rounded-full flex items-center justify-center shadow-2xl p-4">
+            <img 
+              src={avpLogo} 
+              alt="Access Valet Parking Logo" 
+              className="w-full h-full object-contain rounded-full"
+            />
+          </div>
+        </div>
+        
+        {/* Company name with fade-in animation */}
+        <div className="animate-fade-in-up">
+          <h1 className="text-white text-3xl font-bold mb-2 tracking-wide">
+            ACCESS VALET PARKING
+          </h1>
+          <div className="w-24 h-1 bg-white mx-auto rounded-full opacity-80"></div>
+        </div>
+        
+        {/* Loading indicator */}
+        <div className="mt-12 flex justify-center">
+          <div className="flex space-x-2">
+            <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+            <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+            <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check if device is mobile
+    const checkMobile = () => {
+      const isIPad = /iPad/i.test(navigator.userAgent) || 
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isIPhone = /iPhone/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isOtherMobile = /webOS|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      setIsMobile(isIPhone || isAndroid || isOtherMobile || isIPad);
+    };
+
+    checkMobile();
+
+    // Show splash screen for 2.5 seconds on mobile devices
+    if (isMobile) {
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowSplash(false);
+    }
+  }, [isMobile]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <FullscreenSupport />
-        <Router />
+        {showSplash && isMobile ? <SplashScreen /> : <Router />}
       </TooltipProvider>
     </QueryClientProvider>
   );
