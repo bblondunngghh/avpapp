@@ -753,6 +753,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.post('/incident-reports', upload.array('photos', 10), async (req, res) => {
     try {
       console.log('Incident report submission received');
+      console.log('Request body:', req.body);
+      console.log('Content-Type:', req.headers['content-type']);
       
       const {
         customerName,

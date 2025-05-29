@@ -112,14 +112,16 @@ export default function IncidentReport() {
       // Create a FormData instance to handle the file uploads
       const formData = new FormData();
       
-      // Append form values to FormData
+      // Append form values to FormData with proper handling of undefined/null values
       Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, value);
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
       });
       
       // Append photo files to FormData
       photoFiles.forEach((file, index) => {
-        formData.append(`photo${index}`, file);
+        formData.append(`photos`, file);
       });
       
       // Submit the form data to the API
