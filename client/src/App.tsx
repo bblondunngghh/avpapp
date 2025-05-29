@@ -32,6 +32,7 @@ function Router() {
   const [location, setLocation] = useLocation();
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [wasInProtectedArea, setWasInProtectedArea] = useState(false);
+  const [lastActivity, setLastActivity] = useState(Date.now());
   
   // Enhanced detection for mobile devices - iPhone only for mobile admin
   useEffect(() => {
@@ -96,6 +97,55 @@ function Router() {
 
     setWasInProtectedArea(isCurrentlyInProtectedArea);
   }, [location, wasInProtectedArea]);
+
+  // Activity tracking for timeout
+  useEffect(() => {
+    const isCurrentlyInProtectedArea = 
+      location.startsWith('/admin') || 
+      location.startsWith('/admin-login') ||
+      location.startsWith('/reports') ||
+      location === '/mobile-admin' ||
+      location === '/simple-admin' ||
+      location === '/basic-admin' ||
+      location === '/admin-redirect';
+
+    if (!isCurrentlyInProtectedArea) return;
+
+    const updateActivity = () => {
+      setLastActivity(Date.now());
+    };
+
+    // Track user activity
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    events.forEach(event => {
+      document.addEventListener(event, updateActivity, true);
+    });
+
+    // Check for inactivity every 10 seconds
+    const inactivityCheck = setInterval(() => {
+      const now = Date.now();
+      const timeSinceLastActivity = now - lastActivity;
+      
+      // 60 seconds = 60,000 milliseconds
+      if (timeSinceLastActivity > 60000) {
+        // Clear authentication and redirect
+        sessionStorage.removeItem('adminAuthenticated');
+        sessionStorage.removeItem('accountantAuthenticated');
+        localStorage.removeItem('adminAuthenticated');
+        localStorage.removeItem('accountantAuthenticated');
+        
+        console.log('Auto-logout: Inactivity timeout');
+        window.location.href = '/';
+      }
+    }, 10000);
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, updateActivity, true);
+      });
+      clearInterval(inactivityCheck);
+    };
+  }, [location, lastActivity]);
   
   // Determine if we're on an admin or employee page to show/hide normal navigation
   const isAdminPage = location.startsWith('/admin');
