@@ -12,6 +12,7 @@ import ReportCard from "@/components/report-card";
 import { LOCATIONS } from "@/lib/constants";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { useLocation } from "wouter";
+import { formatDateInCentral, parseDateInCentral } from "@/lib/timezone";
 
 export default function Reports() {
   const [, navigate] = useLocation();
@@ -273,7 +274,7 @@ export default function Reports() {
                   <div className="mt-4 text-xs text-blue-600">
                     Showing totals for {filteredReports.length} report(s)
                     {locationFilter && ` • Location: ${LOCATIONS.find(l => l.id.toString() === locationFilter)?.name}`}
-                    {dateFilter && ` • Date: ${format(new Date(dateFilter + 'T00:00:00'), 'M/d/yyyy')}`}
+                    {dateFilter && ` • Date: ${formatDateInCentral(parseDateInCentral(dateFilter), 'M/d/yyyy')}`}
                   </div>
                 </CardContent>
               </Card>

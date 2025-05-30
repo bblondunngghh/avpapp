@@ -21,6 +21,7 @@ import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATIONS, LOCATION_ID_MAP } from "@/lib/constants";
 import RestaurantIcon from "@/components/restaurant-icon";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getCurrentDateCentral } from "@/lib/timezone";
 
 // Import restaurant images
 import capitalGrilleImg from "../assets/capital-grille.jpg";
@@ -93,7 +94,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       locationId: selectedLocationId,
-      date: format(new Date(), 'yyyy-MM-dd'),
+      date: getCurrentDateCentral(),
       shift: selectedLocationId === 1 ? "" : "Dinner", // Default to Dinner for Bob's, Truluck's, and BOA
       manager: selectedLocationId === 3 ? "devin" : 
                selectedLocationId === 2 ? "brett" : "", // Default to Devin Bean for Truluck's, Brett Willson for Bob's
