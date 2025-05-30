@@ -81,19 +81,14 @@ app.use((req, res, next) => {
   }, () => {
     log(`serving on port ${port}`);
     
-    // Start backup service for production data protection
-    BackupService.startBackupSchedule();
-    
-    // Create initial backup
-    BackupService.createBackup().then(() => {
-      console.log('[STARTUP] Initial backup completed successfully');
-    }).catch(error => {
-      console.error('[STARTUP] Initial backup failed:', error);
-    });
-    
-    // Validate data integrity on startup
-    BackupService.validateDataIntegrity().then(isValid => {
-      console.log(`[STARTUP] Data integrity check: ${isValid ? 'PASSED' : 'FAILED'}`);
-    });
+    // Delayed startup of backup services to allow database connection to stabilize
+    setTimeout(() => {
+      try {
+        BackupService.startBackupSchedule();
+        console.log('[STARTUP] Backup service initialized');
+      } catch (error) {
+        console.error('[STARTUP] Backup service failed to start:', error);
+      }
+    }, 10000); // Wait 10 seconds for database to be ready
   });
 })();

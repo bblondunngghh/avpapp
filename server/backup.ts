@@ -2,12 +2,25 @@ import { db } from "./db";
 import { storage } from "./storage";
 
 export class BackupService {
+  // Retry database operations with exponential backoff
+  static async retryOperation<T>(operation: () => Promise<T>, maxRetries = 3): Promise<T> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        if (attempt === maxRetries) throw error;
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+      }
+    }
+    throw new Error('Max retries exceeded');
+  }
+
   // Create a backup of all critical business data
   static async createBackup(): Promise<string> {
     try {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       
-      // Get all data
+      // Get all data with retry logic
       const [
         employees,
         shiftReports,
@@ -17,13 +30,13 @@ export class BackupService {
         permits,
         trainingAcknowledgments
       ] = await Promise.all([
-        storage.getEmployees(),
-        storage.getShiftReports(),
-        storage.getTicketDistributions(),
-        storage.getEmployeeTaxPayments(),
-        storage.getIncidentReports(),
-        storage.getPermits(),
-        storage.getTrainingAcknowledgments()
+        this.retryOperation(() => storage.getEmployees()),
+        this.retryOperation(() => storage.getShiftReports()),
+        this.retryOperation(() => storage.getTicketDistributions()),
+        this.retryOperation(() => storage.getEmployeeTaxPayments()),
+        this.retryOperation(() => storage.getIncidentReports()),
+        this.retryOperation(() => storage.getPermits()),
+        this.retryOperation(() => storage.getTrainingAcknowledgments())
       ]);
 
       const backup = {
