@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog";
-import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info, Settings } from "lucide-react";
+import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info, Settings, CheckCircle, XCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function EmployeeDashboard() {
@@ -38,6 +38,17 @@ export default function EmployeeDashboard() {
   const employeeId = localStorage.getItem("employee_id");
   const employeeName = localStorage.getItem("employee_name");
   const employeeKey = localStorage.getItem("employee_key");
+
+  // Check for training acknowledgments
+  const { data: trainingAcknowledgments = [] } = useQuery({
+    queryKey: ["/api/training-acknowledgments"],
+    queryFn: getQueryFn(),
+  });
+
+  // Check if current employee has completed training
+  const hasCompletedTraining = trainingAcknowledgments.some(
+    (ack: any) => ack.employeeName.toLowerCase() === employeeName?.toLowerCase()
+  );
 
   // Check if employee is authenticated
   useEffect(() => {
@@ -368,6 +379,29 @@ export default function EmployeeDashboard() {
           Logout
         </Button>
       </div>
+
+      {/* Training Requirement Warning */}
+      {!hasCompletedTraining && (
+        <Card className="mb-6 border-orange-200 bg-orange-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-6 w-6 text-orange-600" />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-orange-800 mb-2">Safety Training Required</h3>
+                <p className="text-orange-700 mb-3">
+                  You must complete the safety training acknowledgment before accessing all employee features.
+                </p>
+                <Button 
+                  onClick={() => navigate("/regulations")}
+                  className="bg-orange-600 hover:bg-orange-700 text-white"
+                >
+                  Complete Safety Training
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
@@ -715,6 +749,47 @@ export default function EmployeeDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Training Status Section */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Safety Training Status</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      {hasCompletedTraining ? (
+                        <>
+                          <CheckCircle className="h-6 w-6 text-green-600" />
+                          <div>
+                            <p className="font-medium text-green-800">Training Completed</p>
+                            <p className="text-sm text-green-600">
+                              You have successfully completed the safety training acknowledgment.
+                            </p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-6 w-6 text-red-600" />
+                          <div>
+                            <p className="font-medium text-red-800">Training Required</p>
+                            <p className="text-sm text-red-600 mb-2">
+                              You must complete safety training to access all features.
+                            </p>
+                            <Button 
+                              size="sm"
+                              onClick={() => navigate("/regulations")}
+                              className="bg-red-600 hover:bg-red-700 text-white"
+                            >
+                              Complete Training
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-medium mb-4">Login Credentials</h3>

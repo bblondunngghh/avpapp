@@ -391,6 +391,12 @@ export default function AdminPanel() {
     queryKey: ["/api/employees"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Fetch training acknowledgments
+  const { data: trainingAcknowledgments = [] } = useQuery({
+    queryKey: ["/api/training-acknowledgments"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
   
   // Update local state whenever API data changes
   useEffect(() => {
