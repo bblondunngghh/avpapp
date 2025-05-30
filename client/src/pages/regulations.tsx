@@ -59,7 +59,7 @@ export default function Regulations() {
   }, []);
   
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6 bg-white min-h-screen">
       <Button 
         variant="ghost" 
         className="mb-6" 
