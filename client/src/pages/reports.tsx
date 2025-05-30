@@ -279,7 +279,7 @@ export default function Reports() {
             // Calculate totals from filtered reports
             const totals = filteredReports.reduce((acc, report) => {
               acc.totalCars += report.totalCars || 0;
-              acc.totalCash += report.totalCashCollected || 0;
+              acc.totalCash += report.companyCashTurnIn || 0;
               acc.totalCredit += report.totalCreditSales || 0;
               acc.totalTurnIn += report.totalTurnIn || 0;
               return acc;
