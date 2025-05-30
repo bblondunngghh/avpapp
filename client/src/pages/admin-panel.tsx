@@ -882,9 +882,9 @@ export default function AdminPanel() {
       
       // Calculate payroll data for each employee
       const commissionRate = report.locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
-      const totalJobHours = employeesData.reduce((sum, emp) => sum + (emp.hours || 0), 0);
+      const totalJobHours = Array.isArray(employeesData) ? employeesData.reduce((sum, emp) => sum + (emp.hours || 0), 0) : 0;
       
-      if (employeesData.length > 0) {
+      if (Array.isArray(employeesData) && employeesData.length > 0) {
         // Create a row for each employee with their individual calculations
         employeesData.forEach(emp => {
           const employeeName = emp.name || "Unknown";
