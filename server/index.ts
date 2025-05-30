@@ -89,6 +89,17 @@ app.use((req, res, next) => {
   }, () => {
     log(`serving on port ${port}`);
     
+    // Add global error handlers to prevent crashes
+    process.on('uncaughtException', (error) => {
+      console.error('[UNCAUGHT EXCEPTION] Server will continue running:', error.message);
+      // Don't exit the process - let it continue running
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('[UNHANDLED REJECTION] Server will continue running:', reason);
+      // Don't exit the process - let it continue running
+    });
+    
     // Delayed startup of backup services to allow database connection to stabilize
     setTimeout(() => {
       try {

@@ -10,7 +10,7 @@ import {
   trainingAcknowledgments, type TrainingAcknowledgment, type InsertTrainingAcknowledgment,
   LOCATIONS
 } from "@shared/schema";
-import { db } from "./db";
+import { db, withRetry } from "./db";
 import { eq, desc } from "drizzle-orm";
 
 // Extend interface with CRUD methods
