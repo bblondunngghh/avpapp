@@ -67,11 +67,18 @@ export default function Regulations() {
         <ChevronLeft className="h-4 w-4 mr-2" />
         Back to Dashboard
       </Button>
-      <div className="mb-8">
-        <h1 className="text-2xl text-black uppercase">Access Valet Parking Safety Training Program</h1>
-        <p className="text-gray-600 mt-1">
-          Valet Operations Manual - Safety policies, procedures, and training guidelines
-        </p>
+      <div className="mb-8 flex items-center gap-4">
+        <img 
+          src="/attached_assets/avplogo2.png" 
+          alt="Access Valet Parking Logo" 
+          className="h-16 w-16 object-contain"
+        />
+        <div>
+          <h1 className="text-2xl text-black uppercase">Access Valet Parking Safety Training Program</h1>
+          <p className="text-gray-600 mt-1">
+            Valet Operations Manual - Safety policies, procedures, and training guidelines
+          </p>
+        </div>
       </div>
       <Card>
         <CardContent className="pt-6">
