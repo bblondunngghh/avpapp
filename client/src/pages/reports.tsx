@@ -273,7 +273,7 @@ export default function Reports() {
                   <div className="mt-4 text-xs text-blue-600">
                     Showing totals for {filteredReports.length} report(s)
                     {locationFilter && ` • Location: ${LOCATIONS.find(l => l.id.toString() === locationFilter)?.name}`}
-                    {dateFilter && ` • Date: ${new Date(dateFilter).toLocaleDateString()}`}
+                    {dateFilter && ` • Date: ${format(new Date(dateFilter + 'T00:00:00'), 'M/d/yyyy')}`}
                   </div>
                 </CardContent>
               </Card>
