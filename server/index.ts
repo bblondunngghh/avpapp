@@ -44,12 +44,20 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
+    // Handle database connection errors specifically
+    if (err.code === 'ECONNRESET' || err.code === 'ENOTFOUND' || err.message?.includes('connection')) {
+      console.error('[DATABASE ERROR] Connection issue detected, server continuing:', err.message);
+      return res.status(503).json({ 
+        message: "Database temporarily unavailable. Please try again in a moment." 
+      });
+    }
+
     // Log error details for debugging and monitoring
     console.error(`[ERROR] ${new Date().toISOString()} - ${req.method} ${req.path}`, {
       error: err.message,
       stack: err.stack,
       body: req.body,
-      user: req.user?.id || 'anonymous',
+      userAgent: req.get('User-Agent'),
       ip: req.ip
     });
 
