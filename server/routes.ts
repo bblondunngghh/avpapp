@@ -115,20 +115,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Invalid report ID' });
       }
       
-      // Debug logging
-      console.log('Update request body:', JSON.stringify(req.body, null, 2));
-      console.log('totalReceiptSales in request:', req.body.totalReceiptSales);
-      
       const report = updateShiftReportSchema.parse(req.body);
-      console.log('Parsed report data:', JSON.stringify(report, null, 2));
-      
       const updatedReport = await storage.updateShiftReport(id, report);
       
       if (!updatedReport) {
         return res.status(404).json({ message: 'Shift report not found' });
       }
-      
-      console.log('Updated report result:', JSON.stringify(updatedReport, null, 2));
       res.json(updatedReport);
     } catch (error) {
       if (error instanceof z.ZodError) {
