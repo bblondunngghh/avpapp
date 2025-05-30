@@ -7,6 +7,7 @@ import {
   employeeTaxPayments, type EmployeeTaxPayment, type InsertEmployeeTaxPayment, type UpdateEmployeeTaxPayment,
   incidentReports, type IncidentReport, type InsertIncidentReport,
   permits, type Permit, type InsertPermit, type UpdatePermit,
+  trainingAcknowledgments, type TrainingAcknowledgment, type InsertTrainingAcknowledgment,
   LOCATIONS
 } from "@shared/schema";
 import { db } from "./db";
@@ -72,6 +73,11 @@ export interface IStorage {
   createPermit(permit: InsertPermit): Promise<Permit>;
   updatePermit(id: number, permit: UpdatePermit): Promise<Permit | undefined>;
   deletePermit(id: number): Promise<boolean>;
+  
+  // Training Acknowledgment methods
+  getTrainingAcknowledgments(): Promise<TrainingAcknowledgment[]>;
+  getTrainingAcknowledgment(id: number): Promise<TrainingAcknowledgment | undefined>;
+  createTrainingAcknowledgment(acknowledgment: InsertTrainingAcknowledgment): Promise<TrainingAcknowledgment>;
 }
 
 export class MemStorage implements IStorage {
@@ -1047,6 +1053,39 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error deleting permit:", error);
       return false;
+    }
+  }
+
+  // Training Acknowledgment methods
+  async getTrainingAcknowledgments(): Promise<TrainingAcknowledgment[]> {
+    try {
+      return await db.select().from(trainingAcknowledgments).orderBy(desc(trainingAcknowledgments.createdAt));
+    } catch (error) {
+      console.error("Error getting training acknowledgments:", error);
+      return [];
+    }
+  }
+
+  async getTrainingAcknowledgment(id: number): Promise<TrainingAcknowledgment | undefined> {
+    try {
+      const [acknowledgment] = await db.select().from(trainingAcknowledgments).where(eq(trainingAcknowledgments.id, id));
+      return acknowledgment || undefined;
+    } catch (error) {
+      console.error("Error getting training acknowledgment by ID:", error);
+      return undefined;
+    }
+  }
+
+  async createTrainingAcknowledgment(acknowledgmentData: InsertTrainingAcknowledgment): Promise<TrainingAcknowledgment> {
+    try {
+      const [acknowledgment] = await db
+        .insert(trainingAcknowledgments)
+        .values(acknowledgmentData)
+        .returning();
+      return acknowledgment;
+    } catch (error) {
+      console.error("Error creating training acknowledgment:", error);
+      throw new Error("Failed to create training acknowledgment");
     }
   }
 }

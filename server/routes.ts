@@ -13,11 +13,13 @@ import {
   insertPermitSchema,
   updatePermitSchema,
   insertIncidentReportSchema,
+  insertTrainingAcknowledgmentSchema,
   ShiftReport,
   TicketDistribution,
   Employee,
   EmployeeTaxPayment,
-  Permit
+  Permit,
+  TrainingAcknowledgment
 } from "@shared/schema";
 import { z } from "zod";
 import { 
