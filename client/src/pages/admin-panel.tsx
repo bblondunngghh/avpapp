@@ -39,7 +39,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { 
   BarChart, 
   LineChart, 
@@ -397,6 +397,21 @@ export default function AdminPanel() {
     queryKey: ["/api/training-acknowledgments"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Helper function to check if employee has completed training
+  const hasCompletedTraining = (employeeName: string) => {
+    return trainingAcknowledgments.some((ack: any) => 
+      ack.employeeName.toLowerCase() === employeeName.toLowerCase()
+    );
+  };
+
+  // Helper function to get training completion date
+  const getTrainingCompletionDate = (employeeName: string) => {
+    const acknowledgment = trainingAcknowledgments.find((ack: any) => 
+      ack.employeeName.toLowerCase() === employeeName.toLowerCase()
+    );
+    return acknowledgment ? new Date(acknowledgment.createdAt).toLocaleDateString() : null;
+  };
   
   // Update local state whenever API data changes
   useEffect(() => {
@@ -3648,6 +3663,34 @@ export default function AdminPanel() {
                         value={newEmployee.notes}
                         onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
                       />
+                    </div>
+                    
+                    {/* Training Status Display */}
+                    <div className="grid gap-2">
+                      <Label>Safety Training Status</Label>
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border">
+                        {hasCompletedTraining(newEmployee.fullName) ? (
+                          <>
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-green-700">Training Completed</div>
+                              <div className="text-xs text-gray-500">
+                                Completed on {getTrainingCompletionDate(newEmployee.fullName)}
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <AlertCircle className="h-5 w-5 text-amber-600" />
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-amber-700">Training Required</div>
+                              <div className="text-xs text-gray-500">
+                                Employee must complete safety training before accessing dashboard
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                   

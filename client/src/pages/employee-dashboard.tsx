@@ -42,7 +42,7 @@ export default function EmployeeDashboard() {
   // Check for training acknowledgments
   const { data: trainingAcknowledgments = [] } = useQuery({
     queryKey: ["/api/training-acknowledgments"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
   // Check if current employee has completed training
