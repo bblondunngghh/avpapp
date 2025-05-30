@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Save } from "lucide-react";
+import avpLogo from "@assets/avplogo2.png";
 
 export default function Regulations() {
   const [, navigate] = useLocation();
@@ -69,7 +70,7 @@ export default function Regulations() {
       </Button>
       <div className="mb-8 flex items-center gap-4">
         <img 
-          src="/attached_assets/avplogo2.png" 
+          src={avpLogo} 
           alt="Access Valet Parking Logo" 
           className="h-16 w-16 object-contain"
         />
