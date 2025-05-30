@@ -124,111 +124,103 @@ export default function Regulations() {
           
           <h2 className="text-lg font-medium mb-4 text-black">5. Valet Procedures</h2>
           
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1">
-              <AccordionTrigger className="text-black">5.1 Arrival</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                  <li>Prior to the guest exiting their vehicle, request that they turn off and hand you the key/key fob</li>
-                  <li>Ask for the guest's last name and write it on the ticket</li>
-                  <li>Hang the key on your carabiner immediately</li>
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">5.1 Arrival</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>Prior to the guest exiting their vehicle, request that they turn off and hand you the key/key fob</li>
+                <li>Ask for the guest's last name and write it on the ticket</li>
+                <li>Hang the key on your carabiner immediately</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">5.2 Conduct a Vehicle Inspection</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>Do a thorough walk around the vehicle while notating all dents, scratches, and cracks on the body of the vehicle</li>
+                <li>While notating damage on form, point with your hand at the damage (For locations with security cameras)</li>
+                <li>All other locations, note damage on the back side of claim check</li>
+                <li>Have customer initial identified damage on claim check</li>
+                <li>Hand them their claim check (This will be the item with which they request their vehicle)</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">5.3 Parking the Vehicle</h3>
+              <div className="space-y-4 text-gray-700">
+                <p className="font-medium">When parking the vehicle, you must be aware of:</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>The direction of traffic (follow identified traffic pattern only)</li>
+                  <li>No parking/high hazard areas</li>
+                  <li>Where the vehicle must be parked</li>
+                  <li>Luxury vehicles/oversized vehicles have their designated areas</li>
+                  <li>Which spot to park in</li>
+                  <li>When you have reached the designated area for the vehicle, begin by parking in spots located away from walls, poles, and other vehicles (Usually a center spot)</li>
                 </ul>
-              </AccordionContent>
-            </AccordionItem>
-            
-            <AccordionItem value="item-2">
-              <AccordionTrigger className="text-black">5.2 Conduct a Vehicle Inspection</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                  <li>Do a thorough walk around the vehicle while notating all dents, scratches, and cracks on the body of the vehicle</li>
-                  <li>While notating damage on form, point with your hand at the damage (For locations with security cameras)</li>
-                  <li>All other locations, note damage on the back side of claim check</li>
-                  <li>Have customer initial identified damage on claim check</li>
-                  <li>Hand them their claim check (This will be the item with which they request their vehicle)</li>
+                
+                <p className="font-medium mt-6">Safety Requirements:</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Driver side window must be down</li>
+                  <li>Honk when going around corners</li>
+                  <li>In garages, also flash your headlights</li>
+                  <li>Stop at all stop signs</li>
+                  <li>Stop 5 feet in front of crosswalks</li>
+                  <li>Look in all directions</li>
+                  <li>Stay alert for pedestrians and scooters, allowing them the right-of-way</li>
+                  <li>Golf carts may be present on the property. Allow carts the right-of-way</li>
                 </ul>
-              </AccordionContent>
-            </AccordionItem>
-            
-            <AccordionItem value="item-3">
-              <AccordionTrigger className="text-black">5.3 Parking the Vehicle</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4 text-gray-700">
-                  <p className="font-medium">When parking the vehicle, you must be aware of:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>The direction of traffic (follow identified traffic pattern only)</li>
-                    <li>No parking/high hazard areas</li>
-                    <li>Where the vehicle must be parked</li>
-                    <li>Luxury vehicles/oversized vehicles have their designated areas</li>
-                    <li>Which spot to park in</li>
-                    <li>When you have reached the designated area for the vehicle, begin by parking in spots located away from walls, poles, and other vehicles (Usually a center spot)</li>
-                  </ul>
-                  
-                  <p className="font-medium mt-6">Safety Requirements:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>Driver side window must be down</li>
-                    <li>Honk when going around corners</li>
-                    <li>In garages, also flash your headlights</li>
-                    <li>Stop at all stop signs</li>
-                    <li>Stop 5 feet in front of crosswalks</li>
-                    <li>Look in all directions</li>
-                    <li>Stay alert for pedestrians and scooters, allowing them the right-of-way</li>
-                    <li>Golf carts may be present on the property. Allow carts the right-of-way</li>
-                  </ul>
 
-                  <p className="font-medium mt-6">Parking Process:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>Select a space</li>
-                    <li>Position vehicle at a 45-degree angle to the space</li>
-                    <li>Backing up: Place right hand on passenger seat headrest, turn head over your right shoulder, use both mirrors as aid</li>
-                    <li>Must be 12 inches from back wall or another vehicle</li>
-                    <li>ONLY use brake pedal to move</li>
-                    <li>Straighten wheels when in spot</li>
-                    <li>Roll up all windows</li>
-                    <li>Close sunroof</li>
-                    <li>Get out of vehicle and immediately lock vehicle</li>
-                    <li>Place key on carabiner</li>
-                  </ul>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+                <p className="font-medium mt-6">Parking Process:</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Select a space</li>
+                  <li>Position vehicle at a 45-degree angle to the space</li>
+                  <li>Backing up: Place right hand on passenger seat headrest, turn head over your right shoulder, use both mirrors as aid</li>
+                  <li>Must be 12 inches from back wall or another vehicle</li>
+                  <li>ONLY use brake pedal to move</li>
+                  <li>Straighten wheels when in spot</li>
+                  <li>Roll up all windows</li>
+                  <li>Close sunroof</li>
+                  <li>Get out of vehicle and immediately lock vehicle</li>
+                  <li>Place key on carabiner</li>
+                </ul>
+              </div>
+            </div>
             
-            <AccordionItem value="item-4">
-              <AccordionTrigger className="text-black">5.4 Retrieving Vehicle</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4 text-gray-700">
-                  <p className="font-medium">Vehicle Retrieval Process:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>Match guest ticket to the key that you have just pulled</li>
-                    <li>If guest has lost ticket, ask for Driver's License and complete lost claim check form</li>
-                    <li>License must be matched to the registration/rental agreement when you arrive at the vehicle</li>
-                    <li>Guest must be owner of vehicle</li>
-                    <li>Clip key on carabiner</li>
-                    <li>Check out key manually or through automated system</li>
-                    <li>Return guest their ticket</li>
-                    <li>Walk quickly to retrieve vehicle</li>
-                  </ul>
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">5.4 Retrieving Vehicle</h3>
+              <div className="space-y-4 text-gray-700">
+                <p className="font-medium">Vehicle Retrieval Process:</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Match guest ticket to the key that you have just pulled</li>
+                  <li>If guest has lost ticket, ask for Driver's License and complete lost claim check form</li>
+                  <li>License must be matched to the registration/rental agreement when you arrive at the vehicle</li>
+                  <li>Guest must be owner of vehicle</li>
+                  <li>Clip key on carabiner</li>
+                  <li>Check out key manually or through automated system</li>
+                  <li>Return guest their ticket</li>
+                  <li>Walk quickly to retrieve vehicle</li>
+                </ul>
 
-                  <p className="font-medium mt-6">Vehicle Retrieval Safety:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>Walk around vehicle</li>
-                    <li>Ensure wheels are straight</li>
-                    <li>Not touching any obstructions near vehicle (poles, columns, wall, and cars)</li>
-                    <li>Unlock vehicle and turn on vehicle</li>
-                    <li>If vehicle is a push start, leave the keys on your carabiner</li>
-                    <li>Honk before pulling out of space</li>
-                    <li>ONLY use brake pedal to move vehicle</li>
-                    <li>Drive at five (5) miles an hour</li>
-                    <li>Stop at all stop signs</li>
-                    <li>Look for vehicles and pedestrians</li>
-                    <li>Pull vehicle onto ramp at no more than ten (10) miles an hour</li>
-                    <li>Match guest claim ticket to key ticket</li>
-                    <li>Ask guest for name on the folio</li>
-                    <li>Hand keys to guest</li>
-                  </ul>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+                <p className="font-medium mt-6">Vehicle Retrieval Safety:</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Walk around vehicle</li>
+                  <li>Ensure wheels are straight</li>
+                  <li>Not touching any obstructions near vehicle (poles, columns, wall, and cars)</li>
+                  <li>Unlock vehicle and turn on vehicle</li>
+                  <li>If vehicle is a push start, leave the keys on your carabiner</li>
+                  <li>Honk before pulling out of space</li>
+                  <li>ONLY use brake pedal to move vehicle</li>
+                  <li>Drive at five (5) miles an hour</li>
+                  <li>Stop at all stop signs</li>
+                  <li>Look for vehicles and pedestrians</li>
+                  <li>Pull vehicle onto ramp at no more than ten (10) miles an hour</li>
+                  <li>Match guest claim ticket to key ticket</li>
+                  <li>Ask guest for name on the folio</li>
+                  <li>Hand keys to guest</li>
+                </ul>
+              </div>
+            </div>
+          </div>
           
           <Separator className="my-8" />
           
