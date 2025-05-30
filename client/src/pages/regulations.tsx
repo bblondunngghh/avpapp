@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Save } from "lucide-react";
-import avpLogo from "@assets/avplogo2.png";
+import avpLogo from "@assets/AVPwebsitePNG.png";
 
 export default function Regulations() {
   const [, navigate] = useLocation();
