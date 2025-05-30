@@ -89,6 +89,7 @@ export class MemStorage implements IStorage {
   private employeeTaxPayments: Map<number, EmployeeTaxPayment>;
   private incidentReports: Map<number, IncidentReport>;
   private permits: Map<number, Permit>;
+  private trainingAcknowledgments: Map<number, TrainingAcknowledgment>;
   private userCurrentId: number;
   private employeeCurrentId: number;
   private locationCurrentId: number;
@@ -97,6 +98,7 @@ export class MemStorage implements IStorage {
   private employeeTaxPaymentCurrentId: number;
   private incidentReportCurrentId: number;
   private permitCurrentId: number;
+  private trainingAcknowledgmentCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -107,6 +109,7 @@ export class MemStorage implements IStorage {
     this.employeeTaxPayments = new Map();
     this.incidentReports = new Map();
     this.permits = new Map();
+    this.trainingAcknowledgments = new Map();
     this.userCurrentId = 1;
     this.employeeCurrentId = 1;
     this.locationCurrentId = 1;
@@ -115,6 +118,7 @@ export class MemStorage implements IStorage {
     this.employeeTaxPaymentCurrentId = 1;
     this.incidentReportCurrentId = 1;
     this.permitCurrentId = 1;
+    this.trainingAcknowledgmentCurrentId = 1;
     
     // Initialize with default locations
     this.initializeLocations();

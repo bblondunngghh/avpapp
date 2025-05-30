@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +7,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, Save } from "lucide-react";
+import { ChevronLeft, Save, RotateCcw } from "lucide-react";
+import SignatureCanvas from "react-signature-canvas";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import avpLogo from "@assets/new logo maybe.png";
 
 export default function Regulations() {
@@ -16,29 +19,64 @@ export default function Regulations() {
   const [acknowledgment, setAcknowledgment] = useState({
     employeeName: "",
     date: "",
-    signature: ""
+  });
+  const sigPadRef = useRef<SignatureCanvas>(null);
+
+  const saveAcknowledgmentMutation = useMutation({
+    mutationFn: async (data: { employeeName: string; date: string; signatureData: string }) => {
+      const response = await apiRequest("POST", "/api/training-acknowledgments", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Acknowledgment Saved",
+        description: "Your safety training acknowledgment has been recorded in the database.",
+      });
+      // Clear the form
+      setAcknowledgment({ employeeName: "", date: "" });
+      if (sigPadRef.current) {
+        sigPadRef.current.clear();
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Save Failed",
+        description: error.message || "Failed to save training acknowledgment.",
+        variant: "destructive",
+      });
+    },
   });
 
   const handleSaveAcknowledgment = () => {
-    if (!acknowledgment.employeeName || !acknowledgment.date || !acknowledgment.signature) {
+    if (!acknowledgment.employeeName || !acknowledgment.date) {
       toast({
         title: "Missing Information",
-        description: "Please fill out all fields before saving.",
+        description: "Please fill out your name and date before saving.",
         variant: "destructive",
       });
       return;
     }
 
-    // Save to localStorage for persistence
-    localStorage.setItem('safety_training_acknowledgment', JSON.stringify({
-      ...acknowledgment,
-      timestamp: new Date().toISOString()
-    }));
+    if (!sigPadRef.current || sigPadRef.current.isEmpty()) {
+      toast({
+        title: "Missing Signature",
+        description: "Please provide your signature before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    toast({
-      title: "Acknowledgment Saved",
-      description: "Your safety training acknowledgment has been recorded.",
+    const signatureData = sigPadRef.current.toDataURL();
+    saveAcknowledgmentMutation.mutate({
+      ...acknowledgment,
+      signatureData,
     });
+  };
+
+  const clearSignature = () => {
+    if (sigPadRef.current) {
+      sigPadRef.current.clear();
+    }
   };
 
   // Load saved acknowledgment on component mount
@@ -50,7 +88,6 @@ export default function Regulations() {
         setAcknowledgment({
           employeeName: data.employeeName || "",
           date: data.date || "",
-          signature: data.signature || ""
         });
       } catch (error) {
         // Handle invalid JSON gracefully
@@ -281,9 +318,9 @@ export default function Regulations() {
               <li>I will report any unsafe conditions immediately to my supervisor</li>
               <li>Violations of safety rules may result in disciplinary action up to and including termination</li>
             </ul>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-4 border-t border-blue-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-4 border-t border-blue-200">
               <div>
-                <Label htmlFor="employee-name" className="text-xs text-gray-600 mb-1">Employee Name:</Label>
+                <Label htmlFor="employee-name" className="text-sm text-gray-700 mb-2 block">Employee Name:</Label>
                 <Input
                   id="employee-name"
                   value={acknowledgment.employeeName}
@@ -293,7 +330,7 @@ export default function Regulations() {
                 />
               </div>
               <div>
-                <Label htmlFor="training-date" className="text-xs text-gray-600 mb-1">Date:</Label>
+                <Label htmlFor="training-date" className="text-sm text-gray-700 mb-2 block">Date:</Label>
                 <Input
                   id="training-date"
                   type="date"
@@ -302,24 +339,43 @@ export default function Regulations() {
                   className="mt-1"
                 />
               </div>
-              <div>
-                <Label htmlFor="employee-signature" className="text-xs text-gray-600 mb-1">Signature:</Label>
-                <Input
-                  id="employee-signature"
-                  value={acknowledgment.signature}
-                  onChange={(e) => setAcknowledgment(prev => ({ ...prev, signature: e.target.value }))}
-                  placeholder="Type your name as signature"
-                  className="mt-1"
+            </div>
+            
+            <div className="mt-6">
+              <Label className="text-sm text-gray-700 mb-2 block">Signature:</Label>
+              <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                <SignatureCanvas
+                  ref={sigPadRef}
+                  canvasProps={{
+                    width: 500,
+                    height: 200,
+                    className: 'signature-canvas bg-white border border-gray-200 rounded w-full'
+                  }}
+                  backgroundColor="#ffffff"
                 />
+                <div className="flex justify-end mt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={clearSignature}
+                    className="flex items-center gap-2"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Clear Signature
+                  </Button>
+                </div>
               </div>
             </div>
+            
             <div className="mt-6 flex justify-center">
               <Button 
                 onClick={handleSaveAcknowledgment}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+                disabled={saveAcknowledgmentMutation.isPending}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
                 <Save className="h-4 w-4" />
-                Save Acknowledgment
+                {saveAcknowledgmentMutation.isPending ? "Saving..." : "Save Acknowledgment"}
               </Button>
             </div>
           </div>

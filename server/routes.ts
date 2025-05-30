@@ -1069,6 +1069,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Training Acknowledgment routes
+  apiRouter.get('/training-acknowledgments', async (req, res) => {
+    try {
+      const acknowledgments = await storage.getTrainingAcknowledgments();
+      res.json(acknowledgments);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch training acknowledgments' });
+    }
+  });
+
+  apiRouter.post('/training-acknowledgments', async (req, res) => {
+    try {
+      const validation = insertTrainingAcknowledgmentSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ message: 'Invalid training acknowledgment data', errors: validation.error.errors });
+      }
+
+      const acknowledgmentData = {
+        ...validation.data,
+        ipAddress: req.ip || req.connection.remoteAddress || null,
+        userAgent: req.get('User-Agent') || null,
+      };
+
+      const acknowledgment = await storage.createTrainingAcknowledgment(acknowledgmentData);
+      res.status(201).json(acknowledgment);
+    } catch (error) {
+      console.error('Error creating training acknowledgment:', error);
+      res.status(500).json({ message: 'Failed to create training acknowledgment' });
+    }
+  });
+
   // Register API routes
   app.use('/api', apiRouter);
 
