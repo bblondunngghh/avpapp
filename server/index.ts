@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { BackupService } from "./backup";
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -39,12 +40,25 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
-    throw err;
+    // Log error details for debugging and monitoring
+    console.error(`[ERROR] ${new Date().toISOString()} - ${req.method} ${req.path}`, {
+      error: err.message,
+      stack: err.stack,
+      body: req.body,
+      user: req.user?.id || 'anonymous',
+      ip: req.ip
+    });
+
+    // Don't expose internal error details in production
+    const responseMessage = app.get("env") === "production" && status === 500 
+      ? "Internal Server Error" 
+      : message;
+
+    res.status(status).json({ message: responseMessage });
   });
 
   // importantly only setup vite in development and after
@@ -66,5 +80,20 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Start backup service for production data protection
+    BackupService.startBackupSchedule();
+    
+    // Create initial backup
+    BackupService.createBackup().then(() => {
+      console.log('[STARTUP] Initial backup completed successfully');
+    }).catch(error => {
+      console.error('[STARTUP] Initial backup failed:', error);
+    });
+    
+    // Validate data integrity on startup
+    BackupService.validateDataIntegrity().then(isValid => {
+      console.log(`[STARTUP] Data integrity check: ${isValid ? 'PASSED' : 'FAILED'}`);
+    });
   });
 })();
