@@ -322,3 +322,22 @@ export const updatePermitSchema = createInsertSchema(permits).omit({
 export type InsertPermit = z.infer<typeof insertPermitSchema>;
 export type UpdatePermit = z.infer<typeof updatePermitSchema>;
 export type Permit = typeof permits.$inferSelect;
+
+// Training Acknowledgments schema
+export const trainingAcknowledgments = pgTable("training_acknowledgments", {
+  id: serial("id").primaryKey(),
+  employeeName: text("employee_name").notNull(),
+  date: text("date").notNull(),
+  signatureData: text("signature_data").notNull(), // Base64 encoded signature image
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertTrainingAcknowledgmentSchema = createInsertSchema(trainingAcknowledgments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertTrainingAcknowledgment = z.infer<typeof insertTrainingAcknowledgmentSchema>;
+export type TrainingAcknowledgment = typeof trainingAcknowledgments.$inferSelect;
