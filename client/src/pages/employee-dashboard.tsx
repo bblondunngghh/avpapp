@@ -34,6 +34,9 @@ export default function EmployeeDashboard() {
   });
   const [newEmployeeKey, setNewEmployeeKey] = useState("");
   const [isChangingKey, setIsChangingKey] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [isUpdatingContact, setIsUpdatingContact] = useState(false);
 
   const employeeId = localStorage.getItem("employee_id");
   const employeeName = localStorage.getItem("employee_name");
@@ -44,6 +47,25 @@ export default function EmployeeDashboard() {
     queryKey: ["/api/training-acknowledgments"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Fetch current employee data
+  const { data: currentEmployee } = useQuery({
+    queryKey: ["/api/employees", employeeId],
+    queryFn: async () => {
+      const response = await fetch(`/api/employees/${employeeId}`);
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!employeeId,
+  });
+
+  // Set initial contact info when employee data loads
+  useEffect(() => {
+    if (currentEmployee) {
+      setPhoneNumber(currentEmployee.phone || "");
+      setEmailAddress(currentEmployee.email || "");
+    }
+  }, [currentEmployee]);
 
   // Check if current employee has completed training
   const hasCompletedTraining = trainingAcknowledgments.some(
@@ -132,6 +154,32 @@ export default function EmployeeDashboard() {
     },
   });
 
+  // Mutation to update contact information
+  const updateContactMutation = useMutation({
+    mutationFn: async ({ phone, email }: { phone: string; email: string }) => {
+      const response = await apiRequest("PATCH", `/api/employees/${employeeId}`, {
+        phone: phone.trim() || null,
+        email: email.trim() || null
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      setIsUpdatingContact(false);
+      toast({
+        title: "Contact information updated",
+        description: "Your phone number and email have been successfully updated",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/employees"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to update contact info",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleKeyChange = () => {
     if (!newEmployeeKey.trim()) {
       toast({
@@ -152,6 +200,33 @@ export default function EmployeeDashboard() {
     }
 
     updateEmployeeKeyMutation.mutate(newEmployeeKey.toLowerCase().trim());
+  };
+
+  const handleContactUpdate = () => {
+    // Basic email validation
+    if (emailAddress && !/\S+@\S+\.\S+/.test(emailAddress)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Basic phone validation
+    if (phoneNumber && !/^[\+]?[1-9][\d]{0,15}$/.test(phoneNumber.replace(/[\s\-\(\)]/g, ''))) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid phone number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    updateContactMutation.mutate({
+      phone: phoneNumber,
+      email: emailAddress
+    });
   };
 
   // Filter reports by selected month and employee
@@ -866,6 +941,75 @@ export default function EmployeeDashboard() {
                           Cancel
                         </Button>
                       )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Contact Information</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="phone-number" className="text-sm font-medium">
+                          Phone Number
+                        </Label>
+                        <Input
+                          id="phone-number"
+                          type="tel"
+                          placeholder="Enter your phone number"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          className="bg-white"
+                          disabled={updateContactMutation.isPending}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Used for emergency contact and work-related communications
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor="email-address" className="text-sm font-medium">
+                          Email Address
+                        </Label>
+                        <Input
+                          id="email-address"
+                          type="email"
+                          placeholder="Enter your email address"
+                          value={emailAddress}
+                          onChange={(e) => setEmailAddress(e.target.value)}
+                          className="bg-white"
+                          disabled={updateContactMutation.isPending}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Used for important notifications and updates
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleContactUpdate}
+                        disabled={updateContactMutation.isPending}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        {updateContactMutation.isPending ? "Updating..." : "Update Contact Info"}
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          if (currentEmployee) {
+                            setPhoneNumber(currentEmployee.phone || "");
+                            setEmailAddress(currentEmployee.email || "");
+                          }
+                        }}
+                        disabled={updateContactMutation.isPending}
+                      >
+                        Reset
+                      </Button>
                     </div>
                   </div>
                 </div>
