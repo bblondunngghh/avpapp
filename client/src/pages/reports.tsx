@@ -20,6 +20,8 @@ export default function Reports() {
   const [dateFilter, setDateFilter] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const REPORTS_PER_PAGE = 10;
   
   // Check if user is authenticated as admin
   useEffect(() => {
@@ -58,6 +60,17 @@ export default function Reports() {
     
     return matchesLocation && matchesDate;
   }) : [];
+
+  // Pagination
+  const totalPages = Math.ceil(filteredReports.length / REPORTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * REPORTS_PER_PAGE;
+  const endIndex = startIndex + REPORTS_PER_PAGE;
+  const currentReports = filteredReports.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [locationFilter, dateFilter]);
   
   // Handle new report
   const handleNewReport = () => {
@@ -205,7 +218,7 @@ export default function Reports() {
       ) : filteredReports.length > 0 ? (
         // Reports list
         <div>
-          {filteredReports.map(report => (
+          {currentReports.map(report => (
             <ReportCard
               key={report.id}
               id={report.id}
@@ -226,6 +239,40 @@ export default function Reports() {
               createdAt={report.createdAt}
             />
           ))}
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <Card className="mt-6">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Showing {startIndex + 1}-{Math.min(endIndex, filteredReports.length)} of {filteredReports.length} reports
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-sm text-gray-600">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           
           {/* Summary Totals Table */}
           {(() => {
