@@ -1,12 +1,61 @@
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ChevronLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { ChevronLeft, Save } from "lucide-react";
 
 export default function Regulations() {
   const [, navigate] = useLocation();
+  const { toast } = useToast();
+  const [acknowledgment, setAcknowledgment] = useState({
+    employeeName: "",
+    date: "",
+    signature: ""
+  });
+
+  const handleSaveAcknowledgment = () => {
+    if (!acknowledgment.employeeName || !acknowledgment.date || !acknowledgment.signature) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill out all fields before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Save to localStorage for persistence
+    localStorage.setItem('safety_training_acknowledgment', JSON.stringify({
+      ...acknowledgment,
+      timestamp: new Date().toISOString()
+    }));
+
+    toast({
+      title: "Acknowledgment Saved",
+      description: "Your safety training acknowledgment has been recorded.",
+    });
+  };
+
+  // Load saved acknowledgment on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('safety_training_acknowledgment');
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        setAcknowledgment({
+          employeeName: data.employeeName || "",
+          date: data.date || "",
+          signature: data.signature || ""
+        });
+      } catch (error) {
+        // Handle invalid JSON gracefully
+      }
+    }
+  }, []);
   
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
@@ -234,17 +283,44 @@ export default function Regulations() {
             </ul>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-4 border-t border-blue-200">
               <div>
-                <p className="text-xs text-gray-600 mb-1">Employee Name:</p>
-                <div className="border-b border-gray-400 h-6"></div>
+                <Label htmlFor="employee-name" className="text-xs text-gray-600 mb-1">Employee Name:</Label>
+                <Input
+                  id="employee-name"
+                  value={acknowledgment.employeeName}
+                  onChange={(e) => setAcknowledgment(prev => ({ ...prev, employeeName: e.target.value }))}
+                  placeholder="Enter full name"
+                  className="mt-1"
+                />
               </div>
               <div>
-                <p className="text-xs text-gray-600 mb-1">Date:</p>
-                <div className="border-b border-gray-400 h-6"></div>
+                <Label htmlFor="training-date" className="text-xs text-gray-600 mb-1">Date:</Label>
+                <Input
+                  id="training-date"
+                  type="date"
+                  value={acknowledgment.date}
+                  onChange={(e) => setAcknowledgment(prev => ({ ...prev, date: e.target.value }))}
+                  className="mt-1"
+                />
               </div>
               <div>
-                <p className="text-xs text-gray-600 mb-1">Signature:</p>
-                <div className="border-b border-gray-400 h-6"></div>
+                <Label htmlFor="employee-signature" className="text-xs text-gray-600 mb-1">Signature:</Label>
+                <Input
+                  id="employee-signature"
+                  value={acknowledgment.signature}
+                  onChange={(e) => setAcknowledgment(prev => ({ ...prev, signature: e.target.value }))}
+                  placeholder="Type your name as signature"
+                  className="mt-1"
+                />
               </div>
+            </div>
+            <div className="mt-6 flex justify-center">
+              <Button 
+                onClick={handleSaveAcknowledgment}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+              >
+                <Save className="h-4 w-4" />
+                Save Acknowledgment
+              </Button>
             </div>
           </div>
         </CardContent>
