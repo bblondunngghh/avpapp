@@ -225,6 +225,63 @@ export default function Reports() {
               createdAt={report.createdAt}
             />
           ))}
+          
+          {/* Summary Totals Table */}
+          {(() => {
+            // Calculate totals from filtered reports
+            const totals = filteredReports.reduce((acc, report) => {
+              const turnInRate = report.locationId === 2 ? 6 : 11;
+              const expectedTurnIn = report.totalCars * turnInRate;
+              
+              acc.totalCars += report.totalCars || 0;
+              acc.totalCash += report.cashSales || 0;
+              acc.totalCredit += report.creditSales || 0;
+              acc.totalTurnIn += expectedTurnIn || 0;
+              return acc;
+            }, {
+              totalCars: 0,
+              totalCash: 0,
+              totalCredit: 0,
+              totalTurnIn: 0
+            });
+
+            return (
+              <Card className="mt-6 bg-blue-50 border-blue-200">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-blue-800">
+                    Summary Totals {(locationFilter || dateFilter) && (
+                      <span className="text-sm font-normal text-blue-600">
+                        (Filtered Results)
+                      </span>
+                    )}
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-white p-4 rounded-md border border-blue-100">
+                      <div className="text-sm font-medium text-gray-600">Total Cars Parked</div>
+                      <div className="text-2xl font-bold text-blue-600">{totals.totalCars.toLocaleString()}</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-md border border-blue-100">
+                      <div className="text-sm font-medium text-gray-600">Total Cash Sales</div>
+                      <div className="text-2xl font-bold text-green-600">${totals.totalCash.toLocaleString()}</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-md border border-blue-100">
+                      <div className="text-sm font-medium text-gray-600">Total Credit Sales</div>
+                      <div className="text-2xl font-bold text-purple-600">${totals.totalCredit.toLocaleString()}</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-md border border-blue-100">
+                      <div className="text-sm font-medium text-gray-600">Total Turn-In</div>
+                      <div className="text-2xl font-bold text-orange-600">${totals.totalTurnIn.toLocaleString()}</div>
+                    </div>
+                  </div>
+                  <div className="mt-4 text-xs text-blue-600">
+                    Showing totals for {filteredReports.length} report(s)
+                    {locationFilter && ` • Location: ${LOCATIONS.find(l => l.id.toString() === locationFilter)?.name}`}
+                    {dateFilter && ` • Date: ${new Date(dateFilter).toLocaleDateString()}`}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
         </div>
       ) : (
         // No reports state
