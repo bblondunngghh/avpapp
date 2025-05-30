@@ -489,6 +489,26 @@ export class MemStorage implements IStorage {
   async deletePermit(id: number): Promise<boolean> {
     return this.permits.delete(id);
   }
+
+  // Training Acknowledgment methods
+  async getTrainingAcknowledgments(): Promise<TrainingAcknowledgment[]> {
+    return Array.from(this.trainingAcknowledgments.values());
+  }
+
+  async getTrainingAcknowledgment(id: number): Promise<TrainingAcknowledgment | undefined> {
+    return this.trainingAcknowledgments.get(id);
+  }
+
+  async createTrainingAcknowledgment(acknowledgmentData: InsertTrainingAcknowledgment): Promise<TrainingAcknowledgment> {
+    const id = this.trainingAcknowledgmentCurrentId++;
+    const acknowledgment: TrainingAcknowledgment = {
+      id,
+      ...acknowledgmentData,
+      createdAt: new Date(),
+    };
+    this.trainingAcknowledgments.set(id, acknowledgment);
+    return acknowledgment;
+  }
 }
 
 // Database storage implementation
