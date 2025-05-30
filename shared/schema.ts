@@ -125,6 +125,7 @@ export const shiftReports = pgTable("shift_reports", {
   creditTransactions: integer("credit_transactions").notNull(),
   totalCreditSales: doublePrecision("total_credit_sales").notNull(),
   totalReceipts: integer("total_receipts").notNull(),
+  totalReceiptSales: doublePrecision("total_receipt_sales").notNull().default(0),
   totalCashCollected: doublePrecision("total_cash_collected").notNull(),
   companyCashTurnIn: doublePrecision("company_cash_turn_in").notNull(), // Company turn-in (totalCars * $11)
   totalTurnIn: doublePrecision("total_turn_in").notNull(), // totalCreditSales + companyCashTurnIn
