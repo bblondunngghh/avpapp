@@ -1743,6 +1743,89 @@ export default function AdminPanel() {
                   </Table>
                 </div>
               )}
+
+              {/* Summary Totals Table */}
+              {!isLoading && reports.length > 0 && (() => {
+                // Filter reports based on date range
+                const filteredReports = reports.filter(report => {
+                  let reportDate;
+                  try {
+                    if (report.date.includes('-')) {
+                      const parts = report.date.split('-');
+                      if (parts[0].length === 4) {
+                        // YYYY-MM-DD format
+                        const [year, month, day] = parts;
+                        reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                      } else {
+                        // MM-DD-YYYY format
+                        const [month, day, year] = parts;
+                        reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                      }
+                    } else if (report.date.includes('/')) {
+                      const parts = report.date.split('/');
+                      reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+                    } else {
+                      reportDate = new Date(report.date);
+                    }
+                  } catch {
+                    reportDate = new Date(report.date);
+                  }
+
+                  if (startDate && reportDate < startDate) return false;
+                  if (endDate && reportDate > endDate) return false;
+                  return true;
+                });
+
+                // Calculate totals
+                const totals = filteredReports.reduce((acc, report) => {
+                  const turnInRate = report.locationId === 2 ? 6 : 11;
+                  const expectedTurnIn = report.totalCars * turnInRate;
+                  
+                  acc.totalCars += report.totalCars || 0;
+                  acc.totalCash += report.cashSales || 0;
+                  acc.totalCredit += report.creditSales || 0;
+                  acc.totalTurnIn += expectedTurnIn || 0;
+                  return acc;
+                }, {
+                  totalCars: 0,
+                  totalCash: 0,
+                  totalCredit: 0,
+                  totalTurnIn: 0
+                });
+
+                return filteredReports.length > 0 ? (
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h3 className="text-lg font-semibold mb-4 text-blue-800">
+                      Summary Totals {(startDate || endDate) && (
+                        <span className="text-sm font-normal text-blue-600">
+                          ({startDate ? startDate.toLocaleDateString() : 'Start'} - {endDate ? endDate.toLocaleDateString() : 'End'})
+                        </span>
+                      )}
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-white p-3 rounded-md border border-blue-100">
+                        <div className="text-sm font-medium text-gray-600">Total Cars Parked</div>
+                        <div className="text-2xl font-bold text-blue-600">{totals.totalCars.toLocaleString()}</div>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border border-blue-100">
+                        <div className="text-sm font-medium text-gray-600">Total Cash Sales</div>
+                        <div className="text-2xl font-bold text-green-600">${totals.totalCash.toLocaleString()}</div>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border border-blue-100">
+                        <div className="text-sm font-medium text-gray-600">Total Credit Sales</div>
+                        <div className="text-2xl font-bold text-purple-600">${totals.totalCredit.toLocaleString()}</div>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border border-blue-100">
+                        <div className="text-sm font-medium text-gray-600">Total Turn-In</div>
+                        <div className="text-2xl font-bold text-orange-600">${totals.totalTurnIn.toLocaleString()}</div>
+                      </div>
+                    </div>
+                    <div className="mt-3 text-xs text-blue-600">
+                      Showing totals for {filteredReports.length} report(s) in the selected date range
+                    </div>
+                  </div>
+                ) : null;
+              })()}
             </CardContent>
           </Card>
         </TabsContent>
