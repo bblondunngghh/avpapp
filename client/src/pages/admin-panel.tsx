@@ -849,29 +849,86 @@ export default function AdminPanel() {
     navigate("/admin-login");
   };
   
-  // Function to export shift reports to CSV
+  // Function to export shift reports to CSV with detailed payroll data
   const exportReportsToCSV = () => {
     if (!reports.length) return;
     
-    // CSV header
-    let csvContent = "ID,Date,Location,Shift,Leader,Cars,Turn-In,Employees,Submitted\n";
+    // CSV header with all fields including detailed payroll calculations
+    let csvContent = "Report ID,Date,Location,Shift,Shift Leader,Total Cars,Total Credit Sales,Total Cash Collected,Company Cash Turn In,Total Turn In,Credit Transactions,Total Receipts,Total Receipt Sales,Total Job Hours,Employee Name,Employee Hours,Employee Commission,Employee Tips,Employee Earnings,Employee Money Owed,Employee Tax (22%),Notes,Incidents,Submitted Date\n";
     
-    // Add each row of data
+    // Add each row of data with detailed employee breakdown
     reports.forEach(report => {
       const date = new Date(report.date).toLocaleDateString();
       const submittedDate = new Date(report.createdAt).toLocaleDateString();
       const locationName = getLocationName(report.locationId);
-      const turnInRate = report.locationId === 2 ? 6 : 11;
-      const expectedTurnIn = report.totalCars * turnInRate;
-      const leaderName = EMPLOYEE_NAMES[report.manager] || report.manager;
-      const employeeCount = typeof report.employees === 'string' 
-        ? JSON.parse(report.employees).length 
-        : Array.isArray(report.employees) 
-          ? report.employees.length 
-          : 0;
       
-      // Format the CSV row
-      csvContent += `${report.id},"${date}","${locationName}","${report.shift}","${leaderName}",${report.totalCars},${expectedTurnIn.toFixed(2)},${employeeCount},"${submittedDate}"\n`;
+      // Parse employees data for detailed payroll calculations
+      let employeesData = [];
+      try {
+        employeesData = typeof report.employees === 'string' 
+          ? JSON.parse(report.employees) 
+          : Array.isArray(report.employees) 
+            ? report.employees 
+            : [];
+      } catch (e) {
+        employeesData = [];
+      }
+      
+      // Escape quotes in text fields
+      const escapeCSV = (text) => {
+        if (!text) return "";
+        return `"${String(text).replace(/"/g, '""')}"`;
+      };
+      
+      // Calculate payroll data for each employee
+      const commissionRate = report.locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
+      const totalJobHours = employeesData.reduce((sum, emp) => sum + (emp.hours || 0), 0);
+      
+      if (employeesData.length > 0) {
+        // Create a row for each employee with their individual calculations
+        employeesData.forEach(emp => {
+          const employeeName = emp.name || "Unknown";
+          const employeeHours = emp.hours || 0;
+          const hoursPercent = totalJobHours > 0 ? employeeHours / totalJobHours : 0;
+          
+          // Calculate commission based on cars and commission rate
+          const totalCars = report.totalCars || 0;
+          const empCommission = (totalCars * commissionRate) * hoursPercent;
+          
+          // Calculate tips based on credit sales, cash collections, and receipts
+          const totalCreditSales = report.totalCreditSales || 0;
+          const totalCashCollected = report.totalCashCollected || 0;
+          const totalReceipts = report.totalReceipts || 0;
+          const creditTransactions = report.creditTransactions || 0;
+          
+          const expectedCreditSales = creditTransactions * 15;
+          const creditCardTips = Math.abs(expectedCreditSales - totalCreditSales);
+          
+          const cashCars = totalCars - creditTransactions;
+          const expectedCashSales = cashCars * 15;
+          const cashTips = Math.abs(expectedCashSales - totalCashCollected);
+          
+          const receiptTips = totalReceipts * 3;
+          const totalTips = (creditCardTips + cashTips + receiptTips) * hoursPercent;
+          
+          const empEarnings = empCommission + totalTips;
+          
+          // Calculate money owed (when credit + receipt sales exceed turn in)
+          const receiptSales = totalReceipts * 18;
+          const totalCollections = totalCreditSales + receiptSales;
+          const totalMoneyOwedOnShift = Math.max(0, totalCollections - (report.totalTurnIn || 0));
+          const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
+          
+          // Calculate tax obligation
+          const tax = empEarnings * 0.22;
+          
+          // Format the CSV row with all data including detailed payroll
+          csvContent += `${report.id},${escapeCSV(date)},${escapeCSV(locationName)},${escapeCSV(report.shift)},${escapeCSV(report.shiftLeader)},${report.totalCars || 0},${report.totalCreditSales || 0},${report.totalCashCollected || 0},${report.companyCashTurnIn || 0},${report.totalTurnIn || 0},${report.creditTransactions || 0},${report.totalReceipts || 0},${report.totalReceiptSales || 0},${report.totalJobHours || 0},${escapeCSV(employeeName)},${employeeHours.toFixed(1)},${empCommission.toFixed(2)},${totalTips.toFixed(2)},${empEarnings.toFixed(2)},${moneyOwed.toFixed(2)},${tax.toFixed(2)},${escapeCSV(report.notes || "")},${escapeCSV(report.incidents || "")},${escapeCSV(submittedDate)}\n`;
+        });
+      } else {
+        // If no employees, still include the report data with empty employee fields
+        csvContent += `${report.id},${escapeCSV(date)},${escapeCSV(locationName)},${escapeCSV(report.shift)},${escapeCSV(report.shiftLeader)},${report.totalCars || 0},${report.totalCreditSales || 0},${report.totalCashCollected || 0},${report.companyCashTurnIn || 0},${report.totalTurnIn || 0},${report.creditTransactions || 0},${report.totalReceipts || 0},${report.totalReceiptSales || 0},${report.totalJobHours || 0},"No Employees",0,0,0,0,0,0,${escapeCSV(report.notes || "")},${escapeCSV(report.incidents || "")},${escapeCSV(submittedDate)}\n`;
+      }
     });
     
     // Create a download link
@@ -879,7 +936,7 @@ export default function AdminPanel() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', 'shift-reports.csv');
+    link.setAttribute('download', 'shift-reports-complete-with-payroll.csv');
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
