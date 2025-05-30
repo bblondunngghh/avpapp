@@ -72,7 +72,7 @@ export default function Regulations() {
         <img 
           src={avpLogo} 
           alt="Access Valet Parking Logo" 
-          className="h-16 w-16 object-contain"
+          className="h-24 w-auto object-contain"
         />
         <div>
           <h1 className="text-2xl text-black uppercase">Access Valet Parking Safety Training Program</h1>
