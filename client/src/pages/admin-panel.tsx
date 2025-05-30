@@ -1778,13 +1778,10 @@ export default function AdminPanel() {
 
                 // Calculate totals
                 const totals = filteredReports.reduce((acc, report) => {
-                  const turnInRate = report.locationId === 2 ? 6 : 11;
-                  const expectedTurnIn = report.totalCars * turnInRate;
-                  
                   acc.totalCars += report.totalCars || 0;
-                  acc.totalCash += report.cashSales || 0;
-                  acc.totalCredit += report.creditSales || 0;
-                  acc.totalTurnIn += expectedTurnIn || 0;
+                  acc.totalCash += report.companyCashTurnIn || 0;
+                  acc.totalCredit += report.totalCreditSales || 0;
+                  acc.totalTurnIn += report.totalTurnIn || 0;
                   return acc;
                 }, {
                   totalCars: 0,
