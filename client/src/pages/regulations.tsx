@@ -68,7 +68,7 @@ export default function Regulations() {
         <ChevronLeft className="h-4 w-4 mr-2" />
         Back to Dashboard
       </Button>
-      <div className="mb-8 flex items-center gap-4">
+      <div className="mb-8 flex items-center gap-4 ml-6">
         <img 
           src={avpLogo} 
           alt="Access Valet Parking Logo" 
