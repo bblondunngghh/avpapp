@@ -234,8 +234,8 @@ export default function Reports() {
               const expectedTurnIn = report.totalCars * turnInRate;
               
               acc.totalCars += report.totalCars || 0;
-              acc.totalCash += report.cashSales || 0;
-              acc.totalCredit += report.creditSales || 0;
+              acc.totalCash += report.totalCashCollected || 0;
+              acc.totalCredit += report.totalCreditSales || 0;
               acc.totalTurnIn += expectedTurnIn || 0;
               return acc;
             }, {
