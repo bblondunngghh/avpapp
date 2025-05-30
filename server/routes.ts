@@ -1,6 +1,7 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { BackupService } from "./backup";
 import { 
   insertShiftReportSchema, 
   updateShiftReportSchema,
@@ -1097,6 +1098,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error creating training acknowledgment:', error);
       res.status(500).json({ message: 'Failed to create training acknowledgment' });
+    }
+  });
+
+  // Production Health Monitoring Endpoints
+  apiRouter.get('/health', async (req, res) => {
+    try {
+      const startTime = Date.now();
+      
+      // Test database connectivity
+      await storage.getEmployees();
+      const dbResponseTime = Date.now() - startTime;
+      
+      // Check data integrity
+      const isDataValid = await BackupService.validateDataIntegrity();
+      
+      const healthStatus = {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        database: {
+          connected: true,
+          responseTime: `${dbResponseTime}ms`
+        },
+        dataIntegrity: isDataValid ? 'valid' : 'warning',
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        environment: process.env.NODE_ENV || 'development'
+      };
+      
+      res.json(healthStatus);
+    } catch (error) {
+      res.status(503).json({
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        error: 'Database connection failed'
+      });
+    }
+  });
+
+  // Manual backup endpoint (protected)
+  apiRouter.post('/backup', async (req, res) => {
+    try {
+      const backupData = await BackupService.createBackup();
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="avp-backup-${new Date().toISOString().split('T')[0]}.json"`);
+      res.send(backupData);
+    } catch (error) {
+      console.error('Manual backup failed:', error);
+      res.status(500).json({ message: 'Backup creation failed' });
     }
   });
 
