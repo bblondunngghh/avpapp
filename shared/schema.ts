@@ -27,8 +27,9 @@ export interface EmployeeWithCashPaid {
 // Employee schema
 export const employees = pgTable("employees", {
   id: serial("id").primaryKey(),
-  key: text("key").notNull().unique(), // This is the key used in dropdown selections
+  key: text("key").notNull().unique(), // Auto-generated from last 4 SSN digits
   fullName: text("full_name").notNull(),
+  ssn: text("ssn"), // Full SSN - you'll add manually
   isActive: boolean("is_active").default(true).notNull(),
   isShiftLeader: boolean("is_shift_leader").default(false).notNull(),
   phone: text("phone"),
