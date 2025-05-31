@@ -347,7 +347,8 @@ export default function AdminPanel() {
     phone: '',
     email: '',
     hireDate: new Date().toISOString().split('T')[0],
-    notes: ''
+    notes: '',
+    ssn: ''
   });
 
   // Check if admin is authenticated
@@ -3402,39 +3403,9 @@ export default function AdminPanel() {
                         <TableCell>{employee.key}</TableCell>
                         <TableCell>
                           {employee.ssn ? (
-                            <span className="font-mono text-sm">***-**-{employee.ssn.slice(-4)}</span>
+                            <span className="font-mono text-sm">****{employee.ssn.slice(-4)}</span>
                           ) : (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                const ssn = prompt(`Enter SSN for ${employee.fullName} (format: XXX-XX-XXXX):`);
-                                if (ssn && /^\d{3}-\d{2}-\d{4}$/.test(ssn)) {
-                                  fetch(`/api/employees/${employee.id}`, {
-                                    method: 'PATCH',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ ssn })
-                                  })
-                                  .then(res => res.json())
-                                  .then(() => {
-                                    refetchEmployees();
-                                    toast({
-                                      title: "Success",
-                                      description: "SSN updated successfully"
-                                    });
-                                  })
-                                  .catch(err => {
-                                    console.error(err);
-                                    alert("Failed to update SSN");
-                                  });
-                                } else if (ssn) {
-                                  alert("Please enter SSN in format XXX-XX-XXXX");
-                                }
-                              }}
-                              className="text-xs"
-                            >
-                              Add SSN
-                            </Button>
+                            <span className="text-gray-400 text-sm">Not set</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -3476,7 +3447,8 @@ export default function AdminPanel() {
                                   phone: employee.phone || '',
                                   email: employee.email || '',
                                   hireDate: employee.hireDate.split('T')[0],
-                                  notes: employee.notes || ''
+                                  notes: employee.notes || '',
+                                  ssn: employee.ssn || ''
                                 });
                                 // Set editing ID
                                 setEditingEmployeeId(employee.id);
@@ -3817,6 +3789,24 @@ export default function AdminPanel() {
                           onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
                         />
                       </div>
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="edit-ssn">Last 4 digits of SSN (optional)</Label>
+                      <input 
+                        id="edit-ssn"
+                        type="text"
+                        placeholder="e.g., 1234"
+                        maxLength={4}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={newEmployee.ssn || ''}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                          if (value.length <= 4) {
+                            setNewEmployee({...newEmployee, ssn: value});
+                          }
+                        }}
+                      />
                     </div>
                     
                     <div className="grid gap-2">
