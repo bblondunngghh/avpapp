@@ -27,6 +27,16 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
   const employeeKey = employeeRecord.key?.toLowerCase().trim();
   const employeeFullName = employeeRecord.fullName?.toLowerCase().trim();
   
+  // Debug logging for Ryan specifically
+  if (employeeRecord.fullName === 'Ryan Hocevar' || shiftName === 'ryan') {
+    console.log('Matching attempt:', {
+      shiftName,
+      employeeKey,
+      employeeFullName,
+      employeeRecord
+    });
+  }
+  
   // Primary match: current employee key
   if (shiftName === employeeKey) return true;
   
@@ -35,12 +45,16 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
     const employeeNameParts = employeeFullName.split(/\s+/);
     
     // Check if shift name matches any part of full name (first name, last name, etc.)
-    if (employeeNameParts.some(part => {
+    const match = employeeNameParts.some(part => {
       const partLower = part.toLowerCase().trim();
       return partLower === shiftName || shiftName === partLower;
-    })) {
-      return true;
+    });
+    
+    if (match && (employeeRecord.fullName === 'Ryan Hocevar' || shiftName === 'ryan')) {
+      console.log('Match found for Ryan!', { shiftName, employeeFullName });
     }
+    
+    if (match) return true;
   }
   
   return false;
