@@ -27,34 +27,33 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
   const employeeKey = employeeRecord.key?.toLowerCase().trim();
   const employeeFullName = employeeRecord.fullName?.toLowerCase().trim();
   
-  // Debug logging for Ryan specifically
-  if (employeeRecord.fullName === 'Ryan Hocevar' || shiftName === 'ryan') {
-    console.log('Matching attempt:', {
-      shiftName,
-      employeeKey,
-      employeeFullName,
-      employeeRecord
-    });
-  }
-  
   // Primary match: current employee key
   if (shiftName === employeeKey) return true;
   
-  // Fallback match: check against full name parts for robustness
+  // Fallback match: check against full name parts
   if (employeeFullName) {
     const employeeNameParts = employeeFullName.split(/\s+/);
     
     // Check if shift name matches any part of full name (first name, last name, etc.)
-    const match = employeeNameParts.some(part => {
+    const nameMatch = employeeNameParts.some(part => {
       const partLower = part.toLowerCase().trim();
       return partLower === shiftName;
     });
     
-    if (match && (employeeRecord.fullName === 'Ryan Hocevar' || shiftName === 'ryan')) {
-      console.log('Match found for Ryan!', { shiftName, employeeFullName, match });
+    if (nameMatch) return true;
+  }
+  
+  // Special cases for known employee key changes and variations
+  const specialMatches: Record<string, string[]> = {
+    'ryan hocevar': ['ryan', 'rhoce', 'rjhoce'], // Ryan's various keys and name variants
+    // Add other employees with key changes here as needed
+  };
+  
+  if (employeeFullName && specialMatches[employeeFullName]) {
+    const variants = specialMatches[employeeFullName];
+    if (variants.includes(shiftName)) {
+      return true;
     }
-    
-    if (match) return true;
   }
   
   return false;
