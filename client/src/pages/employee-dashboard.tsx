@@ -263,6 +263,9 @@ export default function EmployeeDashboard() {
       // Compare with the employee key (both old "antonio" format and new numeric format like "8366")
       if (emp.name === employeeKey) return true;
       
+      // For Ryan specifically, also check for 'ryan' in the employees array
+      if (employeeName === 'Ryan Hocevar' && emp.name === 'ryan') return true;
+      
       // Also check if the full name matches (case insensitive) for backward compatibility
       if (employeeName && emp.name && typeof emp.name === 'string') {
         const empNameLower = emp.name.toLowerCase();
