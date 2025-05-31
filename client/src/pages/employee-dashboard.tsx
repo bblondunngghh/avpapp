@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getQueryFn, apiRequest } from "@/lib/queryClient";
 import { LOCATIONS } from "@/lib/constants";
+import { matchEmployee } from "@/lib/employee-utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -258,24 +259,11 @@ export default function EmployeeDashboard() {
       return false; // No match if not an array
     }
     
-    // Check if employee worked on this shift - support both keys and fullName matching
+    // Check if employee worked on this shift using robust matching
     return employees.some((emp: any) => {
-      // Compare with the employee key (both old "antonio" format and new numeric format like "8366")
-      if (emp.name === employeeKey) return true;
-      
-      // For Ryan specifically, also check for 'ryan' in the employees array
-      if (employeeName === 'Ryan Hocevar' && emp.name === 'ryan') return true;
-      
-      // Also check if the full name matches (case insensitive) for backward compatibility
-      if (employeeName && emp.name && typeof emp.name === 'string') {
-        const empNameLower = emp.name.toLowerCase();
-        const employeeNameLower = employeeName.toLowerCase();
-        // Check for partial matches (first name or last name)
-        const employeeNameParts = employeeNameLower.split(' ');
-        if (employeeNameParts.some(part => empNameLower.includes(part))) return true;
-      }
-      
-      return false;
+      // Use robust employee matching that handles key changes
+      const employeeRecord = { key: employeeKey, fullName: employeeName };
+      return matchEmployee(emp, employeeRecord);
     });
   });
 
