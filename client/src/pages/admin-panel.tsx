@@ -3386,6 +3386,7 @@ export default function AdminPanel() {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Key</TableHead>
+                      <TableHead>SSN</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Shift Leader</TableHead>
                       <TableHead>Phone</TableHead>
@@ -3399,6 +3400,43 @@ export default function AdminPanel() {
                       <TableRow key={employee.id}>
                         <TableCell className="font-medium">{employee.fullName}</TableCell>
                         <TableCell>{employee.key}</TableCell>
+                        <TableCell>
+                          {employee.ssn ? (
+                            <span className="font-mono text-sm">***-**-{employee.ssn.slice(-4)}</span>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const ssn = prompt(`Enter SSN for ${employee.fullName} (format: XXX-XX-XXXX):`);
+                                if (ssn && /^\d{3}-\d{2}-\d{4}$/.test(ssn)) {
+                                  fetch(`/api/employees/${employee.id}`, {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ ssn })
+                                  })
+                                  .then(res => res.json())
+                                  .then(() => {
+                                    refetchEmployees();
+                                    toast({
+                                      title: "Success",
+                                      description: "SSN updated successfully"
+                                    });
+                                  })
+                                  .catch(err => {
+                                    console.error(err);
+                                    alert("Failed to update SSN");
+                                  });
+                                } else if (ssn) {
+                                  alert("Please enter SSN in format XXX-XX-XXXX");
+                                }
+                              }}
+                              className="text-xs"
+                            >
+                              Add SSN
+                            </Button>
+                          )}
+                        </TableCell>
                         <TableCell>
                           {employee.isActive ? (
                             <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
