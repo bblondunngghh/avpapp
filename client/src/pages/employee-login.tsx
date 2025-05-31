@@ -15,6 +15,7 @@ import { ChevronLeft } from "lucide-react";
 
 const formSchema = z.object({
   employeeId: z.string().min(1, "Please select an employee"),
+  ssn: z.string().length(4, "Please enter the last 4 digits of your SSN"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -34,6 +35,7 @@ export default function EmployeeLogin() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       employeeId: "",
+      ssn: "",
     },
   });
   
@@ -46,6 +48,16 @@ export default function EmployeeLogin() {
       
       if (!selectedEmployee) {
         throw new Error("Selected employee not found");
+      }
+      
+      // Verify SSN (last 4 digits)
+      if (!selectedEmployee.ssn) {
+        throw new Error("SSN not set for this employee. Please contact your administrator.");
+      }
+      
+      const lastFourSSN = selectedEmployee.ssn.slice(-4);
+      if (data.ssn !== lastFourSSN) {
+        throw new Error("Incorrect SSN. Please enter the last 4 digits of your Social Security Number.");
       }
       
       // Store employee info in localStorage for session
@@ -122,6 +134,30 @@ export default function EmployeeLogin() {
                           ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="ssn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last 4 digits of SSN</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Enter last 4 digits"
+                        maxLength={4}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                          field.onChange(value);
+                        }}
+                        disabled={isLoading || employeesLoading}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
