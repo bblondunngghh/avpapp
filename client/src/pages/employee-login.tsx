@@ -129,7 +129,7 @@ export default function EmployeeLogin() {
                           .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName))
                           .map((emp: any) => (
                             <SelectItem key={emp.id} value={emp.id.toString()}>
-                              {emp.fullName} ({emp.key})
+                              {emp.fullName}
                             </SelectItem>
                           ))}
                       </SelectContent>
