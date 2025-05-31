@@ -3,17 +3,18 @@ import { useLocation } from "wouter";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { apiRequest } from "@/lib/queryClient";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft } from "lucide-react";
 
 const formSchema = z.object({
-  key: z.string().min(1, "Employee key is required"),
-  fullName: z.string().min(1, "Your name is required"),
+  employeeId: z.string().min(1, "Please select an employee"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -23,11 +24,16 @@ export default function EmployeeLogin() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
+  // Fetch employees for dropdown
+  const { data: employees = [], isLoading: employeesLoading } = useQuery({
+    queryKey: ["/api/employees"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      key: "",
-      fullName: "",
+      employeeId: "",
     },
   });
   
@@ -35,34 +41,24 @@ export default function EmployeeLogin() {
     setIsLoading(true);
     
     try {
-      console.log("Login attempt with:", data);
+      // Find the selected employee
+      const selectedEmployee = employees.find((emp: any) => emp.id.toString() === data.employeeId);
       
-      // Call the API to verify employee credentials
-      const response = await fetch("/api/employee-login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      
-      console.log("Login response status:", response.status);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Login error:", errorData);
-        throw new Error(errorData.message || "Invalid employee credentials");
+      if (!selectedEmployee) {
+        throw new Error("Selected employee not found");
       }
-      
-      const employee = await response.json();
-      console.log("Login successful:", employee);
       
       // Store employee info in localStorage for session
       localStorage.setItem("employee_authenticated", "true");
-      localStorage.setItem("employee_id", employee.id.toString());
-      localStorage.setItem("employee_name", employee.fullName);
-      localStorage.setItem("employee_key", employee.key);
+      localStorage.setItem("employee_id", selectedEmployee.id.toString());
+      localStorage.setItem("employee_name", selectedEmployee.fullName);
+      localStorage.setItem("employee_key", selectedEmployee.key);
       localStorage.setItem("employee_auth_time", Date.now().toString());
+      
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${selectedEmployee.fullName}!`,
+      });
       
       // Redirect to employee dashboard
       navigate("/employee-dashboard");
@@ -71,7 +67,7 @@ export default function EmployeeLogin() {
       console.error("Login error details:", error);
       toast({
         title: "Login failed",
-        description: error.message || "Invalid employee credentials",
+        description: error.message || "Unable to login",
         variant: "destructive",
       });
     } finally {
@@ -101,38 +97,31 @@ export default function EmployeeLogin() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="key"
+                name="employeeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee Key</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="e.g. antonio, brett, dave"
-                        disabled={isLoading}
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                        spellCheck={false}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="fullName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter your full name (e.g. Antonio Martinez)"
-                        disabled={isLoading}
-                      />
-                    </FormControl>
+                    <FormLabel>Select Your Name</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value}
+                      disabled={isLoading || employeesLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose your name from the list..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {employees
+                          .filter((emp: any) => emp.isActive)
+                          .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName))
+                          .map((emp: any) => (
+                            <SelectItem key={emp.id} value={emp.id.toString()}>
+                              {emp.fullName} ({emp.key})
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -141,9 +130,9 @@ export default function EmployeeLogin() {
               <Button
                 type="submit"
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-                disabled={isLoading}
+                disabled={isLoading || employeesLoading}
               >
-                {isLoading ? "Logging in..." : "Login"}
+                {isLoading ? "Logging in..." : employeesLoading ? "Loading employees..." : "Login"}
               </Button>
             </form>
           </Form>
