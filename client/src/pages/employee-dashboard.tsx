@@ -33,8 +33,7 @@ export default function EmployeeDashboard() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
-  const [newEmployeeKey, setNewEmployeeKey] = useState("");
-  const [isChangingKey, setIsChangingKey] = useState(false);
+
   const [phoneNumber, setPhoneNumber] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [isUpdatingContact, setIsUpdatingContact] = useState(false);
@@ -97,63 +96,7 @@ export default function EmployeeDashboard() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  // Mutation to update employee key
-  const updateEmployeeKeyMutation = useMutation({
-    mutationFn: async (newKey: string) => {
-      try {
-        const response = await apiRequest("POST", `/api/employees/${employeeId}/update-key`, {
-          key: newKey
-        });
-        
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-        
-        const responseText = await response.text();
-        console.log('Raw response:', responseText);
-        
-        if (!responseText.trim()) {
-          // Empty response, treat as success
-          return { key: newKey, success: true };
-        }
-        
-        try {
-          return JSON.parse(responseText);
-        } catch (parseError) {
-          console.error('JSON parse error:', parseError);
-          console.error('Response that failed to parse:', responseText);
-          // If response isn't JSON but request was successful, assume the key was updated
-          return { key: newKey, success: true };
-        }
-      } catch (error) {
-        console.error('Full error in mutation:', error);
-        throw error;
-      }
-    },
-    onSuccess: (updatedEmployee) => {
-      // Update localStorage with new key
-      localStorage.setItem("employee_key", updatedEmployee.key);
-      setNewEmployeeKey("");
-      setIsChangingKey(false);
-      toast({
-        title: "Success",
-        description: "Your login key has been updated successfully!",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/employees"] });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update your login key",
-        variant: "destructive",
-      });
-    },
-  });
+
 
   // Mutation to update contact information
   const updateContactMutation = useMutation({
@@ -181,27 +124,7 @@ export default function EmployeeDashboard() {
     },
   });
 
-  const handleKeyChange = () => {
-    if (!newEmployeeKey.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a new login key",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (newEmployeeKey.length < 3) {
-      toast({
-        title: "Error",
-        description: "Login key must be at least 3 characters long",
-        variant: "destructive",
-      });
-      return;
-    }
 
-    updateEmployeeKeyMutation.mutate(newEmployeeKey.toLowerCase().trim());
-  };
 
   const handleContactUpdate = () => {
     // Basic email validation
@@ -858,7 +781,7 @@ export default function EmployeeDashboard() {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Login Credentials</h3>
+                  <h3 className="text-lg font-medium mb-4">Account Information</h3>
                   <div className="bg-gray-50 p-4 rounded-lg space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -876,62 +799,16 @@ export default function EmployeeDashboard() {
                         </p>
                       </div>
                       <div>
-                        <Label htmlFor="current-key" className="text-sm font-medium">
-                          Current Login Key
+                        <Label className="text-sm font-medium">
+                          Authentication
                         </Label>
-                        <Input
-                          id="current-key"
-                          value={employeeKey || ""}
-                          disabled
-                          className="bg-white"
-                        />
+                        <div className="bg-white p-3 rounded border text-sm text-gray-600">
+                          Login uses SSN verification for security
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Secure authentication with last 4 digits of SSN
+                        </p>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t pt-4">
-                  <h4 className="text-md font-medium mb-3">Change Login Key</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="new-key" className="text-sm font-medium">
-                        New Login Key
-                      </Label>
-                      <Input
-                        id="new-key"
-                        type="text"
-                        placeholder="Enter a new login key (minimum 3 characters)"
-                        value={newEmployeeKey}
-                        onChange={(e) => setNewEmployeeKey(e.target.value)}
-                        className="max-w-md"
-                        disabled={updateEmployeeKeyMutation.isPending}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Your login key should be easy to remember but unique to you
-                      </p>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={handleKeyChange}
-                        disabled={updateEmployeeKeyMutation.isPending || !newEmployeeKey.trim()}
-                        className="bg-indigo-600 hover:bg-indigo-700"
-                      >
-                        {updateEmployeeKeyMutation.isPending ? "Updating..." : "Update Login Key"}
-                      </Button>
-                      
-                      {isChangingKey && (
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setNewEmployeeKey("");
-                            setIsChangingKey(false);
-                          }}
-                          disabled={updateEmployeeKeyMutation.isPending}
-                        >
-                          Cancel
-                        </Button>
-                      )}
                     </div>
                   </div>
                 </div>
