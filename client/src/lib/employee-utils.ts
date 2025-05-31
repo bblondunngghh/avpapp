@@ -35,9 +35,10 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
     const employeeNameParts = employeeFullName.split(/\s+/);
     
     // Check if shift name matches any part of full name (first name, last name, etc.)
-    if (employeeNameParts.some(part => 
-      part.includes(shiftName) || shiftName.includes(part)
-    )) {
+    if (employeeNameParts.some(part => {
+      const partLower = part.toLowerCase().trim();
+      return partLower === shiftName || shiftName === partLower;
+    })) {
       return true;
     }
   }
