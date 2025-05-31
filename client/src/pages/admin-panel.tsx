@@ -3959,9 +3959,24 @@ export default function AdminPanel() {
                       reportEmployees = [];
                     }
                     
-                    return Array.isArray(reportEmployees) && reportEmployees.some((emp: any) => 
-                      emp.name?.toLowerCase() === employee.key?.toLowerCase()
-                    );
+                    return Array.isArray(reportEmployees) && reportEmployees.some((emp: any) => {
+                      // Primary match: current employee key
+                      if (emp.name?.toLowerCase() === employee.key?.toLowerCase()) return true;
+                      
+                      // Fallback match: check against full name parts for robustness
+                      if (employee.fullName && emp.name && typeof emp.name === 'string') {
+                        const empNameLower = emp.name.toLowerCase();
+                        const employeeNameLower = employee.fullName.toLowerCase();
+                        const employeeNameParts = employeeNameLower.split(' ');
+                        
+                        // Check if employee name matches any part of full name
+                        if (employeeNameParts.some(part => empNameLower.includes(part) || part.includes(empNameLower))) {
+                          return true;
+                        }
+                      }
+                      
+                      return false;
+                    });
                   });
 
                   // Calculate totals for this employee
