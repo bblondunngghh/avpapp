@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { formatDateForDisplay } from "@/lib/timezone";
 import { 
   Tabs, TabsContent, TabsList, TabsTrigger 
 } from "@/components/ui/tabs";
@@ -194,21 +195,9 @@ export default function MobileAdminPanel() {
     return locationMap[locationId] || "Unknown";
   };
   
-  // Format date for display
+  // Format date for display using timezone-aware function
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "Unknown";
-    
-    try {
-      // Try to handle multiple date formats
-      const date = new Date(dateStr);
-      return new Intl.DateTimeFormat('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      }).format(date);
-    } catch (e) {
-      return dateStr;
-    }
+    return formatDateForDisplay(dateStr);
   };
   
   // Format currency

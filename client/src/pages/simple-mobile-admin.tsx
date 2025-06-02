@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, RefreshCw } from "lucide-react";
+import { formatDateForDisplay } from "@/lib/timezone";
 
 // Extremely simplified mobile admin panel for iOS compatibility
 export default function SimpleMobileAdmin() {
@@ -59,19 +60,9 @@ export default function SimpleMobileAdmin() {
     navigate("/admin-login");
   };
   
-  // Format date
+  // Format date using timezone-aware function
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "Unknown";
-    try {
-      const date = new Date(dateStr);
-      return new Intl.DateTimeFormat('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      }).format(date);
-    } catch (e) {
-      return dateStr;
-    }
+    return formatDateForDisplay(dateStr);
   };
   
   // Format currency
