@@ -104,14 +104,29 @@ export const locations = pgTable("locations", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
   active: boolean("active").notNull().default(true),
+  curbsideRate: doublePrecision("curbside_rate").notNull().default(15), // Rate charged to customer per car
+  turnInRate: doublePrecision("turn_in_rate").notNull().default(11), // Amount turned in to company per car
+  employeeCommission: doublePrecision("employee_commission").notNull().default(4), // Commission paid to employees per car
 });
 
 export const insertLocationSchema = createInsertSchema(locations).pick({
   name: true,
   active: true,
+  curbsideRate: true,
+  turnInRate: true,
+  employeeCommission: true,
 });
 
+export const updateLocationSchema = createInsertSchema(locations).pick({
+  name: true,
+  active: true,
+  curbsideRate: true,
+  turnInRate: true,
+  employeeCommission: true,
+}).partial();
+
 export type InsertLocation = z.infer<typeof insertLocationSchema>;
+export type UpdateLocation = z.infer<typeof updateLocationSchema>;
 export type Location = typeof locations.$inferSelect;
 
 // Shift report schema

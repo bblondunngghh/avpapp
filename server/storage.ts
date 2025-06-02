@@ -1,7 +1,7 @@
 import { 
   users, type User, type InsertUser, 
   employees, type Employee, type InsertEmployee, type UpdateEmployee,
-  locations, type Location, type InsertLocation,
+  locations, type Location, type InsertLocation, type UpdateLocation,
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
   ticketDistributions, type TicketDistribution, type InsertTicketDistribution, type UpdateTicketDistribution,
   employeeTaxPayments, type EmployeeTaxPayment, type InsertEmployeeTaxPayment, type UpdateEmployeeTaxPayment,
@@ -35,6 +35,8 @@ export interface IStorage {
   getLocation(id: number): Promise<Location | undefined>;
   getLocationByName(name: string): Promise<Location | undefined>;
   createLocation(location: InsertLocation): Promise<Location>;
+  updateLocation(id: number, location: UpdateLocation): Promise<Location | undefined>;
+  deleteLocation(id: number): Promise<boolean>;
   
   // Shift report methods
   getShiftReports(): Promise<ShiftReport[]>;
@@ -268,10 +270,31 @@ export class MemStorage implements IStorage {
     const location: Location = { 
       ...insertLocation, 
       id,
-      active: insertLocation.active ?? true
+      active: insertLocation.active ?? true,
+      curbsideRate: insertLocation.curbsideRate ?? 15,
+      turnInRate: insertLocation.turnInRate ?? 11,
+      employeeCommission: insertLocation.employeeCommission ?? 4
     };
     this.locations.set(id, location);
     return location;
+  }
+
+  async updateLocation(id: number, locationUpdate: UpdateLocation): Promise<Location | undefined> {
+    const location = this.locations.get(id);
+    if (!location) {
+      return undefined;
+    }
+    
+    const updatedLocation: Location = {
+      ...location,
+      ...locationUpdate
+    };
+    this.locations.set(id, updatedLocation);
+    return updatedLocation;
+  }
+
+  async deleteLocation(id: number): Promise<boolean> {
+    return this.locations.delete(id);
   }
   
   // Shift report methods
