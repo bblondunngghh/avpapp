@@ -443,63 +443,47 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         <div className="form-header-container">
           <h1 className="report-title">Access Valet Parking Shift Report</h1>
           
-          {form.watch('locationId') === 1 ? (
-            <div className="form-header-content">
-              <div className="restaurant-image relative">
-                <img 
-                  src={capitalGrilleImg} 
-                  alt="The Capital Grille" 
-                />
+          {(() => {
+            const currentLocation = locations?.find((loc: any) => loc.id === form.watch('locationId'));
+            if (!currentLocation) {
+              return (
+                <div className="form-header-content">
+                  <div className="restaurant-image relative">
+                    <div className="w-32 h-16 bg-gray-200 rounded flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">No Logo</span>
+                    </div>
+                  </div>
+                  
+                  <div className="address">
+                    Loading location...
+                  </div>
+                </div>
+              );
+            }
+            
+            return (
+              <div className="form-header-content">
+                <div className="restaurant-image relative">
+                  {currentLocation.logoUrl ? (
+                    <img 
+                      src={currentLocation.logoUrl} 
+                      alt={currentLocation.name}
+                      className="max-w-32 max-h-16 object-contain"
+                    />
+                  ) : (
+                    <div className="w-32 h-16 bg-gray-200 rounded flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">No Logo</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="address">
+                  {currentLocation.name}<br />
+                  {currentLocation.address || 'Address not available'}
+                </div>
               </div>
-              
-              <div className="address">
-                The Capital Grille<br />
-                117 W 4th St. Austin, TX 78701
-              </div>
-            </div>
-          ) : form.watch('locationId') === 2 ? (
-            <div className="form-header-content">
-              <div className="restaurant-image relative">
-                <img 
-                  src={bobsImg} 
-                  alt="Bob's Steak and Chop House" 
-                />
-              </div>
-              
-              <div className="address">
-                Bob's Steak and Chop House<br />
-                301 Lavaca St. Austin, TX 78701
-              </div>
-            </div>
-          ) : form.watch('locationId') === 3 ? (
-            <div className="form-header-content">
-              <div className="restaurant-image relative">
-                <img 
-                  src={trulucksImg} 
-                  alt="Truluck's" 
-                />
-              </div>
-              
-              <div className="address">
-                Truluck's<br />
-                400 Colorado St. Austin, TX 78701
-              </div>
-            </div>
-          ) : (
-            <div className="form-header-content">
-              <div className="restaurant-image relative">
-                <img 
-                  src={boaImg} 
-                  alt="BOA Steakhouse" 
-                />
-              </div>
-              
-              <div className="address">
-                BOA Steakhouse<br />
-                300 W 6th St. Austin, TX 78701
-              </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </div>
       <Form {...form}>
