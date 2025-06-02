@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { formatDateForDisplay } from "@/lib/timezone";
+import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 import { 
   Tabs, TabsContent, TabsList, TabsTrigger 
 } from "@/components/ui/tabs";
@@ -840,6 +840,8 @@ export default function MobileAdminPanel() {
               {(() => {
                 // Calculate weekly hours for each employee
                 const weeklyHours = {};
+                
+                // Get current week bounds using timezone-aware parsing
                 const today = new Date();
                 const currentWeekStart = new Date(today);
                 currentWeekStart.setDate(today.getDate() - today.getDay());
@@ -848,35 +850,72 @@ export default function MobileAdminPanel() {
                 currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
                 currentWeekEnd.setHours(23, 59, 59, 999);
 
+                console.log('Mobile Hours Debug - Week range:', {
+                  start: currentWeekStart.toLocaleDateString(),
+                  end: currentWeekEnd.toLocaleDateString(),
+                  reportsCount: reports.length
+                });
+
                 // Calculate hours from shift reports
                 reports.forEach((report) => {
-                  const reportDate = new Date(report.date);
+                  // Use timezone-aware date parsing
+                  const reportDate = parseReportDate(report.date);
+                  
+                  console.log('Mobile Hours Debug - Report:', {
+                    reportId: report.id,
+                    date: report.date,
+                    parsedDate: reportDate.toLocaleDateString(),
+                    inWeek: reportDate >= currentWeekStart && reportDate <= currentWeekEnd
+                  });
+                  
                   if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
                     // Parse employees field which contains JSON string
-                    let employees = [];
+                    let reportEmployees = [];
                     try {
-                      employees = typeof report.employees === 'string' ? JSON.parse(report.employees) : report.employees || [];
+                      if (typeof report.employees === 'string') {
+                        reportEmployees = JSON.parse(report.employees);
+                      } else if (Array.isArray(report.employees)) {
+                        reportEmployees = report.employees;
+                      }
                     } catch (e) {
-                      employees = [];
+                      console.warn('Mobile Hours Debug - Failed to parse employees:', e);
+                      reportEmployees = [];
                     }
                     
-                    if (Array.isArray(employees)) {
-                      employees.forEach((empHour) => {
-                        if (!weeklyHours[empHour.name]) {
-                          weeklyHours[empHour.name] = { totalHours: 0 };
+                    console.log('Mobile Hours Debug - Report employees:', reportEmployees);
+                    
+                    if (Array.isArray(reportEmployees)) {
+                      reportEmployees.forEach((empHour) => {
+                        const empName = empHour.name;
+                        const empHours = Number(empHour.hours) || 0;
+                        
+                        if (empName) {
+                          if (!weeklyHours[empName]) {
+                            weeklyHours[empName] = { totalHours: 0 };
+                          }
+                          weeklyHours[empName].totalHours += empHours;
+                          
+                          console.log('Mobile Hours Debug - Added hours:', {
+                            employee: empName,
+                            hours: empHours,
+                            newTotal: weeklyHours[empName].totalHours
+                          });
                         }
-                        weeklyHours[empHour.name].totalHours += empHour.hours || 0;
                       });
                     }
                   }
                 });
 
-                // Add employees with 0 hours
-                employees.forEach((emp) => {
-                  if (!weeklyHours[emp.fullName]) {
-                    weeklyHours[emp.fullName] = { totalHours: 0 };
-                  }
-                });
+                // Add employees with 0 hours (from global employees list)
+                if (Array.isArray(employees)) {
+                  employees.forEach((emp) => {
+                    if (!weeklyHours[emp.fullName]) {
+                      weeklyHours[emp.fullName] = { totalHours: 0 };
+                    }
+                  });
+                }
+
+                console.log('Mobile Hours Debug - Final weekly hours:', weeklyHours);
 
                 const hoursEntries = Object.entries(weeklyHours).sort((a, b) => b[1].totalHours - a[1].totalHours);
 
