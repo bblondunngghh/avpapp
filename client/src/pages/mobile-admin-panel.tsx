@@ -849,31 +849,10 @@ export default function MobileAdminPanel() {
                 const currentWeekEnd = new Date(currentWeekStart);
                 currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
                 currentWeekEnd.setHours(23, 59, 59, 999);
-                
-                // If no reports in current week, expand to last 30 days for mobile compatibility
-                const hasCurrentWeekReports = reports.some(report => {
-                  const reportDate = parseReportDate(report.date);
-                  return reportDate >= currentWeekStart && reportDate <= currentWeekEnd;
-                });
-                
-                let effectiveStart = currentWeekStart;
-                let effectiveEnd = currentWeekEnd;
-                let timeLabel = "This week";
-                
-                if (!hasCurrentWeekReports) {
-                  // Expand to last 30 days if no current week data
-                  effectiveStart = new Date(today);
-                  effectiveStart.setDate(today.getDate() - 30);
-                  effectiveStart.setHours(0, 0, 0, 0);
-                  effectiveEnd = new Date(today);
-                  effectiveEnd.setHours(23, 59, 59, 999);
-                  timeLabel = "Last 30 days";
-                }
 
-                console.log('Mobile Hours Debug - Date range:', {
-                  start: effectiveStart.toLocaleDateString(),
-                  end: effectiveEnd.toLocaleDateString(),
-                  timeLabel: timeLabel,
+                console.log('Mobile Hours Debug - Week range:', {
+                  start: currentWeekStart.toLocaleDateString(),
+                  end: currentWeekEnd.toLocaleDateString(),
                   reportsCount: reports.length
                 });
 
@@ -886,10 +865,10 @@ export default function MobileAdminPanel() {
                     reportId: report.id,
                     date: report.date,
                     parsedDate: reportDate.toLocaleDateString(),
-                    inRange: reportDate >= effectiveStart && reportDate <= effectiveEnd
+                    inWeek: reportDate >= currentWeekStart && reportDate <= currentWeekEnd
                   });
                   
-                  if (reportDate >= effectiveStart && reportDate <= effectiveEnd) {
+                  if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
                     // Parse employees field which contains JSON string
                     let reportEmployees = [];
                     try {
@@ -948,7 +927,7 @@ export default function MobileAdminPanel() {
                       <div key={name} className="border rounded p-3 flex justify-between items-center">
                         <div>
                           <p className="font-medium">{name}</p>
-                          <p className="text-sm text-gray-500">{timeLabel}</p>
+                          <p className="text-sm text-gray-500">This week</p>
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className="text-lg font-bold">{data.totalHours}h</span>
