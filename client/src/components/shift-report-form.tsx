@@ -18,7 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft, Plus } from "lucide-react";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
-import { SHIFT_OPTIONS, LOCATIONS, LOCATION_ID_MAP } from "@/lib/constants";
+import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
 import RestaurantIcon from "@/components/restaurant-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCurrentDateCentral } from "@/lib/timezone";
@@ -81,13 +81,19 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const locationIdParam = searchParams.get('locationId');
   
+  // Fetch locations from API
+  const { data: locations } = useQuery({
+    queryKey: ["/api/locations"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
   // Set the locationId from URL parameters or default to first location
-  const initialLocationId = locationIdParam ? parseInt(locationIdParam) : 1;
+  const initialLocationId = locationIdParam ? parseInt(locationIdParam) : (locations?.[0]?.id || 1);
   const [selectedLocationId, setSelectedLocationId] = useState(initialLocationId);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Find location name
-  const locationName = LOCATIONS.find(loc => loc.id === selectedLocationId)?.name || '';
+  const locationName = locations?.find((loc: any) => loc.id === selectedLocationId)?.name || '';
   
   // Setup form with zod validation
   const form = useForm<FormValues>({

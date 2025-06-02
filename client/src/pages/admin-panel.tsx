@@ -1273,9 +1273,13 @@ export default function AdminPanel() {
     doc.save("employee-payroll.pdf");
   };
 
-  // Get location name by ID
+  // Get location name by ID using dynamic locations data
   const getLocationName = (locationId: number) => {
-    return LOCATIONS.find(loc => loc.id === locationId)?.name || "Unknown";
+    const { data: locations } = useQuery({
+      queryKey: ["/api/locations"],
+      queryFn: getQueryFn({ on401: "returnNull" }),
+    });
+    return locations?.find((loc: any) => loc.id === locationId)?.name || "Unknown";
   };
 
   return (
