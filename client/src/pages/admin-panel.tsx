@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { employeeWorkedInShift, findEmployeeInShift } from "@/lib/employee-utils";
+import { formatDateForDisplay } from "@/lib/timezone";
 import { 
   Tabs, 
   TabsContent, 

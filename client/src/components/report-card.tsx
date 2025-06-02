@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { format, parseISO } from "date-fns";
 import { Edit, Trash2, CircleDollarSign, Calendar, Clock, Car, CreditCard, Receipt, User } from "lucide-react";
+import { formatDateForDisplay } from "@/lib/timezone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -64,39 +65,8 @@ export default function ReportCard({
   // Find location name
   const location = LOCATIONS.find(loc => loc.id === locationId)?.name || 'Unknown Location';
   
-  // Format date display - avoid timezone issues
-  let formattedDate = date;
-  try {
-    // Handle different date formats safely without timezone conversion
-    if (date.includes('-')) {
-      const parts = date.split('-');
-      let dateObj;
-      // Check if it's MM-DD-YYYY or YYYY-MM-DD format
-      if (parts[0].length === 4) {
-        // YYYY-MM-DD format
-        const [year, month, day] = parts;
-        dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      } else {
-        // MM-DD-YYYY format
-        const [month, day, year] = parts;
-        dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      }
-      
-      // Validate the parsed date
-      if (!isNaN(dateObj.getTime()) && dateObj.getFullYear() >= 2020 && dateObj.getFullYear() <= 2030) {
-        formattedDate = format(dateObj, 'MMM d, yyyy');
-      }
-    } else if (date.includes('/')) {
-      // Handle M/D/YYYY format
-      const parts = date.split('/');
-      const dateObj = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
-      if (!isNaN(dateObj.getTime()) && dateObj.getFullYear() >= 2020 && dateObj.getFullYear() <= 2030) {
-        formattedDate = format(dateObj, 'MMM d, yyyy');
-      }
-    }
-  } catch (error) {
-    // If date parsing fails, use the original date string
-  }
+  // Format date display with proper timezone handling
+  const formattedDate = formatDateForDisplay(date);
   
   // Format createdAt date
   let formattedCreatedAt = '';
