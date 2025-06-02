@@ -977,7 +977,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 <div className="font-bold text-blue-800 text-[14px]">
                   ${(() => {
                     const selectedLocationId = form.watch('locationId');
-                    // Get the turn-in rate based on location
+                    // Get the turn-in rate based on location using hybrid system
                     let turnInRate = 11; // Default to Capital Grille rate
                     if (selectedLocationId === 2) { // Bob's Steak and Chop House
                       turnInRate = 6;
@@ -985,6 +985,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       turnInRate = 8;
                     } else if (selectedLocationId === 4) { // BOA Steakhouse
                       turnInRate = 7;
+                    } else if (selectedLocationId >= 5) {
+                      // Use dynamic turn-in rates for new locations (ID 5+)
+                      const location = locations?.find((loc: any) => loc.id === selectedLocationId);
+                      turnInRate = location?.turnInRate || 11;
                     }
                     return (totalCars * turnInRate).toFixed(2);
                   })()}
