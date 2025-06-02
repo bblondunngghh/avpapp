@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { employeeWorkedInShift, findEmployeeInShift } from "@/lib/employee-utils";
-import { formatDateForDisplay } from "@/lib/timezone";
+import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 import { 
   Tabs, 
   TabsContent, 
@@ -481,30 +481,7 @@ export default function AdminPanel() {
       // Process each report
       filteredReports.forEach(report => {
         // Parse date correctly to avoid timezone issues
-        let reportDate;
-        try {
-          if (report.date.includes('-')) {
-            const parts = report.date.split('-');
-            // Check if it's MM-DD-YYYY or YYYY-MM-DD format
-            if (parts[0].length === 4) {
-              // YYYY-MM-DD format
-              const [year, month, day] = parts;
-              reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-            } else {
-              // MM-DD-YYYY format
-              const [month, day, year] = parts;
-              reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-            }
-          } else if (report.date.includes('/')) {
-            const parts = report.date.split('/');
-            // M/D/YYYY format
-            reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
-          } else {
-            reportDate = new Date(report.date);
-          }
-        } catch {
-          reportDate = new Date(report.date);
-        }
+        const reportDate = parseReportDate(report.date);
         
         const month = reportDate.getMonth(); // 0-11
         const dayOfWeek = reportDate.getDay(); // 0-6
@@ -1402,7 +1379,7 @@ export default function AdminPanel() {
               currentWeekEnd.setHours(23, 59, 59, 999);
 
               reports.forEach((report: any) => {
-                const reportDate = new Date(report.date);
+                const reportDate = parseReportDate(report.date);
                 if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
                   let employees = [];
                   try {
@@ -4317,30 +4294,7 @@ export default function AdminPanel() {
                 // Process reports for current week
                 reports.forEach((report: any) => {
                   // Parse date correctly to avoid timezone issues
-                  let reportDate;
-                  try {
-                    if (report.date.includes('-')) {
-                      const parts = report.date.split('-');
-                      // Check if it's MM-DD-YYYY or YYYY-MM-DD format
-                      if (parts[0].length === 4) {
-                        // YYYY-MM-DD format
-                        const [year, month, day] = parts;
-                        reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                      } else {
-                        // MM-DD-YYYY format
-                        const [month, day, year] = parts;
-                        reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                      }
-                    } else if (report.date.includes('/')) {
-                      const parts = report.date.split('/');
-                      // MM/DD/YYYY format
-                      reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
-                    } else {
-                      reportDate = new Date(report.date);
-                    }
-                  } catch {
-                    reportDate = new Date(report.date);
-                  }
+                  const reportDate = parseReportDate(report.date);
                   
                   if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
                     let reportEmployees = [];

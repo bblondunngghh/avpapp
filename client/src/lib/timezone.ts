@@ -89,3 +89,47 @@ export function getCurrentTimeCentral(): Date {
   const now = new Date();
   return new Date(now.toLocaleString("en-US", { timeZone: CENTRAL_TIMEZONE }));
 }
+
+/**
+ * Parse any date string to a consistent Date object
+ * This function handles various date formats safely
+ */
+export function parseReportDate(dateString: string): Date {
+  if (!dateString) return new Date();
+  
+  try {
+    // Handle YYYY-MM-DD format
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+    
+    // Handle MM-DD-YYYY format
+    if (dateString.match(/^\d{2}-\d{2}-\d{4}$/)) {
+      const [month, day, year] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+    
+    // Handle M/D/YYYY format
+    if (dateString.includes('/')) {
+      const parts = dateString.split('/');
+      if (parts.length === 3) {
+        const month = parseInt(parts[0]);
+        const day = parseInt(parts[1]);
+        const year = parseInt(parts[2]);
+        return new Date(year, month - 1, day);
+      }
+    }
+    
+    // Fallback to standard Date parsing
+    const date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+      return date;
+    }
+    
+    return new Date();
+  } catch (error) {
+    console.error('Date parsing error:', error);
+    return new Date();
+  }
+}
