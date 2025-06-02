@@ -314,11 +314,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalReceiptSales: values.totalReceiptSales || 0,
       totalCashCollected: values.totalCashCollected || 0,
       companyCashTurnIn: values.companyCashTurnIn || 0,
-      totalTurnIn: values.totalTurnIn || (values.totalCars * (
-        values.locationId === 2 ? 6 : 
-        values.locationId === 3 ? 8 : 
-        values.locationId === 4 ? 7 : 11
-      )),
+      totalTurnIn: values.totalTurnIn || (values.totalCars * (() => {
+        // Use hardcoded rates for original locations (IDs 1-4)
+        if (values.locationId === 1) return 11; // Capital Grille
+        if (values.locationId === 2) return 6;  // Bob's Steak
+        if (values.locationId === 3) return 8;  // Truluck's
+        if (values.locationId === 4) return 7;  // BOA Steakhouse
+        
+        // Use dynamic rates for new locations (ID 5+)
+        return locations?.find((loc: any) => loc.id === values.locationId)?.turnInRate || 11;
+      })()),
       overShort: values.overShort || 0
     };
     
