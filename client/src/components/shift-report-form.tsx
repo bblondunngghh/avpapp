@@ -904,19 +904,36 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 mt-2">
-                    {form.watch("locationId") === 4 ? (
-                      <>
-                        <div>• Cash: $13 per cash car - cash collected (BOA rate)</div>
-                        <div>• Credit: $13 per transaction - credit sales</div>
-                        <div>• Receipt: $3 per receipt</div>
-                      </>
-                    ) : (
-                      <>
-                        <div>• Cash: $15 per cash car - cash collected</div>
-                        <div>• Credit: $15 per transaction - credit sales</div>
-                        <div>• Receipt: $3 per receipt</div>
-                      </>
-                    )}
+                    {(() => {
+                      const locationId = form.watch("locationId");
+                      if (locationId === 4) {
+                        return (
+                          <>
+                            <div>• Cash: $13 per cash car - cash collected (BOA rate)</div>
+                            <div>• Credit: $13 per transaction - credit sales</div>
+                            <div>• Receipt: $3 per receipt</div>
+                          </>
+                        );
+                      } else if (locationId >= 5) {
+                        const location = locations?.find((loc: any) => loc.id === locationId);
+                        const rate = location?.curbsideRate || 15;
+                        return (
+                          <>
+                            <div>• Cash: ${rate} per cash car - cash collected (dynamic rate)</div>
+                            <div>• Credit: ${rate} per transaction - credit sales</div>
+                            <div>• Receipt: $3 per receipt</div>
+                          </>
+                        );
+                      } else {
+                        return (
+                          <>
+                            <div>• Cash: $15 per cash car - cash collected</div>
+                            <div>• Credit: $15 per transaction - credit sales</div>
+                            <div>• Receipt: $3 per receipt</div>
+                          </>
+                        );
+                      }
+                    })()}
                   </div>
                 </div>
               </div>
