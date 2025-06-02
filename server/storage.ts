@@ -811,6 +811,30 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Failed to create location");
     }
   }
+
+  async updateLocation(id: number, locationData: UpdateLocation): Promise<Location | undefined> {
+    try {
+      const [location] = await db
+        .update(locations)
+        .set(locationData)
+        .where(eq(locations.id, id))
+        .returning();
+      return location || undefined;
+    } catch (error) {
+      console.error("Error updating location:", error);
+      throw new Error("Failed to update location");
+    }
+  }
+
+  async deleteLocation(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(locations).where(eq(locations.id, id)).returning();
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting location:", error);
+      throw new Error("Failed to delete location");
+    }
+  }
   
   async getShiftReports(): Promise<ShiftReport[]> {
     try {

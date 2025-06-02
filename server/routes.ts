@@ -15,12 +15,15 @@ import {
   updatePermitSchema,
   insertIncidentReportSchema,
   insertTrainingAcknowledgmentSchema,
+  insertLocationSchema,
+  updateLocationSchema,
   ShiftReport,
   TicketDistribution,
   Employee,
   EmployeeTaxPayment,
   Permit,
-  TrainingAcknowledgment
+  TrainingAcknowledgment,
+  Location
 } from "@shared/schema";
 import { z } from "zod";
 import { 
@@ -43,6 +46,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(locations);
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch locations' });
+    }
+  });
+
+  // Get specific location
+  apiRouter.get('/locations/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const location = await storage.getLocation(id);
+      if (!location) {
+        return res.status(404).json({ message: 'Location not found' });
+      }
+      res.json(location);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch location' });
+    }
+  });
+
+  // Create new location
+  apiRouter.post('/locations', async (req, res) => {
+    try {
+      const parsed = insertLocationSchema.parse(req.body);
+      const location = await storage.createLocation(parsed);
+      res.status(201).json(location);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid location data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to create location' });
+    }
+  });
+
+  // Update location
+  apiRouter.put('/locations/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const parsed = updateLocationSchema.parse(req.body);
+      const location = await storage.updateLocation(id, parsed);
+      if (!location) {
+        return res.status(404).json({ message: 'Location not found' });
+      }
+      res.json(location);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid location data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to update location' });
+    }
+  });
+
+  // Delete location
+  apiRouter.delete('/locations/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteLocation(id);
+      if (!success) {
+        return res.status(404).json({ message: 'Location not found' });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete location' });
     }
   });
   

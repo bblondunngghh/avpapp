@@ -1414,6 +1414,10 @@ export default function AdminPanel() {
             <Activity className="h-4 w-4 mr-2" />
             Incident Reports
           </TabsTrigger>
+          <TabsTrigger value="location-management" className="flex-shrink-0 flex items-center">
+            <MapPin className="h-4 w-4 mr-2" />
+            Location Management
+          </TabsTrigger>
         </TabsList>
         
 
@@ -4665,6 +4669,301 @@ export default function AdminPanel() {
                         </TableBody>
                       </Table>
                     </div>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Location Management Tab */}
+        <TabsContent value="location-management">
+          <Card>
+            <CardHeader>
+              <CardTitle>Location Management</CardTitle>
+              <CardDescription>
+                Configure location rates and settings for each restaurant
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                const { data: locations, isLoading: locationsLoading, refetch: refetchLocations } = useQuery({
+                  queryKey: ["/api/locations"],
+                  queryFn: getQueryFn({ on401: "returnNull" }),
+                });
+
+                const [editingLocation, setEditingLocation] = useState<any>(null);
+                const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+                const createLocationMutation = useMutation({
+                  mutationFn: async (locationData: any) => {
+                    const res = await apiRequest("POST", "/api/locations", locationData);
+                    return await res.json();
+                  },
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
+                    setIsDialogOpen(false);
+                    setEditingLocation(null);
+                    toast({
+                      title: "Success",
+                      description: "Location created successfully",
+                    });
+                  },
+                  onError: (error: any) => {
+                    toast({
+                      title: "Error",
+                      description: "Failed to create location",
+                      variant: "destructive",
+                    });
+                  },
+                });
+
+                const updateLocationMutation = useMutation({
+                  mutationFn: async ({ id, ...locationData }: any) => {
+                    const res = await apiRequest("PUT", `/api/locations/${id}`, locationData);
+                    return await res.json();
+                  },
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
+                    setIsDialogOpen(false);
+                    setEditingLocation(null);
+                    toast({
+                      title: "Success",
+                      description: "Location updated successfully",
+                    });
+                  },
+                  onError: (error: any) => {
+                    toast({
+                      title: "Error", 
+                      description: "Failed to update location",
+                      variant: "destructive",
+                    });
+                  },
+                });
+
+                const deleteLocationMutation = useMutation({
+                  mutationFn: async (id: number) => {
+                    await apiRequest("DELETE", `/api/locations/${id}`);
+                  },
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
+                    toast({
+                      title: "Success",
+                      description: "Location deleted successfully",
+                    });
+                  },
+                  onError: (error: any) => {
+                    toast({
+                      title: "Error",
+                      description: "Failed to delete location",
+                      variant: "destructive",
+                    });
+                  },
+                });
+
+                const handleSubmit = (formData: any) => {
+                  if (editingLocation) {
+                    updateLocationMutation.mutate({ id: editingLocation.id, ...formData });
+                  } else {
+                    createLocationMutation.mutate(formData);
+                  }
+                };
+
+                if (locationsLoading) {
+                  return <div className="text-center py-8">Loading locations...</div>;
+                }
+
+                return (
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex-1 mr-4">
+                        <div className="flex items-center gap-3">
+                          <MapPin className="h-5 w-5 text-blue-600" />
+                          <div>
+                            <h4 className="font-medium text-blue-900">Total Locations: {locations?.length || 0}</h4>
+                            <p className="text-sm text-blue-700">Manage rates and settings for each restaurant location</p>
+                          </div>
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={() => {
+                          setEditingLocation(null);
+                          setIsDialogOpen(true);
+                        }}
+                        className="flex items-center gap-2"
+                      >
+                        <PlusCircle className="h-4 w-4" />
+                        Add Location
+                      </Button>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Location Name</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Curbside Rate</TableHead>
+                            <TableHead>Turn-in Rate</TableHead>
+                            <TableHead>Employee Commission</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {locations?.map((location: any) => (
+                            <TableRow key={location.id}>
+                              <TableCell className="font-medium">{location.name}</TableCell>
+                              <TableCell>
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  location.active 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {location.active ? 'Active' : 'Inactive'}
+                                </span>
+                              </TableCell>
+                              <TableCell>${location.curbsideRate}</TableCell>
+                              <TableCell>${location.turnInRate}</TableCell>
+                              <TableCell>${location.employeeCommission}</TableCell>
+                              <TableCell>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setEditingLocation(location);
+                                      setIsDialogOpen(true);
+                                    }}
+                                  >
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => {
+                                      if (confirm(`Are you sure you want to delete ${location.name}? This action cannot be undone.`)) {
+                                        deleteLocationMutation.mutate(location.id);
+                                      }
+                                    }}
+                                  >
+                                    Delete
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+
+                    {/* Location Form Dialog */}
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>
+                            {editingLocation ? 'Edit Location' : 'Add New Location'}
+                          </DialogTitle>
+                          <DialogDescription>
+                            Configure the rates and settings for this location
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.target as HTMLFormElement);
+                            const locationData = {
+                              name: formData.get('name'),
+                              active: formData.get('active') === 'true',
+                              curbsideRate: parseFloat(formData.get('curbsideRate') as string),
+                              turnInRate: parseFloat(formData.get('turnInRate') as string),
+                              employeeCommission: parseFloat(formData.get('employeeCommission') as string),
+                            };
+                            handleSubmit(locationData);
+                          }}
+                          className="space-y-4"
+                        >
+                          <div>
+                            <Label htmlFor="name">Location Name</Label>
+                            <input
+                              id="name"
+                              name="name"
+                              type="text"
+                              defaultValue={editingLocation?.name || ''}
+                              required
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="active">Status</Label>
+                            <Select name="active" defaultValue={editingLocation?.active ? 'true' : 'true'}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="true">Active</SelectItem>
+                                <SelectItem value="false">Inactive</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="curbsideRate">Curbside Rate ($)</Label>
+                            <input
+                              id="curbsideRate"
+                              name="curbsideRate"
+                              type="number"
+                              step="0.01"
+                              defaultValue={editingLocation?.curbsideRate || 15}
+                              required
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <Label htmlFor="turnInRate">Turn-in Rate ($)</Label>
+                            <input
+                              id="turnInRate"
+                              name="turnInRate"
+                              type="number"
+                              step="0.01"
+                              defaultValue={editingLocation?.turnInRate || 11}
+                              required
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <Label htmlFor="employeeCommission">Employee Commission ($)</Label>
+                            <input
+                              id="employeeCommission"
+                              name="employeeCommission"
+                              type="number"
+                              step="0.01"
+                              defaultValue={editingLocation?.employeeCommission || 4}
+                              required
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <DialogFooter>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => setIsDialogOpen(false)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              type="submit"
+                              disabled={createLocationMutation.isPending || updateLocationMutation.isPending}
+                            >
+                              {editingLocation ? 'Update' : 'Create'} Location
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 );
               })()}
