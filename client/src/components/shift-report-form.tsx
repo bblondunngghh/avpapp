@@ -404,25 +404,36 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // Calculate cash cars (total cars - credit card transactions - receipt transactions)
   const cashCars = totalCars - creditTransactions - totalReceipts;
   
-  // Commission calculations - different rates per location
-  let commissionRate = 4; // Default for Capital Grille
+  // Commission calculations - use hybrid rate system
   const currentLocationId = form.watch("locationId");
-  if (currentLocationId === 2) { // Bob's
-    commissionRate = 9;
-  } else if (currentLocationId === 3) { // Truluck's
-    commissionRate = 7;
-  } else if (currentLocationId === 4) { // BOA Steakhouse
-    commissionRate = 6;
-  }
+  let commissionRate = (() => {
+    // Use hardcoded commission rates for original locations (IDs 1-4)
+    if (currentLocationId === 1) return 4; // Capital Grille
+    if (currentLocationId === 2) return 9; // Bob's Steak
+    if (currentLocationId === 3) return 7; // Truluck's
+    if (currentLocationId === 4) return 6; // BOA Steakhouse
+    
+    // Use dynamic commission rates for new locations (ID 5+)
+    return locations?.find((loc: any) => loc.id === currentLocationId)?.employeeCommission || 4;
+  })();
   const creditCardCommission = creditTransactions * commissionRate; 
   const cashCommission = cashCars * commissionRate;
   const receiptCommission = totalReceipts * commissionRate;
   
-  // Tips calculations based on specific formulas explained
-  // For credit card tips: credit transactions * $15/$13 = theoretical revenue
+  // Tips calculations - use hybrid rate system for per-car pricing
+  // For credit card tips: credit transactions * curbside rate = theoretical revenue
   // If theoretical revenue > actual sales, the difference is tips (excess)
   // If actual sales > theoretical revenue, the difference is also tips (shortfall)
-  const perCarPrice = form.watch("locationId") === 4 ? 13 : 15; // BOA uses $13/car, others use $15/car
+  const perCarPrice = (() => {
+    // Use hardcoded curbside rates for original locations (IDs 1-4)
+    if (currentLocationId === 1) return 15; // Capital Grille
+    if (currentLocationId === 2) return 15; // Bob's Steak
+    if (currentLocationId === 3) return 15; // Truluck's
+    if (currentLocationId === 4) return 13; // BOA Steakhouse
+    
+    // Use dynamic curbside rates for new locations (ID 5+)
+    return locations?.find((loc: any) => loc.id === currentLocationId)?.curbsideRate || 15;
+  })();
   const creditCardTransactionsTotal = creditTransactions * perCarPrice;
   const creditCardTips = Math.abs(totalCreditSales - creditCardTransactionsTotal);
                       
