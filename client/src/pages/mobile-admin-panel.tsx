@@ -842,9 +842,11 @@ export default function MobileAdminPanel() {
                 const weeklyHours = {};
                 
                 // Get current week bounds using timezone-aware parsing
+                // Use Central Time for consistent week calculation
                 const today = new Date();
-                const currentWeekStart = new Date(today);
-                currentWeekStart.setDate(today.getDate() - today.getDay());
+                const centralToday = new Date(today.toLocaleString("en-US", { timeZone: "America/Chicago" }));
+                const currentWeekStart = new Date(centralToday);
+                currentWeekStart.setDate(centralToday.getDate() - centralToday.getDay());
                 currentWeekStart.setHours(0, 0, 0, 0);
                 const currentWeekEnd = new Date(currentWeekStart);
                 currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
