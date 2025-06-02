@@ -368,16 +368,18 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const totalCashCollected = Number(form.watch("totalCashCollected") || 0);
   const companyCashTurnIn = Number(form.watch("companyCashTurnIn") || 0);
   
-  // Use different rates based on location 
-  let turnInRate = 11; // Default for Capital Grille
+  // Use hybrid rate system: hardcoded for original locations, dynamic for new ones
   const currentLocation = Number(form.watch("locationId"));
-  if (currentLocation === 2) { // Bob's
-    turnInRate = 6;
-  } else if (currentLocation === 3) { // Truluck's
-    turnInRate = 8;
-  } else if (currentLocation === 4) { // BOA
-    turnInRate = 7;
-  }
+  let turnInRate = (() => {
+    // Use hardcoded rates for original locations (IDs 1-4)
+    if (currentLocation === 1) return 11; // Capital Grille
+    if (currentLocation === 2) return 6;  // Bob's Steak
+    if (currentLocation === 3) return 8;  // Truluck's
+    if (currentLocation === 4) return 7;  // BOA Steakhouse
+    
+    // Use dynamic rates for new locations (ID 5+)
+    return locations?.find((loc: any) => loc.id === currentLocation)?.turnInRate || 11;
+  })();
   const totalTurnIn = totalCars * turnInRate;
   
   // Get total receipt sales
