@@ -861,25 +861,37 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 mt-2">
-                    {form.watch("locationId") === 3 ? (
-                      <>
-                        <div>• Cash: $7 per cash car (Truluck's rate)</div>
-                        <div>• Credit: $7 per card transaction</div>
-                        <div>• Receipt: $7 per receipt</div>
-                      </>
-                    ) : form.watch("locationId") === 4 ? (
-                      <>
-                        <div>• Cash: $6 per cash car (BOA Steakhouse rate)</div>
-                        <div>• Credit: $6 per card transaction</div>
-                        <div>• Receipt: $6 per receipt</div>
-                      </>
-                    ) : (
-                      <>
-                        <div>• Cash: $4 per cash car</div>
-                        <div>• Credit: $4 per card transaction</div>
-                        <div>• Receipt: $4 per receipt</div>
-                      </>
-                    )}
+                    {(() => {
+                      const locationId = form.watch("locationId");
+                      let rate = 4;
+                      let locationName = "";
+                      
+                      if (locationId === 1) {
+                        rate = 4;
+                        locationName = " (Capital Grille rate)";
+                      } else if (locationId === 2) {
+                        rate = 9;
+                        locationName = " (Bob's rate)";
+                      } else if (locationId === 3) {
+                        rate = 7;
+                        locationName = " (Truluck's rate)";
+                      } else if (locationId === 4) {
+                        rate = 6;
+                        locationName = " (BOA Steakhouse rate)";
+                      } else if (locationId >= 5) {
+                        const location = locations?.find((loc: any) => loc.id === locationId);
+                        rate = location?.employeeCommission || 4;
+                        locationName = " (dynamic rate)";
+                      }
+                      
+                      return (
+                        <>
+                          <div>• Cash: ${rate} per cash car{locationName}</div>
+                          <div>• Credit: ${rate} per card transaction</div>
+                          <div>• Receipt: ${rate} per receipt</div>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
                 
