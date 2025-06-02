@@ -107,6 +107,10 @@ export const locations = pgTable("locations", {
   curbsideRate: doublePrecision("curbside_rate").notNull().default(15), // Rate charged to customer per car
   turnInRate: doublePrecision("turn_in_rate").notNull().default(11), // Amount turned in to company per car
   employeeCommission: doublePrecision("employee_commission").notNull().default(4), // Commission paid to employees per car
+  logoUrl: text("logo_url"), // URL or path to location's logo image
+  address: text("address"), // Full address of the location
+  phone: text("phone"), // Location phone number
+  website: text("website"), // Location website URL
 });
 
 export const insertLocationSchema = createInsertSchema(locations).pick({
@@ -115,6 +119,10 @@ export const insertLocationSchema = createInsertSchema(locations).pick({
   curbsideRate: true,
   turnInRate: true,
   employeeCommission: true,
+  logoUrl: true,
+  address: true,
+  phone: true,
+  website: true,
 });
 
 export const updateLocationSchema = createInsertSchema(locations).pick({
@@ -123,6 +131,10 @@ export const updateLocationSchema = createInsertSchema(locations).pick({
   curbsideRate: true,
   turnInRate: true,
   employeeCommission: true,
+  logoUrl: true,
+  address: true,
+  phone: true,
+  website: true,
 }).partial();
 
 export type InsertLocation = z.infer<typeof insertLocationSchema>;

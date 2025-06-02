@@ -1273,12 +1273,14 @@ export default function AdminPanel() {
     doc.save("employee-payroll.pdf");
   };
 
+  // Fetch locations at component level
+  const { data: locations } = useQuery({
+    queryKey: ["/api/locations"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
   // Get location name by ID using dynamic locations data
   const getLocationName = (locationId: number) => {
-    const { data: locations } = useQuery({
-      queryKey: ["/api/locations"],
-      queryFn: getQueryFn({ on401: "returnNull" }),
-    });
     return locations?.find((loc: any) => loc.id === locationId)?.name || "Unknown";
   };
 
@@ -4881,6 +4883,10 @@ export default function AdminPanel() {
                               curbsideRate: parseFloat(formData.get('curbsideRate') as string),
                               turnInRate: parseFloat(formData.get('turnInRate') as string),
                               employeeCommission: parseFloat(formData.get('employeeCommission') as string),
+                              logoUrl: formData.get('logoUrl') || null,
+                              address: formData.get('address') || null,
+                              phone: formData.get('phone') || null,
+                              website: formData.get('website') || null,
                             };
                             handleSubmit(locationData);
                           }}
@@ -4946,6 +4952,54 @@ export default function AdminPanel() {
                               step="0.01"
                               defaultValue={editingLocation?.employeeCommission || 4}
                               required
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <Label htmlFor="logoUrl">Logo URL</Label>
+                            <input
+                              id="logoUrl"
+                              name="logoUrl"
+                              type="url"
+                              defaultValue={editingLocation?.logoUrl || ''}
+                              placeholder="https://example.com/logo.png"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <Label htmlFor="address">Address</Label>
+                            <textarea
+                              id="address"
+                              name="address"
+                              defaultValue={editingLocation?.address || ''}
+                              placeholder="Full address including street, city, state, and zip"
+                              rows={3}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <Label htmlFor="phone">Phone Number</Label>
+                            <input
+                              id="phone"
+                              name="phone"
+                              type="tel"
+                              defaultValue={editingLocation?.phone || ''}
+                              placeholder="(555) 123-4567"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <Label htmlFor="website">Website</Label>
+                            <input
+                              id="website"
+                              name="website"
+                              type="url"
+                              defaultValue={editingLocation?.website || ''}
+                              placeholder="https://restaurant-website.com"
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                           </div>
