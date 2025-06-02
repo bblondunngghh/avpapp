@@ -881,7 +881,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       } else if (locationId >= 5) {
                         const location = locations?.find((loc: any) => loc.id === locationId);
                         rate = location?.employeeCommission || 4;
-                        locationName = " (dynamic rate)";
+                        locationName = "";
                       }
                       
                       return (
@@ -931,7 +931,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         const rate = location?.curbsideRate || 15;
                         return (
                           <>
-                            <div>• Cash: ${rate} per cash car - cash collected (dynamic rate)</div>
+                            <div>• Cash: ${rate} per cash car - cash collected</div>
                             <div>• Credit: ${rate} per transaction - credit sales</div>
                             <div>• Receipt: $3 per receipt</div>
                           </>
