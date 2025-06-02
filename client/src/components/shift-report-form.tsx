@@ -610,16 +610,36 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     </FormControl>
                     <div className="flex justify-between text-xs text-gray-600 mt-1">
                       <span>
-                        {form.watch("locationId") === 1 ? "Capital Grille Rate: $11.00 per car" :
-                         form.watch("locationId") === 2 ? "Bob's Steak & Chop House Rate: $6.00 per car" : 
-                         form.watch("locationId") === 3 ? "Truluck's Rate: $8.00 per car" : 
-                         "BOA Steakhouse Rate: $7.00 per car"}
+                        {(() => {
+                          const locationId = form.watch("locationId");
+                          const currentLocation = locations?.find((loc: any) => loc.id === locationId);
+                          
+                          // Use hardcoded rates for original locations
+                          if (locationId === 1) return "Capital Grille Rate: $11.00 per car";
+                          if (locationId === 2) return "Bob's Steak & Chop House Rate: $6.00 per car";
+                          if (locationId === 3) return "Truluck's Rate: $8.00 per car";
+                          if (locationId === 4) return "BOA Steakhouse Rate: $7.00 per car";
+                          
+                          // Use dynamic rates for new locations
+                          if (currentLocation) {
+                            return `${currentLocation.name} Rate: $${currentLocation.turnInRate?.toFixed(2) || '0.00'} per car`;
+                          }
+                          
+                          return "Rate: $0.00 per car";
+                        })()}
                       </span>
-                      <span>Expected Turn-In: ${(totalCars * (
-                        form.watch("locationId") === 2 ? 6 : 
-                        form.watch("locationId") === 3 ? 8 : 
-                        form.watch("locationId") === 4 ? 7 : 11
-                      )).toFixed(2)}</span>
+                      <span>Expected Turn-In: ${(totalCars * (() => {
+                        const locationId = form.watch("locationId");
+                        
+                        // Use hardcoded rates for original locations (IDs 1-4)
+                        if (locationId === 1) return 11; // Capital Grille
+                        if (locationId === 2) return 6;  // Bob's Steak
+                        if (locationId === 3) return 8;  // Truluck's
+                        if (locationId === 4) return 7;  // BOA Steakhouse
+                        
+                        // Use dynamic rates for new locations (ID 5+)
+                        return locations?.find((loc: any) => loc.id === locationId)?.turnInRate || 11;
+                      })()).toFixed(2)}</span>
                     </div>
                     <FormMessage />
                   </FormItem>
