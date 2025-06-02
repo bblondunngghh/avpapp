@@ -491,10 +491,22 @@ export default function MobileAdminPanel() {
         if (report && typeof report === 'object') {
           const locationId = report.locationId;
           if (performance[locationId]) {
-            performance[locationId].totalCars += Number(report.totalCars) || 0;
-            performance[locationId].totalRevenue += Number(report.totalTurnIn) || 0;
+            const cars = Number(report.totalCars) || 0;
+            performance[locationId].totalCars += cars;
             performance[locationId].creditTransactions += Number(report.creditTransactions) || 0;
             performance[locationId].cashTransactions += (Number(report.totalCars) - Number(report.creditTransactions)) || 0;
+            
+            // Calculate revenue based on location-specific rates
+            let revenuePerCar = 11; // Default for Capital Grille
+            if (locationId === 2) { // Bob's Steak & Chop House
+              revenuePerCar = 6;
+            } else if (locationId === 3) { // Truluck's
+              revenuePerCar = 8;
+            } else if (locationId === 4) { // BOA Steakhouse
+              revenuePerCar = 7;
+            }
+            
+            performance[locationId].totalRevenue += cars * revenuePerCar;
           }
         }
       });
