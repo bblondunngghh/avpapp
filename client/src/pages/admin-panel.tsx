@@ -4864,7 +4864,7 @@ export default function AdminPanel() {
 
                     {/* Location Form Dialog */}
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <DialogContent>
+                      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle>
                             {editingLocation ? 'Edit Location' : 'Add New Location'}
