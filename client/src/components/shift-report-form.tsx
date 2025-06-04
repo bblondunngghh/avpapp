@@ -23,11 +23,10 @@ import RestaurantIcon from "@/components/restaurant-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCurrentDateCentral } from "@/lib/timezone";
 
-// Import restaurant images
-import capitalGrilleImg from "../assets/capital-grille.jpg";
-import bobsImg from "../assets/bobs.jpg";
-import trulucksImg from "../assets/trulucks.jpg";
-import boaImg from "../assets/boa.jpg";
+// Import hardcoded images for original locations
+import capGrilleImage from "@assets/CAP GRILLE image.jpg";
+import bobsImage from "@assets/bobs.jpg";
+import boaImage from "@assets/BOA.jpg";
 
 // Create form schema
 const formSchema = z.object({
@@ -476,14 +475,32 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               );
             }
             
+            // Get hardcoded image for original locations
+            const getLocationImage = (locationId: number) => {
+              switch (locationId) {
+                case 1: // Capital Grille
+                  return capGrilleImage;
+                case 2: // Bob's Steak and Chop House
+                  return bobsImage;
+                case 3: // Truluck's
+                  return null; // No hardcoded image for Truluck's
+                case 4: // BOA Steakhouse
+                  return boaImage;
+                default:
+                  return currentLocation.logoUrl || null;
+              }
+            };
+
+            const locationImage = getLocationImage(currentLocation.id);
+
             return (
               <div className="form-header-content">
                 <div className="restaurant-image relative">
-                  {currentLocation.logoUrl ? (
+                  {locationImage ? (
                     <img 
-                      src={currentLocation.logoUrl} 
+                      src={locationImage} 
                       alt={currentLocation.name}
-                      className="max-w-32 max-h-16 object-contain"
+                      className="w-full h-40 object-cover object-center rounded-lg shadow-lg border border-gray-100"
                     />
                   ) : (
                     <div className="w-32 h-16 bg-gray-200 rounded flex items-center justify-center">
