@@ -475,7 +475,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               );
             }
             
-            // Get hardcoded image for original locations
+            // Get hardcoded image and address for original locations
             const getLocationImage = (locationId: number) => {
               switch (locationId) {
                 case 1: // Capital Grille
@@ -491,7 +491,23 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               }
             };
 
+            const getLocationAddress = (locationId: number) => {
+              switch (locationId) {
+                case 1: // Capital Grille
+                  return "5340 Belt Line Rd\nDallas, TX 75254\n(972) 770-4300";
+                case 2: // Bob's Steak and Chop House
+                  return "4300 Lemmon Ave\nDallas, TX 75219\n(214) 528-9446";
+                case 3: // Truluck's
+                  return "2401 McKinney Ave\nDallas, TX 75201\n(214) 220-2401";
+                case 4: // BOA Steakhouse
+                  return "4322 Lemmon Ave\nDallas, TX 75219\n(214) 219-2782";
+                default:
+                  return currentLocation.address || 'Address not available';
+              }
+            };
+
             const locationImage = getLocationImage(currentLocation.id);
+            const locationAddress = getLocationAddress(currentLocation.id);
 
             return (
               <div className="form-header-content">
@@ -511,7 +527,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 
                 <div className="address">
                   {currentLocation.name}<br />
-                  {currentLocation.address || 'Address not available'}
+                  {locationAddress.split('\n').map((line, index) => (
+                    <span key={index}>
+                      {line}
+                      {index < locationAddress.split('\n').length - 1 && <br />}
+                    </span>
+                  ))}
                 </div>
               </div>
             );
