@@ -34,10 +34,43 @@ import {
 } from "./csv-upload";
 import { sendIncidentNotification, type IncidentEmailData } from "./email";
 import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configure multer for image uploads
+  const storage_config = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadDir = './uploads/locations';
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      const timestamp = Date.now();
+      const ext = path.extname(file.originalname);
+      cb(null, `location-${timestamp}${ext}`);
+    }
+  });
+
+  const upload = multer({ 
+    storage: storage_config,
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image files are allowed'));
+      }
+    },
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  });
+
   // Create API routes
   const apiRouter = express.Router();
+  
+  // Serve uploaded files
+  app.use('/uploads', express.static('./uploads'));
   
   // Get all locations
   apiRouter.get('/locations', async (req, res) => {
@@ -106,6 +139,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: 'Failed to delete location' });
+    }
+  });
+
+  // Upload location image
+  apiRouter.post('/locations/upload-image', upload.single('image'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No image file provided' });
+      }
+      
+      const imageUrl = `/uploads/locations/${req.file.filename}`;
+      res.json({ imageUrl });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to upload image' });
     }
   });
   
@@ -1014,14 +1061,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Setup multer for file uploads
-  const upload = multer({ 
+  // Setup multer for incident file uploads
+  const incidentUpload = multer({ 
     storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
   });
 
   // Incident report submission endpoint
-  apiRouter.post('/incident-reports', upload.array('photos', 10), async (req, res) => {
+  apiRouter.post('/incident-reports', incidentUpload.array('photos', 10), async (req, res) => {
     try {
       console.log('Incident report submission received');
       console.log('Request body:', req.body);

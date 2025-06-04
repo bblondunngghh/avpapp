@@ -4700,6 +4700,9 @@ export default function AdminPanel() {
 
                 const [editingLocation, setEditingLocation] = useState<any>(null);
                 const [isDialogOpen, setIsDialogOpen] = useState(false);
+                const [selectedFile, setSelectedFile] = useState<File | null>(null);
+                const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+                const [isUploading, setIsUploading] = useState(false);
 
                 const createLocationMutation = useMutation({
                   mutationFn: async (locationData: any) => {
@@ -4767,12 +4770,73 @@ export default function AdminPanel() {
                   },
                 });
 
-                const handleSubmit = (formData: any) => {
-                  if (editingLocation) {
-                    updateLocationMutation.mutate({ id: editingLocation.id, ...formData });
-                  } else {
-                    createLocationMutation.mutate(formData);
+                const uploadImage = async (file: File): Promise<string | null> => {
+                  const formData = new FormData();
+                  formData.append('image', file);
+                  
+                  try {
+                    setIsUploading(true);
+                    const response = await fetch('/api/locations/upload-image', {
+                      method: 'POST',
+                      body: formData,
+                    });
+                    
+                    if (!response.ok) {
+                      throw new Error('Upload failed');
+                    }
+                    
+                    const result = await response.json();
+                    return result.imageUrl;
+                  } catch (error) {
+                    toast({
+                      title: "Upload Error",
+                      description: "Failed to upload image",
+                      variant: "destructive",
+                    });
+                    return null;
+                  } finally {
+                    setIsUploading(false);
                   }
+                };
+
+                const handleSubmit = async (formData: any) => {
+                  let logoUrl = formData.logoUrl;
+                  
+                  // If a new file is selected, upload it first
+                  if (selectedFile) {
+                    logoUrl = await uploadImage(selectedFile);
+                    if (!logoUrl) return; // Upload failed, don't proceed
+                  }
+                  
+                  const locationData = { ...formData, logoUrl };
+                  
+                  if (editingLocation) {
+                    updateLocationMutation.mutate({ id: editingLocation.id, ...locationData });
+                  } else {
+                    createLocationMutation.mutate(locationData);
+                  }
+                };
+
+                const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.type.startsWith('image/')) {
+                      setSelectedFile(file);
+                      const previewUrl = URL.createObjectURL(file);
+                      setUploadedImageUrl(previewUrl);
+                    } else {
+                      toast({
+                        title: "Invalid File",
+                        description: "Please select an image file",
+                        variant: "destructive",
+                      });
+                    }
+                  }
+                };
+
+                const resetFileUpload = () => {
+                  setSelectedFile(null);
+                  setUploadedImageUrl(null);
                 };
 
                 if (locationsLoading) {
@@ -4957,14 +5021,32 @@ export default function AdminPanel() {
                           </div>
 
                           <div>
-                            <Label htmlFor="logoUrl">Logo URL</Label>
+                            <Label htmlFor="logoFile">Logo Image</Label>
+                            <div className="space-y-2">
+                              <input
+                                id="logoFile"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                              {(uploadedImageUrl || editingLocation?.logoUrl) && (
+                                <div className="mt-2">
+                                  <img 
+                                    src={uploadedImageUrl || editingLocation?.logoUrl} 
+                                    alt="Logo preview" 
+                                    className="max-w-32 max-h-16 object-contain border rounded"
+                                  />
+                                </div>
+                              )}
+                              {isUploading && (
+                                <p className="text-sm text-blue-600">Uploading image...</p>
+                              )}
+                            </div>
                             <input
-                              id="logoUrl"
+                              type="hidden"
                               name="logoUrl"
-                              type="url"
-                              defaultValue={editingLocation?.logoUrl || ''}
-                              placeholder="https://example.com/logo.png"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              value={uploadedImageUrl || editingLocation?.logoUrl || ''}
                             />
                           </div>
 
