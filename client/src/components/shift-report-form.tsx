@@ -483,7 +483,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 case 2: // Bob's Steak and Chop House
                   return bobsImage;
                 case 3: // Truluck's
-                  return null; // No hardcoded image for Truluck's
+                  return currentLocation.logoUrl || null; // Use database logoUrl for Truluck's
                 case 4: // BOA Steakhouse
                   return boaImage;
                 default:
