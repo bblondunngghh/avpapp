@@ -494,13 +494,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             const getLocationAddress = (locationId: number) => {
               switch (locationId) {
                 case 1: // Capital Grille
-                  return "5340 Belt Line Rd\nDallas, TX 75254\n(972) 770-4300";
+                  return currentLocation.address || 'Address not available';
                 case 2: // Bob's Steak and Chop House
-                  return "4300 Lemmon Ave\nDallas, TX 75219\n(214) 528-9446";
+                  return currentLocation.address || 'Address not available';
                 case 3: // Truluck's
-                  return "2401 McKinney Ave\nDallas, TX 75201\n(214) 220-2401";
+                  return currentLocation.address || 'Address not available';
                 case 4: // BOA Steakhouse
-                  return "4322 Lemmon Ave\nDallas, TX 75219\n(214) 219-2782";
+                  return currentLocation.address || 'Address not available';
                 default:
                   return currentLocation.address || 'Address not available';
               }
