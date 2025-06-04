@@ -4713,6 +4713,7 @@ export default function AdminPanel() {
                     queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
                     setIsDialogOpen(false);
                     setEditingLocation(null);
+                    resetFileUpload();
                     toast({
                       title: "Success",
                       description: "Location created successfully",
@@ -4736,6 +4737,7 @@ export default function AdminPanel() {
                     queryClient.invalidateQueries({ queryKey: ["/api/locations"] });
                     setIsDialogOpen(false);
                     setEditingLocation(null);
+                    resetFileUpload();
                     toast({
                       title: "Success",
                       description: "Location updated successfully",
@@ -4858,6 +4860,7 @@ export default function AdminPanel() {
                       <Button 
                         onClick={() => {
                           setEditingLocation(null);
+                          resetFileUpload();
                           setIsDialogOpen(true);
                         }}
                         className="flex items-center gap-2"
@@ -4902,6 +4905,7 @@ export default function AdminPanel() {
                                     size="sm"
                                     onClick={() => {
                                       setEditingLocation(location);
+                                      resetFileUpload();
                                       setIsDialogOpen(true);
                                     }}
                                   >
@@ -4938,7 +4942,7 @@ export default function AdminPanel() {
                           </DialogDescription>
                         </DialogHeader>
                         <form
-                          onSubmit={(e) => {
+                          onSubmit={async (e) => {
                             e.preventDefault();
                             const formData = new FormData(e.target as HTMLFormElement);
                             const locationData = {
@@ -4952,7 +4956,11 @@ export default function AdminPanel() {
                               phone: formData.get('phone') || null,
                               website: formData.get('website') || null,
                             };
-                            handleSubmit(locationData);
+                            await handleSubmit(locationData);
+                            if (!selectedFile || uploadedImageUrl) {
+                              setIsDialogOpen(false);
+                              resetFileUpload();
+                            }
                           }}
                           className="space-y-4"
                         >
@@ -5090,7 +5098,10 @@ export default function AdminPanel() {
                             <Button
                               type="button"
                               variant="outline"
-                              onClick={() => setIsDialogOpen(false)}
+                              onClick={() => {
+                                setIsDialogOpen(false);
+                                resetFileUpload();
+                              }}
                             >
                               Cancel
                             </Button>
