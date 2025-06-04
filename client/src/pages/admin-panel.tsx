@@ -1966,6 +1966,8 @@ export default function AdminPanel() {
                         <TableHead className="text-right">Money Owed</TableHead>
                         <TableHead className="text-right">Total Earnings</TableHead>
                         <TableHead className="text-right">Est. Taxes (22%)</TableHead>
+                        <TableHead className="text-right">Cash Paid</TableHead>
+                        <TableHead className="text-right">Tax Balance</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
