@@ -4064,7 +4064,8 @@ export default function AdminPanel() {
 
                       // Tax calculations
                       const tax = empEarnings * 0.22;
-                      const additionalTaxPayments = Math.max(0, tax - moneyOwed);
+                      const cashPaid = Number(employeeData.cashPaid || 0);
+                      const additionalTaxPayments = cashPaid; // Use actual cash paid amount
 
                       totalEarnings += empEarnings;
                       totalTax += tax;
@@ -4074,7 +4075,7 @@ export default function AdminPanel() {
                     }
                   });
 
-                  const moneyOwedAfterTax = Math.max(0, totalTax - totalAdditionalTaxPayments);
+                  const moneyOwedAfterTax = Math.max(0, totalTax - totalMoneyOwed - totalAdditionalTaxPayments);
                   
                   // Calculate totals for commission and tips separately
                   let totalCommissionOnly = 0;
