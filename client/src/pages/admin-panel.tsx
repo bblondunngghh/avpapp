@@ -4052,10 +4052,8 @@ export default function AdminPanel() {
                       if (locationId === 4) { // BOA uses $13
                         perCarPrice = 13;
                       } else if (locationId >= 5) { // New locations use dynamic rates
-                        // For new locations, we need to fetch the curbside rate from locations data
-                        // Since we don't have locations data here, we'll use 15 as default
-                        // This should be improved to fetch actual location data
-                        perCarPrice = 15;
+                        const currentLocation = locations?.find((loc: any) => loc.id === locationId);
+                        perCarPrice = currentLocation?.curbsideRate || 15;
                       }
                       
                       const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);

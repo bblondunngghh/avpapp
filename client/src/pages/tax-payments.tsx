@@ -282,11 +282,19 @@ export default function AccountantPage() {
       
       if (!employeeData) return 0;
 
-      // Calculate tips based on actual shift report logic
+      // Calculate tips based on actual shift report logic with correct per-car rates
       const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
       
-      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
-      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+      // Use correct per-car pricing based on location
+      let perCarPrice = 15; // Default rate
+      if (report.locationId === 4) { // BOA uses $13
+        perCarPrice = 13;
+      } else if (report.locationId >= 5) { // New locations use dynamic rates - would need locations data
+        perCarPrice = 15; // Default for now since we don't have locations data in this component
+      }
+      
+      const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+      const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
       const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
       const totalTips = creditCardTips + cashTips + receiptTips;
 
