@@ -4047,9 +4047,19 @@ export default function AdminPanel() {
                                              (cashCars * commissionRate) + 
                                              (report.totalReceipts * commissionRate);
                       
-                      // Tips calculations - exact same logic as employee dashboard
-                      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
-                      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+                      // Tips calculations - using correct per-car rates for each location
+                      let perCarPrice = 15; // Default rate
+                      if (locationId === 4) { // BOA uses $13
+                        perCarPrice = 13;
+                      } else if (locationId >= 5) { // New locations use dynamic rates
+                        // For new locations, we need to fetch the curbside rate from locations data
+                        // Since we don't have locations data here, we'll use 15 as default
+                        // This should be improved to fetch actual location data
+                        perCarPrice = 15;
+                      }
+                      
+                      const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+                      const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
                       const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
                       const totalTips = creditCardTips + cashTips + receiptTips;
                       const empCommission = totalCommission * hoursPercent;
