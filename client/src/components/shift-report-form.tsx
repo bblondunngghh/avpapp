@@ -295,7 +295,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     // Make sure employees array is properly included
     const employees = (values.employees || []).map(employee => ({
       name: employee.name || '',
-      hours: employee.hours || 0
+      hours: employee.hours || 0,
+      cashPaid: employee.cashPaid || 0
     }));
     
     // Ensure all required fields are included and preserve date format
