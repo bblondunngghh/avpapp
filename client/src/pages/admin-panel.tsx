@@ -973,8 +973,17 @@ export default function AdminPanel() {
       const receiptCommission = report.totalReceipts * commissionRate;
       
       // Tips calculations
-      const creditCardTips = Math.abs(report.creditTransactions * (report.locationId === 4 ? 13 : report.locationId >= 5 ? (locations?.find((loc: any) => loc.id === report.locationId)?.curbsideRate || 15) : 15) - report.totalCreditSales);
-      const cashTips = Math.abs(cashCars * (report.locationId === 4 ? 13 : report.locationId >= 5 ? (locations?.find((loc: any) => loc.id === report.locationId)?.curbsideRate || 15) : 15) - (report.totalCashCollected - report.companyCashTurnIn));
+      // Get correct per-car rate for this location
+      let perCarPrice = 15; // Default rate
+      if (report.locationId === 4) { // BOA uses $13
+        perCarPrice = 13;
+      } else if (report.locationId >= 5) { // New locations use dynamic rates
+        const currentLocation = locations?.find((loc: any) => loc.id === report.locationId);
+        perCarPrice = currentLocation?.curbsideRate || 15;
+      }
+      
+      const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+      const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
       const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
       
       // Process each employee in the report
@@ -1151,9 +1160,17 @@ export default function AdminPanel() {
       const cashCommission = cashCars * commissionRate;
       const receiptCommission = report.totalReceipts * commissionRate;
       
-      // Tips calculations
-      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
-      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+      // Tips calculations - using correct per-car rates for each location
+      let perCarPrice = 15; // Default rate
+      if (report.locationId === 4) { // BOA uses $13
+        perCarPrice = 13;
+      } else if (report.locationId >= 5) { // New locations use dynamic rates
+        const currentLocation = locations?.find((loc: any) => loc.id === report.locationId);
+        perCarPrice = currentLocation?.curbsideRate || 15;
+      }
+      
+      const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+      const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
       const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
       
       // Process each employee in the report
@@ -4122,9 +4139,17 @@ export default function AdminPanel() {
                                              (cashCars * commissionRate) + 
                                              (report.totalReceipts * commissionRate);
                       
-                      // Tips calculations
-                      const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
-                      const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+                      // Tips calculations - using correct per-car rates for each location
+                      let perCarPrice = 15; // Default rate
+                      if (report.locationId === 4) { // BOA uses $13
+                        perCarPrice = 13;
+                      } else if (report.locationId >= 5) { // New locations use dynamic rates
+                        const currentLocation = locations?.find((loc: any) => loc.id === report.locationId);
+                        perCarPrice = currentLocation?.curbsideRate || 15;
+                      }
+                      
+                      const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+                      const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
                       const receiptTips = report.totalReceipts * 3;
                       const totalTips = creditCardTips + cashTips + receiptTips;
 
