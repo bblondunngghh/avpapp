@@ -205,6 +205,7 @@ export default function AdminPanel() {
     totalCommission: number;
     totalTips: number;
     totalMoneyOwed: number;
+    totalCashPaid: number;
     reports: number;
     locationId: number;
   }[]>([]);
@@ -624,6 +625,7 @@ export default function AdminPanel() {
         totalCommission: number;
         totalTips: number;
         totalMoneyOwed: number;
+        totalCashPaid: number;
         reports: number;
         locationId: number;
       }>();
@@ -784,6 +786,9 @@ export default function AdminPanel() {
           const employeeTips = hoursPercent * totalTips;
           const employeeTotalEarnings = employeeCommission + employeeTips;
           
+          // Get cash paid amount for this employee
+          const employeeCashPaid = Number(employee.cashPaid || 0);
+          
           // Get or create employee stats
           const existingStats = employeeMap.get(employee.name) || {
             name: employee.name,
@@ -792,6 +797,7 @@ export default function AdminPanel() {
             totalCommission: 0,
             totalTips: 0,
             totalMoneyOwed: 0,
+            totalCashPaid: 0,
             reports: 0,
             locationId: report.locationId
           };
@@ -804,6 +810,7 @@ export default function AdminPanel() {
             totalCommission: existingStats.totalCommission + employeeCommission,
             totalTips: existingStats.totalTips + employeeTips,
             totalMoneyOwed: existingStats.totalMoneyOwed + employeeMoneyOwed,
+            totalCashPaid: existingStats.totalCashPaid + employeeCashPaid,
             reports: existingStats.reports + 1,
             locationId: report.locationId // Keep using the most recent location
           });
@@ -1971,28 +1978,42 @@ export default function AdminPanel() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {employeeStats.map((employee) => (
-                        <TableRow key={employee.name}>
-                          <TableCell className="font-medium">
-                            {EMPLOYEE_NAMES[employee.name] || employee.name}
-                          </TableCell>
-                          <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
-                          <TableCell className="text-right">
-                            {LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-'}
-                          </TableCell>
-                          <TableCell className="text-right">${employee.totalCommission.toFixed(2)}</TableCell>
-                          <TableCell className="text-right">${employee.totalTips.toFixed(2)}</TableCell>
-                          <TableCell className="text-right text-blue-700">
-                            ${employee.totalMoneyOwed.toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-right font-medium text-blue-800">
-                            ${employee.totalEarnings.toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-right text-red-700">
-                            ${(employee.totalEarnings * 0.22).toFixed(2)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {employeeStats.map((employee) => {
+                        const estimatedTax = employee.totalEarnings * 0.22;
+                        const cashPaid = employee.totalCashPaid || 0;
+                        const taxBalance = Math.max(0, estimatedTax - employee.totalMoneyOwed - cashPaid);
+                        
+                        return (
+                          <TableRow key={employee.name}>
+                            <TableCell className="font-medium">
+                              {EMPLOYEE_NAMES[employee.name] || employee.name}
+                            </TableCell>
+                            <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
+                            <TableCell className="text-right">
+                              {LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-'}
+                            </TableCell>
+                            <TableCell className="text-right">${employee.totalCommission.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${employee.totalTips.toFixed(2)}</TableCell>
+                            <TableCell className="text-right text-blue-700">
+                              ${employee.totalMoneyOwed.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right font-medium text-blue-800">
+                              ${employee.totalEarnings.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right text-red-700">
+                              ${estimatedTax.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right text-green-700 font-medium">
+                              ${cashPaid.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <span className={taxBalance > 0 ? "text-red-600 font-medium" : "text-green-600"}>
+                                ${taxBalance.toFixed(2)}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 </div>
