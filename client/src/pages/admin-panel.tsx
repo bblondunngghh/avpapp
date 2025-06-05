@@ -4090,7 +4090,9 @@ export default function AdminPanel() {
                       // Tax calculations
                       const tax = empEarnings * 0.22;
                       const cashPaid = Number(employeeData.cashPaid || 0);
-                      const additionalTaxPayments = cashPaid; // Use actual cash paid amount
+                      // Calculate additional tax payment needed (amount beyond what money owed covers)
+                      const taxNotCoveredByMoneyOwed = Math.max(0, tax - moneyOwed);
+                      const additionalTaxPayments = Math.min(cashPaid, taxNotCoveredByMoneyOwed);
 
                       totalEarnings += empEarnings;
                       totalTax += tax;
