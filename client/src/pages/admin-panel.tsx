@@ -135,6 +135,8 @@ export default function AdminPanel() {
   
   // Initial setup - check authentication and adapt UI for mobile
   useEffect(() => {
+    let cleanupFunction: (() => void) | null = null;
+    
     const initializeAdmin = async () => {
       try {
         // Check if we need to adapt UI for mobile
@@ -169,8 +171,8 @@ export default function AdminPanel() {
           window.addEventListener(event, handleUserActivity);
         });
         
-        // Return cleanup function
-        return () => {
+        // Set cleanup function
+        cleanupFunction = () => {
           activityEvents.forEach(event => {
             window.removeEventListener(event, handleUserActivity);
           });
@@ -180,14 +182,14 @@ export default function AdminPanel() {
         console.error("Error in admin panel initialization:", error);
         // If there's an error, redirect to login as a fallback
         navigate("/admin-login");
-        return () => {};
       }
     };
     
-    const cleanup = initializeAdmin();
+    initializeAdmin();
+    
     return () => {
-      if (cleanup instanceof Promise) {
-        cleanup.then(cleanupFn => cleanupFn && cleanupFn());
+      if (cleanupFunction) {
+        cleanupFunction();
       }
     };
   }, [navigate]);
