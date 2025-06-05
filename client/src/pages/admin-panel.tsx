@@ -612,13 +612,13 @@ export default function AdminPanel() {
     setSalesTrendData(salesTrend);
     setReportsByDay(dayReportCounts);
     
-  }, [reports, selectedMonth, selectedLocation]);
+  }, [reports?.length, selectedMonth, selectedLocation]);
   
   // Note: employees data comes directly from the API query above
 
   // Calculate statistics whenever reports or date filters change
   useEffect(() => {
-    if (reports && reports.length > 0) {
+    if (Array.isArray(reports) && reports.length > 0 && Array.isArray(employees)) {
       // Employee statistics
       const employeeMap = new Map<string, {
         name: string;
@@ -837,7 +837,7 @@ export default function AdminPanel() {
       setEmployeeStats(employeeStatsArray);
       setLocationStats(locationStatsArray);
     }
-  }, [reports, selectedMonth]);
+  }, [reports?.length, selectedMonth, employees?.length]);
 
   // Handle logout
   const handleLogout = () => {
