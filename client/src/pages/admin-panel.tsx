@@ -4071,6 +4071,8 @@ export default function AdminPanel() {
                         commissionRate = 7;
                       } else if (locationId === 4) { // BOA
                         commissionRate = 6;
+                      } else if (locationId === 7) { // PPS
+                        commissionRate = 2;
                       }
                       const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
                       
@@ -4082,6 +4084,8 @@ export default function AdminPanel() {
                       let perCarPrice = 15; // Default rate
                       if (locationId === 4) { // BOA uses $13
                         perCarPrice = 13;
+                      } else if (locationId === 7) { // PPS uses $6
+                        perCarPrice = 6;
                       } else if (locationId >= 5) { // New locations use dynamic rates
                         const currentLocation = locations?.find((loc: any) => loc.id === locationId);
                         perCarPrice = currentLocation?.curbsideRate || 15;
