@@ -12,7 +12,7 @@ import Reports from "@/pages/reports";
 import ReportsWrapper from "@/pages/reports-wrapper";
 import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
-import AdminPanel from "@/pages/admin-panel";
+import AdminPanel from "@/pages/admin-panel-clean";
 import MobileAdminPanel from "@/pages/mobile-admin-panel"; // Mobile-friendly version
 import SimpleMobileAdmin from "@/pages/simple-mobile-admin"; // Super-simplified mobile admin for iOS
 import AdminAuthGuard from "@/pages/admin-auth-guard";
