@@ -1430,6 +1430,11 @@ export default function AdminPanel() {
                     weeklyEmployees = [];
                   }
 
+                  // Safety check to ensure weeklyEmployees is an array
+                  if (!Array.isArray(weeklyEmployees)) {
+                    weeklyEmployees = [];
+                  }
+
                   weeklyEmployees.forEach((emp: any) => {
                     if (!weeklyHours[emp.key]) {
                       weeklyHours[emp.key] = { totalHours: 0 };
