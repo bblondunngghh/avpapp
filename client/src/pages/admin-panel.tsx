@@ -104,6 +104,20 @@ function FaultDeterminationSection({ report }: { report: any }) {
           </div>
         )}
         
+        {faultStatus === 'not-at-fault' && (
+          <div>
+            <Label className="text-sm font-medium">Description/Notes</Label>
+            <textarea
+              placeholder="Please provide details about why this is not at fault..."
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 min-h-[80px]"
+              onChange={(e) => {
+                updateIncidentMutation.mutate({ additionalNotes: e.target.value || null });
+              }}
+              defaultValue={report.additionalNotes || ''}
+            />
+          </div>
+        )}
+        
         {faultStatus === 'at-fault' && (
           <div>
             <Label className="text-sm font-medium">Repair Status</Label>
