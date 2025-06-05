@@ -4147,6 +4147,11 @@ export default function AdminPanel() {
                       totalMoneyOwed += moneyOwed;
                       totalAdditionalTaxPayments += additionalTaxPayments;
                       totalHours += employeeData.hours;
+                      
+                      // Track total additional tax payments for June debugging
+                      if (selectedAccountingMonth === '2025-06' && additionalTaxPayments > 0) {
+                        console.log(`June additional tax payment: ${employee.key} - $${additionalTaxPayments} from report ${report.id}`);
+                      }
                     }
                   });
 
