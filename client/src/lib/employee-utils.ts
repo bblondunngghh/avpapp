@@ -2,6 +2,17 @@
  * Utility functions for robust employee matching that survives key changes
  */
 
+/**
+ * Parse date string safely without timezone issues
+ * Prevents dates like "2025-06-01" from being parsed as "2025-05-31" due to timezone conversion
+ * @param dateString - Date string in YYYY-MM-DD format
+ * @returns Date object parsed as local date
+ */
+export function parseLocalDate(dateString: string): Date {
+  const [year, month, day] = dateString.split('-');
+  return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+}
+
 export interface EmployeeRecord {
   key: string;
   fullName: string;
@@ -27,15 +38,7 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
   const employeeKey = employeeRecord.key?.toLowerCase().trim();
   const employeeFullName = employeeRecord.fullName?.toLowerCase().trim();
   
-  // Debug Ryan specifically
-  if (shiftName === 'ryan' || employeeKey === 'ryan') {
-    console.log(`matchEmployee debug for Ryan:`, {
-      shiftName,
-      employeeKey,
-      employeeFullName,
-      match: shiftName === employeeKey
-    });
-  }
+
   
   // Primary match: current employee key
   if (shiftName === employeeKey) return true;

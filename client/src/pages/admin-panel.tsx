@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { employeeWorkedInShift, findEmployeeInShift } from "@/lib/employee-utils";
+import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 import { 
   Tabs, 
@@ -4008,21 +4008,8 @@ export default function AdminPanel() {
                 const employeeAccountingData = employeeRecords.map(employee => {
                   const employeeReports = reports.filter((report: any) => {
                     // Apply month filter first - use timezone-safe date parsing
-                    const [year, month, day] = report.date.split('-');
-                    const reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                    const reportDate = parseLocalDate(report.date);
                     const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
-                    
-                    // Debug report 528 specifically - check before filter
-                    if (report.id === 528) {
-                      console.log(`Report 528 processing (FIXED):`, {
-                        reportId: report.id,
-                        originalDate: report.date,
-                        parsedDate: reportDate.toString(),
-                        reportMonth,
-                        selectedAccountingMonth,
-                        willBeFiltered: selectedAccountingMonth && reportMonth !== selectedAccountingMonth
-                      });
-                    }
                     
                     if (selectedAccountingMonth && reportMonth !== selectedAccountingMonth) {
                       return false;
@@ -4046,16 +4033,7 @@ export default function AdminPanel() {
                     
                     const worked = employeeWorkedInShift(report, employee);
                     
-                    // Debug Ryan and report 528 specifically
-                    if (employee.key === 'ryan' && report.id === 528) {
-                      console.log(`Ryan report 528 filtering:`, {
-                        reportId: report.id,
-                        date: report.date,
-                        employeeKey: employee.key,
-                        worked,
-                        reportEmployees
-                      });
-                    }
+
                     
                     return worked;
                   });
@@ -4154,19 +4132,7 @@ export default function AdminPanel() {
                       // Additional tax payments should be the cash paid when there's a tax shortfall
                       const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? cashPaid : 0;
                       
-                      // Debug logging for all employees with cash payments
-                      if (cashPaid > 0 || employeeData.name === 'antonio' || employeeData.name === 'dave' || employeeData.name === 'kevin' || employeeData.name === 'ryan' || employeeData.name === 'jonathan') {
-                        console.log(`${employeeData.name} Debug:`, {
-                          empEarnings,
-                          tax,
-                          moneyOwed,
-                          shiftReportCashPaid,
-                          taxRecordCashPaid,
-                          cashPaid,
-                          taxNotCoveredByMoneyOwed,
-                          additionalTaxPayments
-                        });
-                      }
+
 
                       totalEarnings += empEarnings;
                       totalTax += tax;
@@ -4174,10 +4140,7 @@ export default function AdminPanel() {
                       totalAdditionalTaxPayments += additionalTaxPayments;
                       totalHours += employeeData.hours;
                       
-                      // Track total additional tax payments for June debugging
-                      if (selectedAccountingMonth === '2025-06' && additionalTaxPayments > 0) {
-                        console.log(`June additional tax payment: ${employee.key} - $${additionalTaxPayments} from report ${report.id}`);
-                      }
+
                     }
                   });
 
