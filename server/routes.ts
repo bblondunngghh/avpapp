@@ -48,24 +48,52 @@ async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
       employees = shiftReport.employees;
     }
 
-    // Process each employee with cash payments
+    // Process ALL employees in the shift report (not just those with cash payments)
     for (const emp of employees) {
-      if (emp.cashPaid && emp.cashPaid > 0) {
-        // Find the employee by name/key
-        const employee = await storage.getEmployeeByKey(emp.name);
-        if (employee) {
-          // Find existing tax payment record for this employee and report
-          const taxPayments = await storage.getEmployeeTaxPayments();
-          const existingTaxPayment = taxPayments.find(tp => 
-            tp.employeeId === employee.id && tp.reportId === shiftReport.id
-          );
+      // Find the employee by name/key
+      const employee = await storage.getEmployeeByKey(emp.name);
+      if (employee) {
+        // Find existing tax payment record for this employee and report
+        const taxPayments = await storage.getEmployeeTaxPayments();
+        const existingTaxPayment = taxPayments.find(tp => 
+          tp.employeeId === employee.id && tp.reportId === shiftReport.id
+        );
 
+        // If employee has cash payment, update or create tax payment record
+        if (emp.cashPaid && emp.cashPaid > 0) {
           if (existingTaxPayment) {
-            // Update the existing tax payment record with cash paid amount
+            // Update existing tax payment record with new cash paid amount (additive)
+            const newPaidAmount = Number(existingTaxPayment.paidAmount) + Number(emp.cashPaid);
             await storage.updateEmployeeTaxPayment(existingTaxPayment.id, {
-              paidAmount: emp.cashPaid,
-              remainingAmount: Math.max(0, existingTaxPayment.taxAmount - emp.cashPaid)
+              paidAmount: newPaidAmount.toString(),
+              remainingAmount: Math.max(0, Number(existingTaxPayment.taxAmount) - newPaidAmount).toString()
             });
+          } else {
+            // Create new tax payment record if none exists
+            // Calculate earnings and tax for this employee
+            const location = await storage.getLocation(shiftReport.locationId);
+            if (location) {
+              const totalHours = employees.reduce((sum, e) => sum + e.hours, 0);
+              const hoursPercent = emp.hours / totalHours;
+              
+              // Calculate commission and tips
+              const totalCommission = shiftReport.totalCars * location.employeeCommission;
+              const totalTips = shiftReport.totalCreditSales * 0.02;
+              const empCommission = totalCommission * hoursPercent;
+              const empTips = totalTips * hoursPercent;
+              const empEarnings = empCommission + empTips;
+              const tax = empEarnings * 0.22;
+              
+              await storage.createEmployeeTaxPayment({
+                employeeId: employee.id,
+                reportId: shiftReport.id,
+                locationId: shiftReport.locationId,
+                totalEarnings: empEarnings.toFixed(2),
+                taxAmount: tax.toFixed(2),
+                paidAmount: emp.cashPaid.toString(),
+                remainingAmount: Math.max(0, tax - emp.cashPaid).toFixed(2)
+              });
+            }
           }
         }
       }
