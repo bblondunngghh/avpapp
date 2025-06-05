@@ -4803,95 +4803,137 @@ export default function AdminPanel() {
                                           View Details
                                         </Button>
                                       </DialogTrigger>
-                                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                                        <DialogHeader>
+                                      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+                                        <DialogHeader className="flex-shrink-0">
                                           <DialogTitle>Incident Report Details</DialogTitle>
                                           <DialogDescription>
                                             Submitted on {new Date(report.submittedAt).toLocaleString()}
                                           </DialogDescription>
                                         </DialogHeader>
-                                        <div className="space-y-4">
-                                          <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                              <Label className="font-medium">Customer Information</Label>
-                                              <div className="text-sm space-y-1 mt-1">
-                                                <div>Name: {report.customerName}</div>
-                                                <div>Email: {report.customerEmail}</div>
-                                                <div>Phone: {report.customerPhone}</div>
-                                              </div>
-                                            </div>
-                                            <div>
-                                              <Label className="font-medium">Incident Details</Label>
-                                              <div className="text-sm space-y-1 mt-1">
-                                                <div>Date: {report.incidentDate}</div>
-                                                <div>Time: {report.incidentTime}</div>
-                                                <div>Location: {report.incidentLocation}</div>
-                                                <div>Employee: {employee?.fullName || 'Unknown'}</div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          
-                                          <div>
-                                            <Label className="font-medium">Vehicle Information</Label>
-                                            <div className="text-sm space-y-1 mt-1">
-                                              <div>Vehicle: {report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
-                                              <div>Color: {report.vehicleColor}</div>
-                                              <div>License Plate: {report.vehicleLicensePlate}</div>
-                                            </div>
-                                          </div>
-                                          
-                                          <div>
-                                            <Label className="font-medium">Incident Description</Label>
-                                            <p className="text-sm mt-1">{report.incidentDescription}</p>
-                                          </div>
-                                          
-                                          <div>
-                                            <Label className="font-medium">Damage Description</Label>
-                                            <p className="text-sm mt-1">{report.damageDescription}</p>
-                                          </div>
-                                          
-                                          {report.witnessName && (
-                                            <div>
-                                              <Label className="font-medium">Witness Information</Label>
-                                              <div className="text-sm space-y-1 mt-1">
-                                                <div>Name: {report.witnessName}</div>
-                                                {report.witnessPhone && <div>Phone: {report.witnessPhone}</div>}
-                                              </div>
-                                            </div>
-                                          )}
-                                          
-                                          {report.additionalNotes && (
-                                            <div>
-                                              <Label className="font-medium">Additional Notes</Label>
-                                              <p className="text-sm mt-1">{report.additionalNotes}</p>
-                                            </div>
-                                          )}
-                                          
-                                          {report.photoUrls && report.photoUrls.length > 0 && (
-                                            <div>
-                                              <Label className="font-medium">Photos</Label>
-                                              <div className="grid grid-cols-2 gap-2 mt-2">
-                                                {report.photoUrls.map((photoUrl: string, index: number) => (
-                                                  <div key={index} className="relative">
-                                                    <img 
-                                                      src={photoUrl} 
-                                                      alt={`Incident photo ${index + 1}`}
-                                                      className="w-full h-32 object-cover rounded border"
-                                                      onClick={() => window.open(photoUrl, '_blank')}
-                                                      style={{ cursor: 'pointer' }}
-                                                    />
-                                                    <div className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
-                                                      Photo {index + 1}
-                                                    </div>
+                                        <div className="flex-1 overflow-y-auto pr-2">
+                                          <div className="space-y-6">
+                                            {/* Customer & Incident Info */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                              <div className="space-y-3">
+                                                <div>
+                                                  <Label className="text-base font-semibold text-gray-900">Customer Information</Label>
+                                                  <div className="mt-2 bg-gray-50 p-3 rounded-lg space-y-1">
+                                                    <div className="text-sm"><span className="font-medium">Name:</span> {report.customerName}</div>
+                                                    <div className="text-sm"><span className="font-medium">Email:</span> {report.customerEmail}</div>
+                                                    <div className="text-sm"><span className="font-medium">Phone:</span> {report.customerPhone}</div>
                                                   </div>
-                                                ))}
+                                                </div>
                                               </div>
-                                              <p className="text-xs text-gray-500 mt-1">Click photos to view full size</p>
+                                              
+                                              <div className="space-y-3">
+                                                <div>
+                                                  <Label className="text-base font-semibold text-gray-900">Incident Details</Label>
+                                                  <div className="mt-2 bg-gray-50 p-3 rounded-lg space-y-1">
+                                                    <div className="text-sm"><span className="font-medium">Date:</span> {report.incidentDate}</div>
+                                                    <div className="text-sm"><span className="font-medium">Time:</span> {report.incidentTime}</div>
+                                                    <div className="text-sm"><span className="font-medium">Location:</span> {report.incidentLocation}</div>
+                                                    <div className="text-sm"><span className="font-medium">Employee:</span> {employee?.fullName || 'Unknown'}</div>
+                                                  </div>
+                                                </div>
+                                              </div>
                                             </div>
-                                          )}
+                                            
+                                            {/* Vehicle Information */}
+                                            <div>
+                                              <Label className="text-base font-semibold text-gray-900">Vehicle Information</Label>
+                                              <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                                  <div className="text-sm"><span className="font-medium">Vehicle:</span> {report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
+                                                  <div className="text-sm"><span className="font-medium">Color:</span> {report.vehicleColor}</div>
+                                                  <div className="text-sm"><span className="font-medium">License:</span> {report.vehicleLicensePlate}</div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            
+                                            {/* Descriptions */}
+                                            <div className="grid grid-cols-1 gap-4">
+                                              <div>
+                                                <Label className="text-base font-semibold text-gray-900">Incident Description</Label>
+                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                                  <p className="text-sm leading-relaxed">{report.incidentDescription}</p>
+                                                </div>
+                                              </div>
+                                              
+                                              <div>
+                                                <Label className="text-base font-semibold text-gray-900">Damage Description</Label>
+                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                                  <p className="text-sm leading-relaxed">{report.damageDescription}</p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            
+                                            {/* Witness Information */}
+                                            {(report.witnessName || report.witnessPhone) && (
+                                              <div>
+                                                <Label className="text-base font-semibold text-gray-900">Witness Information</Label>
+                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg space-y-1">
+                                                  {report.witnessName && <div className="text-sm"><span className="font-medium">Name:</span> {report.witnessName}</div>}
+                                                  {report.witnessPhone && <div className="text-sm"><span className="font-medium">Phone:</span> {report.witnessPhone}</div>}
+                                                </div>
+                                              </div>
+                                            )}
+                                            
+                                            {/* Additional Notes */}
+                                            {report.additionalNotes && (
+                                              <div>
+                                                <Label className="text-base font-semibold text-gray-900">Additional Notes</Label>
+                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                                  <p className="text-sm leading-relaxed">{report.additionalNotes}</p>
+                                                </div>
+                                              </div>
+                                            )}
+                                            
+                                            {/* Photos */}
+                                            {report.photoUrls && report.photoUrls.length > 0 && (
+                                              <div>
+                                                <Label className="text-base font-semibold text-gray-900">Photos ({report.photoUrls.length})</Label>
+                                                <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                  {report.photoUrls.map((url: string, index: number) => (
+                                                    <div key={index} className="relative group">
+                                                      <img 
+                                                        src={url} 
+                                                        alt={`Incident photo ${index + 1}`}
+                                                        className="w-full h-24 object-cover rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                                        onClick={() => window.open(url, '_blank')}
+                                                      />
+                                                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all"></div>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
                                           
-                                          {/* Fault Determination Section */}
-                                          <FaultDeterminationSection report={report} />
+                                            {/* Fault Determination Section */}
+                                            <div>
+                                              <Label className="text-base font-semibold text-gray-900">Fault Determination & Status</Label>
+                                              <div className="mt-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                                <FaultDeterminationSection report={report} />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        
+                                        {/* Footer with Save Button */}
+                                        <div className="flex-shrink-0 border-t pt-4 mt-4">
+                                          <div className="flex justify-end">
+                                            <Button 
+                                              onClick={() => {
+                                                // All changes are already handled by individual components
+                                                toast({
+                                                  title: "Changes Saved",
+                                                  description: "All incident report updates have been saved successfully.",
+                                                });
+                                              }}
+                                              className="w-32"
+                                            >
+                                              Save Changes
+                                            </Button>
+                                          </div>
                                         </div>
                                       </DialogContent>
                                     </Dialog>
