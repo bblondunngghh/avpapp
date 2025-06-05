@@ -4031,7 +4031,20 @@ export default function AdminPanel() {
                       reportEmployees = [];
                     }
                     
-                    return employeeWorkedInShift(report, employee);
+                    const worked = employeeWorkedInShift(report, employee);
+                    
+                    // Debug Ryan and report 528 specifically
+                    if (employee.key === 'ryan' && report.id === 528) {
+                      console.log(`Ryan report 528 filtering:`, {
+                        reportId: report.id,
+                        date: report.date,
+                        employeeKey: employee.key,
+                        worked,
+                        reportEmployees
+                      });
+                    }
+                    
+                    return worked;
                   });
 
                   // Calculate totals for this employee
