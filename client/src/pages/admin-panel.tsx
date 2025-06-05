@@ -227,7 +227,7 @@ export default function AdminPanel() {
     "2025-03": 25411,
     "2025-04": 20974,
     "2025-05": 19431
-  }), []);
+  } as Record<string, number>), []);
   
   // Partner pay history data for table display
   const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
