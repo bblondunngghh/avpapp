@@ -3509,10 +3509,8 @@ export default function AdminPanel() {
                                     });
                                     
                                     if (response.ok) {
-                                      // Remove from local state
-                                      setEmployees(
-                                        employees.filter(e => e.id !== employee.id)
-                                      );
+                                      // Refresh employee data from API
+                                      refetchEmployees();
                                       
                                       // Show success message
                                       alert(`Employee "${employee.fullName}" has been deleted.`);
@@ -3920,8 +3918,8 @@ export default function AdminPanel() {
                           if (response.ok) {
                             const data = await response.json();
                             
-                            // Update local state
-                            setEmployees(employees.map(emp => emp.id === data.id ? data : emp));
+                            // Refresh employee data from API
+                            refetchEmployees();
                             
                             // Close dialog
                             setIsEditEmployeeOpen(false);
@@ -4107,7 +4105,7 @@ export default function AdminPanel() {
                       const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
                       
                       // Find tax payments for this employee and report
-                      const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
+                      const employeeRecord = employees.find((emp: any) => emp.key.toLowerCase() === employee.key.toLowerCase());
                       const employeeTaxPayments = taxPayments.filter((payment: any) => 
                         payment.employeeId === employeeRecord?.id && payment.reportId === report.id
                       );
