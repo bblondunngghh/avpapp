@@ -204,6 +204,8 @@ export default function EmployeeDashboard() {
       commissionRate = 7;
     } else if (locationId === 4) { // BOA
       commissionRate = 6;
+    } else if (locationId === 7) { // PPS
+      commissionRate = 2;
     }
     const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
     
@@ -212,9 +214,12 @@ export default function EmployeeDashboard() {
                            (cashCars * commissionRate) + 
                            (report.totalReceipts * commissionRate);
     
-    // Tips calculations
-    const creditCardTips = Math.abs(report.creditTransactions * 15 - report.totalCreditSales);
-    const cashTips = Math.abs(cashCars * 15 - (report.totalCashCollected - report.companyCashTurnIn));
+    // Tips calculations - use correct tip rates per location
+    let tipRate = 15; // Default for original locations
+    if (locationId === 7) tipRate = 6; // PPS = $6
+    
+    const creditCardTips = Math.abs(report.creditTransactions * tipRate - report.totalCreditSales);
+    const cashTips = Math.abs(cashCars * tipRate - (report.totalCashCollected - report.companyCashTurnIn));
     const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
     const totalTips = creditCardTips + cashTips + receiptTips;
     
@@ -273,8 +278,10 @@ export default function EmployeeDashboard() {
       // Calculate tax obligation
       const tax = empEarnings * 0.22;
       
-      // Additional tax payments = cash needed when money owed doesn't cover full tax obligation
-      const additionalTaxPayments = Math.max(0, tax - moneyOwed);
+      // Additional tax payments = actual cash paid when there's a tax shortfall
+      const taxNotCoveredByMoneyOwed = Math.max(0, tax - moneyOwed);
+      const employeeCashPaid = Number(employeeData.cashPaid || 0);
+      const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? employeeCashPaid : 0;
       
       // Update summary
       summary.totalHours += employeeData.hours;
