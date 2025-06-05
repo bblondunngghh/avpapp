@@ -420,8 +420,8 @@ export default function AdminPanel() {
     if (!Array.isArray(trainingAcknowledgments)) return null;
     const acknowledgment = trainingAcknowledgments.find((ack: any) => 
       ack.employeeName.toLowerCase() === employeeName.toLowerCase()
-    );
-    return acknowledgment ? new Date(acknowledgment.createdAt).toLocaleDateString() : null;
+    ) : null;
+    return acknowledgment ? new Date(acknowledgment.createdAt).toLocaleDateString();
   };
   
   // Update local state whenever API data changes
@@ -528,7 +528,7 @@ export default function AdminPanel() {
         // Add to location distribution
         const locationIndex = locationDistribution.findIndex(loc => 
           loc.name === LOCATIONS.find(l => l.id === report.locationId)?.name
-        );
+        ) : null;
         if (locationIndex !== -1) {
           locationDistribution[locationIndex].value += report.totalCars;
         }
@@ -1820,7 +1820,7 @@ export default function AdminPanel() {
                             </TableCell>
                             <TableCell className="text-right">{submittedDate.toLocaleDateString()}</TableCell>
                           </TableRow>
-                        );
+                        ) : null;
                       })}
                     </TableBody>
                   </Table>
@@ -2041,7 +2041,7 @@ export default function AdminPanel() {
                               </span>
                             </TableCell>
                           </TableRow>
-                        );
+                        ) : null;
                       })}
                     </TableBody>
                   </Table>
@@ -2267,7 +2267,7 @@ export default function AdminPanel() {
                             </div>
                           </div>
                         </div>
-                      );
+                      ) : null;
                     })}
                   </div>
                   
@@ -2788,7 +2788,7 @@ export default function AdminPanel() {
                               <TableCell className={`text-right font-semibold ${textColor}`}>${location.totalIncome.toFixed(2)}</TableCell>
                               <TableCell className="text-right">{location.reports}</TableCell>
                             </TableRow>
-                          );
+                          ) : null;
                         })}
                         {/* Total Row */}
                         <TableRow className="bg-gray-50 dark:bg-gray-800 font-semibold">
@@ -3162,7 +3162,7 @@ export default function AdminPanel() {
                                     const usedTicketsStr = prompt(
                                       `Update used tickets for ${location?.name} (Batch: ${distribution.batchNumber}).\nCurrent used: ${distribution.usedTickets}\nEnter new total:`, 
                                       distribution.usedTickets.toString()
-                                    );
+                                    ) : null;
                                     
                                     if (usedTicketsStr === null) return; // Cancel pressed
                                     
@@ -3205,7 +3205,7 @@ export default function AdminPanel() {
                                           ticketDistributions.map(d => 
                                             d.id === updatedDistribution.id ? updatedDistribution : d
                                           )
-                                        );
+                                        ) : null;
                                         
                                         // Show success message
                                         alert(`Successfully updated used tickets to ${usedTickets}`);
@@ -3240,7 +3240,7 @@ export default function AdminPanel() {
                                           // Remove from local state
                                           setTicketDistributions(
                                             ticketDistributions.filter(d => d.id !== distribution.id)
-                                          );
+                                          ) : null;
                                           
                                           // Show success message
                                           toast({
@@ -3279,7 +3279,7 @@ export default function AdminPanel() {
                               </div>
                             </TableCell>
                           </TableRow>
-                        );
+                        ) : null;
                       })}
                     </TableBody>
                   </Table>
@@ -3306,7 +3306,7 @@ export default function AdminPanel() {
                     // Start adding all employees from EMPLOYEE_NAMES
                     const confirmImport = confirm(
                       "This will add all missing employees from the system that are listed in the EMPLOYEE_NAMES constant. Continue?"
-                    );
+                    ) : null;
                     
                     if (confirmImport) {
                       // Get existing employees
@@ -3345,7 +3345,7 @@ export default function AdminPanel() {
                               },
                               body: JSON.stringify(employee),
                             })
-                          );
+                          ) : null;
                           
                           Promise.allSettled(addPromises)
                             .then(results => {
@@ -4045,15 +4045,15 @@ export default function AdminPanel() {
                         shiftEmployees = report.employees;
                       }
                     } catch (e) {
-                      employees = [];
+                      shiftEmployees = [];
                     }
 
-                    const employeeData = employees.find((emp: any) => 
+                    const employeeData = Array.isArray(shiftEmployees) ? shiftEmployees.find((emp: any) => 
                       emp.name?.toLowerCase() === employee.key?.toLowerCase()
-                    );
+                    ) : null;
 
                     if (employeeData) {
-                      const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
+                      const totalJobHours = report.totalJobHours || Array.isArray(shiftEmployees) ? shiftEmployees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0) : 0;
                       const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
 
                       // Commission calculation - correct rates for each location
@@ -4110,10 +4110,10 @@ export default function AdminPanel() {
                       const employeeRecord = employees.find((emp: any) => emp.key.toLowerCase() === employee.key.toLowerCase());
                       const employeeTaxPayments = taxPayments.filter((payment: any) => 
                         payment.employeeId === employeeRecord?.id && payment.reportId === report.id
-                      );
+                      ) : null;
                       const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
                         sum + Number(payment.paidAmount || 0), 0
-                      );
+                      ) : null;
                       
                       // Use the maximum of shift report cash paid or tax record cash paid
                       const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
@@ -4167,15 +4167,15 @@ export default function AdminPanel() {
                         shiftEmployees = report.employees;
                       }
                     } catch (e) {
-                      employees = [];
+                      shiftEmployees = [];
                     }
 
-                    const employeeData = employees.find((emp: any) => 
+                    const employeeData = Array.isArray(shiftEmployees) ? shiftEmployees.find((emp: any) => 
                       emp.name?.toLowerCase() === employee.key?.toLowerCase()
-                    );
+                    ) : null;
 
                     if (employeeData) {
-                      const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
+                      const totalJobHours = report.totalJobHours || Array.isArray(shiftEmployees) ? shiftEmployees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0) : 0;
                       const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
 
                       // Commission calculation
@@ -4363,7 +4363,7 @@ export default function AdminPanel() {
                       </Card>
                     </div>
                   </div>
-                );
+                ) : null;
               })()}
             </CardContent>
           </Card>
@@ -4433,7 +4433,7 @@ export default function AdminPanel() {
                     if (Array.isArray(reportEmployees)) {
                       reportEmployees.forEach((emp: any) => {
                         // Find employee by name since shift reports store employee.name, not employee.key
-                        const employee = Array.isArray(employees) ? employees.find((e: any) => e.fullName === emp.name || e.key === emp.name) : null;
+                        const employee = Array.isArray(employees) ? employees.find((e: any) => e.fullName === emp.name || e.key === emp.name);
                         if (employee && weeklyHours[employee.key]) {
                           const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
                           weeklyHours[employee.key].weeklyBreakdown[dayName] = (weeklyHours[employee.key].weeklyBreakdown[dayName] || 0) + emp.hours;
@@ -4572,7 +4572,7 @@ export default function AdminPanel() {
                       Current week: {currentWeekStart.toLocaleDateString()} - {currentWeekEnd.toLocaleDateString()}
                     </div>
                   </div>
-                );
+                ) : null;
               })()}
             </CardContent>
           </Card>
@@ -4630,7 +4630,7 @@ export default function AdminPanel() {
                       <h3 className="text-lg font-medium text-gray-900 mb-2">No incident reports</h3>
                       <p className="text-gray-500">No incident reports have been submitted yet.</p>
                     </div>
-                  );
+                  ) : null;
                 }
 
                 return (
@@ -4784,13 +4784,13 @@ export default function AdminPanel() {
                                   </div>
                                 </TableCell>
                               </TableRow>
-                            );
+                            ) : null;
                           })}
                         </TableBody>
                       </Table>
                     </div>
                   </div>
-                );
+                ) : null;
               })()}
             </CardContent>
           </Card>
@@ -5230,7 +5230,7 @@ export default function AdminPanel() {
                       </DialogContent>
                     </Dialog>
                   </div>
-                );
+                ) : null;
               })()}
             </CardContent>
           </Card>
