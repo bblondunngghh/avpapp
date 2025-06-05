@@ -336,8 +336,7 @@ export default function AdminPanel() {
     notes: ''
   });
   
-  // Employee management state
-  const [employees, setEmployees] = useState<EmployeeRecord[]>([]);
+  // Employee management state - using employeeRecords from API instead
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isEditEmployeeOpen, setIsEditEmployeeOpen] = useState(false);
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
@@ -3418,7 +3417,7 @@ export default function AdminPanel() {
             <CardContent>
               {isLoadingEmployees ? (
                 <div className="text-center py-8">Loading employees...</div>
-              ) : employees.length === 0 ? (
+              ) : employeeRecords.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   No employees found. Add an employee to get started.
                 </div>
@@ -3439,7 +3438,7 @@ export default function AdminPanel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {employees.map(employee => (
+                    {employeeRecords.map(employee => (
                       <TableRow key={employee.id}>
                         <TableCell className="font-medium">{employee.fullName}</TableCell>
                         <TableCell>{employee.key}</TableCell>
@@ -3513,10 +3512,8 @@ export default function AdminPanel() {
                                     });
                                     
                                     if (response.ok) {
-                                      // Remove from local state
-                                      setEmployees(
-                                        employees.filter(e => e.id !== employee.id)
-                                      );
+                                      // Refetch employee data
+                                      refetchEmployees();
                                       
                                       // Show success message
                                       alert(`Employee "${employee.fullName}" has been deleted.`);
@@ -3540,13 +3537,13 @@ export default function AdminPanel() {
                     {/* Total employees row */}
                     <TableRow className="bg-muted/50">
                       <TableCell colSpan={2} className="font-medium">
-                        Total Employees: {employees.length}
+                        Total Employees: {employeeRecords.length}
                       </TableCell>
                       <TableCell colSpan={1}>
-                        Active: {employees.filter(e => e.isActive).length}
+                        Active: {employeeRecords.filter(e => e.isActive).length}
                       </TableCell>
                       <TableCell colSpan={1}>
-                        Shift Leaders: {employees.filter(e => e.isShiftLeader).length}
+                        Shift Leaders: {employeeRecords.filter(e => e.isShiftLeader).length}
                       </TableCell>
                       <TableCell colSpan={4}></TableCell>
                     </TableRow>
