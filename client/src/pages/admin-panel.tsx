@@ -760,26 +760,26 @@ export default function AdminPanel() {
         const totalTips = creditCardTips + cashTips + receiptTips;
 
         // Parse employee data from JSON string
-        let employees = [];
+        let reportEmployees = [];
         try {
           if (report.employees && typeof report.employees === 'string') {
-            employees = JSON.parse(report.employees);
+            reportEmployees = JSON.parse(report.employees);
           } else if (Array.isArray(report.employees)) {
-            employees = report.employees;
+            reportEmployees = report.employees;
           }
         } catch (err) {
           console.error("Failed to parse employee data:", err);
-          employees = [];
+          reportEmployees = [];
         }
 
-        // Safety check to ensure employees is an array before using forEach
-        if (!Array.isArray(employees)) {
-          console.warn("employees is not an array, converting to empty array:", employees);
-          employees = [];
+        // Safety check to ensure reportEmployees is an array before using forEach
+        if (!Array.isArray(reportEmployees)) {
+          console.warn("reportEmployees is not an array, converting to empty array:", reportEmployees);
+          reportEmployees = [];
         }
 
         // Process each employee
-        employees.forEach(employee => {
+        reportEmployees.forEach(employee => {
           // Skip employees with no name
           if (!employee.name) return;
           
@@ -1421,23 +1421,25 @@ export default function AdminPanel() {
               reports.forEach((report: any) => {
                 const reportDate = parseReportDate(report.date);
                 if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
-                  let employees = [];
+                  let shiftEmployees = [];
                   try {
                     if (typeof report.employees === 'string') {
-                      employees = JSON.parse(report.employees);
+                      shiftEmployees = JSON.parse(report.employees);
                     } else if (Array.isArray(report.employees)) {
-                      employees = report.employees;
+                      shiftEmployees = report.employees;
                     }
                   } catch (e) {
-                    employees = [];
+                    shiftEmployees = [];
                   }
 
-                  employees.forEach((emp: any) => {
-                    if (!weeklyHours[emp.key]) {
-                      weeklyHours[emp.key] = { totalHours: 0 };
-                    }
-                    weeklyHours[emp.key].totalHours += emp.hours;
-                  });
+                  if (Array.isArray(shiftEmployees)) {
+                    shiftEmployees.forEach((emp: any) => {
+                      if (!weeklyHours[emp.key]) {
+                        weeklyHours[emp.key] = { totalHours: 0 };
+                      }
+                      weeklyHours[emp.key].totalHours += emp.hours;
+                    });
+                  }
                 }
               });
 
