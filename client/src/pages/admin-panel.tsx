@@ -4037,12 +4037,12 @@ export default function AdminPanel() {
                   let totalHours = 0;
 
                   employeeReports.forEach((report: any) => {
-                    let employees = [];
+                    let shiftEmployees = [];
                     try {
                       if (typeof report.employees === 'string') {
-                        employees = JSON.parse(report.employees);
+                        shiftEmployees = JSON.parse(report.employees);
                       } else if (Array.isArray(report.employees)) {
-                        employees = report.employees;
+                        shiftEmployees = report.employees;
                       }
                     } catch (e) {
                       employees = [];
@@ -4159,12 +4159,12 @@ export default function AdminPanel() {
                   let totalTipsOnly = 0;
                   
                   employeeReports.forEach((report: any) => {
-                    let employees = [];
+                    let shiftEmployees = [];
                     try {
                       if (typeof report.employees === 'string') {
-                        employees = JSON.parse(report.employees);
+                        shiftEmployees = JSON.parse(report.employees);
                       } else if (Array.isArray(report.employees)) {
-                        employees = report.employees;
+                        shiftEmployees = report.employees;
                       }
                     } catch (e) {
                       employees = [];
