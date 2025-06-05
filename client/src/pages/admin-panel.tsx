@@ -4128,8 +4128,8 @@ export default function AdminPanel() {
                       // Additional tax payments should be the cash paid when there's a tax shortfall
                       const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? cashPaid : 0;
                       
-                      // Debug logging for all employees
-                      if (employeeData.name === 'antonio' || employeeData.name === 'dave' || employeeData.name === 'brandon') {
+                      // Debug logging for all employees with cash payments
+                      if (cashPaid > 0 || employeeData.name === 'antonio' || employeeData.name === 'dave' || employeeData.name === 'kevin' || employeeData.name === 'ryan' || employeeData.name === 'jonathan') {
                         console.log(`${employeeData.name} Debug:`, {
                           empEarnings,
                           tax,
