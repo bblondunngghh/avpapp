@@ -757,22 +757,20 @@ export default function AdminPanel() {
         const receiptTips = report.totalReceipts * 3;
         const totalTips = creditCardTips + cashTips + receiptTips;
 
-        // Parse employee data from JSON string
+        // Parse employee data from JSON string with robust error handling
         let reportEmployees = [];
         try {
           if (report.employees && typeof report.employees === 'string') {
-            reportEmployees = JSON.parse(report.employees);
+            const parsed = JSON.parse(report.employees);
+            reportEmployees = Array.isArray(parsed) ? parsed : [];
           } else if (Array.isArray(report.employees)) {
             reportEmployees = report.employees;
+          } else if (report.employees) {
+            // Handle unexpected data types by converting to empty array
+            reportEmployees = [];
           }
         } catch (err) {
-          console.error("Failed to parse employee data:", err);
-          reportEmployees = [];
-        }
-
-        // Safety check to ensure reportEmployees is an array before using forEach
-        if (!Array.isArray(reportEmployees)) {
-          console.warn("reportEmployees is not an array, converting to empty array:", reportEmployees);
+          // Silently handle parsing errors to reduce console noise
           reportEmployees = [];
         }
 
