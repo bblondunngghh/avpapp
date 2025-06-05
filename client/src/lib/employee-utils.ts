@@ -27,6 +27,16 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
   const employeeKey = employeeRecord.key?.toLowerCase().trim();
   const employeeFullName = employeeRecord.fullName?.toLowerCase().trim();
   
+  // Debug Ryan specifically
+  if (shiftName === 'ryan' || employeeKey === 'ryan') {
+    console.log(`matchEmployee debug for Ryan:`, {
+      shiftName,
+      employeeKey,
+      employeeFullName,
+      match: shiftName === employeeKey
+    });
+  }
+  
   // Primary match: current employee key
   if (shiftName === employeeKey) return true;
   
