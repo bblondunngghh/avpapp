@@ -499,12 +499,12 @@ export default function AccountantPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[200px]">Employee</TableHead>
-                    <TableHead className="text-right w-[120px]">Commission</TableHead>
-                    <TableHead className="text-right w-[100px]">Tips</TableHead>
-                    <TableHead className="text-right w-[120px]">Money Owed</TableHead>
-                    <TableHead className="text-right w-[100px]">Advance</TableHead>
-                    <TableHead className="text-right w-[100px]">Tax Contribution</TableHead>
+                    <TableHead className="text-center w-[200px]">Employee</TableHead>
+                    <TableHead className="text-center w-[120px]">Commission</TableHead>
+                    <TableHead className="text-center w-[100px]">Tips</TableHead>
+                    <TableHead className="text-center w-[120px]">Money Owed</TableHead>
+                    <TableHead className="text-center w-[100px]">Advance</TableHead>
+                    <TableHead className="text-center w-[100px]">Tax Contribution</TableHead>
                     <TableHead className="text-center w-[120px]">Date</TableHead>
                     <TableHead className="text-center w-[80px]">Actions</TableHead>
                   </TableRow>
@@ -546,22 +546,22 @@ export default function AccountantPage() {
                       
                       return (
                         <TableRow key={`employee-${employee.id}`}>
-                          <TableCell className="font-medium w-[200px]">
+                          <TableCell className="font-medium text-center w-[200px]">
                             {employee.fullName}
                           </TableCell>
-                          <TableCell className="text-right w-[120px]">
+                          <TableCell className="text-center w-[120px]">
                             {formatCurrency(totalCommission)}
                           </TableCell>
-                          <TableCell className="text-right w-[100px]">
+                          <TableCell className="text-center w-[100px]">
                             {formatCurrency(totalTips)}
                           </TableCell>
-                          <TableCell className="text-right w-[120px]">
+                          <TableCell className="text-center w-[120px]">
                             {formatCurrency(totalMoneyOwed)}
                           </TableCell>
-                          <TableCell className="text-right w-[100px]">
+                          <TableCell className="text-center w-[100px]">
                             {formatCurrency(totalAdvance)}
                           </TableCell>
-                          <TableCell className="text-right w-[100px]">
+                          <TableCell className="text-center w-[100px]">
                             {formatCurrency(totalCashPaid)}
                           </TableCell>
                           <TableCell className="text-center w-[120px]">
