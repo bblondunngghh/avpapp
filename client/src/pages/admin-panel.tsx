@@ -4261,21 +4261,8 @@ export default function AdminPanel() {
                         sum + Number(payment.paidAmount || 0), 0
                       );
                       
-                      // Use the maximum of shift report cash paid or tax record cash paid
-                      const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
-                      
-                      // Debug logging for Ryan
-                      if (employee.key.toLowerCase() === 'ryan') {
-                        console.log('Ryan debug:', {
-                          empEarnings,
-                          tax,
-                          moneyOwed,
-                          shiftReportCashPaid,
-                          taxRecordCashPaid,
-                          cashPaid,
-                          hoursPercent
-                        });
-                      }
+                      // Use the sum of shift report cash paid and tax record cash paid for total cash paid
+                      const cashPaid = shiftReportCashPaid + taxRecordCashPaid;
                       
                       // Calculate additional tax payments as cash paid beyond tax obligations
                       // If money owed covers all tax, then any cash paid is additional
