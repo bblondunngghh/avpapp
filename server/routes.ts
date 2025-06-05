@@ -33,7 +33,6 @@ import {
   processTicketDistributionsCSV 
 } from "./csv-upload";
 import { sendIncidentNotification, type IncidentEmailData } from "./email";
-import { CalculationValidator } from "./calculation-validator";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -73,22 +72,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded files
   app.use('/uploads', express.static('./uploads'));
   
-  // Get all locations with fallback
+  // Get all locations
   apiRouter.get('/locations', async (req, res) => {
     try {
       const locations = await storage.getLocations();
       res.json(locations);
     } catch (error) {
-      console.error('Error fetching locations:', error);
-      // Return basic locations as fallback to keep app functional
-      const fallbackLocations = [
-        { id: 1, name: "The Capital Grille", active: true },
-        { id: 2, name: "Bob's Steak & Chop House", active: true },
-        { id: 3, name: "Truluck's", active: true },
-        { id: 4, name: "BOA Steakhouse", active: true },
-        { id: 7, name: "PPS", active: true }
-      ];
-      res.json(fallbackLocations);
+      res.status(500).json({ message: 'Failed to fetch locations' });
     }
   });
 
@@ -1186,43 +1176,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).end();
     } catch (error) {
       res.status(500).json({ message: 'Failed to delete incident report' });
-    }
-  });
-
-  // Calculation validation endpoints for accounting accuracy
-  apiRouter.get('/validate-calculations', async (req, res) => {
-    try {
-      const summary = await CalculationValidator.validateAllCalculations();
-      res.json(summary);
-    } catch (error) {
-      console.error('Validation error:', error);
-      res.status(500).json({ message: 'Failed to validate calculations' });
-    }
-  });
-
-  apiRouter.post('/fix-jonathan-hours', async (req, res) => {
-    try {
-      const success = await CalculationValidator.fixJonathanHours();
-      if (success) {
-        res.json({ success: true, message: 'Jonathan\'s hours fixed successfully' });
-      } else {
-        res.status(500).json({ success: false, message: 'Failed to fix Jonathan\'s hours' });
-      }
-    } catch (error) {
-      console.error('Error fixing Jonathan\'s hours:', error);
-      res.status(500).json({ success: false, message: 'Error fixing hours' });
-    }
-  });
-
-  apiRouter.get('/audit-report', async (req, res) => {
-    try {
-      const summary = await CalculationValidator.validateAllCalculations();
-      const auditReport = CalculationValidator.generateAuditReport(summary);
-      res.setHeader('Content-Type', 'text/plain');
-      res.send(auditReport);
-    } catch (error) {
-      console.error('Audit report error:', error);
-      res.status(500).json({ message: 'Failed to generate audit report' });
     }
   });
 
