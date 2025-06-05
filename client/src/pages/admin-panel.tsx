@@ -4713,6 +4713,29 @@ export default function AdminPanel() {
                                               <p className="text-sm mt-1">{report.additionalNotes}</p>
                                             </div>
                                           )}
+                                          
+                                          {report.photoUrls && report.photoUrls.length > 0 && (
+                                            <div>
+                                              <Label className="font-medium">Photos</Label>
+                                              <div className="grid grid-cols-2 gap-2 mt-2">
+                                                {report.photoUrls.map((photoUrl: string, index: number) => (
+                                                  <div key={index} className="relative">
+                                                    <img 
+                                                      src={photoUrl} 
+                                                      alt={`Incident photo ${index + 1}`}
+                                                      className="w-full h-32 object-cover rounded border"
+                                                      onClick={() => window.open(photoUrl, '_blank')}
+                                                      style={{ cursor: 'pointer' }}
+                                                    />
+                                                    <div className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
+                                                      Photo {index + 1}
+                                                    </div>
+                                                  </div>
+                                                ))}
+                                              </div>
+                                              <p className="text-xs text-gray-500 mt-1">Click photos to view full size</p>
+                                            </div>
+                                          )}
                                         </div>
                                       </DialogContent>
                                     </Dialog>

@@ -303,6 +303,7 @@ export const incidentReports = pgTable("incident_reports", {
   vehicleLicensePlate: text("vehicle_license_plate").notNull(),
   damageDescription: text("damage_description").notNull(),
   additionalNotes: text("additional_notes"),
+  photoUrls: text("photo_urls").array().default([]),
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
 });
 
