@@ -4014,6 +4014,17 @@ export default function AdminPanel() {
                     if (selectedAccountingMonth && reportMonth !== selectedAccountingMonth) {
                       return false;
                     }
+                    
+                    // Debug report 528 specifically
+                    if (report.id === 528) {
+                      console.log(`Report 528 processing:`, {
+                        reportId: report.id,
+                        date: report.date,
+                        reportMonth,
+                        selectedAccountingMonth,
+                        passedMonthFilter: !selectedAccountingMonth || reportMonth === selectedAccountingMonth
+                      });
+                    }
 
                     // Then filter by employee participation
                     let reportEmployees = [];
