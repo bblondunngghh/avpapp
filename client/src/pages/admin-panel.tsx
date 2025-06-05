@@ -95,6 +95,48 @@ function FaultDeterminationSection({ report }: { report: any }) {
     </div>
   );
 }
+
+function RepairStatusDropdown({ report, updateMutation }: { report: any; updateMutation: any }) {
+  const [selectedStatus, setSelectedStatus] = useState(report.repairStatus || '');
+  const [showSaveButton, setShowSaveButton] = useState(false);
+  
+  return (
+    <div className="space-y-2">
+      <Select
+        value={selectedStatus}
+        onValueChange={(value) => {
+          setSelectedStatus(value);
+          setShowSaveButton(value !== (report.repairStatus || ''));
+        }}
+      >
+        <SelectTrigger className="w-[140px]">
+          <SelectValue placeholder="Select status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="pending">Pending</SelectItem>
+          <SelectItem value="completed">Completed</SelectItem>
+          <SelectItem value="">Not Set</SelectItem>
+        </SelectContent>
+      </Select>
+      
+      {showSaveButton && (
+        <Button
+          size="sm"
+          onClick={() => {
+            const updates = { repairStatus: selectedStatus || null };
+            updateMutation.mutate({ reportId: report.id, updates });
+            setShowSaveButton(false);
+          }}
+          disabled={updateMutation.isPending}
+          className="w-full"
+        >
+          {updateMutation.isPending ? 'Saving...' : 'Save Status'}
+        </Button>
+      )}
+    </div>
+  );
+}
+
 import { 
   Tabs, 
   TabsContent, 
@@ -4854,30 +4896,10 @@ export default function AdminPanel() {
                                       </DialogContent>
                                     </Dialog>
                                     
-                                    <div className="flex gap-2">
-                                      <Button 
-                                        variant={report.repairStatus === 'pending' ? 'default' : 'outline'}
-                                        size="sm"
-                                        onClick={() => {
-                                          const updates = { repairStatus: 'pending' };
-                                          updateIncidentMutation.mutate({ reportId: report.id, updates });
-                                        }}
-                                        disabled={updateIncidentMutation.isPending}
-                                      >
-                                        Pending
-                                      </Button>
-                                      <Button 
-                                        variant={report.repairStatus === 'completed' ? 'default' : 'outline'}
-                                        size="sm"
-                                        onClick={() => {
-                                          const updates = { repairStatus: 'completed' };
-                                          updateIncidentMutation.mutate({ reportId: report.id, updates });
-                                        }}
-                                        disabled={updateIncidentMutation.isPending}
-                                      >
-                                        Completed
-                                      </Button>
-                                    </div>
+                                    <RepairStatusDropdown 
+                                      report={report} 
+                                      updateMutation={updateIncidentMutation} 
+                                    />
                                   </div>
                                 </TableCell>
                               </TableRow>
