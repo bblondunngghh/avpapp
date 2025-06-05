@@ -1579,17 +1579,14 @@ export default function AdminPanel() {
                 queryFn: getQueryFn({ on401: "returnNull" }),
               });
               
-              // Check for new incidents in the last 24 hours
-              const newIncidents = incidentReports?.filter((report: any) => {
-                const reportDate = new Date(report.submittedAt);
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                return reportDate > yesterday;
+              // Check for incidents that are not completed
+              const incompleteIncidents = incidentReports?.filter((report: any) => {
+                return report.repairStatus !== 'completed';
               }) || [];
               
-              return newIncidents.length > 0 ? (
+              return incompleteIncidents.length > 0 ? (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                  {newIncidents.length}
+                  {incompleteIncidents.length}
                 </span>
               ) : null;
             })()}
