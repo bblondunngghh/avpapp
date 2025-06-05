@@ -1062,9 +1062,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Setup multer for incident file uploads
+  const incidentStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadDir = path.join(process.cwd(), 'uploads');
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, `incident-${uniqueSuffix}${path.extname(file.originalname)}`);
+    }
+  });
+
   const incidentUpload = multer({ 
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+    storage: incidentStorage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image files are allowed'));
+      }
+    }
   });
 
   // Incident report submission endpoint
@@ -1094,6 +1115,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         additionalNotes
       } = req.body;
 
+      // Process uploaded photos
+      const photoUrls: string[] = [];
+      if (req.files && Array.isArray(req.files)) {
+        for (const file of req.files) {
+          // Generate a URL path for the uploaded file
+          const photoUrl = `/uploads/${file.filename}`;
+          photoUrls.push(photoUrl);
+        }
+      }
+
       // Save incident report to database
       const incidentData = {
         customerName,
@@ -1113,6 +1144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         vehicleLicensePlate,
         damageDescription,
         additionalNotes: additionalNotes || null,
+        photoUrls,
       };
 
       const report = await storage.createIncidentReport(incidentData);
