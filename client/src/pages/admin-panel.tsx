@@ -517,9 +517,10 @@ export default function AdminPanel() {
   });
 
   // Fetch tax payments
-  const { data: taxPayments = [] } = useQuery({
+  const { data: taxPayments = [], refetch: refetchTaxPayments } = useQuery({
     queryKey: ["/api/tax-payments"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    refetchInterval: 5000, // Refresh every 5 seconds to show new tax payments
   });
 
   // Helper function to check if employee has completed training
@@ -1568,15 +1569,7 @@ export default function AdminPanel() {
 
               const alertCount = Object.values(weeklyHours).filter(emp => emp.totalHours >= 35).length;
               
-              // Debug logging (remove after fixing)
-              console.log('Hours tracker debug:', {
-                weeklyHours,
-                alertCount,
-                reportsCount: reports?.length || 0,
-                currentWeekStart: currentWeekStart.toISOString(),
-                currentWeekEnd: currentWeekEnd.toISOString()
-              });
-              
+
               return alertCount > 0 ? (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                   !
