@@ -4127,27 +4127,26 @@ export default function AdminPanel() {
                       // Additional tax payments should be the cash paid when there's a tax shortfall
                       const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? cashPaid : 0;
                       
-                      // Debug logging for all employees with detailed calculation breakdown
-                      if (employeeData.name === 'antonio' || employeeData.name === 'dave' || employeeData.name === 'brandon') {
-                        console.log(`${employeeData.name} Report ${report.id} Debug:`, {
-                          locationId: report.locationId,
-                          date: report.date,
-                          totalCars: report.totalCars,
-                          creditTransactions: report.creditTransactions,
-                          totalReceipts: report.totalReceipts,
-                          cashCars: cashCars,
-                          commissionRate,
-                          perCarPrice,
-                          totalCommission,
-                          totalTips,
-                          hoursPercent,
-                          empCommission,
-                          empTips,
-                          empEarnings,
-                          hours: employeeData.hours,
-                          totalJobHours: totalJobHours
-                        });
-                      }
+                      // Debug logging for ALL employees with detailed calculation breakdown
+                      console.log(`${employeeData.name} Report ${report.id} Debug:`, {
+                        locationId: report.locationId,
+                        locationName: LOCATIONS.find(loc => loc.id === report.locationId)?.name || 'Unknown',
+                        date: report.date,
+                        totalCars: report.totalCars,
+                        creditTransactions: report.creditTransactions,
+                        totalReceipts: report.totalReceipts,
+                        cashCars: cashCars,
+                        commissionRate,
+                        perCarPrice,
+                        totalCommission,
+                        totalTips,
+                        hoursPercent,
+                        empCommission,
+                        empTips,
+                        empEarnings,
+                        hours: employeeData.hours,
+                        totalJobHours: totalJobHours
+                      });
 
                       totalEarnings += empEarnings;
                       totalTax += tax;
