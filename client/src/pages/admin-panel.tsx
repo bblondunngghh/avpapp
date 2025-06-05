@@ -706,7 +706,11 @@ export default function AdminPanel() {
       });
 
       filteredReports.forEach(report => {
-        const commissionRate = report.locationId === 2 ? 9 : 4; // Bob's = $9, others = $4
+        // Set commission rates per location
+        let commissionRate = 4; // Default for original locations
+        if (report.locationId === 2) commissionRate = 9;      // Bob's = $9
+        else if (report.locationId === 7) commissionRate = 2; // PPS = $2
+        // For new locations (ID 5+), use dynamic rates from database
         const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
         
         // Update location statistics
@@ -747,10 +751,14 @@ export default function AdminPanel() {
         const receiptCommission = report.totalReceipts * commissionRate;
         const totalCommission = creditCardCommission + cashCommission + receiptCommission;
         
-        // Tips calculations
-        const creditCardTransactionsTotal = report.creditTransactions * 15;
+        // Tips calculations - set tip rates per location
+        let tipRate = 15; // Default for original locations
+        if (report.locationId === 7) tipRate = 6; // PPS = $6
+        // For new locations (ID 5+), use dynamic rates from database
+        
+        const creditCardTransactionsTotal = report.creditTransactions * tipRate;
         const creditCardTips = Math.abs(report.totalCreditSales - creditCardTransactionsTotal);
-        const cashCarsTotal = cashCars * 15;
+        const cashCarsTotal = cashCars * tipRate;
         const cashTips = Math.abs(report.totalCashCollected - cashCarsTotal);
         const receiptTips = report.totalReceipts * 3;
         const totalTips = creditCardTips + cashTips + receiptTips;
