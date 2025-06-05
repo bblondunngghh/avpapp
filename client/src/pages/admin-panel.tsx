@@ -758,26 +758,26 @@ export default function AdminPanel() {
         const totalTips = creditCardTips + cashTips + receiptTips;
 
         // Parse employee data from JSON string
-        let employees = [];
+        let reportEmployees = [];
         try {
           if (report.employees && typeof report.employees === 'string') {
-            employees = JSON.parse(report.employees);
+            reportEmployees = JSON.parse(report.employees);
           } else if (Array.isArray(report.employees)) {
-            employees = report.employees;
+            reportEmployees = report.employees;
           }
         } catch (err) {
           console.error("Failed to parse employee data:", err);
-          employees = [];
+          reportEmployees = [];
         }
 
-        // Safety check to ensure employees is an array before using forEach
-        if (!Array.isArray(employees)) {
-          console.warn("employees is not an array, converting to empty array:", employees);
-          employees = [];
+        // Safety check to ensure reportEmployees is an array before using forEach
+        if (!Array.isArray(reportEmployees)) {
+          console.warn("reportEmployees is not an array, converting to empty array:", reportEmployees);
+          reportEmployees = [];
         }
 
         // Process each employee
-        employees.forEach(employee => {
+        reportEmployees.forEach(employee => {
           // Skip employees with no name
           if (!employee.name) return;
           
