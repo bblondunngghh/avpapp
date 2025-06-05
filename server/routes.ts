@@ -1180,6 +1180,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Calculation validation endpoints for accounting accuracy
+  apiRouter.get('/validate-calculations', async (req, res) => {
+    try {
+      const summary = await CalculationValidator.validateAllCalculations();
+      res.json(summary);
+    } catch (error) {
+      console.error('Validation error:', error);
+      res.status(500).json({ message: 'Failed to validate calculations' });
+    }
+  });
+
+  apiRouter.post('/fix-jonathan-hours', async (req, res) => {
+    try {
+      const success = await CalculationValidator.fixJonathanHours();
+      if (success) {
+        res.json({ success: true, message: 'Jonathan\'s hours fixed successfully' });
+      } else {
+        res.status(500).json({ success: false, message: 'Failed to fix Jonathan\'s hours' });
+      }
+    } catch (error) {
+      console.error('Error fixing Jonathan\'s hours:', error);
+      res.status(500).json({ success: false, message: 'Error fixing hours' });
+    }
+  });
+
+  apiRouter.get('/audit-report', async (req, res) => {
+    try {
+      const summary = await CalculationValidator.validateAllCalculations();
+      const auditReport = CalculationValidator.generateAuditReport(summary);
+      res.setHeader('Content-Type', 'text/plain');
+      res.send(auditReport);
+    } catch (error) {
+      console.error('Audit report error:', error);
+      res.status(500).json({ message: 'Failed to generate audit report' });
+    }
+  });
+
   // Training Acknowledgment routes
   apiRouter.get('/training-acknowledgments', async (req, res) => {
     try {

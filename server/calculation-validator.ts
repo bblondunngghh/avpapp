@@ -63,8 +63,9 @@ export class CalculationValidator {
       isValid = false;
     }
 
-    if (report.totalJobHours <= 0) {
-      errors.push(`Invalid total job hours: ${report.totalJobHours}`);
+    const reportTotalHours = report.totalJobHours || 0;
+    if (reportTotalHours <= 0) {
+      errors.push(`Invalid total job hours: ${reportTotalHours}`);
       isValid = false;
     }
 
@@ -77,7 +78,7 @@ export class CalculationValidator {
     const totalTips = (report.totalCars * perCarPrice) - report.totalCreditSales;
     
     // Calculate hour percentage
-    const hoursPercent = report.totalJobHours > 0 ? hours / report.totalJobHours : 0;
+    const hoursPercent = reportTotalHours > 0 ? hours / reportTotalHours : 0;
 
     // Calculate employee earnings
     const empCommission = totalCommission * hoursPercent;
@@ -189,9 +190,10 @@ export class CalculationValidator {
       if (jonathanIndex !== -1) {
         employees[jonathanIndex].hours = 6.5; // Fix to correct hours
         
-        // Update the report
+        // Update the report using proper update parameters
         const updatedReport = await storage.updateShiftReport(536, {
-          employees: JSON.stringify(employees)
+          employees: JSON.stringify(employees),
+          totalJobHours: report.totalJobHours || 6.5
         });
 
         if (updatedReport) {
