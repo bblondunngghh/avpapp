@@ -220,17 +220,34 @@ interface ShiftReport {
 }
 
 export default function AdminPanel() {
-  // ALL HOOKS DECLARED AT TOP IN CONSISTENT ORDER
+  // ALL HOOKS DECLARED AT TOP IN CONSISTENT ORDER TO PREVENT REACT CRASH
   const [, navigate] = useLocation();
   const { toast } = useToast();
   
-  // Core state
+  // Core state variables
   const [isAddingEmployees, setIsAddingEmployees] = useState(false);
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  
+  // Statistics and analytics state
+  const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
+  const [carDistributionByLocation, setCarDistributionByLocation] = useState<Array<{name: string; value: number; color: string}>>([]);
+  const [salesTrendData, setSalesTrendData] = useState<Array<{date: string; sales: number; cars: number}>>([]);
+  const [reportsByDay, setReportsByDay] = useState<Array<{name: string; reports: number}>>([]);
+  const [employeeStats, setEmployeeStats] = useState<{
+    name: string;
+    totalHours: number;
+    totalEarnings: number;
+    totalCommission: number;
+    totalTips: number;
+    totalMoneyOwed: number;
+    totalCashPaid: number;
+    reports: number;
+    locationId: number;
+  }[]>([]);
   
   // Location and distribution state
   const [locationStats, setLocationStats] = useState<{
@@ -248,8 +265,9 @@ export default function AdminPanel() {
   const [editingDistribution, setEditingDistribution] = useState<TicketDistribution | null>(null);
   const [selectedLocationForDistribution, setSelectedLocationForDistribution] = useState<number | null>(null);
   const [newDistribution, setNewDistribution] = useState({
-    allocatedTickets: '',
-    usedTickets: '',
+    locationId: 1,
+    allocatedTickets: 0,
+    usedTickets: 0,
     batchNumber: '',
     notes: ''
   });
@@ -263,7 +281,7 @@ export default function AdminPanel() {
     isShiftLeader: false,
     phone: '',
     email: '',
-    hireDate: '',
+    hireDate: new Date().toISOString().split('T')[0],
     notes: '',
     ssn: ''
   });
@@ -272,19 +290,38 @@ export default function AdminPanel() {
   const [showAddEmployeeDialog, setShowAddEmployeeDialog] = useState(false);
   const [showEditEmployeeDialog, setShowEditEmployeeDialog] = useState(false);
   
-  // Expenses and partner payment state
-  const [savedExpenses, setSavedExpenses] = useState<{[key: string]: {totalExpenses: number; records: Array<{id: string; description: string; amount: number; date: string; category: string}>}}>({});
+  // Partner pay and expenses state
+  const [monthlyRevenue, setMonthlyRevenue] = useState<number>(0);
+  const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
   const [currentMonth] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
+  const [savedExpenses, setSavedExpenses] = useState<{[key: string]: {totalExpenses: number; records: Array<{id: string; description: string; amount: number; date: string; category: string}>}}>({});
+  const [isEditingExpenses, setIsEditingExpenses] = useState<boolean>(false);
+  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
+  const [expensesPassword, setExpensesPassword] = useState<string>("");
   const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
-    date: string;
-    amount: number;
-    recipient: string;
-    category: string;
     month: string;
+    brandon: number;
+    ryan: number;
+    dave: number;
+    total: number;
   }>>([]);
+  const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+  const EXPENSES_EDIT_PASSWORD = "bbonly";
+  
+  // Manual revenue data for specific months
+  const manualRevenue = useMemo(() => ({
+    "2025-01": 17901,
+    "2025-02": 27556,
+    "2025-03": 25411,
+    "2025-04": 20974,
+    "2025-05": 19431
+  } as Record<string, number>), []);
 
   // All useQuery hooks
   const { data: reports = [], isLoading, refetch: refetchReports } = useQuery<ShiftReport[]>({
