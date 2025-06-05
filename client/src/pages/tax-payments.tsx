@@ -504,7 +504,7 @@ export default function AccountantPage() {
                     <TableHead className="text-right w-[100px]">Tips</TableHead>
                     <TableHead className="text-right w-[120px]">Money Owed</TableHead>
                     <TableHead className="text-right w-[100px]">Advance</TableHead>
-                    <TableHead className="text-right w-[100px]">Cash Paid</TableHead>
+                    <TableHead className="text-right w-[100px]">Tax Contribution</TableHead>
                     <TableHead className="text-center w-[120px]">Date</TableHead>
                     <TableHead className="text-center w-[80px]">Actions</TableHead>
                   </TableRow>
