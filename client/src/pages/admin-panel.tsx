@@ -4092,7 +4092,20 @@ export default function AdminPanel() {
                       const cashPaid = Number(employeeData.cashPaid || 0);
                       // Calculate additional tax payment needed (amount beyond what money owed covers)
                       const taxNotCoveredByMoneyOwed = Math.max(0, tax - moneyOwed);
-                      const additionalTaxPayments = Math.min(cashPaid, taxNotCoveredByMoneyOwed);
+                      // Additional tax payments should be the cash paid when there's a tax shortfall
+                      const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? cashPaid : 0;
+                      
+                      // Debug logging for Brandon
+                      if (employeeData.name === 'brandon') {
+                        console.log('Brandon Debug:', {
+                          empEarnings,
+                          tax,
+                          moneyOwed,
+                          cashPaid,
+                          taxNotCoveredByMoneyOwed,
+                          additionalTaxPayments
+                        });
+                      }
 
                       totalEarnings += empEarnings;
                       totalTax += tax;
