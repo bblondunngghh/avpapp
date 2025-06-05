@@ -995,16 +995,16 @@ export default function AdminPanel() {
       const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
       
       // Process each employee in the report
-      const employees = typeof report.employees === 'string' 
+      const csvEmployeesFirst = typeof report.employees === 'string' 
         ? JSON.parse(report.employees) 
         : Array.isArray(report.employees) 
           ? report.employees 
           : [];
       
-      if (employees.length > 0) {
-        const totalJobHours = employees.reduce((sum, emp) => sum + emp.hours, 0);
+      if (csvEmployeesFirst.length > 0) {
+        const totalJobHours = csvEmployeesFirst.reduce((sum, emp) => sum + emp.hours, 0);
         
-        employees.forEach(employee => {
+        csvEmployeesFirst.forEach(employee => {
           const hoursPercent = totalJobHours > 0 ? employee.hours / totalJobHours : 0;
           
           // Calculate employee's share of each type of commission and tips
@@ -1182,16 +1182,16 @@ export default function AdminPanel() {
       const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
       
       // Process each employee in the report
-      const employees = typeof report.employees === 'string' 
+      const csvEmployeesSecond = typeof report.employees === 'string' 
         ? JSON.parse(report.employees) 
         : Array.isArray(report.employees) 
           ? report.employees 
           : [];
       
-      if (employees.length > 0) {
-        const totalJobHours = employees.reduce((sum, emp) => sum + emp.hours, 0);
+      if (csvEmployeesSecond.length > 0) {
+        const totalJobHours = csvEmployeesSecond.reduce((sum, emp) => sum + emp.hours, 0);
         
-        employees.forEach(employee => {
+        csvEmployeesSecond.forEach(employee => {
           const hoursPercent = totalJobHours > 0 ? employee.hours / totalJobHours : 0;
           
           // Calculate employee's share of each type of commission and tips
@@ -1419,18 +1419,18 @@ export default function AdminPanel() {
               reports.forEach((report: any) => {
                 const reportDate = parseReportDate(report.date);
                 if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
-                  let employees = [];
+                  let weeklyEmployees = [];
                   try {
                     if (typeof report.employees === 'string') {
-                      employees = JSON.parse(report.employees);
+                      weeklyEmployees = JSON.parse(report.employees);
                     } else if (Array.isArray(report.employees)) {
-                      employees = report.employees;
+                      weeklyEmployees = report.employees;
                     }
                   } catch (e) {
-                    employees = [];
+                    weeklyEmployees = [];
                   }
 
-                  employees.forEach((emp: any) => {
+                  weeklyEmployees.forEach((emp: any) => {
                     if (!weeklyHours[emp.key]) {
                       weeklyHours[emp.key] = { totalHours: 0 };
                     }
