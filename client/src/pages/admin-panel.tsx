@@ -5,6 +5,96 @@ import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
+
+// Fault Determination Component
+function FaultDeterminationSection({ report }: { report: any }) {
+  const [faultStatus, setFaultStatus] = useState(report.faultStatus || '');
+  const [repairCost, setRepairCost] = useState(report.repairCost || '');
+  const [repairStatus, setRepairStatus] = useState(report.repairStatus || '');
+  const { toast } = useToast();
+  
+  const updateIncidentMutation = useMutation({
+    mutationFn: async (updates: any) => {
+      const response = await apiRequest("PUT", `/api/incident-reports/${report.id}`, updates);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/incident-reports"] });
+      toast({
+        title: "Updated",
+        description: "Incident report updated successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update incident report",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  return (
+    <div className="border-t pt-4 mt-4">
+      <Label className="font-medium text-lg">Fault Determination & Resolution</Label>
+      <div className="grid grid-cols-1 gap-4 mt-3">
+        <div>
+          <Label className="text-sm font-medium">Fault Status</Label>
+          <select 
+            value={faultStatus}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setFaultStatus(newValue);
+              updateIncidentMutation.mutate({ faultStatus: newValue || null });
+            }}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Select Status</option>
+            <option value="at-fault">At Fault</option>
+            <option value="not-at-fault">Not at Fault</option>
+          </select>
+        </div>
+        
+        {faultStatus === 'at-fault' && (
+          <div>
+            <Label className="text-sm font-medium">Cost of Repair</Label>
+            <input
+              type="number"
+              step="0.01"
+              placeholder="0.00"
+              value={repairCost}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setRepairCost(newValue);
+                updateIncidentMutation.mutate({ repairCost: newValue || null });
+              }}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        )}
+        
+        {faultStatus === 'at-fault' && (
+          <div>
+            <Label className="text-sm font-medium">Repair Status</Label>
+            <select 
+              value={repairStatus}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setRepairStatus(newValue);
+                updateIncidentMutation.mutate({ repairStatus: newValue || null });
+              }}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Status</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 import { 
   Tabs, 
   TabsContent, 
@@ -4563,6 +4653,27 @@ export default function AdminPanel() {
                   },
                 });
 
+                const updateIncidentMutation = useMutation({
+                  mutationFn: async ({ reportId, updates }: { reportId: number, updates: any }) => {
+                    const response = await apiRequest("PUT", `/api/incident-reports/${reportId}`, updates);
+                    return response.json();
+                  },
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/incident-reports"] });
+                    toast({
+                      title: "Updated",
+                      description: "Incident report updated successfully",
+                    });
+                  },
+                  onError: () => {
+                    toast({
+                      title: "Error",
+                      description: "Failed to update incident report",
+                      variant: "destructive",
+                    });
+                  },
+                });
+
                 if (incidentReportsLoading) {
                   return <div className="text-center py-8">Loading incident reports...</div>;
                 }
@@ -4738,105 +4849,35 @@ export default function AdminPanel() {
                                           )}
                                           
                                           {/* Fault Determination Section */}
-                                          <div className="border-t pt-4 mt-4">
-                                            <Label className="font-medium text-lg">Fault Determination & Resolution</Label>
-                                            {(() => {
-                                              const [faultStatus, setFaultStatus] = useState(report.faultStatus || '');
-                                              const [repairCost, setRepairCost] = useState(report.repairCost || '');
-                                              const [repairStatus, setRepairStatus] = useState(report.repairStatus || '');
-                                              
-                                              const updateIncidentMutation = useMutation({
-                                                mutationFn: async (updates: any) => {
-                                                  const response = await apiRequest("PUT", `/api/incident-reports/${report.id}`, updates);
-                                                  return response.json();
-                                                },
-                                                onSuccess: () => {
-                                                  queryClient.invalidateQueries({ queryKey: ["/api/incident-reports"] });
-                                                  toast({
-                                                    title: "Updated",
-                                                    description: "Incident report updated successfully",
-                                                  });
-                                                },
-                                                onError: () => {
-                                                  toast({
-                                                    title: "Error",
-                                                    description: "Failed to update incident report",
-                                                    variant: "destructive",
-                                                  });
-                                                },
-                                              });
-                                              
-                                              return (
-                                                <div className="grid grid-cols-1 gap-4 mt-3">
-                                                  <div>
-                                                    <Label className="text-sm font-medium">Fault Status</Label>
-                                                    <select 
-                                                      value={faultStatus}
-                                                      onChange={(e) => {
-                                                        const newValue = e.target.value;
-                                                        setFaultStatus(newValue);
-                                                        updateIncidentMutation.mutate({ faultStatus: newValue || null });
-                                                      }}
-                                                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                    >
-                                                      <option value="">Select Status</option>
-                                                      <option value="at-fault">At Fault</option>
-                                                      <option value="not-at-fault">Not at Fault</option>
-                                                    </select>
-                                                  </div>
-                                                  
-                                                  {faultStatus === 'at-fault' && (
-                                                    <div>
-                                                      <Label className="text-sm font-medium">Cost of Repair</Label>
-                                                      <input
-                                                        type="number"
-                                                        step="0.01"
-                                                        placeholder="0.00"
-                                                        value={repairCost}
-                                                        onChange={(e) => {
-                                                          const newValue = e.target.value;
-                                                          setRepairCost(newValue);
-                                                          updateIncidentMutation.mutate({ repairCost: newValue || null });
-                                                        }}
-                                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                      />
-                                                    </div>
-                                                  )}
-                                                  
-                                                  {faultStatus === 'at-fault' && (
-                                                    <div>
-                                                      <Label className="text-sm font-medium">Repair Status</Label>
-                                                      <select 
-                                                        value={repairStatus}
-                                                        onChange={(e) => {
-                                                          const newValue = e.target.value;
-                                                          setRepairStatus(newValue);
-                                                          updateIncidentMutation.mutate({ repairStatus: newValue || null });
-                                                        }}
-                                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                      >
-                                                        <option value="">Select Status</option>
-                                                        <option value="pending">Pending</option>
-                                                        <option value="completed">Completed</option>
-                                                      </select>
-                                                    </div>
-                                                  )}
-                                                </div>
-                                              );
-                                            })()}
-                                          </div>
+                                          <FaultDeterminationSection report={report} />
                                         </div>
                                       </DialogContent>
                                     </Dialog>
                                     
-                                    <Button 
-                                      variant="destructive" 
-                                      size="sm"
-                                      onClick={() => deleteIncidentMutation.mutate(report.id)}
-                                      disabled={deleteIncidentMutation.isPending}
-                                    >
-                                      Delete
-                                    </Button>
+                                    <div className="flex gap-2">
+                                      <Button 
+                                        variant={report.repairStatus === 'pending' ? 'default' : 'outline'}
+                                        size="sm"
+                                        onClick={() => {
+                                          const updates = { repairStatus: 'pending' };
+                                          updateIncidentMutation.mutate({ reportId: report.id, updates });
+                                        }}
+                                        disabled={updateIncidentMutation.isPending}
+                                      >
+                                        Pending
+                                      </Button>
+                                      <Button 
+                                        variant={report.repairStatus === 'completed' ? 'default' : 'outline'}
+                                        size="sm"
+                                        onClick={() => {
+                                          const updates = { repairStatus: 'completed' };
+                                          updateIncidentMutation.mutate({ reportId: report.id, updates });
+                                        }}
+                                        disabled={updateIncidentMutation.isPending}
+                                      >
+                                        Completed
+                                      </Button>
+                                    </div>
                                   </div>
                                 </TableCell>
                               </TableRow>

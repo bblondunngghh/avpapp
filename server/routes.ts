@@ -1193,6 +1193,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update incident report
+  apiRouter.put('/incident-reports/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid report ID' });
+      }
+      
+      const updated = await storage.updateIncidentReport(id, req.body);
+      if (!updated) {
+        return res.status(404).json({ message: 'Incident report not found' });
+      }
+      
+      res.json({ success: true, message: 'Incident report updated successfully' });
+    } catch (error) {
+      console.error('Error updating incident report:', error);
+      res.status(500).json({ message: 'Failed to update incident report' });
+    }
+  });
+
   // Delete incident report
   apiRouter.delete('/incident-reports/:id', async (req, res) => {
     try {
