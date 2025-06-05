@@ -27,7 +27,7 @@ import { getCurrentDateCentral } from "@/lib/timezone";
 import capGrilleImage from "@assets/CAP GRILLE image.jpg";
 import bobsImage from "@assets/bobs.jpg";
 import boaImage from "@assets/BOA.jpg";
-import trulucksImage from "@assets/AVP LOGO 2024 - 2 HQ.jpg";
+import trulucksImage from "@assets/TL LOGO-1190x440_1749130680525.jpg";
 
 // Create form schema
 const formSchema = z.object({
