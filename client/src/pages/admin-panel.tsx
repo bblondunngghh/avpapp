@@ -422,6 +422,10 @@ export default function AdminPanel() {
   });
   const EXPENSES_EDIT_PASSWORD = "bbonly";
   
+  // Date filter state
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
   // Load saved expenses from localStorage on initial render
   useEffect(() => {
     try {
@@ -436,10 +440,6 @@ export default function AdminPanel() {
       console.error("Error loading saved expenses:", error);
     }
   }, []);
-  
-  // Date filter state
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   
   // Employee management state is defined below
   
