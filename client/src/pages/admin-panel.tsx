@@ -402,6 +402,12 @@ export default function AdminPanel() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
+  // Fetch tax payments
+  const { data: taxPayments = [] } = useQuery({
+    queryKey: ["/api/tax-payments"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
   // Helper function to check if employee has completed training
   const hasCompletedTraining = (employeeName: string) => {
     return trainingAcknowledgments.some((ack: any) => 
@@ -4089,18 +4095,34 @@ export default function AdminPanel() {
 
                       // Tax calculations
                       const tax = empEarnings * 0.22;
-                      const cashPaid = Number(employeeData.cashPaid || 0);
+                      // Get cash paid from both shift report and tax payment records
+                      const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
+                      
+                      // Find tax payments for this employee and report
+                      const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
+                      const employeeTaxPayments = taxPayments.filter((payment: any) => 
+                        payment.employeeId === employeeRecord?.id && payment.reportId === report.id
+                      );
+                      const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
+                        sum + Number(payment.paidAmount || 0), 0
+                      );
+                      
+                      // Use the maximum of shift report cash paid or tax record cash paid
+                      const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
+                      
                       // Calculate additional tax payment needed (amount beyond what money owed covers)
                       const taxNotCoveredByMoneyOwed = Math.max(0, tax - moneyOwed);
                       // Additional tax payments should be the cash paid when there's a tax shortfall
                       const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? cashPaid : 0;
                       
-                      // Debug logging for Brandon
-                      if (employeeData.name === 'brandon') {
-                        console.log('Brandon Debug:', {
+                      // Debug logging for all employees
+                      if (employeeData.name === 'antonio' || employeeData.name === 'dave' || employeeData.name === 'brandon') {
+                        console.log(`${employeeData.name} Debug:`, {
                           empEarnings,
                           tax,
                           moneyOwed,
+                          shiftReportCashPaid,
+                          taxRecordCashPaid,
                           cashPaid,
                           taxNotCoveredByMoneyOwed,
                           additionalTaxPayments
