@@ -992,49 +992,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Incident Reports endpoints
-  apiRouter.get('/incident-reports', async (req, res) => {
-    try {
-      const reports = await storage.getIncidentReports();
-      res.json(reports);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch incident reports' });
-    }
-  });
 
-  apiRouter.post('/incident-reports', async (req, res) => {
-    try {
-      const reportData = insertIncidentReportSchema.parse(req.body);
-      const report = await storage.createIncidentReport(reportData);
-      res.status(201).json(report);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          message: 'Invalid incident report data', 
-          errors: error.errors 
-        });
-      }
-      res.status(500).json({ message: 'Failed to create incident report' });
-    }
-  });
-
-  apiRouter.delete('/incident-reports/:id', async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: 'Invalid report ID' });
-      }
-      
-      const deleted = await storage.deleteIncidentReport(id);
-      if (!deleted) {
-        return res.status(404).json({ message: 'Incident report not found' });
-      }
-      
-      res.status(204).send();
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to delete incident report' });
-    }
-  });
 
   // CSV Upload Routes
   apiRouter.post('/upload/employees', processEmployeeCSV);
@@ -1220,6 +1178,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to delete incident report' });
     }
   });
+
+
 
   // Training Acknowledgment routes
   apiRouter.get('/training-acknowledgments', async (req, res) => {
