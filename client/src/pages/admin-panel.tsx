@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
@@ -220,14 +220,14 @@ export default function AdminPanel() {
   const [isEditingExpenses, setIsEditingExpenses] = useState<boolean>(false);
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
   const [expensesPassword, setExpensesPassword] = useState<string>("");
-  const [manualRevenue, setManualRevenue] = useState<Record<string, number>>({
+  const manualRevenue = useMemo(() => ({
     // Pre-set monthly revenue values
     "2025-01": 17901,
     "2025-02": 27556,
     "2025-03": 25411,
     "2025-04": 20974,
     "2025-05": 19431
-  });
+  }), []);
   
   // Partner pay history data for table display
   const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
