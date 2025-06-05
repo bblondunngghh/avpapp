@@ -336,8 +336,7 @@ export default function AdminPanel() {
     notes: ''
   });
   
-  // Employee management state
-  const [employees, setEmployees] = useState<EmployeeRecord[]>([]);
+  // Employee management state (employees data comes from API query)
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isEditEmployeeOpen, setIsEditEmployeeOpen] = useState(false);
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
@@ -391,7 +390,7 @@ export default function AdminPanel() {
   });
   
   // Fetch employees data
-  const { data: employeeRecords = [], isLoading: isLoadingEmployees, refetch: refetchEmployees } = useQuery<EmployeeRecord[]>({
+  const { data: employees = [], isLoading: isLoadingEmployees, refetch: refetchEmployees } = useQuery<EmployeeRecord[]>({
     queryKey: ["/api/employees"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
@@ -615,12 +614,7 @@ export default function AdminPanel() {
     
   }, [reports, selectedMonth, selectedLocation]);
   
-  // Set initial employees data
-  useEffect(() => {
-    if (employeeRecords && employeeRecords.length > 0) {
-      setEmployees(employeeRecords);
-    }
-  }, [employeeRecords]);
+  // Note: employees data comes directly from the API query above
 
   // Calculate statistics whenever reports or date filters change
   useEffect(() => {
