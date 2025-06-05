@@ -4007,13 +4007,14 @@ export default function AdminPanel() {
                 // Calculate employee accounting data with month filtering
                 const employeeAccountingData = employeeRecords.map(employee => {
                   const employeeReports = reports.filter((report: any) => {
-                    // Apply month filter first
-                    const reportDate = new Date(report.date);
+                    // Apply month filter first - use timezone-safe date parsing
+                    const [year, month, day] = report.date.split('-');
+                    const reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
                     const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
                     
                     // Debug report 528 specifically - check before filter
                     if (report.id === 528) {
-                      console.log(`Report 528 processing:`, {
+                      console.log(`Report 528 processing (FIXED):`, {
                         reportId: report.id,
                         originalDate: report.date,
                         parsedDate: reportDate.toString(),
