@@ -383,7 +383,7 @@ export default function AdminPanel() {
   
   // Calculate statistics and analytics data
   useEffect(() => {
-    if (!reports) return;
+    if (!reports || !locations) return;
     
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
