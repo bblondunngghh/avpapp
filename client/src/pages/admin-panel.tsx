@@ -4264,6 +4264,19 @@ export default function AdminPanel() {
                       // Use the maximum of shift report cash paid or tax record cash paid
                       const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
                       
+                      // Debug logging for Ryan
+                      if (employee.key.toLowerCase() === 'ryan') {
+                        console.log('Ryan debug:', {
+                          empEarnings,
+                          tax,
+                          moneyOwed,
+                          shiftReportCashPaid,
+                          taxRecordCashPaid,
+                          cashPaid,
+                          hoursPercent
+                        });
+                      }
+                      
                       // Calculate additional tax payments as cash paid beyond tax obligations
                       // If money owed covers all tax, then any cash paid is additional
                       // If money owed partially covers tax, then cash paid beyond remaining tax is additional
