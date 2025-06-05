@@ -27,6 +27,7 @@ import { getCurrentDateCentral } from "@/lib/timezone";
 import capGrilleImage from "@assets/CAP GRILLE image.jpg";
 import bobsImage from "@assets/bobs.jpg";
 import boaImage from "@assets/BOA.jpg";
+import trulucksImage from "@assets/AVP LOGO 2024 - 2 HQ.jpg";
 
 // Create form schema
 const formSchema = z.object({
@@ -484,7 +485,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 case 2: // Bob's Steak and Chop House
                   return bobsImage;
                 case 3: // Truluck's
-                  return currentLocation.logoUrl || null; // Use database logoUrl for Truluck's
+                  return trulucksImage;
                 case 4: // BOA Steakhouse
                   return boaImage;
                 default:
