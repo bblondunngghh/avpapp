@@ -67,6 +67,7 @@ export interface IStorage {
   getIncidentReports(): Promise<IncidentReport[]>;
   getIncidentReport(id: number): Promise<IncidentReport | undefined>;
   createIncidentReport(report: InsertIncidentReport): Promise<IncidentReport>;
+  updateIncidentReport(id: number, updates: any): Promise<IncidentReport | undefined>;
   deleteIncidentReport(id: number): Promise<boolean>;
   
   // Permits methods
@@ -469,6 +470,19 @@ export class MemStorage implements IStorage {
     
     this.incidentReports.set(id, report);
     return report;
+  }
+
+  async updateIncidentReport(id: number, updates: any): Promise<IncidentReport | undefined> {
+    const existing = this.incidentReports.get(id);
+    if (!existing) return undefined;
+    
+    const updated: IncidentReport = {
+      ...existing,
+      ...updates
+    };
+    
+    this.incidentReports.set(id, updated);
+    return updated;
   }
 
   async deleteIncidentReport(id: number): Promise<boolean> {
@@ -1046,6 +1060,20 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error creating incident report:", error);
       throw new Error("Failed to create incident report");
+    }
+  }
+
+  async updateIncidentReport(id: number, updates: any): Promise<IncidentReport | undefined> {
+    try {
+      const [updated] = await db
+        .update(incidentReports)
+        .set(updates)
+        .where(eq(incidentReports.id, id))
+        .returning();
+      return updated || undefined;
+    } catch (error) {
+      console.error("Error updating incident report:", error);
+      throw new Error("Failed to update incident report");
     }
   }
 
