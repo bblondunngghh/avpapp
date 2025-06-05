@@ -4388,7 +4388,7 @@ export default function AdminPanel() {
                 }> = {};
 
                 // Initialize all employees with 0 hours
-                employees.forEach((emp: any) => {
+                (employeeRecords || []).forEach((emp: any) => {
                   weeklyHours[emp.key] = {
                     employee: emp,
                     totalHours: 0,
@@ -4426,7 +4426,7 @@ export default function AdminPanel() {
 
                     reportEmployees.forEach((emp: any) => {
                       // Find employee by name since shift reports store employee.name, not employee.key
-                      const employee = employees.find((e: any) => e.fullName === emp.name || e.key === emp.name);
+                      const employee = (employeeRecords || []).find((e: any) => e.fullName === emp.name || e.key === emp.name);
                       if (employee && weeklyHours[employee.key]) {
                         const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
                         weeklyHours[employee.key].weeklyBreakdown[dayName] = (weeklyHours[employee.key].weeklyBreakdown[dayName] || 0) + emp.hours;
