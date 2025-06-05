@@ -504,7 +504,7 @@ export default function AdminPanel() {
     return () => {
       clearInterval(authCheckInterval);
     };
-  }, []);
+  }, [navigate]);
 
   // Fetch all shift reports
   const { data: reports = [], isLoading, refetch: refetchReports } = useQuery<ShiftReport[]>({
