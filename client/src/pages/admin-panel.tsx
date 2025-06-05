@@ -4425,8 +4425,14 @@ export default function AdminPanel() {
                       reportEmployees = [];
                     }
 
-                    reportEmployees.forEach((emp: any) => {
-                      // Find employee by name since shift reports store employee.name, not employee.key
+                    // Safety check to ensure reportEmployees is an array
+                    if (!Array.isArray(reportEmployees)) {
+                      reportEmployees = [];
+                    }
+
+                    if (Array.isArray(reportEmployees) && reportEmployees.length > 0) {
+                      reportEmployees.forEach((emp: any) => {
+                        // Find employee by name since shift reports store employee.name, not employee.key
                       const employee = (employeeRecords || []).find((e: any) => e.fullName === emp.name || e.key === emp.name);
                       if (employee && weeklyHours[employee.key]) {
                         const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
@@ -4440,7 +4446,8 @@ export default function AdminPanel() {
                           weeklyHours[employee.key].status = 'warning';
                         }
                       }
-                    });
+                      });
+                    }
                   }
                 });
 
