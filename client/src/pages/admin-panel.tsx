@@ -14,7 +14,7 @@ function ExpandableDescription({ incident, damage, witness, notes }: {
   notes?: string; 
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const maxLength = 150;
+  const maxLength = 50;
   
   const fullText = `${incident} | ${damage}${witness ? ` | Witness: ${witness}` : ''}${notes ? ` | Notes: ${notes}` : ''}`;
   const shouldTruncate = fullText.length > maxLength;
@@ -204,7 +204,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car } from "lucide-react";
 import { 
   BarChart, 
   LineChart, 
@@ -1571,7 +1571,7 @@ export default function AdminPanel() {
             })()}
           </TabsTrigger>
           <TabsTrigger value="incident-reports" className="flex-shrink-0 flex items-center relative">
-            <Activity className="h-4 w-4 mr-2" />
+            <Car className="h-4 w-4 mr-2" />
             Incident Reports
             {(() => {
               const { data: incidentReports } = useQuery({
