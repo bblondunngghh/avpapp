@@ -32,6 +32,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,6 +53,10 @@ export default function AccountantPage() {
   const [, navigate] = useLocation();
   const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedEmployeeForAction, setSelectedEmployeeForAction] = useState<Employee | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState('');
   
   // Check if admin is authenticated
   useEffect(() => {
@@ -577,10 +590,16 @@ export default function AccountantPage() {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  setSelectedEmployeeForAction(employee);
+                                  setShowDetailsModal(true);
+                                }}>
                                   View Details
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  setSelectedEmployeeForAction(employee);
+                                  setShowPaymentModal(true);
+                                }}>
                                     Record Payment
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -617,6 +636,124 @@ export default function AccountantPage() {
           </p>
         </CardContent>
       </Card>
+
+      {/* View Details Modal */}
+      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Employee Details - {selectedEmployeeForAction?.fullName}</DialogTitle>
+            <DialogDescription>
+              Detailed financial information for this employee
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedEmployeeForAction && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Employee Name</Label>
+                  <p className="text-sm text-gray-600">{selectedEmployeeForAction.fullName}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Employee Key</Label>
+                  <p className="text-sm text-gray-600">{selectedEmployeeForAction.key}</p>
+                </div>
+              </div>
+              
+              <Separator />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Total Commission</Label>
+                  <p className="text-sm text-gray-600">
+                    {formatCurrency(
+                      filteredPayments?.filter(p => p.employeeId === selectedEmployeeForAction.id)
+                        .reduce((sum, payment) => sum + calculateCommission(payment), 0) || 0
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Total Tips</Label>
+                  <p className="text-sm text-gray-600">
+                    {formatCurrency(
+                      filteredPayments?.filter(p => p.employeeId === selectedEmployeeForAction.id)
+                        .reduce((sum, payment) => sum + calculateTips(payment), 0) || 0
+                    )}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Total Money Owed</Label>
+                  <p className="text-sm text-gray-600">
+                    {formatCurrency(
+                      filteredPayments?.filter(p => p.employeeId === selectedEmployeeForAction.id)
+                        .reduce((sum, payment) => sum + calculateMoneyOwed(payment), 0) || 0
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Total Tax Contribution</Label>
+                  <p className="text-sm text-gray-600">
+                    {formatCurrency(
+                      filteredPayments?.filter(p => p.employeeId === selectedEmployeeForAction.id)
+                        .reduce((sum, payment) => sum + (payment.cashPaid || 0), 0) || 0
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button onClick={() => setShowDetailsModal(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Record Payment Modal */}
+      <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Record Payment - {selectedEmployeeForAction?.fullName}</DialogTitle>
+            <DialogDescription>
+              Record a new tax payment for this employee
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="payment-amount">Payment Amount</Label>
+              <Input
+                id="payment-amount"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={paymentAmount}
+                onChange={(e) => setPaymentAmount(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setShowPaymentModal(false);
+              setPaymentAmount('');
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              // TODO: Implement payment recording logic
+              console.log(`Recording payment of $${paymentAmount} for ${selectedEmployeeForAction?.fullName}`);
+              setShowPaymentModal(false);
+              setPaymentAmount('');
+            }}>
+              Record Payment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
