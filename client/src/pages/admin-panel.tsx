@@ -4803,14 +4803,14 @@ export default function AdminPanel() {
                                           View Details
                                         </Button>
                                       </DialogTrigger>
-                                      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+                                      <DialogContent className="max-w-4xl max-h-[95vh] flex flex-col">
                                         <DialogHeader className="flex-shrink-0">
                                           <DialogTitle>Incident Report Details</DialogTitle>
                                           <DialogDescription>
                                             Submitted on {new Date(report.submittedAt).toLocaleString()}
                                           </DialogDescription>
                                         </DialogHeader>
-                                        <div className="flex-1 overflow-y-auto pr-2">
+                                        <div className="flex-1 overflow-y-auto pr-2 pb-4">
                                           <div className="space-y-6">
                                             {/* Customer & Incident Info */}
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -4909,7 +4909,7 @@ export default function AdminPanel() {
                                             )}
                                           
                                             {/* Fault Determination Section */}
-                                            <div>
+                                            <div className="mb-8">
                                               <Label className="text-base font-semibold text-gray-900">Fault Determination & Status</Label>
                                               <div className="mt-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
                                                 <FaultDeterminationSection report={report} />
