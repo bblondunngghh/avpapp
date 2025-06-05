@@ -4011,19 +4011,20 @@ export default function AdminPanel() {
                     const reportDate = new Date(report.date);
                     const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
                     
-                    if (selectedAccountingMonth && reportMonth !== selectedAccountingMonth) {
-                      return false;
-                    }
-                    
-                    // Debug report 528 specifically
+                    // Debug report 528 specifically - check before filter
                     if (report.id === 528) {
                       console.log(`Report 528 processing:`, {
                         reportId: report.id,
-                        date: report.date,
+                        originalDate: report.date,
+                        parsedDate: reportDate.toString(),
                         reportMonth,
                         selectedAccountingMonth,
-                        passedMonthFilter: !selectedAccountingMonth || reportMonth === selectedAccountingMonth
+                        willBeFiltered: selectedAccountingMonth && reportMonth !== selectedAccountingMonth
                       });
+                    }
+                    
+                    if (selectedAccountingMonth && reportMonth !== selectedAccountingMonth) {
+                      return false;
                     }
 
                     // Then filter by employee participation
