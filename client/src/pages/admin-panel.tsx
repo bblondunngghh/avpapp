@@ -253,58 +253,8 @@ export default function AdminPanel() {
         setSavedExpenses(JSON.parse(savedExpensesFromStorage));
       }
       
-      // Generate partner payment history from saved expenses and manual revenue
-      const expensesData = savedExpensesFromStorage ? JSON.parse(savedExpensesFromStorage) : {};
-      const historyData: Array<{
-        month: string;
-        brandon: number;
-        ryan: number;
-        dave: number;
-        total: number;
-      }> = [];
-      
-      // Process all months with manual revenue (Jan-May 2025)
-      Object.keys(manualRevenue).forEach(month => {
-        const revenue = manualRevenue[month];
-        const expenses = expensesData[month] || 0; // Use saved expenses or 0 if not set
-        
-        if (revenue > 0) {
-          const profit = revenue - expenses;
-          // Show entry even if profit is 0 or negative to display expenses effect
-          const [year, monthNum] = month.split('-');
-          const monthDate = new Date(parseInt(year), parseInt(monthNum) - 1);
-          const monthDisplay = monthDate.toLocaleString('default', { month: 'short', year: 'numeric' });
-          
-          historyData.push({
-            month: monthDisplay,
-            brandon: Math.max(0, profit * 0.5), // 50%, but don't go negative
-            ryan: Math.max(0, profit * 0.4),    // 40%, but don't go negative
-            dave: Math.max(0, profit * 0.1),    // 10%, but don't go negative
-            total: Math.max(0, profit)
-          });
-        }
-      });
-      
-      // Process any additional months with only saved expenses (for future months)
-      Object.keys(expensesData).forEach(month => {
-        // Skip if already processed above
-        if (manualRevenue[month]) return;
-        
-        const expenses = expensesData[month];
-        // This would be for June 2025 onwards when we calculate from reports
-        // For now, skip these as we don't have the calculation logic yet
-      });
-      
-
-      
-      // Sort by month
-      historyData.sort((a, b) => {
-        const dateA = new Date(a.month);
-        const dateB = new Date(b.month);
-        return dateA.getTime() - dateB.getTime();
-      });
-      
-      setPartnerPaymentHistory(historyData);
+      // Initialize empty partner payment history to prevent errors
+      setPartnerPaymentHistory([]);
     } catch (error) {
       console.error("Error loading saved expenses:", error);
     }
