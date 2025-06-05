@@ -115,7 +115,7 @@ function RepairStatusDropdown({ report, updateMutation }: { report: any; updateM
         <SelectContent>
           <SelectItem value="pending">Pending</SelectItem>
           <SelectItem value="completed">Completed</SelectItem>
-          <SelectItem value="">Not Set</SelectItem>
+          <SelectItem value="not_set">Not Set</SelectItem>
         </SelectContent>
       </Select>
       
@@ -123,7 +123,7 @@ function RepairStatusDropdown({ report, updateMutation }: { report: any; updateM
         <Button
           size="sm"
           onClick={() => {
-            const updates = { repairStatus: selectedStatus || null };
+            const updates = { repairStatus: selectedStatus === 'not_set' ? null : selectedStatus };
             updateMutation.mutate({ reportId: report.id, updates });
             setShowSaveButton(false);
           }}
