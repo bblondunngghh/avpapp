@@ -410,6 +410,7 @@ export default function AdminPanel() {
 
   // Helper function to check if employee has completed training
   const hasCompletedTraining = (employeeName: string) => {
+    if (!Array.isArray(trainingAcknowledgments)) return false;
     return trainingAcknowledgments.some((ack: any) => 
       ack.employeeName.toLowerCase() === employeeName.toLowerCase()
     );
@@ -417,6 +418,7 @@ export default function AdminPanel() {
 
   // Helper function to get training completion date
   const getTrainingCompletionDate = (employeeName: string) => {
+    if (!Array.isArray(trainingAcknowledgments)) return null;
     const acknowledgment = trainingAcknowledgments.find((ack: any) => 
       ack.employeeName.toLowerCase() === employeeName.toLowerCase()
     );
@@ -4395,14 +4397,16 @@ export default function AdminPanel() {
                 }> = {};
 
                 // Initialize all employees with 0 hours
-                employees.forEach((emp: any) => {
-                  weeklyHours[emp.key] = {
-                    employee: emp,
-                    totalHours: 0,
-                    weeklyBreakdown: {},
-                    status: 'safe'
-                  };
-                });
+                if (Array.isArray(employees)) {
+                  employees.forEach((emp: any) => {
+                    weeklyHours[emp.key] = {
+                      employee: emp,
+                      totalHours: 0,
+                      weeklyBreakdown: {},
+                      status: 'safe'
+                    };
+                  });
+                }
 
                 // Get current week start (Sunday)
                 const today = new Date();
