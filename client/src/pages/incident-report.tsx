@@ -145,15 +145,7 @@ export default function IncidentReport() {
   });
   
   const onSubmit = (data: FormValues) => {
-    if (photoFiles.length === 0) {
-      toast({
-        title: "Photos Required",
-        description: "Please upload at least one photo of the damage.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
+    console.log('Submitting form with photos:', photoFiles.length);
     submitMutation.mutate(data);
   };
   

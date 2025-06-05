@@ -1093,6 +1093,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log('Incident report submission received');
       console.log('Request body:', req.body);
+      console.log('Files uploaded:', req.files);
       console.log('Content-Type:', req.headers['content-type']);
       
       const {
