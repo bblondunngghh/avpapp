@@ -4264,10 +4264,12 @@ export default function AdminPanel() {
                       // Use the maximum of shift report cash paid or tax record cash paid
                       const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
                       
-                      // Calculate additional tax payment needed (amount beyond what money owed covers)
-                      const taxNotCoveredByMoneyOwed = Math.max(0, tax - moneyOwed);
-                      // Additional tax payments should be the cash paid when there's a tax shortfall
-                      const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? cashPaid : 0;
+                      // Calculate additional tax payments as cash paid beyond tax obligations
+                      // If money owed covers all tax, then any cash paid is additional
+                      // If money owed partially covers tax, then cash paid beyond remaining tax is additional
+                      const taxCoveredByMoneyOwed = Math.min(tax, moneyOwed);
+                      const remainingTax = tax - taxCoveredByMoneyOwed;
+                      const additionalTaxPayments = Math.max(0, cashPaid - remainingTax);
                       
 
 
