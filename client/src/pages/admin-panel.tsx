@@ -6,6 +6,37 @@ import { useToast } from "@/hooks/use-toast";
 import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 
+// Component for expandable description
+function ExpandableDescription({ incident, damage, witness, notes }: { 
+  incident: string; 
+  damage: string; 
+  witness?: string; 
+  notes?: string; 
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxLength = 150;
+  
+  const fullText = `${incident} | ${damage}${witness ? ` | Witness: ${witness}` : ''}${notes ? ` | Notes: ${notes}` : ''}`;
+  const shouldTruncate = fullText.length > maxLength;
+  const displayText = shouldTruncate && !isExpanded 
+    ? `${fullText.substring(0, maxLength)}...` 
+    : fullText;
+  
+  return (
+    <div className="text-sm">
+      <div className="break-words">{displayText}</div>
+      {shouldTruncate && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-blue-600 hover:text-blue-800 text-xs mt-1 font-medium"
+        >
+          {isExpanded ? 'View Less' : 'View More'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 // Fault Determination Component
 function FaultDeterminationSection({ report }: { report: any }) {
   const [faultStatus, setFaultStatus] = useState(report.faultStatus || '');
@@ -4784,16 +4815,12 @@ export default function AdminPanel() {
                                   </div>
                                 </TableCell>
                                 <TableCell className="max-w-[300px]">
-                                  <div className="text-sm space-y-1">
-                                    <div><strong>Incident:</strong> {report.incidentDescription}</div>
-                                    <div><strong>Damage:</strong> {report.damageDescription}</div>
-                                    {report.witnessName && (
-                                      <div><strong>Witness:</strong> {report.witnessName} ({report.witnessPhone})</div>
-                                    )}
-                                    {report.additionalNotes && (
-                                      <div><strong>Notes:</strong> {report.additionalNotes}</div>
-                                    )}
-                                  </div>
+                                  <ExpandableDescription 
+                                    incident={report.incidentDescription}
+                                    damage={report.damageDescription}
+                                    witness={report.witnessName ? `${report.witnessName} (${report.witnessPhone})` : undefined}
+                                    notes={report.additionalNotes}
+                                  />
                                 </TableCell>
                                 <TableCell>
                                   <div className="flex gap-2">
