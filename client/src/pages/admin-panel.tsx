@@ -4261,8 +4261,8 @@ export default function AdminPanel() {
                         sum + Number(payment.paidAmount || 0), 0
                       );
                       
-                      // Use the sum of shift report cash paid and tax record cash paid for total cash paid
-                      const cashPaid = shiftReportCashPaid + taxRecordCashPaid;
+                      // Use the maximum of shift report cash paid or tax record cash paid to avoid double counting
+                      const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
                       
                       // Calculate additional tax payments as cash paid beyond tax obligations
                       // If money owed covers all tax, then any cash paid is additional
