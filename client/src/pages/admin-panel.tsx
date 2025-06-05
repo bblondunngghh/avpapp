@@ -1570,9 +1570,29 @@ export default function AdminPanel() {
               ) : null;
             })()}
           </TabsTrigger>
-          <TabsTrigger value="incident-reports" className="flex-shrink-0 flex items-center">
+          <TabsTrigger value="incident-reports" className="flex-shrink-0 flex items-center relative">
             <Activity className="h-4 w-4 mr-2" />
             Incident Reports
+            {(() => {
+              const { data: incidentReports } = useQuery({
+                queryKey: ["/api/incident-reports"],
+                queryFn: getQueryFn({ on401: "returnNull" }),
+              });
+              
+              // Check for new incidents in the last 24 hours
+              const newIncidents = incidentReports?.filter((report: any) => {
+                const reportDate = new Date(report.submittedAt);
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                return reportDate > yesterday;
+              }) || [];
+              
+              return newIncidents.length > 0 ? (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {newIncidents.length}
+                </span>
+              ) : null;
+            })()}
           </TabsTrigger>
           <TabsTrigger value="location-management" className="flex-shrink-0 flex items-center">
             <MapPin className="h-4 w-4 mr-2" />
