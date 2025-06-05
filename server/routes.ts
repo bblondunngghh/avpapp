@@ -37,6 +37,44 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
+// Function to sync cash payments from shift reports to tax payment records
+async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
+  try {
+    // Parse employees data from the shift report
+    let employees = [];
+    if (typeof shiftReport.employees === 'string') {
+      employees = JSON.parse(shiftReport.employees);
+    } else if (Array.isArray(shiftReport.employees)) {
+      employees = shiftReport.employees;
+    }
+
+    // Process each employee with cash payments
+    for (const emp of employees) {
+      if (emp.cashPaid && emp.cashPaid > 0) {
+        // Find the employee by name/key
+        const employee = await storage.getEmployeeByKey(emp.name);
+        if (employee) {
+          // Find existing tax payment record for this employee and report
+          const taxPayments = await storage.getEmployeeTaxPayments();
+          const existingTaxPayment = taxPayments.find(tp => 
+            tp.employeeId === employee.id && tp.reportId === shiftReport.id
+          );
+
+          if (existingTaxPayment) {
+            // Update the existing tax payment record with cash paid amount
+            await storage.updateEmployeeTaxPayment(existingTaxPayment.id, {
+              paidAmount: emp.cashPaid,
+              remainingAmount: Math.max(0, existingTaxPayment.taxAmount - emp.cashPaid)
+            });
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to sync cash payments to tax records:', error);
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configure multer for image uploads
   const storage_config = multer.diskStorage({
@@ -205,6 +243,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const report = insertShiftReportSchema.parse(req.body);
       const createdReport = await storage.createShiftReport(report);
+      
+      // Sync cash payments from shift report to tax payment records
+      await syncCashPaymentsToTaxRecords(createdReport);
+      
       res.status(201).json(createdReport);
     } catch (error) {
       if (error instanceof z.ZodError) {
