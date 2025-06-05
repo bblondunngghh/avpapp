@@ -4127,17 +4127,25 @@ export default function AdminPanel() {
                       // Additional tax payments should be the cash paid when there's a tax shortfall
                       const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? cashPaid : 0;
                       
-                      // Debug logging for all employees
+                      // Debug logging for all employees with detailed calculation breakdown
                       if (employeeData.name === 'antonio' || employeeData.name === 'dave' || employeeData.name === 'brandon') {
-                        console.log(`${employeeData.name} Debug:`, {
+                        console.log(`${employeeData.name} Report ${report.id} Debug:`, {
+                          locationId: report.locationId,
+                          date: report.date,
+                          totalCars: report.totalCars,
+                          creditTransactions: report.creditTransactions,
+                          totalReceipts: report.totalReceipts,
+                          cashCars: cashCars,
+                          commissionRate,
+                          perCarPrice,
+                          totalCommission,
+                          totalTips,
+                          hoursPercent,
+                          empCommission,
+                          empTips,
                           empEarnings,
-                          tax,
-                          moneyOwed,
-                          shiftReportCashPaid,
-                          taxRecordCashPaid,
-                          cashPaid,
-                          taxNotCoveredByMoneyOwed,
-                          additionalTaxPayments
+                          hours: employeeData.hours,
+                          totalJobHours: totalJobHours
                         });
                       }
 
