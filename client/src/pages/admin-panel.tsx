@@ -612,12 +612,7 @@ export default function AdminPanel() {
     
   }, [reports, selectedMonth, selectedLocation]);
   
-  // Set initial employees data
-  useEffect(() => {
-    if (employeeRecords && employeeRecords.length > 0) {
-      setEmployees(employeeRecords);
-    }
-  }, [employeeRecords]);
+  // Employee data is now handled directly through employeeRecords
 
   // Calculate statistics whenever reports or date filters change
   useEffect(() => {
@@ -3921,8 +3916,8 @@ export default function AdminPanel() {
                           if (response.ok) {
                             const data = await response.json();
                             
-                            // Update local state
-                            setEmployees(employees.map(emp => emp.id === data.id ? data : emp));
+                            // Refetch employee data
+                            refetchEmployees();
                             
                             // Close dialog
                             setIsEditEmployeeOpen(false);
@@ -4001,7 +3996,7 @@ export default function AdminPanel() {
 
               {(() => {
                 // Calculate employee accounting data with month filtering
-                const employeeAccountingData = employees.map(employee => {
+                const employeeAccountingData = employeeRecords.map(employee => {
                   const employeeReports = reports.filter((report: any) => {
                     // Apply month filter first
                     const reportDate = new Date(report.date);
