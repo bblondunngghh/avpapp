@@ -4973,6 +4973,11 @@ export default function AdminPanel() {
                                     variant="destructive"
                                     size="sm"
                                     onClick={() => {
+                                      const password = prompt("Enter password to delete location:");
+                                      if (password !== "bbonly") {
+                                        alert("Incorrect password. Location deletion cancelled.");
+                                        return;
+                                      }
                                       if (confirm(`Are you sure you want to delete ${location.name}? This action cannot be undone.`)) {
                                         deleteLocationMutation.mutate(location.id);
                                       }
