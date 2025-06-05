@@ -4427,22 +4427,25 @@ export default function AdminPanel() {
                       reportEmployees = [];
                     }
 
-                    reportEmployees.forEach((emp: any) => {
-                      // Find employee by name since shift reports store employee.name, not employee.key
-                      const employee = employees.find((e: any) => e.fullName === emp.name || e.key === emp.name);
-                      if (employee && weeklyHours[employee.key]) {
-                        const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
-                        weeklyHours[employee.key].weeklyBreakdown[dayName] = (weeklyHours[employee.key].weeklyBreakdown[dayName] || 0) + emp.hours;
-                        weeklyHours[employee.key].totalHours += emp.hours;
-                        
-                        // Determine status
-                        if (weeklyHours[employee.key].totalHours >= 38) {
-                          weeklyHours[employee.key].status = 'critical';
-                        } else if (weeklyHours[employee.key].totalHours >= 35) {
-                          weeklyHours[employee.key].status = 'warning';
+                    // Ensure reportEmployees is an array before using forEach
+                    if (Array.isArray(reportEmployees)) {
+                      reportEmployees.forEach((emp: any) => {
+                        // Find employee by name since shift reports store employee.name, not employee.key
+                        const employee = Array.isArray(employees) ? employees.find((e: any) => e.fullName === emp.name || e.key === emp.name) : null;
+                        if (employee && weeklyHours[employee.key]) {
+                          const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
+                          weeklyHours[employee.key].weeklyBreakdown[dayName] = (weeklyHours[employee.key].weeklyBreakdown[dayName] || 0) + emp.hours;
+                          weeklyHours[employee.key].totalHours += emp.hours;
+                          
+                          // Determine status
+                          if (weeklyHours[employee.key].totalHours >= 38) {
+                            weeklyHours[employee.key].status = 'critical';
+                          } else if (weeklyHours[employee.key].totalHours >= 35) {
+                            weeklyHours[employee.key].status = 'warning';
+                          }
                         }
-                      }
-                    });
+                      });
+                    }
                   }
                 });
 

@@ -3,10 +3,12 @@ import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
-// Configure Neon for serverless environment
+// Configure Neon for serverless environment with optimized settings
 neonConfig.webSocketConstructor = ws;
 neonConfig.useSecureWebSocket = true;
 neonConfig.pipelineConnect = false;
+neonConfig.poolQueryViaFetch = true;
+neonConfig.fetchConnectionCache = true;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -14,15 +16,15 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Enhanced connection configuration for production stability
+// Ultra-lightweight connection configuration for reliability
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  max: 5, // Further reduced for serverless stability
-  idleTimeoutMillis: 30000, // Increase idle timeout
-  connectionTimeoutMillis: 10000, // Increase connection timeout
-  keepAlive: true,
-  maxUses: 7500, // Limit connection reuse
-  allowExitOnIdle: false,
+  max: 1, // Single connection for maximum stability
+  idleTimeoutMillis: 10000, // Very short idle timeout
+  connectionTimeoutMillis: 3000, // Very short connection timeout
+  keepAlive: false, // Disable keep-alive
+  maxUses: 100, // Very low connection reuse
+  allowExitOnIdle: true, // Allow immediate exit when idle
 });
 
 // Add connection error handling
