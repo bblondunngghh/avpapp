@@ -5,6 +5,15 @@ import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Car, Edit, Trash2, PlusCircle, Eye, EyeOff } from "lucide-react";
 
 // Component for expandable description
 function ExpandableDescription({ incident, damage, witness, notes }: { 
@@ -356,59 +365,221 @@ export default function AdminPanel() {
     );
   }
 
+  // Device detection for mobile/desktop UI adaptation
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Admin Panel</h1>
-      
-      {/* Basic admin panel content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Shift Reports</h3>
-          <p className="text-gray-600">Total Reports: {reports.length}</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-4 space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <button 
+            onClick={() => navigate("/")}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Home
+          </button>
         </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Employees</h3>
-          <p className="text-gray-600">Total Employees: {employeeRecords.length}</p>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Incidents</h3>
-          <p className="text-gray-600">Total Incidents: {incidentReports.length}</p>
-        </div>
-      </div>
-      
-      {/* Incident Reports Section */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Recent Incident Reports</h3>
-        <div className="space-y-4">
-          {incidentReports.slice(0, 5).map((report: any) => (
-            <div key={report.id} className="border-b pb-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-medium">{report.customerName}</p>
-                  <p className="text-sm text-gray-600">{report.incidentDate}</p>
-                  <ExpandableDescription
-                    incident={report.incidentDescription}
-                    damage={report.damageDescription}
-                    witness={report.witnessName}
-                    notes={report.additionalNotes}
-                  />
-                </div>
-                <div className="text-right">
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    report.repairStatus === 'completed' ? 'bg-green-100 text-green-800' :
-                    report.repairStatus === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {report.repairStatus || 'pending'}
+
+        <Tabs defaultValue="analytics" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
+            <TabsTrigger value="analytics" className="text-xs sm:text-sm">Analytics</TabsTrigger>
+            <TabsTrigger value="incident-reports" className="text-xs sm:text-sm flex items-center gap-1">
+              <Car className="h-4 w-4" />
+              Incidents
+              {(() => {
+                const incompleteCount = incidentReports.filter((report: any) => 
+                  report.repairStatus !== 'completed'
+                ).length;
+                
+                return incompleteCount > 0 ? (
+                  <span className="bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 ml-1 min-w-[20px] h-5 flex items-center justify-center">
+                    {incompleteCount}
                   </span>
+                ) : null;
+              })()}
+            </TabsTrigger>
+            <TabsTrigger value="shift-reports" className="text-xs sm:text-sm">Reports</TabsTrigger>
+            <TabsTrigger value="employee-management" className="text-xs sm:text-sm">Employees</TabsTrigger>
+            <TabsTrigger value="location-management" className="text-xs sm:text-sm">Locations</TabsTrigger>
+            <TabsTrigger value="ticket-distributions" className="text-xs sm:text-sm">Tickets</TabsTrigger>
+          </TabsList>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics">
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Analytics & Performance</CardTitle>
+                <CardDescription>
+                  Track company revenue, expenses, and location performance metrics
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Key Performance Metrics */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-blue-800">Total Reports</h3>
+                      <p className="text-2xl font-bold text-blue-900">{reports.length}</p>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-green-800">Total Cars Parked</h3>
+                      <p className="text-2xl font-bold text-green-900">
+                        {reports.reduce((sum, report) => sum + report.totalCars, 0)}
+                      </p>
+                    </div>
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-purple-800">Active Locations</h3>
+                      <p className="text-2xl font-bold text-purple-900">{locations.filter((loc: any) => loc.active).length}</p>
+                    </div>
+                    <div className="bg-orange-50 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-orange-800">Total Employees</h3>
+                      <p className="text-2xl font-bold text-orange-900">{employeeRecords.length}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <FaultDeterminationSection report={report} />
-            </div>
-          ))}
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Incident Reports Tab */}
+          <TabsContent value="incident-reports">
+            <Card>
+              <CardHeader>
+                <CardTitle>Incident Reports Management</CardTitle>
+                <CardDescription>
+                  Review and manage customer incident reports with fault determination
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {incidentReports.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      No incident reports found
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Customer</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead>Description</TableHead>
+                            <TableHead>Fault Status</TableHead>
+                            <TableHead>Repair Status</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {incidentReports.map((report: any) => (
+                            <TableRow key={report.id}>
+                              <TableCell className="font-medium">
+                                {report.customerName}
+                              </TableCell>
+                              <TableCell>
+                                {new Date(report.incidentDate).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell>
+                                {locations.find((loc: any) => loc.id === report.locationId)?.name || 'Unknown'}
+                              </TableCell>
+                              <TableCell>
+                                <ExpandableDescription
+                                  incident={report.incidentDescription}
+                                  damage={report.damageDescription}
+                                  witness={report.witnessName}
+                                  notes={report.additionalNotes}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <span className={`px-2 py-1 rounded text-xs ${
+                                  report.faultStatus === 'at-fault' ? 'bg-red-100 text-red-800' :
+                                  report.faultStatus === 'not-at-fault' ? 'bg-green-100 text-green-800' :
+                                  'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {report.faultStatus || 'pending'}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                <span className={`px-2 py-1 rounded text-xs ${
+                                  report.repairStatus === 'completed' ? 'bg-green-100 text-green-800' :
+                                  report.repairStatus === 'in-progress' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {report.repairStatus || 'pending'}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                <FaultDeterminationSection report={report} />
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Other tabs would continue here with shift reports, employees, locations, tickets */}
+          <TabsContent value="shift-reports">
+            <Card>
+              <CardHeader>
+                <CardTitle>Shift Reports</CardTitle>
+                <CardDescription>View and manage daily shift reports</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-gray-500">
+                  Shift reports management - {reports.length} total reports
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="employee-management">
+            <Card>
+              <CardHeader>
+                <CardTitle>Employee Management</CardTitle>
+                <CardDescription>Manage employee records and information</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-gray-500">
+                  Employee management - {employeeRecords.length} total employees
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="location-management">
+            <Card>
+              <CardHeader>
+                <CardTitle>Location Management</CardTitle>
+                <CardDescription>Configure location rates and settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-gray-500">
+                  Location management - {locations.length} total locations
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="ticket-distributions">
+            <Card>
+              <CardHeader>
+                <CardTitle>Ticket Distributions</CardTitle>
+                <CardDescription>Track ticket allocation and usage</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-gray-500">
+                  Ticket distributions - {ticketDistributions.length} total distributions
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
