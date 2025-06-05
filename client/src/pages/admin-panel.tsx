@@ -4264,12 +4264,9 @@ export default function AdminPanel() {
                       // Use the maximum of shift report cash paid or tax record cash paid to avoid double counting
                       const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
                       
-                      // Calculate additional tax payments as cash paid beyond tax obligations
-                      // If money owed covers all tax, then any cash paid is additional
-                      // If money owed partially covers tax, then cash paid beyond remaining tax is additional
-                      const taxCoveredByMoneyOwed = Math.min(tax, moneyOwed);
-                      const remainingTax = tax - taxCoveredByMoneyOwed;
-                      const additionalTaxPayments = Math.max(0, cashPaid - remainingTax);
+                      // Additional tax payments = total cash paid by employee
+                      // This represents all cash the employee has paid toward their tax obligations
+                      const additionalTaxPayments = cashPaid;
                       
 
 
