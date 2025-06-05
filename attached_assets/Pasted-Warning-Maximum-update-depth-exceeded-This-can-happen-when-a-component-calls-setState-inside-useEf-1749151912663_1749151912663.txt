@@ -1,0 +1,27 @@
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn&#x27;t have a dependency array, or one of the dependencies changes on every render.
+    at AdminPanel (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/pages/admin-panel.tsx:83:24)
+    at Route (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=200b5622:323:16)
+    at Switch (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=200b5622:379:17)
+    at main
+    at div
+    at Router (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/App.tsx?v=1KHwEfzyIY4SVRd801vmU:48:35)
+    at Provider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-U27FYV5Z.js?v=200b5622:38:15)
+    at TooltipProvider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=200b5622:160:5)
+    at QueryClientProvider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=200b5622:2805:3)
+    at App (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/App.tsx?v=1KHwEfzyIY4SVRd801vmU:372:39)
+    at ThemeProvider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/components/ui/theme-provider.tsx:26:3)
+at AdminPanel (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/pages/admin-panel.tsx:83:24)
+at Route (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=200b5622:323:16)
+at Switch (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=200b5622:379:17)
+at main
+at div
+at Router (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/App.tsx?v=1KHwEfzyIY4SVRd801vmU:48:35)
+at Provider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-U27FYV5Z.js?v=200b5622:38:15)
+at TooltipProvider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=200b5622:160:5)
+at QueryClientProvider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=200b5622:2805:3)
+at App (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/App.tsx?v=1KHwEfzyIY4SVRd801vmU:372:39)
+at ThemeProvider (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/src/components/ui/theme-provider.tsx:26:3)
+at t.value (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://e1605efa-fbe4-4710-80e5-ef9e8eea991b-00-70mkjucr5gg4.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

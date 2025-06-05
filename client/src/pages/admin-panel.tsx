@@ -192,7 +192,7 @@ export default function AdminPanel() {
         cleanupFunction();
       }
     };
-  }, [navigate]);
+  }, []);
   
   // Statistics state
   const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
@@ -377,7 +377,7 @@ export default function AdminPanel() {
     return () => {
       clearInterval(authCheckInterval);
     };
-  }, [navigate]);
+  }, []);
 
   // Fetch all shift reports
   const { data: reports = [], isLoading, refetch: refetchReports } = useQuery<ShiftReport[]>({
