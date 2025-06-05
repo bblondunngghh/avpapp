@@ -1533,35 +1533,49 @@ export default function AdminPanel() {
               currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
               currentWeekEnd.setHours(23, 59, 59, 999);
 
-              reports.forEach((report: any) => {
-                const reportDate = parseReportDate(report.date);
-                if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
-                  let weeklyEmployees = [];
-                  try {
-                    if (typeof report.employees === 'string') {
-                      weeklyEmployees = JSON.parse(report.employees);
-                    } else if (Array.isArray(report.employees)) {
-                      weeklyEmployees = report.employees;
+              // Only process if we have reports data
+              if (Array.isArray(reports) && reports.length > 0) {
+                reports.forEach((report: any) => {
+                  const reportDate = parseReportDate(report.date);
+                  if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
+                    let weeklyEmployees = [];
+                    try {
+                      if (typeof report.employees === 'string') {
+                        weeklyEmployees = JSON.parse(report.employees);
+                      } else if (Array.isArray(report.employees)) {
+                        weeklyEmployees = report.employees;
+                      }
+                    } catch (e) {
+                      weeklyEmployees = [];
                     }
-                  } catch (e) {
-                    weeklyEmployees = [];
-                  }
 
-                  // Safety check to ensure weeklyEmployees is an array
-                  if (!Array.isArray(weeklyEmployees)) {
-                    weeklyEmployees = [];
-                  }
-
-                  weeklyEmployees.forEach((emp: any) => {
-                    if (!weeklyHours[emp.key]) {
-                      weeklyHours[emp.key] = { totalHours: 0 };
+                    // Safety check to ensure weeklyEmployees is an array
+                    if (!Array.isArray(weeklyEmployees)) {
+                      weeklyEmployees = [];
                     }
-                    weeklyHours[emp.key].totalHours += emp.hours;
-                  });
-                }
-              });
+
+                    weeklyEmployees.forEach((emp: any) => {
+                      if (emp && emp.key && typeof emp.hours === 'number') {
+                        if (!weeklyHours[emp.key]) {
+                          weeklyHours[emp.key] = { totalHours: 0 };
+                        }
+                        weeklyHours[emp.key].totalHours += emp.hours;
+                      }
+                    });
+                  }
+                });
+              }
 
               const alertCount = Object.values(weeklyHours).filter(emp => emp.totalHours >= 35).length;
+              
+              // Debug logging (remove after fixing)
+              console.log('Hours tracker debug:', {
+                weeklyHours,
+                alertCount,
+                reportsCount: reports?.length || 0,
+                currentWeekStart: currentWeekStart.toISOString(),
+                currentWeekEnd: currentWeekEnd.toISOString()
+              });
               
               return alertCount > 0 ? (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
