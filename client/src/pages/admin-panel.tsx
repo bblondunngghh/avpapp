@@ -776,53 +776,57 @@ export default function AdminPanel() {
           reportEmployees = [];
         }
 
-        // Process each employee
-        reportEmployees.forEach(employee => {
-          // Skip employees with no name
-          if (!employee.name) return;
-          
-          const totalHours = Number(report.totalJobHours || 0);
-          const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
-          
-          // Calculate money owed (if negative cashTurnIn) 
-          const expectedCompanyCashTurnIn = report.totalTurnIn - report.totalCreditSales - (report.totalReceiptSales || 0);
-          const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
-            hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
+        // Additional safety check - ensure we have a valid array with elements
+        if (Array.isArray(reportEmployees) && reportEmployees.length > 0) {
+          // Process each employee
+          reportEmployees.forEach(employee => {
+            // Skip employees with no name
+            if (!employee.name) return;
+            
+            const totalHours = Number(report.totalJobHours || 0);
+            const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
+            
+            // Calculate money owed (if negative cashTurnIn) 
+            const expectedCompanyCashTurnIn = report.totalTurnIn - report.totalCreditSales - (report.totalReceiptSales || 0);
+            const employeeMoneyOwed = expectedCompanyCashTurnIn < 0 ? 
+              hoursPercent * Math.abs(expectedCompanyCashTurnIn) : 0;
 
-          // Calculate employee's portion of commission and tips
-          const employeeCommission = hoursPercent * totalCommission;
-          const employeeTips = hoursPercent * totalTips;
-          const employeeTotalEarnings = employeeCommission + employeeTips;
-          
-          // Get cash paid amount for this employee
-          const employeeCashPaid = Number(employee.cashPaid || 0);
-          
-          // Get or create employee stats
-          const existingStats = employeeMap.get(employee.name) || {
-            name: employee.name,
-            totalHours: 0,
-            totalEarnings: 0,
-            totalCommission: 0,
-            totalTips: 0,
-            totalMoneyOwed: 0,
-            totalCashPaid: 0,
-            reports: 0,
-            locationId: report.locationId
-          };
-          
-          // Update stats
-          employeeMap.set(employee.name, {
-            ...existingStats,
-            totalHours: existingStats.totalHours + employee.hours,
-            totalEarnings: existingStats.totalEarnings + employeeTotalEarnings,
-            totalCommission: existingStats.totalCommission + employeeCommission,
-            totalTips: existingStats.totalTips + employeeTips,
-            totalMoneyOwed: existingStats.totalMoneyOwed + employeeMoneyOwed,
-            totalCashPaid: existingStats.totalCashPaid + employeeCashPaid,
-            reports: existingStats.reports + 1,
-            locationId: report.locationId // Keep using the most recent location
+            // Calculate employee's portion of commission and tips
+            const employeeCommission = hoursPercent * totalCommission;
+            const employeeTips = hoursPercent * totalTips;
+            const employeeTotalEarnings = employeeCommission + employeeTips;
+            
+            // Get cash paid amount for this employee
+            const employeeCashPaid = Number(employee.cashPaid || 0);
+            
+            // Get or create employee stats
+            const existingStats = employeeMap.get(employee.name) || {
+              name: employee.name,
+              totalHours: 0,
+              totalEarnings: 0,
+              totalCommission: 0,
+              totalTips: 0,
+              totalMoneyOwed: 0,
+              totalCashPaid: 0,
+              reports: 0,
+              locationId: report.locationId
+            };
+            
+            // Update stats
+            employeeMap.set(employee.name, {
+              ...existingStats,
+              totalHours: existingStats.totalHours + employee.hours,
+              totalEarnings: existingStats.totalEarnings + employeeTotalEarnings,
+              totalCommission: existingStats.totalCommission + employeeCommission,
+              totalTips: existingStats.totalTips + employeeTips,
+              totalMoneyOwed: existingStats.totalMoneyOwed + employeeMoneyOwed,
+              totalCashPaid: existingStats.totalCashPaid + employeeCashPaid,
+              reports: existingStats.reports + 1,
+              locationId: report.locationId // Keep using the most recent location
+            });
           });
-        });
+        }
+
       });
 
       // Convert maps to arrays and sort
