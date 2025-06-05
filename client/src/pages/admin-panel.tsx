@@ -308,7 +308,7 @@ export default function AdminPanel() {
     } catch (error) {
       console.error("Error loading saved expenses:", error);
     }
-  }, []);
+  }, [manualRevenue]);
   
   // Date filter state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
