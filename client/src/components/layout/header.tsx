@@ -16,20 +16,18 @@ export default function Header() {
   
   return (
     <header className="app-header">
-      <div className="app-header-content">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 w-48">
-            {/* Left spacer for balance */}
-          </div>
-          
-          <div className="flex items-center justify-center">
-            <h1 className="app-title flex items-center gap-2">
-              <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
-              <span>ACCESS VALET PARKING</span>
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-2 w-48 justify-end">
+      <div className="relative w-full">
+        {/* Centered title container */}
+        <div className="absolute inset-0 flex items-center justify-center py-2">
+          <h1 className="app-title flex items-center gap-2">
+            <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
+            <span>ACCESS VALET PARKING</span>
+          </h1>
+        </div>
+        
+        {/* Right-aligned admin button container aligned with page content */}
+        <div className="container mx-auto px-4 py-2 flex justify-end items-center relative z-10" style={{height: '56px'}}>
+          <div className="flex items-center gap-2">
             <Button 
               variant="secondary" 
               size="sm" 
