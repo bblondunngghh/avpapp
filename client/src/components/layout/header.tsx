@@ -5,6 +5,10 @@ import { Menu, Car, Home, ClipboardList, PlusCircle, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import navCarIcon from "@assets/Sports-Car-2--Streamline-Ultimate.png";
 import carToolKeysIcon from "@assets/Car-Tool-Keys--Streamline-Ultimate.png";
+import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
+import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
+import newReportIcon from "@assets/Data-File-Edit--Streamline-Ultimate.png";
+import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -52,7 +56,7 @@ export default function Header() {
                     className="justify-start" 
                     onClick={() => handleNavigation('/')}
                   >
-                    <Home className="mr-2 h-5 w-5" />
+                    <img src={dashboardIcon} alt="Dashboard" className="mr-2 h-5 w-5" />
                     Dashboard
                   </Button>
                   <Button 
@@ -60,7 +64,7 @@ export default function Header() {
                     className="justify-start" 
                     onClick={() => handleNavigation('/reports')}
                   >
-                    <ClipboardList className="mr-2 h-5 w-5" />
+                    <img src={reportsIcon} alt="Reports" className="mr-2 h-5 w-5" />
                     All Reports
                   </Button>
                   <Button 
@@ -68,7 +72,7 @@ export default function Header() {
                     className="justify-start" 
                     onClick={() => handleNavigation('/report-selection')}
                   >
-                    <PlusCircle className="mr-2 h-5 w-5" />
+                    <img src={newReportIcon} alt="New Report" className="mr-2 h-5 w-5" />
                     New Report
                   </Button>
                   <Button 
@@ -76,7 +80,7 @@ export default function Header() {
                     className="justify-start" 
                     onClick={() => handleNavigation('/admin-login')}
                   >
-                    <User className="mr-2 h-5 w-5" />
+                    <img src={employeeIcon} alt="Admin" className="mr-2 h-5 w-5" />
                     Admin Login
                   </Button>
                 </div>
