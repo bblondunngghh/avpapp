@@ -207,6 +207,7 @@ import {
 import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car } from "lucide-react";
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
+import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1512,7 +1513,7 @@ export default function AdminPanel() {
             Partner Distribution
           </TabsTrigger>
           <TabsTrigger value="tickets" className="flex-shrink-0 flex items-center">
-            <Ticket className="h-4 w-4 mr-2" />
+            <img src={tagsAddIcon} alt="Tags Add" className="h-4 w-4 mr-2" />
             Tickets
           </TabsTrigger>
           <TabsTrigger value="manage-employees" className="flex-shrink-0 flex items-center">
