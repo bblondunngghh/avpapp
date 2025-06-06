@@ -31,6 +31,7 @@ import taskListCashIcon from "@assets/Task-List-Cash--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import logoutIcon from "@assets/Logout-2--Streamline-Ultimate.png";
 import alertTriangleIcon from "@assets/Alert-Triangle--Streamline-Ultimate.png";
+import serverSettingsIcon from "@assets/Server-Settings--Streamline-Ultimate.png";
 
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
@@ -537,7 +538,7 @@ export default function EmployeeDashboard() {
             Shift Details
           </TabsTrigger>
           <TabsTrigger value="settings">
-            <Settings className="h-4 w-4 mr-2" />
+            <img src={serverSettingsIcon} alt="Settings" className="h-4 w-4 mr-2" />
             Settings
           </TabsTrigger>
         </TabsList>
