@@ -126,7 +126,7 @@ export default function Dashboard() {
             <Button 
               variant="outline" 
               onClick={() => navigate("/employee-login")}
-              className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center gap-2"
+              className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center justify-center gap-2"
             >
               <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
               Employee Login
