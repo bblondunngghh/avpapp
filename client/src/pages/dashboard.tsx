@@ -8,6 +8,7 @@ import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate
 import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
+import gestureTapIcon from "@assets/Gesture-Tap-Swipe-Right-1--Streamline-Ultimate.png";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 
@@ -55,7 +56,7 @@ export default function Dashboard() {
               onClick={handleNewReport}
               className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white group-hover:shadow-md"
             >
-              Create Report <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              Create Report <img src={gestureTapIcon} alt="Gesture Tap" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </CardContent>
         </Card>
@@ -74,7 +75,7 @@ export default function Dashboard() {
               onClick={() => navigate("/incident-report")}
               className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white group-hover:shadow-md"
             >
-              Report Incident <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              Report Incident <img src={gestureTapIcon} alt="Gesture Tap" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </CardContent>
         </Card>
@@ -93,7 +94,7 @@ export default function Dashboard() {
               onClick={() => navigate("/regulations")}
               className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white group-hover:shadow-md"
             >
-              View Guidelines <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              View Guidelines <img src={gestureTapIcon} alt="Gesture Tap" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </CardContent>
         </Card>
@@ -112,7 +113,7 @@ export default function Dashboard() {
               onClick={() => navigate("/permits")}
               className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white group-hover:shadow-md"
             >
-              View Permits <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              View Permits <img src={gestureTapIcon} alt="Gesture Tap" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </CardContent>
         </Card>
