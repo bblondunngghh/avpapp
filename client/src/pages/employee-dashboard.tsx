@@ -250,20 +250,10 @@ export default function EmployeeDashboard() {
       employeesList = [];
     }
     
-    // Find employee data using the same matching logic as above
+    // Find employee data using the same robust matching logic as filtering
+    const employeeRecord = { key: employeeKey, fullName: employeeName };
     const employeeData = employeesList.find((emp: any) => {
-      if (!emp) return false;
-      
-      if (emp.name === employeeKey) return true;
-      
-      if (employeeName && emp.name && typeof emp.name === 'string') {
-        const empNameLower = emp.name.toLowerCase();
-        const employeeNameLower = employeeName.toLowerCase();
-        const employeeNameParts = employeeNameLower.split(' ');
-        if (employeeNameParts.some(part => empNameLower.includes(part))) return true;
-      }
-      
-      return false;
+      return matchEmployee(emp, employeeRecord);
     });
     
     if (employeeData) {
