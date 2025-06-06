@@ -3585,9 +3585,9 @@ export default function AdminPanel() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Name</TableHead>
-                      <TableHead>Key</TableHead>
                       <TableHead>SSN</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Training Complete</TableHead>
                       <TableHead>Shift Leader</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Email</TableHead>
@@ -3596,37 +3596,54 @@ export default function AdminPanel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {employeeRecords.map(employee => (
-                      <TableRow key={employee.id}>
-                        <TableCell className="font-medium">{employee.fullName}</TableCell>
-                        <TableCell>{employee.key}</TableCell>
-                        <TableCell>
-                          {employee.ssn ? (
-                            <span className="font-mono text-sm">****{employee.ssn.slice(-4)}</span>
-                          ) : (
-                            <span className="text-gray-400 text-sm">Not set</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {employee.isActive ? (
-                            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                              Active
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                              Inactive
-                            </span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {employee.isShiftLeader ? (
-                            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                              Yes
-                            </span>
-                          ) : (
-                            <span>No</span>
-                          )}
-                        </TableCell>
+                    {employeeRecords.map(employee => {
+                      // Check if employee has completed training
+                      const hasCompletedTraining = trainingAcknowledgments?.some((ack: any) => 
+                        ack.employeeName.toLowerCase().includes(employee.fullName.toLowerCase()) ||
+                        employee.fullName.toLowerCase().includes(ack.employeeName.toLowerCase())
+                      );
+
+                      return (
+                        <TableRow key={employee.id}>
+                          <TableCell className="font-medium">{employee.fullName}</TableCell>
+                          <TableCell>
+                            {employee.ssn ? (
+                              <span className="font-mono text-sm">****{employee.ssn.slice(-4)}</span>
+                            ) : (
+                              <span className="text-gray-400 text-sm">Not set</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {employee.isActive ? (
+                              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                                Active
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                                Inactive
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {hasCompletedTraining ? (
+                              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                                ✓ Complete
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                                ✗ Incomplete
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {employee.isShiftLeader ? (
+                              <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                Yes
+                              </span>
+                            ) : (
+                              <span>No</span>
+                            )}
+                          </TableCell>
                         <TableCell>{employee.phone || '-'}</TableCell>
                         <TableCell>{employee.email || '-'}</TableCell>
                         <TableCell>{new Date(employee.hireDate).toLocaleDateString()}</TableCell>
@@ -3690,7 +3707,8 @@ export default function AdminPanel() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                      );
+                    })}
                     
                     {/* Total employees row */}
                     <TableRow className="bg-muted/50">
