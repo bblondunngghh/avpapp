@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-react";
 import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
+import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 
@@ -79,7 +80,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-teal-500 bg-gradient-to-b from-white to-teal-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-teal-500 to-teal-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <Construction className="h-10 w-10 text-white" />
+              <img src={constructionConeIcon} alt="Construction Cone" className="h-10 w-10 filter brightness-0 invert" />
             </div>
             <h3 className="text-xl mb-3 text-teal-600">Rules & Regulations</h3>
             <p className="text-gray-600 mb-6 flex-grow">
