@@ -40,7 +40,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <Car className="h-10 w-10 text-white" />
+              <img src="/assets/Car-4--Streamline-Ultimate.png" alt="Car" className="h-10 w-10 filter brightness-0 invert" />
             </div>
             <h3 className="text-xl mb-3 text-blue-600">Submit Shift Report</h3>
             <p className="text-gray-600 mb-6 flex-grow">
