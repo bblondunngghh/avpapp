@@ -213,6 +213,7 @@ import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import timeClockNineIcon from "@assets/Time-Clock-Nine--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
+import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1477,7 +1478,7 @@ export default function AdminPanel() {
               }
             }}
           >
-            <DollarSign className="mr-2 h-4 w-4" />
+            <img src={accountingBillStackIcon} alt="Accounting Bill Stack" className="mr-2 h-4 w-4" />
             Accountant Section
           </Button>
           <Button 
