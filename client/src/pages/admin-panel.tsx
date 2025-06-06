@@ -71,19 +71,23 @@ function FaultDeterminationSection({ report }: { report: any }) {
       <div className="grid grid-cols-1 gap-4 mt-3">
         <div>
           <Label className="text-sm font-medium">Fault Status</Label>
-          <select 
+          <Select
             value={faultStatus}
-            onChange={(e) => {
-              const newValue = e.target.value;
+            onValueChange={(value) => {
+              const newValue = value || '';
               setFaultStatus(newValue);
               updateIncidentMutation.mutate({ faultStatus: newValue || null });
             }}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="">Select Status</option>
-            <option value="at-fault">At Fault</option>
-            <option value="not-at-fault">Not at Fault</option>
-          </select>
+            <SelectTrigger className="mt-1">
+              <SelectValue placeholder="Select Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">Select Status</SelectItem>
+              <SelectItem value="at-fault">At Fault</SelectItem>
+              <SelectItem value="not-at-fault">Not at Fault</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         
         {faultStatus === 'at-fault' && (
@@ -107,19 +111,23 @@ function FaultDeterminationSection({ report }: { report: any }) {
         {faultStatus === 'at-fault' && (
           <div>
             <Label className="text-sm font-medium">Repair Status</Label>
-            <select 
+            <Select
               value={repairStatus}
-              onChange={(e) => {
-                const newValue = e.target.value;
+              onValueChange={(value) => {
+                const newValue = value || '';
                 setRepairStatus(newValue);
                 updateIncidentMutation.mutate({ repairStatus: newValue || null });
               }}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select Status</option>
-              <option value="pending">Pending</option>
-              <option value="completed">Completed</option>
-            </select>
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Select Status</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         )}
       </div>
