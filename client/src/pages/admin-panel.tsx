@@ -216,6 +216,7 @@ import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import folderUploadIcon from "@assets/Folder-Upload--Streamline-Ultimate.png";
 import paperWriteIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
+import logoutIcon from "@assets/Logout-2--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1461,7 +1462,7 @@ export default function AdminPanel() {
               Home
             </Button>
             <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
+              <img src={logoutIcon} alt="Logout" className="h-4 w-4 mr-2" />
               Logout
             </Button>
           </div>
