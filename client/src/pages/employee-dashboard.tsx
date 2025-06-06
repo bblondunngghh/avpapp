@@ -29,6 +29,7 @@ import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Strea
 import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import taskListCashIcon from "@assets/Task-List-Cash--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
+import logoutIcon from "@assets/Logout-2--Streamline-Ultimate.png";
 
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
@@ -376,7 +377,7 @@ export default function EmployeeDashboard() {
           onClick={handleLogout}
           className="border-gray-200 text-gray-700"
         >
-          <LogOut className="h-4 w-4 mr-2" />
+          <img src={logoutIcon} alt="Logout" className="h-4 w-4 mr-2" />
           Logout
         </Button>
       </div>
