@@ -11,7 +11,7 @@ import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
 import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
-import irisScanApprovedIcon from "@assets/Iris-Scan-Approved--Streamline-Ultimate.png";
+import viewSquareIcon from "@assets/View-Square--Streamline-Ultimate.png";
 
 // Component for compact customer info
 function CompactCustomerInfo({ name, email, phone }: { 
@@ -4807,13 +4807,13 @@ export default function AdminPanel() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Date/Time</TableHead>
-                            <TableHead>Customer</TableHead>
-                            <TableHead>Location</TableHead>
-                            <TableHead>Employee</TableHead>
-                            <TableHead>Vehicle</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>Actions</TableHead>
+                            <TableHead className="w-[120px]">Date/Time</TableHead>
+                            <TableHead className="w-[140px]">Customer</TableHead>
+                            <TableHead className="w-[120px]">Location</TableHead>
+                            <TableHead className="w-[120px]">Employee</TableHead>
+                            <TableHead className="w-[160px]">Vehicle</TableHead>
+                            <TableHead className="w-[200px]">Description</TableHead>
+                            <TableHead className="w-[80px] text-center">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -4856,11 +4856,11 @@ export default function AdminPanel() {
                                   <div className="flex gap-2">
                                     <Dialog>
                                       <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="px-3 py-2">
+                                        <Button variant="outline" size="sm" className="p-2">
                                           <img 
-                                            src={irisScanApprovedIcon} 
+                                            src={viewSquareIcon} 
                                             alt="View Details" 
-                                            className="w-5 h-5"
+                                            className="w-4 h-4"
                                           />
                                         </Button>
                                       </DialogTrigger>
