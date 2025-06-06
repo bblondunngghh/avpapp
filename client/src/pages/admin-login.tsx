@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Lock, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
+import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate.png";
 
 // Define the admin password
 const ADMIN_PASSWORD = "cg2023";
@@ -144,7 +145,7 @@ export default function AdminLogin() {
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
           <div className="mx-auto bg-blue-100 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
-            <Lock className="h-7 w-7 text-blue-700" />
+            <img src={lockShieldIcon} alt="Lock Shield" className="h-7 w-7" />
           </div>
           <CardTitle className="text-2xl">Admin Access</CardTitle>
           <CardDescription>
