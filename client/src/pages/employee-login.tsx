@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft } from "lucide-react";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
+import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 
 const formSchema = z.object({
   employeeId: z.string().min(1, "Please select an employee"),
@@ -100,6 +101,9 @@ export default function EmployeeLogin() {
           >
             <img src={houseIcon} alt="House" className="h-5 w-5" />
           </Button>
+          <div className="flex justify-center mb-4">
+            <img src={deliveryManIcon} alt="Employee" className="h-16 w-16" />
+          </div>
           <CardTitle className="text-2xl text-indigo-700">Employee Login</CardTitle>
           <CardDescription>
             Access your payroll information and timesheets
