@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 
 // Define the admin password
 const ADMIN_PASSWORD = "cg2023";
