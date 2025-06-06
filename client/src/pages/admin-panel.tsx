@@ -11,7 +11,41 @@ import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
 import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
-import makeUpEyeIcon from "@assets/Make-Up-Eye--Streamline-Ultimate.png";
+import irisScanApprovedIcon from "@assets/Iris-Scan-Approved--Streamline-Ultimate.png";
+
+// Component for compact customer info
+function CompactCustomerInfo({ name, email, phone }: { 
+  name: string; 
+  email: string; 
+  phone: string; 
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  return (
+    <div className="text-sm">
+      <div className="font-medium">{name}</div>
+      {isExpanded ? (
+        <div className="space-y-1">
+          <div className="text-gray-500 break-all">{email}</div>
+          <div className="text-gray-500">{phone}</div>
+          <button 
+            onClick={() => setIsExpanded(false)}
+            className="text-blue-600 text-xs hover:underline"
+          >
+            View Less
+          </button>
+        </div>
+      ) : (
+        <button 
+          onClick={() => setIsExpanded(true)}
+          className="text-blue-600 text-xs hover:underline"
+        >
+          View More
+        </button>
+      )}
+    </div>
+  );
+}
 
 // Component for expandable description
 function ExpandableDescription({ incident, damage, witness, notes }: { 
@@ -4795,11 +4829,11 @@ export default function AdminPanel() {
                                   </div>
                                 </TableCell>
                                 <TableCell>
-                                  <div className="text-sm">
-                                    <div className="font-medium">{report.customerName}</div>
-                                    <div className="text-gray-500">{report.customerEmail}</div>
-                                    <div className="text-gray-500">{report.customerPhone}</div>
-                                  </div>
+                                  <CompactCustomerInfo 
+                                    name={report.customerName}
+                                    email={report.customerEmail}
+                                    phone={report.customerPhone}
+                                  />
                                 </TableCell>
                                 <TableCell className="font-medium">{report.incidentLocation}</TableCell>
                                 <TableCell>{employee?.fullName || 'Unknown'}</TableCell>
@@ -4822,8 +4856,12 @@ export default function AdminPanel() {
                                   <div className="flex gap-2">
                                     <Dialog>
                                       <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm">
-                                          View Details
+                                        <Button variant="outline" size="sm" className="px-3 py-2">
+                                          <img 
+                                            src={irisScanApprovedIcon} 
+                                            alt="View Details" 
+                                            className="w-5 h-5"
+                                          />
                                         </Button>
                                       </DialogTrigger>
                                       <DialogContent className="max-w-4xl max-h-[95vh] flex flex-col">
