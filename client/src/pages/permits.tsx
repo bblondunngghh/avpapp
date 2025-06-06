@@ -15,7 +15,7 @@ import checkCircleIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import calendarWarningIcon from "@assets/Calendar-Warning--Streamline-Ultimate.png";
 import paperWriteIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
-import eyeIcon from "@assets/Make-Up-Eye--Streamline-Ultimate.png";
+import eyeIcon from "@assets/Glasses-Sun-Circle--Streamline-Ultimate.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
