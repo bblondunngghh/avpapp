@@ -1,6 +1,7 @@
 import { useLocation, useRoute } from "wouter";
 import { ClipboardList, Home, PlusCircle, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
 
 export default function BottomNavigation() {
   const [, navigate] = useLocation();
@@ -42,7 +43,7 @@ export default function BottomNavigation() {
         className={`bottom-nav-item ${isHome ? 'active' : ''}`}
         onClick={() => navigate('/')}
       >
-        <Home className="bottom-nav-icon" size={20} />
+        <img src={dashboardIcon} alt="Dashboard" className="bottom-nav-icon" />
         <span className="bottom-nav-label">Dashboard</span>
       </button>
       
