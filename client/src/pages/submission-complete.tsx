@@ -3,6 +3,7 @@ import { useLocation, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Car, DollarSign, Users, AlertTriangle, Shield } from "lucide-react";
 import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
+import financialIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import { LOCATIONS } from "@/lib/constants";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ShiftReport, Employee } from "@shared/schema";
@@ -377,7 +378,7 @@ export default function SubmissionComplete() {
               
               <div className="bg-white p-3 rounded-md border border-blue-100">
                 <div className="flex items-center mb-2">
-                  <DollarSign className="h-4 w-4 text-green-600 mr-2" />
+                  <img src={financialIcon} alt="Financial" className="h-4 w-4 mr-2" />
                   <h4 className="font-medium text-green-800">Financial Summary</h4>
                 </div>
                 <div className="space-y-1 pl-6">
