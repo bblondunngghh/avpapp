@@ -104,7 +104,7 @@ export default function EmployeeLogin() {
           <div className="flex justify-center mb-4">
             <img src={deliveryManIcon} alt="Employee" className="h-16 w-16" />
           </div>
-          <CardTitle className="text-2xl text-indigo-700">Employee Login</CardTitle>
+          <CardTitle className="text-2xl text-blue-700">Employee Login</CardTitle>
           <CardDescription>
             Access your payroll information and timesheets
           </CardDescription>
@@ -170,7 +170,7 @@ export default function EmployeeLogin() {
               
               <Button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 disabled={isLoading || employeesLoading}
               >
                 {isLoading ? "Logging in..." : employeesLoading ? "Loading employees..." : "Login"}
