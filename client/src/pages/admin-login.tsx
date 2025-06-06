@@ -137,7 +137,7 @@ export default function AdminLogin() {
           onClick={() => navigate("/")}
           className="bg-white hover:bg-gray-100 flex items-center gap-1"
         >
-          <Home className="h-4 w-4" />
+          <img src={houseIcon} alt="House" className="h-4 w-4" />
           Return to Home
         </Button>
       </div>

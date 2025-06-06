@@ -205,6 +205,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car } from "lucide-react";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
   LineChart, 
@@ -1445,7 +1446,7 @@ export default function AdminPanel() {
               onClick={() => navigate("/")}
               className="flex items-center gap-1"
             >
-              <Home className="h-4 w-4" />
+              <img src={houseIcon} alt="House" className="h-4 w-4" />
               Home
             </Button>
             <Button variant="outline" onClick={handleLogout}>
