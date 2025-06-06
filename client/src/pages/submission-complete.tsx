@@ -5,6 +5,7 @@ import { CheckCircle, Car, DollarSign, Users, AlertTriangle, Shield } from "luci
 import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
 import financialIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
+import earningsIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import { LOCATIONS } from "@/lib/constants";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ShiftReport, Employee } from "@shared/schema";
@@ -513,7 +514,7 @@ export default function SubmissionComplete() {
             {/* Earnings Breakdown Section */}
             <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
               <div className="flex items-center mb-3">
-                <DollarSign className="h-4 w-4 text-blue-700 mr-2" />
+                <img src={earningsIcon} alt="Earnings" className="h-4 w-4 mr-2" />
                 <h4 className="font-medium text-blue-800">
                   Detailed Earnings Breakdown
                 </h4>
