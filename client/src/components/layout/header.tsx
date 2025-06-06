@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Car, Home, ClipboardList, PlusCircle, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import navCarIcon from "@assets/Car-2--Streamline-Ultimate.png";
 
 export default function Header() {
@@ -39,8 +38,6 @@ export default function Header() {
             >
               Admin Login
             </Button>
-            
-            <ModeToggle />
             
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
