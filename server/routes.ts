@@ -33,6 +33,10 @@ import {
   processTicketDistributionsCSV 
 } from "./csv-upload";
 import { sendIncidentNotification, type IncidentEmailData } from "./email";
+import { 
+  validateShiftReportMiddleware, 
+  dataIntegrityLoggingMiddleware 
+} from "./validation-middleware";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -307,71 +311,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Create a new shift report
-  apiRouter.post('/shift-reports', async (req, res) => {
-    try {
-      const report = insertShiftReportSchema.parse(req.body);
-      
-      // CRITICAL: Validate date format to prevent timezone issues
-      if (!validateDateFormat(report.date)) {
-        return res.status(400).json({ 
-          message: 'Invalid date format. Must be YYYY-MM-DD' 
-        });
-      }
-      
-      // CRITICAL: Validate employee data to prevent JSON corruption
-      if (report.employees) {
-        try {
-          validateEmployeeData(report.employees);
-        } catch (validationError) {
+  apiRouter.post('/shift-reports', 
+    dataIntegrityLoggingMiddleware,
+    validateShiftReportMiddleware,
+    async (req, res) => {
+      try {
+        const report = insertShiftReportSchema.parse(req.body);
+        const createdReport = await storage.createShiftReport(report);
+        
+        // Sync cash payments from shift report to tax payment records
+        await syncCashPaymentsToTaxRecords(createdReport);
+        
+        res.status(201).json(createdReport);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
           return res.status(400).json({ 
-            message: 'Invalid employee data', 
-            error: validationError.message 
+            message: 'Invalid shift report data', 
+            errors: error.errors 
           });
         }
+        res.status(500).json({ message: 'Failed to create shift report' });
       }
-      
-      const createdReport = await storage.createShiftReport(report);
-      
-      // Sync cash payments from shift report to tax payment records
-      await syncCashPaymentsToTaxRecords(createdReport);
-      
-      res.status(201).json(createdReport);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          message: 'Invalid shift report data', 
-          errors: error.errors 
-        });
-      }
-      res.status(500).json({ message: 'Failed to create shift report' });
     }
-  });
+  );
   
   // Update a shift report
-  apiRouter.put('/shift-reports/:id', async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: 'Invalid report ID' });
+  apiRouter.put('/shift-reports/:id',
+    dataIntegrityLoggingMiddleware,
+    validateShiftReportMiddleware,
+    async (req, res) => {
+      try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) {
+          return res.status(400).json({ message: 'Invalid report ID' });
+        }
+        
+        const report = updateShiftReportSchema.parse(req.body);
+        const updatedReport = await storage.updateShiftReport(id, report);
+        
+        if (!updatedReport) {
+          return res.status(404).json({ message: 'Shift report not found' });
+        }
+        
+        // Sync cash payments from updated shift report to tax payment records
+        await syncCashPaymentsToTaxRecords(updatedReport);
+        
+        res.json(updatedReport);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return res.status(400).json({ 
+            message: 'Invalid shift report data', 
+            errors: error.errors 
+          });
+        }
+        res.status(500).json({ message: 'Failed to update shift report' });
       }
-      
-      const report = updateShiftReportSchema.parse(req.body);
-      const updatedReport = await storage.updateShiftReport(id, report);
-      
-      if (!updatedReport) {
-        return res.status(404).json({ message: 'Shift report not found' });
-      }
-      res.json(updatedReport);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          message: 'Invalid shift report data', 
-          errors: error.errors 
-        });
-      }
-      res.status(500).json({ message: 'Failed to update shift report' });
     }
-  });
+  );
   
   // Delete a shift report
   apiRouter.delete('/shift-reports/:id', async (req, res) => {
