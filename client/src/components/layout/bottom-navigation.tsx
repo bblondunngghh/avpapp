@@ -2,6 +2,7 @@ import { useLocation, useRoute } from "wouter";
 import { ClipboardList, Home, PlusCircle, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
+import employeeIcon from "@assets/Human-Resources-Employee-Previous-1--Streamline-Ultimate.png";
 
 export default function BottomNavigation() {
   const [, navigate] = useLocation();
@@ -67,7 +68,7 @@ export default function BottomNavigation() {
         className={`bottom-nav-item ${isEmployeeDashboard ? 'active' : ''}`}
         onClick={() => navigate('/employee-dashboard')}
       >
-        <User className="bottom-nav-icon" size={20} />
+        <img src={employeeIcon} alt="Employee" className="bottom-nav-icon" />
         <span className="bottom-nav-label">Employee</span>
       </button>
     </nav>
