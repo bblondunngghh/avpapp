@@ -3626,13 +3626,23 @@ export default function AdminPanel() {
                           </TableCell>
                           <TableCell>
                             {hasCompletedTraining ? (
-                              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                                ✓ Complete
-                              </span>
+                              <div className="flex justify-center">
+                                <img 
+                                  src="/attached_assets/Check-Circle-1--Streamline-Ultimate.png" 
+                                  alt="Training Complete" 
+                                  className="w-6 h-6"
+                                  title="Training Complete"
+                                />
+                              </div>
                             ) : (
-                              <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                                ✗ Incomplete
-                              </span>
+                              <div className="flex justify-center">
+                                <img 
+                                  src="/attached_assets/Delete-1--Streamline-Ultimate.png" 
+                                  alt="Training Incomplete" 
+                                  className="w-6 h-6"
+                                  title="Training Incomplete"
+                                />
+                              </div>
                             )}
                           </TableCell>
                           <TableCell>
