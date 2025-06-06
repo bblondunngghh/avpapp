@@ -3,6 +3,7 @@ import { ClipboardList, Home, PlusCircle, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Human-Resources-Employee-Previous-1--Streamline-Ultimate.png";
+import newReportIcon from "@assets/Data-File-Edit--Streamline-Ultimate.png";
 
 export default function BottomNavigation() {
   const [, navigate] = useLocation();
@@ -60,7 +61,7 @@ export default function BottomNavigation() {
         className={`bottom-nav-item ${isReportSelection ? 'active' : ''}`}
         onClick={() => navigate('/report-selection')}
       >
-        <PlusCircle className="bottom-nav-icon" size={20} />
+        <img src={newReportIcon} alt="New Report" className="bottom-nav-icon" />
         <span className="bottom-nav-label">New Report</span>
       </button>
 
