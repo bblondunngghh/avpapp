@@ -214,6 +214,7 @@ import timeClockNineIcon from "@assets/Time-Clock-Nine--Streamline-Ultimate.png"
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
+import folderUploadIcon from "@assets/Folder-Upload--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1494,7 +1495,7 @@ export default function AdminPanel() {
             }}
             className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
           >
-            <FileSpreadsheet className="h-4 w-4" />
+            <img src={folderUploadIcon} alt="Folder Upload" className="h-4 w-4" />
             CSV Upload
           </Button>
           <Button 
