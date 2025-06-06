@@ -7,6 +7,7 @@ import shiftReportIcon from "@assets/Task-List-Add--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
+import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 
@@ -125,8 +126,9 @@ export default function Dashboard() {
             <Button 
               variant="outline" 
               onClick={() => navigate("/employee-login")}
-              className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50"
+              className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center gap-2"
             >
+              <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
               Employee Login
             </Button>
           </div>
