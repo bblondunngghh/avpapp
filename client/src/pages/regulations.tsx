@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Save, RotateCcw } from "lucide-react";
+import laptopDownloadIcon from "@assets/Laptop-Download--Streamline-Ultimate.png";
 import SignatureCanvas from "react-signature-canvas";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -374,7 +375,7 @@ export default function Regulations() {
                 disabled={saveAcknowledgmentMutation.isPending}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
-                <Save className="h-4 w-4" />
+                <img src={laptopDownloadIcon} alt="Laptop Download" className="h-4 w-4" />
                 {saveAcknowledgmentMutation.isPending ? "Saving..." : "Save Acknowledgment"}
               </Button>
             </div>
