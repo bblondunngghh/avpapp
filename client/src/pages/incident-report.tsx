@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Camera, CarFront, ChevronLeft, Plus, Trash2, Upload, X } from "lucide-react";
+import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -558,7 +559,10 @@ export default function IncidentReport() {
                   <span className="animate-spin mr-2">⋯</span> Submitting Report
                 </div>
               ) : (
-                "Submit Incident Report"
+                <div className="flex items-center">
+                  <span>Submit Incident Report</span>
+                  <img src={sendEmailIcon} alt="Send Email" className="ml-2 h-5 w-5" />
+                </div>
               )}
             </Button>
           </div>

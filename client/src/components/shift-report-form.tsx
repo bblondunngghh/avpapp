@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft, Plus } from "lucide-react";
+import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
@@ -1683,12 +1684,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               ) : (
                 <>
                   <span>{reportId ? "Update Report" : "Submit Report"}</span>
-                  <span className="ml-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M22 2L11 13" />
-                      <path d="M22 2L15 22L11 13L2 9L22 2Z" />
-                    </svg>
-                  </span>
+                  <img src={sendEmailIcon} alt="Send Email" className="ml-3 h-5 w-5" />
                 </>
               )}
             </Button>
