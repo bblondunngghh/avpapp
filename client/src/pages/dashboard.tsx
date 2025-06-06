@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-react";
-import carIcon from "@assets/Sports-Car-2--Streamline-Ultimate.png";
+import shiftReportIcon from "@assets/Task-List-Add--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
@@ -44,7 +44,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <img src={carIcon} alt="Car" className="h-10 w-10" />
+              <img src={shiftReportIcon} alt="Task List Add" className="h-10 w-10" />
             </div>
             <h3 className="text-xl mb-3 text-blue-600">Submit Shift Report</h3>
             <p className="text-gray-600 mb-6 flex-grow">
