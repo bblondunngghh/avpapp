@@ -437,7 +437,7 @@ export default function EmployeeDashboard() {
         
         <Card className={paySummary.totalMoneyOwed > 0 ? "border-2 border-green-300 shadow-md" : ""}>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               <div className={`p-3 rounded-full ${paySummary.totalMoneyOwed > 0 ? 'bg-green-100' : 'bg-gray-100'}`}>
                 <img src={cashUserIcon} alt="Cash User" className="h-6 w-6" />
               </div>
@@ -458,7 +458,7 @@ export default function EmployeeDashboard() {
         
         <Card className={paySummary.totalAdditionalTaxPayments > 0 ? "border-2 border-blue-300 shadow-md" : ""}>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               <div className="bg-blue-100 p-3 rounded-full">
                 <img src={taskListCashIcon} alt="Task List Cash" className="h-6 w-6" />
               </div>
