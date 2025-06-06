@@ -8,6 +8,8 @@ import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 import checkCompleteIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import deleteIncompleteIcon from "@assets/Delete-1--Streamline-Ultimate.png";
 import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
+import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
+import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 
 // Component for expandable description
 function ExpandableDescription({ incident, damage, witness, notes }: { 
@@ -5174,18 +5176,18 @@ export default function AdminPanel() {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Location Name</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Curbside Rate</TableHead>
-                            <TableHead>Turn-in Rate</TableHead>
-                            <TableHead>Employee Commission</TableHead>
-                            <TableHead>Actions</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
+                            <TableHead className="text-center">Curbside Rate</TableHead>
+                            <TableHead className="text-center">Turn-in Rate</TableHead>
+                            <TableHead className="text-center">Employee Commission</TableHead>
+                            <TableHead className="text-center">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {locations?.map((location: any) => (
                             <TableRow key={location.id}>
                               <TableCell className="font-medium">{location.name}</TableCell>
-                              <TableCell>
+                              <TableCell className="text-center">
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                   location.active 
                                     ? 'bg-green-100 text-green-800' 
@@ -5194,11 +5196,11 @@ export default function AdminPanel() {
                                   {location.active ? 'Active' : 'Inactive'}
                                 </span>
                               </TableCell>
-                              <TableCell>${location.curbsideRate}</TableCell>
-                              <TableCell>${location.turnInRate}</TableCell>
-                              <TableCell>${location.employeeCommission}</TableCell>
-                              <TableCell>
-                                <div className="flex gap-2">
+                              <TableCell className="text-center">${location.curbsideRate}</TableCell>
+                              <TableCell className="text-center">${location.turnInRate}</TableCell>
+                              <TableCell className="text-center">${location.employeeCommission}</TableCell>
+                              <TableCell className="text-center">
+                                <div className="flex gap-2 justify-center">
                                   <Button
                                     variant="outline"
                                     size="sm"
@@ -5207,8 +5209,13 @@ export default function AdminPanel() {
                                       resetFileUpload();
                                       setIsDialogOpen(true);
                                     }}
+                                    className="p-2"
                                   >
-                                    Edit
+                                    <img 
+                                      src={contentPenIcon} 
+                                      alt="Edit" 
+                                      className="w-4 h-4"
+                                    />
                                   </Button>
                                   <Button
                                     variant="destructive"
@@ -5223,8 +5230,13 @@ export default function AdminPanel() {
                                         deleteLocationMutation.mutate(location.id);
                                       }
                                     }}
+                                    className="p-2"
                                   >
-                                    Delete
+                                    <img 
+                                      src={binIcon} 
+                                      alt="Delete" 
+                                      className="w-4 h-4"
+                                    />
                                   </Button>
                                 </div>
                               </TableCell>
