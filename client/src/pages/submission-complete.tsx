@@ -6,6 +6,7 @@ import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
 import financialIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import earningsIcon from "@assets/Cash-User--Streamline-Ultimate.png";
+import taxIcon from "@assets/Task-List-Cash--Streamline-Ultimate.png";
 import { LOCATIONS } from "@/lib/constants";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ShiftReport, Employee } from "@shared/schema";
@@ -625,7 +626,7 @@ export default function SubmissionComplete() {
             {/* Tax Information Section */}
             <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
               <div className="flex items-center mb-3">
-                <Shield className="h-4 w-4 text-purple-600 mr-2" />
+                <img src={taxIcon} alt="Tax" className="h-4 w-4 mr-2" />
                 <h4 className="font-medium text-purple-800">
                   Tax Summary
                 </h4>
@@ -735,7 +736,7 @@ export default function SubmissionComplete() {
                   <div className={`mt-3 p-2 rounded ${taxSummary.isCovered ? 'bg-green-100 border border-green-200' : 'bg-amber-100 border border-amber-200'}`}>
                     {taxSummary.isCovered ? (
                       <p className="text-sm text-green-800 font-medium flex items-center">
-                        <Shield className="h-4 w-4 mr-1" /> All Taxes Covered
+                        <img src={taxIcon} alt="Tax" className="h-4 w-4 mr-1" /> All Taxes Covered
                       </p>
                     ) : (
                       <div>
