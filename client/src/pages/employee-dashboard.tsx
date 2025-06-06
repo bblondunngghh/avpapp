@@ -533,7 +533,7 @@ export default function EmployeeDashboard() {
             Earnings Summary
           </TabsTrigger>
           <TabsTrigger value="details">
-            <FileText className="h-4 w-4 mr-2" />
+            <img src={taskListCashIcon} alt="Shift Details" className="h-4 w-4 mr-2" />
             Shift Details
           </TabsTrigger>
           <TabsTrigger value="settings">
