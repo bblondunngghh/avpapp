@@ -26,6 +26,7 @@ import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info, 
 import { useToast } from "@/hooks/use-toast";
 import watchTimeIcon from "@assets/Watch-Time-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
+import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
@@ -434,7 +435,7 @@ export default function EmployeeDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`p-3 rounded-full ${paySummary.totalMoneyOwed > 0 ? 'bg-green-100' : 'bg-gray-100'}`}>
-                <DollarSign className={`h-6 w-6 ${paySummary.totalMoneyOwed > 0 ? 'text-green-700' : 'text-gray-500'}`} />
+                <img src={cashUserIcon} alt="Cash User" className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Money Owed to You</p>
