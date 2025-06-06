@@ -20,7 +20,7 @@ export default function Header() {
       <div className="app-header-content">
         <div className="flex items-center justify-center flex-1">
           <h1 className="app-title flex items-center gap-2">
-            <img src={navCarIcon} alt="Car" className="h-6 w-6 filter brightness-0 invert animate-bounce-slow" />
+            <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
             <span>ACCESS VALET PARKING</span>
           </h1>
         </div>
