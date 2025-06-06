@@ -206,6 +206,7 @@ import {
 } from "@/components/ui/table";
 import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car } from "lucide-react";
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
+import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1507,7 +1508,7 @@ export default function AdminPanel() {
           </TabsTrigger>
 
           <TabsTrigger value="locations" className="flex-shrink-0 flex items-center">
-            <TrendingUp className="h-4 w-4 mr-2" />
+            <img src={analyticsBoardBarsIcon} alt="Analytics Board Bars" className="h-4 w-4 mr-2" />
             Partner Distribution
           </TabsTrigger>
           <TabsTrigger value="tickets" className="flex-shrink-0 flex items-center">
