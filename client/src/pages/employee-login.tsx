@@ -101,7 +101,7 @@ export default function EmployeeLogin() {
           >
             <img src={houseIcon} alt="House" className="h-5 w-5" />
           </Button>
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-2">
             <img src={deliveryManIcon} alt="Employee" className="h-16 w-16" />
           </div>
           <CardTitle className="text-2xl text-blue-700">Employee Login</CardTitle>
