@@ -181,19 +181,18 @@ export default function EmployeeDashboard() {
       }
     } catch (err) {
       console.error("Failed to parse employee data:", err);
+      return false;
     }
     
     // Safety check to ensure employees is an array before using .some()
     if (!Array.isArray(employees)) {
       console.warn("employees is not an array, converting to empty array:", employees);
-      employees = [];
       return false; // No match if not an array
     }
     
     // Check if employee worked on this shift using robust matching
+    const employeeRecord = { key: employeeKey || '', fullName: employeeName || '' };
     return employees.some((emp: any) => {
-      // Use robust employee matching that handles key changes
-      const employeeRecord = { key: employeeKey, fullName: employeeName };
       return matchEmployee(emp, employeeRecord);
     });
   });
