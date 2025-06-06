@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
 import { ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Edit, Upload, Eye, Download } from "lucide-react";
+import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
@@ -298,7 +299,7 @@ export default function PermitsPage() {
                 <p className="text-sm text-gray-600">Total Permits</p>
                 <p className="text-2xl font-semibold">{permits.length}</p>
               </div>
-              <FileText className="h-8 w-8 text-blue-600" />
+              <img src={newspaperIcon} alt="Newspaper" className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
