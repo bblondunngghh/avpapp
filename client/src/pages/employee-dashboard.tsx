@@ -25,6 +25,7 @@ import {
 import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info, Settings, CheckCircle, XCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import watchTimeIcon from "@assets/Watch-Time-1--Streamline-Ultimate.png";
+import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
@@ -419,7 +420,7 @@ export default function EmployeeDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="bg-green-100 p-3 rounded-full">
-                <DollarSign className="h-6 w-6 text-green-700" />
+                <img src={accountingBillStackIcon} alt="Accounting Bill Stack" className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Total Earnings</p>
