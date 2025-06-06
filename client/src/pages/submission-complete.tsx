@@ -736,7 +736,7 @@ export default function SubmissionComplete() {
                     ) : (
                       <div>
                         <p className="text-sm text-amber-800 font-medium flex items-center mb-1">
-                          <AlertTriangle className="h-4 w-4 mr-1" /> Additional Tax Payment Required
+                          <AlertTriangle className="h-4 w-4 mr-1" /> Reminder: Total Additional Tax Payment Due.
                         </p>
                         <p className="text-xs text-amber-700 pl-5">
                           Cash Needed: <span className="font-medium">{formatCurrency(Math.max(0, taxSummary.expectedAmount - taxSummary.cashPaid))}</span>
