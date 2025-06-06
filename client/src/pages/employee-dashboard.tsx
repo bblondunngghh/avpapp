@@ -472,7 +472,7 @@ export default function EmployeeDashboard() {
         </Card>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -482,23 +482,6 @@ export default function EmployeeDashboard() {
               <div>
                 <p className="text-sm text-gray-500">Total Shifts</p>
                 <h3 className="text-2xl font-bold">{paySummary.shifts.length}</h3>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="bg-purple-100 p-3 rounded-full">
-                <AlertCircle className="h-6 w-6 text-purple-700" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Money Owed After Tax Coverage</p>
-                <h3 className="text-2xl font-bold text-purple-700">
-                  ${Math.max(0, paySummary.totalTax - paySummary.totalAdditionalTaxPayments).toFixed(2)}
-                </h3>
-                <p className="text-xs text-purple-500 mt-1">Amount owed after covering tax obligations</p>
               </div>
             </div>
           </CardContent>
