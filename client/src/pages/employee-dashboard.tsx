@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getQueryFn, apiRequest } from "@/lib/queryClient";
 import { LOCATIONS } from "@/lib/constants";
-import { matchEmployee } from "@/lib/employee-utils";
+import { matchEmployee, extractMonth, parseEmployeesData } from "@/lib/employee-utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -165,33 +165,16 @@ export default function EmployeeDashboard() {
 
   // Filter reports by selected month and employee
   const filteredReports = allReports.filter((report: any) => {
-    // Parse date correctly - report.date is in YYYY-MM-DD format
-    const [year, month, day] = report.date.split('-');
-    const reportMonth = `${year}-${month}`;
+    // CRITICAL: Use safe date parsing to prevent timezone issues
+    const reportMonth = extractMonth(report.date);
     
     // Apply month filter if set
     if (selectedMonth && reportMonth !== selectedMonth) {
       return false;
     }
     
-    // Filter reports where this employee worked
-    let employees = [];
-    try {
-      if (typeof report.employees === 'string') {
-        employees = JSON.parse(report.employees);
-      } else if (Array.isArray(report.employees)) {
-        employees = report.employees;
-      }
-    } catch (err) {
-      console.error("Failed to parse employee data:", err, "Original data:", report.employees);
-      return false;
-    }
-    
-    // Safety check to ensure employees is an array before using .some()
-    if (!Array.isArray(employees)) {
-      console.warn("employees is not an array, converting to empty array:", employees);
-      return false; // No match if not an array
-    }
+    // CRITICAL: Use safe employee data parsing to prevent JSON corruption
+    const employees = parseEmployeesData(report.employees);
     
     // Check if employee worked on this shift using robust matching
     const employeeRecord = { key: employeeKey || '', fullName: employeeName || '' };
@@ -233,24 +216,8 @@ export default function EmployeeDashboard() {
     const receiptTips = report.totalReceipts * 3; // $3 tip per receipt
     const totalTips = creditCardTips + cashTips + receiptTips;
     
-    // Get employee data from report
-    // Parse employee data safely
-    let employeesList = [];
-    try {
-      if (typeof report.employees === 'string') {
-        employeesList = JSON.parse(report.employees);
-      } else if (Array.isArray(report.employees)) {
-        employeesList = report.employees;
-      }
-    } catch (err) {
-      console.error("Failed to parse employee data:", err);
-    }
-    
-    // Make sure employees is an array before searching
-    if (!Array.isArray(employeesList)) {
-      console.warn("employees is not an array for finding employee data, converting to empty array:", employeesList);
-      employeesList = [];
-    }
+    // CRITICAL: Use safe employee data parsing for payroll calculations
+    const employeesList = parseEmployeesData(report.employees);
     
     // Find employee data using the same robust matching logic as filtering
     const employeeRecord = { key: employeeKey || '', fullName: employeeName || '' };

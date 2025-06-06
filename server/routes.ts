@@ -37,16 +37,56 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
+// Validation functions to prevent critical data integrity issues
+function validateEmployeeData(employees: any): any[] {
+  if (Array.isArray(employees)) {
+    return employees;
+  }
+  
+  if (typeof employees === 'string') {
+    try {
+      const parsed = JSON.parse(employees);
+      if (!Array.isArray(parsed)) {
+        throw new Error('Parsed employee data is not an array');
+      }
+      // Validate each employee object has required fields
+      parsed.forEach((emp: any, index: number) => {
+        if (!emp.name || typeof emp.name !== 'string') {
+          throw new Error(`Employee at index ${index} missing valid name field`);
+        }
+        if (emp.hours !== undefined && (isNaN(Number(emp.hours)) || Number(emp.hours) < 0)) {
+          throw new Error(`Employee at index ${index} has invalid hours value`);
+        }
+      });
+      return parsed;
+    } catch (error) {
+      throw new Error(`Failed to parse employee JSON: ${error.message}`);
+    }
+  }
+  
+  throw new Error('Employee data must be string or array');
+}
+
+function validateDateFormat(dateString: string): boolean {
+  // Validate YYYY-MM-DD format
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(dateString)) {
+    return false;
+  }
+  
+  // Validate actual date values
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && 
+         date.getMonth() === month - 1 && 
+         date.getDate() === day;
+}
+
 // Function to sync cash payments from shift reports to tax payment records
 async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
   try {
-    // Parse employees data from the shift report
-    let employees = [];
-    if (typeof shiftReport.employees === 'string') {
-      employees = JSON.parse(shiftReport.employees);
-    } else if (Array.isArray(shiftReport.employees)) {
-      employees = shiftReport.employees;
-    }
+    // Use validation function to safely parse employees data
+    const employees = validateEmployeeData(shiftReport.employees);
 
     // Process ALL employees in the shift report (not just those with cash payments)
     for (const emp of employees) {
@@ -270,6 +310,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.post('/shift-reports', async (req, res) => {
     try {
       const report = insertShiftReportSchema.parse(req.body);
+      
+      // CRITICAL: Validate date format to prevent timezone issues
+      if (!validateDateFormat(report.date)) {
+        return res.status(400).json({ 
+          message: 'Invalid date format. Must be YYYY-MM-DD' 
+        });
+      }
+      
+      // CRITICAL: Validate employee data to prevent JSON corruption
+      if (report.employees) {
+        try {
+          validateEmployeeData(report.employees);
+        } catch (validationError) {
+          return res.status(400).json({ 
+            message: 'Invalid employee data', 
+            error: validationError.message 
+          });
+        }
+      }
+      
       const createdReport = await storage.createShiftReport(report);
       
       // Sync cash payments from shift report to tax payment records

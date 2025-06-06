@@ -13,6 +13,42 @@ export function parseLocalDate(dateString: string): Date {
   return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 }
 
+/**
+ * Extract month from date string without timezone conversion issues
+ * CRITICAL: Always use this instead of new Date() for month filtering
+ * @param dateString - Date string in YYYY-MM-DD format
+ * @returns Month string in YYYY-MM format
+ */
+export function extractMonth(dateString: string): string {
+  const [year, month] = dateString.split('-');
+  return `${year}-${month}`;
+}
+
+/**
+ * Safely parse employee JSON data with validation
+ * CRITICAL: Always use this to prevent JSON corruption issues
+ * @param employeesData - Raw employees data (string or array)
+ * @returns Parsed employee array or empty array on error
+ */
+export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
+  if (Array.isArray(employeesData)) {
+    return employeesData;
+  }
+  
+  if (typeof employeesData === 'string') {
+    try {
+      const parsed = JSON.parse(employeesData);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.error('Failed to parse employee JSON data:', error, 'Raw data:', employeesData);
+      return [];
+    }
+  }
+  
+  console.warn('Employee data is neither string nor array:', employeesData);
+  return [];
+}
+
 export interface EmployeeRecord {
   key: string;
   fullName: string;
