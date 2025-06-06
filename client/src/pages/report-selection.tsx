@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Car, ShieldAlert, ChevronLeft } from "lucide-react";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { LOCATIONS } from "@/lib/constants";
 import RestaurantIcon from "@/components/restaurant-icon";
 import shiftReportIcon from "@assets/Task-List-Add--Streamline-Ultimate.png";
@@ -19,7 +20,7 @@ export default function ReportSelection() {
             onClick={() => navigate("/")} 
             className="p-0 h-10 w-10 rounded-full bg-white shadow-sm hover:shadow-md"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <img src={houseIcon} alt="House" className="h-5 w-5" />
           </Button>
           <h1 className="text-3xl md:text-4xl font-bold text-center flex-1 pr-10 text-gray-900">
             Select Report Type

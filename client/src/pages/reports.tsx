@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, LockKeyhole, ArrowLeft } from "lucide-react";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import LocationSelectorModal from "@/components/location-selector-modal";
 import ReportCard from "@/components/report-card";
 import { LOCATIONS } from "@/lib/constants";
@@ -108,7 +109,7 @@ export default function Reports() {
             onClick={() => navigate("/admin")}
             className="flex items-center gap-1"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <img src={houseIcon} alt="House" className="h-4 w-4" />
             Back to Admin Panel
           </Button>
           <h2 className="text-2xl font-normal text-primary">All Reports</h2>

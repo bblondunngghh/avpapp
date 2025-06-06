@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Camera, CarFront, ChevronLeft, Plus, Trash2, Upload, X } from "lucide-react";
 import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -157,7 +158,7 @@ export default function IncidentReport() {
         className="mb-6" 
         onClick={() => navigate("/")}
       >
-        <ChevronLeft className="h-4 w-4 mr-2" />
+        <img src={houseIcon} alt="House" className="h-4 w-4 mr-2" />
         Back to Dashboard
       </Button>
       <div className="mb-8">
