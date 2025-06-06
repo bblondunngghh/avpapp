@@ -120,7 +120,7 @@ export default function Dashboard() {
       </div>
       
       {/* Admin and Employee Login Links */}
-      <div className="text-center mt-8 pt-6 border-t border-gray-200">
+      <div className="text-center mt-8 pt-6 border-t border-gray-200 pb-24">
         <div className="flex flex-col items-center justify-center">
           <p className="text-gray-500 mb-3">View your hours, earnings and tax information:</p>
           <Button 
