@@ -363,13 +363,13 @@ export default function EmployeeDashboard() {
     <div className="container mx-auto py-6 px-4 max-w-5xl">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16 border-2 border-indigo-200">
-            <AvatarFallback className="bg-indigo-100 text-indigo-700 text-xl">
+          <Avatar className="h-16 w-16 border-2 border-blue-200">
+            <AvatarFallback className="bg-blue-100 text-blue-700 text-xl">
               {getInitials(employeeName)}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl text-indigo-800">{formatName(employeeName)}</h1>
+            <h1 className="text-2xl text-blue-800">{formatName(employeeName)}</h1>
             <p className="text-gray-500">Employee Dashboard</p>
           </div>
         </div>
