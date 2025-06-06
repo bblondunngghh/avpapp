@@ -9,6 +9,7 @@ import earningsIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import taxIcon from "@assets/Task-List-Cash--Streamline-Ultimate.png";
 import checkIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import alertIcon from "@assets/Alert-Triangle--Streamline-Ultimate.png";
+import certifiedIcon from "@assets/Certified-Ribbon--Streamline-Ultimate.png";
 import { LOCATIONS } from "@/lib/constants";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ShiftReport, Employee } from "@shared/schema";
@@ -324,7 +325,7 @@ export default function SubmissionComplete() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
       <div className="max-w-3xl w-full bg-white rounded-lg shadow-lg p-8">
         <div className="flex justify-center mb-4">
-          <CheckCircle className="h-16 w-16 text-green-500" />
+          <img src={certifiedIcon} alt="Certified" className="h-16 w-16" />
         </div>
         
         <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">Report Submitted Successfully!</h1>
