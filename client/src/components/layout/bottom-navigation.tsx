@@ -9,7 +9,7 @@ import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 export default function BottomNavigation() {
   const [, navigate] = useLocation();
   const [isHome] = useRoute("/");
-  const [isReports] = useRoute("/reports");
+
   const [isReportSelection] = useRoute("/report-selection");
   const [isEmployeeDashboard] = useRoute("/employee-dashboard");
   const [isAdmin, setIsAdmin] = useState(false);
@@ -50,14 +50,7 @@ export default function BottomNavigation() {
         <span className="bottom-nav-label">Dashboard</span>
       </button>
       
-      <button 
-        className={`bottom-nav-item ${isReports ? 'active' : ''}`}
-        onClick={() => navigate('/reports')}
-      >
-        <img src={reportsIcon} alt="Reports" className="bottom-nav-icon" />
-        <span className="bottom-nav-label">Reports</span>
-      </button>
-      
+
       <button 
         className={`bottom-nav-item ${isReportSelection ? 'active' : ''}`}
         onClick={() => navigate('/report-selection')}

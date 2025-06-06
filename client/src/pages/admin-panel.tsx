@@ -72,18 +72,16 @@ function FaultDeterminationSection({ report }: { report: any }) {
         <div>
           <Label className="text-sm font-medium">Fault Status</Label>
           <Select
-            value={faultStatus}
+            value={faultStatus || undefined}
             onValueChange={(value) => {
-              const newValue = value || '';
-              setFaultStatus(newValue);
-              updateIncidentMutation.mutate({ faultStatus: newValue || null });
+              setFaultStatus(value);
+              updateIncidentMutation.mutate({ faultStatus: value || null });
             }}
           >
             <SelectTrigger className="mt-1">
               <SelectValue placeholder="Select Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Select Status</SelectItem>
               <SelectItem value="at-fault">At Fault</SelectItem>
               <SelectItem value="not-at-fault">Not at Fault</SelectItem>
             </SelectContent>
@@ -112,18 +110,16 @@ function FaultDeterminationSection({ report }: { report: any }) {
           <div>
             <Label className="text-sm font-medium">Repair Status</Label>
             <Select
-              value={repairStatus}
+              value={repairStatus || undefined}
               onValueChange={(value) => {
-                const newValue = value || '';
-                setRepairStatus(newValue);
-                updateIncidentMutation.mutate({ repairStatus: newValue || null });
+                setRepairStatus(value);
+                updateIncidentMutation.mutate({ repairStatus: value || null });
               }}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Select Status</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
