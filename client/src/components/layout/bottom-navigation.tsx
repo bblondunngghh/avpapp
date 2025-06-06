@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import newReportIcon from "@assets/Data-File-Edit--Streamline-Ultimate.png";
+import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 
 export default function BottomNavigation() {
   const [, navigate] = useLocation();
@@ -53,7 +54,7 @@ export default function BottomNavigation() {
         className={`bottom-nav-item ${isReports ? 'active' : ''}`}
         onClick={() => navigate('/reports')}
       >
-        <ClipboardList className="bottom-nav-icon" size={20} />
+        <img src={reportsIcon} alt="Reports" className="bottom-nav-icon" />
         <span className="bottom-nav-label">Reports</span>
       </button>
       
