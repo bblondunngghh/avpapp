@@ -4852,8 +4852,8 @@ export default function AdminPanel() {
                                     notes={report.additionalNotes}
                                   />
                                 </TableCell>
-                                <TableCell>
-                                  <div className="flex gap-2">
+                                <TableCell className="text-center">
+                                  <div className="flex gap-2 justify-center">
                                     <Dialog>
                                       <DialogTrigger asChild>
                                         <Button variant="outline" size="sm" className="p-2">
