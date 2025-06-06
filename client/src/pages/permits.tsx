@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Edit, Upload, Eye, Download } from "lucide-react";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import checkCircleIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
+import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
@@ -326,7 +327,7 @@ export default function PermitsPage() {
                 <p className="text-sm text-gray-600">Locations</p>
                 <p className="text-2xl font-semibold">4</p>
               </div>
-              <MapPin className="h-8 w-8 text-purple-600" />
+              <img src={pinLocationIcon} alt="Pin Location" className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
