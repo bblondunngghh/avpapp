@@ -3,7 +3,7 @@ import { ClipboardList, Home, PlusCircle, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
-import newReportIcon from "@assets/Data-File-Edit--Streamline-Ultimate.png";
+import newReportIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 
 export default function BottomNavigation() {
