@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useLocation } from "wouter";
 import { ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Edit, Upload, Eye, Download } from "lucide-react";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
+import checkCircleIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
@@ -313,7 +314,7 @@ export default function PermitsPage() {
                   {permits.filter(p => p.status === 'Active').length}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
+              <img src={checkCircleIcon} alt="Check Circle" className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
