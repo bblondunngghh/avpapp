@@ -208,6 +208,11 @@ import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarCh
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
 import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
+import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
+import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
+import timeClockNineIcon from "@assets/Time-Clock-Nine--Streamline-Ultimate.png";
+import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
+import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1517,15 +1522,15 @@ export default function AdminPanel() {
             Tickets
           </TabsTrigger>
           <TabsTrigger value="manage-employees" className="flex-shrink-0 flex items-center">
-            <Users className="h-4 w-4 mr-2" />
+            <img src={deliveryManIcon} alt="Delivery Man" className="h-4 w-4 mr-2" />
             Employees
           </TabsTrigger>
           <TabsTrigger value="employee-accounting" className="flex-shrink-0 flex items-center">
-            <DollarSign className="h-4 w-4 mr-2" />
+            <img src={cashUserIcon} alt="Cash User" className="h-4 w-4 mr-2" />
             Employee Accounting
           </TabsTrigger>
           <TabsTrigger value="hours-tracker" className="flex-shrink-0 flex items-center relative">
-            <Clock className="h-4 w-4 mr-2" />
+            <img src={timeClockNineIcon} alt="Time Clock Nine" className="h-4 w-4 mr-2" />
             Hours Tracker
             {(() => {
               // Calculate badge count for critical/warning employees
@@ -1582,7 +1587,7 @@ export default function AdminPanel() {
             })()}
           </TabsTrigger>
           <TabsTrigger value="incident-reports" className="flex-shrink-0 flex items-center relative">
-            <Car className="h-4 w-4 mr-2" />
+            <img src={carRepairFireIcon} alt="Car Repair Fire" className="h-4 w-4 mr-2" />
             Incident Reports
             {(() => {
               const { data: incidentReports } = useQuery({
@@ -1603,7 +1608,7 @@ export default function AdminPanel() {
             })()}
           </TabsTrigger>
           <TabsTrigger value="location-management" className="flex-shrink-0 flex items-center">
-            <MapPin className="h-4 w-4 mr-2" />
+            <img src={pinLocationIcon} alt="Pin Location" className="h-4 w-4 mr-2" />
             Location Management
           </TabsTrigger>
         </TabsList>
