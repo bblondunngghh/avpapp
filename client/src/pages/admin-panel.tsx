@@ -10,6 +10,8 @@ import deleteIncompleteIcon from "@assets/Delete-1--Streamline-Ultimate.png";
 import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
 import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
+import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
+import makeUpEyeIcon from "@assets/Make-Up-Eye--Streamline-Ultimate.png";
 
 // Component for expandable description
 function ExpandableDescription({ incident, damage, witness, notes }: { 
@@ -220,7 +222,6 @@ import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
 import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import timeClockNineIcon from "@assets/Time-Clock-Nine--Streamline-Ultimate.png";
-import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import folderUploadIcon from "@assets/Folder-Upload--Streamline-Ultimate.png";
@@ -4756,7 +4757,11 @@ export default function AdminPanel() {
                   <div className="space-y-4">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <div className="flex items-center gap-3">
-                        <Activity className="h-5 w-5 text-blue-600" />
+                        <img 
+                          src={carRepairFireIcon} 
+                          alt="Car Repair Fire" 
+                          className="h-5 w-5"
+                        />
                         <div>
                           <h4 className="font-medium text-blue-900">Total Reports: {incidentReports.length}</h4>
                           <p className="text-sm text-blue-700">All incident reports are stored here for your review</p>
@@ -5218,7 +5223,7 @@ export default function AdminPanel() {
                                     />
                                   </Button>
                                   <Button
-                                    variant="destructive"
+                                    variant="outline"
                                     size="sm"
                                     onClick={() => {
                                       const password = prompt("Enter password to delete location:");
