@@ -4856,12 +4856,8 @@ export default function AdminPanel() {
                                   <div className="flex gap-2 justify-center">
                                     <Dialog>
                                       <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="p-2">
-                                          <img 
-                                            src={viewSquareIcon} 
-                                            alt="View Details" 
-                                            className="w-4 h-4"
-                                          />
+                                        <Button variant="outline" size="sm">
+                                          View
                                         </Button>
                                       </DialogTrigger>
                                       <DialogContent className="max-w-4xl max-h-[95vh] flex flex-col">
