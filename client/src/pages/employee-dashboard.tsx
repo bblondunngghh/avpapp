@@ -515,8 +515,8 @@ export default function EmployeeDashboard() {
         </div>
         
         <Button 
-          variant="secondary" 
           size="sm"
+          className="bg-blue-600 hover:bg-blue-700 text-white"
           onClick={() => {
             const now = new Date();
             setSelectedMonth(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`);
