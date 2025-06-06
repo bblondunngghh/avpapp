@@ -205,6 +205,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car } from "lucide-react";
+import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1501,7 +1502,7 @@ export default function AdminPanel() {
       <Tabs defaultValue="reports" className="w-full">
         <TabsList className="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:flex lg:flex-wrap gap-1 h-auto">
           <TabsTrigger value="reports" className="flex-shrink-0 flex items-center">
-            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <img src={monitorHeartNotesIcon} alt="Monitor Heart Notes" className="h-4 w-4 mr-2" />
             Reports
           </TabsTrigger>
 
