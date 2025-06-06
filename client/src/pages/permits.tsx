@@ -14,6 +14,7 @@ import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import checkCircleIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import calendarWarningIcon from "@assets/Calendar-Warning--Streamline-Ultimate.png";
+import paperWriteIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
@@ -391,7 +392,7 @@ export default function PermitsPage() {
                         onClick={() => handleEditPermit(permit)}
                         className="flex items-center gap-1"
                       >
-                        <Edit className="h-3 w-3" />
+                        <img src={paperWriteIcon} alt="Paper Write" className="h-3 w-3" />
                         Edit
                       </Button>
                       {permit.pdfData && (
