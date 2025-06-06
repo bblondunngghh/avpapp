@@ -309,6 +309,58 @@ export default function Regulations() {
           
           <Separator className="my-8" />
           
+          <h2 className="text-lg font-medium mb-4 text-black">8. Valet Attendant Regulations</h2>
+          
+          <div className="space-y-6">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                While the Austin City Code does not explicitly outline a separate "valet attendant code," attendants are subject to operational rules under the valet operator's permit and general right-of-way regulations. The following are inferred responsibilities and requirements for valet attendants based on the ordinance and city guidelines:
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">8.1 Compliance with Operator Protocols</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>Attendants must follow the operator's approved procedures for vehicle key custody and valet tag identification (e.g., using tags to track vehicles)</li>
+                <li>Wear retroreflective outerwear (as submitted in the operator's permit application) for visibility and safety in the right-of-way</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">8.2 Proper Use of Valet Zones</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>Attendants must ensure vehicles are parked only in designated valet zones (temporary or permanent) and adhere to time limits (e.g., 45-minute maximum for non-hotel/residential zones)</li>
+                <li>Avoid using valet zones for personal parking or non-valet activities, as this violates the ordinance</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">8.3 Signage and Safety</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>Ensure compliance with city-approved signage (e.g., valet zone signs) and maintain clear access to the right-of-way</li>
+                <li>Do not block bike lanes, sidewalks, or restricted areas (e.g., 6th Street during restricted hours: Thursday–Sunday, 9 p.m.–3 a.m.)</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">8.4 Enforcement and Accountability</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>Attendants' actions are subject to oversight by Parking Enforcement officers, Austin Police Department, or trained volunteers</li>
+                <li>Violations (e.g., improper parking, blocking restricted areas) may result in citations processed by the Austin Municipal Court. Operators are responsible for ensuring attendants comply</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-base font-medium text-black mb-3">8.5 Training and Conduct</h3>
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <li>While not explicitly mandated in the ordinance, attendants are expected to be trained in the operator's procedures (e.g., key custody, customer service, and zone management) as reviewed during the permitting process</li>
+                <li>Attendants must maintain professional conduct to avoid conflicts with pedestrians, cyclists, or other drivers</li>
+              </ul>
+            </div>
+          </div>
+          
+          <Separator className="my-8" />
+          
           <div className="rounded-md border border-blue-200 bg-blue-50 p-6">
             <h2 className="text-base font-medium mb-3 text-black">Training Acknowledgment</h2>
             <p className="text-sm text-gray-700 mb-4">
