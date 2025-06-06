@@ -18,68 +18,74 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="app-header-content">
-        <div className="flex items-center justify-center flex-1">
-          <h1 className="app-title flex items-center gap-2">
-            <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
-            <span>ACCESS VALET PARKING</span>
-          </h1>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="secondary" 
-            size="sm" 
-            className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
-            onClick={() => handleNavigation('/admin-login')}
-          >
-            Admin Login
-          </Button>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2 w-48">
+            {/* Left spacer for balance */}
+          </div>
           
-          <ModeToggle />
+          <div className="flex items-center justify-center">
+            <h1 className="app-title flex items-center gap-2">
+              <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
+              <span>ACCESS VALET PARKING</span>
+            </h1>
+          </div>
           
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white md:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <div className="flex flex-col gap-4 mt-8">
-                <Button 
-                  variant="ghost" 
-                  className="justify-start" 
-                  onClick={() => handleNavigation('/')}
-                >
-                  <Home className="mr-2 h-5 w-5" />
-                  Dashboard
+          <div className="flex items-center gap-2 w-48 justify-end">
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
+              onClick={() => handleNavigation('/admin-login')}
+            >
+              Admin Login
+            </Button>
+            
+            <ModeToggle />
+            
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-white md:hidden">
+                  <Menu className="h-5 w-5" />
                 </Button>
-                <Button 
-                  variant="ghost" 
-                  className="justify-start" 
-                  onClick={() => handleNavigation('/reports')}
-                >
-                  <ClipboardList className="mr-2 h-5 w-5" />
-                  All Reports
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  className="justify-start" 
-                  onClick={() => handleNavigation('/report-selection')}
-                >
-                  <PlusCircle className="mr-2 h-5 w-5" />
-                  New Report
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  className="justify-start" 
-                  onClick={() => handleNavigation('/admin-login')}
-                >
-                  <User className="mr-2 h-5 w-5" />
-                  Admin Login
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetTrigger>
+              <SheetContent>
+                <div className="flex flex-col gap-4 mt-8">
+                  <Button 
+                    variant="ghost" 
+                    className="justify-start" 
+                    onClick={() => handleNavigation('/')}
+                  >
+                    <Home className="mr-2 h-5 w-5" />
+                    Dashboard
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="justify-start" 
+                    onClick={() => handleNavigation('/reports')}
+                  >
+                    <ClipboardList className="mr-2 h-5 w-5" />
+                    All Reports
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="justify-start" 
+                    onClick={() => handleNavigation('/report-selection')}
+                  >
+                    <PlusCircle className="mr-2 h-5 w-5" />
+                    New Report
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="justify-start" 
+                    onClick={() => handleNavigation('/admin-login')}
+                  >
+                    <User className="mr-2 h-5 w-5" />
+                    Admin Login
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
