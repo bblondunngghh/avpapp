@@ -372,7 +372,7 @@ export default function AdminPanel() {
         cleanupFunction();
       }
     };
-  }, []);
+  }, [navigate]);
   
   // Statistics state
   const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
