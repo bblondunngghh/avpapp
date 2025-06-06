@@ -30,6 +30,7 @@ import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import taskListCashIcon from "@assets/Task-List-Cash--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import logoutIcon from "@assets/Logout-2--Streamline-Ultimate.png";
+import alertTriangleIcon from "@assets/Alert-Triangle--Streamline-Ultimate.png";
 
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
@@ -387,7 +388,7 @@ export default function EmployeeDashboard() {
         <Card className="mb-6 border-orange-200 bg-orange-50">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <AlertCircle className="h-6 w-6 text-orange-600" />
+              <img src={alertTriangleIcon} alt="Alert Triangle" className="h-6 w-6" />
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-orange-800 mb-2">Safety Training Required</h3>
                 <p className="text-orange-700 mb-3">
