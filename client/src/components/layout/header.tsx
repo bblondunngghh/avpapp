@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, Car, Home, ClipboardList, PlusCircle, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import navCarIcon from "@assets/Car-2--Streamline-Ultimate.png";
+import carToolKeysIcon from "@assets/Car-Tool-Keys--Streamline-Ultimate.png";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -22,6 +23,7 @@ export default function Header() {
           <h1 className="app-title flex items-center gap-2">
             <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
             <span>ACCESS VALET PARKING</span>
+            <img src={carToolKeysIcon} alt="Car Keys" className="h-6 w-6 animate-bounce-slow" />
           </h1>
         </div>
         
