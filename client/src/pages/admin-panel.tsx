@@ -4807,13 +4807,13 @@ export default function AdminPanel() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-[120px]">Date/Time</TableHead>
-                            <TableHead className="w-[140px]">Customer</TableHead>
-                            <TableHead className="w-[120px]">Location</TableHead>
-                            <TableHead className="w-[120px]">Employee</TableHead>
-                            <TableHead className="w-[160px]">Vehicle</TableHead>
-                            <TableHead className="w-[200px]">Description</TableHead>
-                            <TableHead className="w-[80px] text-center">Actions</TableHead>
+                            <TableHead>Date/Time</TableHead>
+                            <TableHead>Customer</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead>Employee</TableHead>
+                            <TableHead>Vehicle</TableHead>
+                            <TableHead>Description</TableHead>
+                            <TableHead className="w-[100px] text-center">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
