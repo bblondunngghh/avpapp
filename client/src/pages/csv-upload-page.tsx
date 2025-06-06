@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 import CSVUploader from '@/components/csv-uploader';
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 
 export default function CSVUploadPage() {
   const [location, navigate] = useLocation();
@@ -41,7 +42,8 @@ export default function CSVUploadPage() {
             onClick={() => navigate('/admin')}
             className="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center w-full"
           >
-            ← Back to Admin Panel
+            <img src={houseIcon} alt="House" className="h-4 w-4 mr-2" />
+            Back to Admin Panel
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, HomeIcon } from "lucide-react";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 
 export default function IncidentSubmitted() {
   const [, navigate] = useLocation();
@@ -36,7 +37,7 @@ export default function IncidentSubmitted() {
             onClick={() => navigate("/")}
             className="w-full"
           >
-            <HomeIcon className="h-4 w-4 mr-2" />
+            <img src={houseIcon} alt="House" className="h-4 w-4 mr-2" />
             Return to Dashboard
           </Button>
           

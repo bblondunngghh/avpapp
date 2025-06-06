@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Save, RotateCcw } from "lucide-react";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import laptopDownloadIcon from "@assets/Laptop-Download--Streamline-Ultimate.png";
 import SignatureCanvas from "react-signature-canvas";
 import { useMutation } from "@tanstack/react-query";
@@ -103,7 +104,7 @@ export default function Regulations() {
         className="mb-6" 
         onClick={() => navigate("/")}
       >
-        <ChevronLeft className="h-4 w-4 mr-2" />
+        <img src={houseIcon} alt="House" className="h-4 w-4 mr-2" />
         Back to Dashboard
       </Button>
       <div className="mb-8 flex items-center gap-4 ml-6">

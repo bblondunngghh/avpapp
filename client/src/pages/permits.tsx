@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
 import { ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Edit, Upload, Eye, Download } from "lucide-react";
+import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import checkCircleIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
@@ -285,7 +286,7 @@ export default function PermitsPage() {
             onClick={() => navigate("/")}
             className="flex items-center gap-2"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <img src={houseIcon} alt="House" className="h-4 w-4" />
             Back to Dashboard
           </Button>
           <div>
