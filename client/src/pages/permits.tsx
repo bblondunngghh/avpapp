@@ -13,6 +13,7 @@ import { ArrowLeft, FileText, Calendar, MapPin, CheckCircle, Edit, Upload, Eye, 
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import checkCircleIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
+import calendarWarningIcon from "@assets/Calendar-Warning--Streamline-Ultimate.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
@@ -339,7 +340,7 @@ export default function PermitsPage() {
                 <p className="text-sm text-gray-600">Expiring Soon</p>
                 <p className="text-2xl font-semibold text-amber-600">{getExpiringSoonCount()}</p>
               </div>
-              <Calendar className="h-8 w-8 text-amber-600" />
+              <img src={calendarWarningIcon} alt="Calendar Warning" className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
