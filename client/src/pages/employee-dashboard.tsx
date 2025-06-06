@@ -28,6 +28,7 @@ import watchTimeIcon from "@assets/Watch-Time-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import taskListCashIcon from "@assets/Task-List-Cash--Streamline-Ultimate.png";
+import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 
 export default function EmployeeDashboard() {
   const [, navigate] = useLocation();
@@ -476,7 +477,7 @@ export default function EmployeeDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="bg-amber-100 p-3 rounded-full">
-                <FileText className="h-6 w-6 text-amber-700" />
+                <img src={newspaperIcon} alt="Newspaper" className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Total Shifts</p>
