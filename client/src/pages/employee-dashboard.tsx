@@ -161,10 +161,13 @@ export default function EmployeeDashboard() {
     });
   };
 
+
+
   // Filter reports by selected month and employee
   const filteredReports = allReports.filter((report: any) => {
-    const reportDate = new Date(report.date);
-    const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+    // Parse date correctly - report.date is in YYYY-MM-DD format
+    const [year, month, day] = report.date.split('-');
+    const reportMonth = `${year}-${month}`;
     
     // Apply month filter if set
     if (selectedMonth && reportMonth !== selectedMonth) {
@@ -180,7 +183,7 @@ export default function EmployeeDashboard() {
         employees = report.employees;
       }
     } catch (err) {
-      console.error("Failed to parse employee data:", err);
+      console.error("Failed to parse employee data:", err, "Original data:", report.employees);
       return false;
     }
     
@@ -250,7 +253,7 @@ export default function EmployeeDashboard() {
     }
     
     // Find employee data using the same robust matching logic as filtering
-    const employeeRecord = { key: employeeKey, fullName: employeeName };
+    const employeeRecord = { key: employeeKey || '', fullName: employeeName || '' };
     const employeeData = employeesList.find((emp: any) => {
       return matchEmployee(emp, employeeRecord);
     });
