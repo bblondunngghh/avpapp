@@ -529,7 +529,7 @@ export default function EmployeeDashboard() {
       <Tabs defaultValue="earnings">
         <TabsList className="mb-6">
           <TabsTrigger value="earnings">
-            <DollarSign className="h-4 w-4 mr-2" />
+            <img src={accountingBillStackIcon} alt="Earnings" className="h-4 w-4 mr-2" />
             Earnings Summary
           </TabsTrigger>
           <TabsTrigger value="details">
