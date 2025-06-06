@@ -120,19 +120,16 @@ export default function Dashboard() {
       
       {/* Admin and Employee Login Links */}
       <div className="text-center mt-8 pt-6 border-t border-gray-200">
-        <div className="flex flex-col md:flex-row justify-center gap-6 items-center">
-          <div>
-            <p className="text-gray-500 mb-3">View your hours, earnings and tax information:</p>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/employee-login")}
-              className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center justify-center gap-2"
-            >
-              <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
-              Employee Login
-            </Button>
-          </div>
-
+        <div className="flex flex-col items-center justify-center">
+          <p className="text-gray-500 mb-3">View your hours, earnings and tax information:</p>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/employee-login")}
+            className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center justify-center gap-2"
+          >
+            <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
+            Employee Login
+          </Button>
         </div>
       </div>
       
