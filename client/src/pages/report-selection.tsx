@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Car, ShieldAlert, ChevronLeft } from "lucide-react";
 import { LOCATIONS } from "@/lib/constants";
 import RestaurantIcon from "@/components/restaurant-icon";
+import shiftReportIcon from "@assets/Task-List-Add--Streamline-Ultimate.png";
+import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
 
 export default function ReportSelection() {
   const [, navigate] = useLocation();
@@ -30,7 +32,7 @@ export default function ReportSelection() {
             <div className="p-6">
               <div className="flex items-center mb-4">
                 <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-full shadow-md">
-                  <Car className="h-8 w-8 text-white" />
+                  <img src={shiftReportIcon} alt="Shift Report" className="h-8 w-8" />
                 </div>
                 <div className="ml-4">
                   <h2 className="text-xl font-medium text-blue-600">Shift Report</h2>
@@ -67,7 +69,7 @@ export default function ReportSelection() {
             <div className="p-6">
               <div className="flex items-center mb-4">
                 <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-3 rounded-full shadow-md">
-                  <ShieldAlert className="h-8 w-8 text-white" />
+                  <img src={carRepairIcon} alt="Incident Report" className="h-8 w-8" />
                 </div>
                 <div className="ml-4">
                   <h2 className="text-xl font-medium text-orange-600">Incident Report</h2>
