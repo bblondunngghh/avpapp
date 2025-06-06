@@ -202,6 +202,32 @@ function Router() {
               return <AdminPanel />;
             }}
           </Route>
+          <Route path="/admin-panel">
+            {() => {
+              // Check if iPad - force desktop admin panel
+              const isIPad = /iPad/i.test(navigator.userAgent) || 
+                            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+              
+              // Check if iPhone (not iPad)
+              const isIPhone = /iPhone/i.test(navigator.userAgent);
+              
+              // Force desktop admin panel for iPads
+              if (isIPad) {
+                console.log("iPad detected - using desktop admin panel");
+                return <AdminPanel />;
+              }
+              
+              // Use mobile admin panel only for iPhones
+              if (isIPhone) {
+                console.log("iPhone detected - using mobile admin panel");
+                return <MobileAdminPanel />;
+              }
+              
+              // Default to desktop admin panel for all other devices
+              console.log("Desktop/other device - using desktop admin panel");
+              return <AdminPanel />;
+            }}
+          </Route>
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/admin/tax-payments" component={AccountantPage} />
           <Route path="/reports" component={ReportsWrapper} />
