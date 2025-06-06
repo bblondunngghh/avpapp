@@ -5,6 +5,8 @@ import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
+import checkCompleteIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
+import deleteIncompleteIcon from "@assets/Delete-1--Streamline-Ultimate.png";
 
 // Component for expandable description
 function ExpandableDescription({ incident, damage, witness, notes }: { 
@@ -3628,7 +3630,7 @@ export default function AdminPanel() {
                             {hasCompletedTraining ? (
                               <div className="flex justify-center">
                                 <img 
-                                  src="/attached_assets/Check-Circle-1--Streamline-Ultimate.png" 
+                                  src={checkCompleteIcon} 
                                   alt="Training Complete" 
                                   className="w-6 h-6"
                                   title="Training Complete"
@@ -3637,7 +3639,7 @@ export default function AdminPanel() {
                             ) : (
                               <div className="flex justify-center">
                                 <img 
-                                  src="/attached_assets/Delete-1--Streamline-Ultimate.png" 
+                                  src={deleteIncompleteIcon} 
                                   alt="Training Incomplete" 
                                   className="w-6 h-6"
                                   title="Training Incomplete"
