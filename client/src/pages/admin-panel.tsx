@@ -3123,7 +3123,11 @@ export default function AdminPanel() {
                       size="sm"
                       className="flex items-center gap-1"
                     >
-                      <PlusCircle className="h-4 w-4" />
+                      <img 
+                        src={addCircleIcon} 
+                        alt="Add" 
+                        className="w-4 h-4"
+                      />
                       Allocate Tickets
                     </Button>
                   </DialogTrigger>
@@ -5137,7 +5141,11 @@ export default function AdminPanel() {
                     <div className="flex justify-between items-center">
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex-1 mr-4">
                         <div className="flex items-center gap-3">
-                          <MapPin className="h-5 w-5 text-blue-600" />
+                          <img 
+                            src={pinLocationIcon} 
+                            alt="Location" 
+                            className="w-5 h-5"
+                          />
                           <div>
                             <h4 className="font-medium text-blue-900">Total Locations: {locations?.length || 0}</h4>
                             <p className="text-sm text-blue-700">Manage rates and settings for each restaurant location</p>
@@ -5152,7 +5160,11 @@ export default function AdminPanel() {
                         }}
                         className="flex items-center gap-2"
                       >
-                        <PlusCircle className="h-4 w-4" />
+                        <img 
+                          src={addCircleIcon} 
+                          alt="Add" 
+                          className="w-4 h-4"
+                        />
                         Add Location
                       </Button>
                     </div>
