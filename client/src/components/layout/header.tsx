@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Car, Home, ClipboardList, PlusCircle, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import navCarIcon from "@assets/Car-2--Streamline-Ultimate.png";
+import navCarIcon from "@assets/Sports-Car-2--Streamline-Ultimate.png";
 import carToolKeysIcon from "@assets/Car-Tool-Keys--Streamline-Ultimate.png";
 
 export default function Header() {
