@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-react";
 import carIcon from "@assets/Sports-Car-2--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
-import electricCarChargeIcon from "@assets/Electric-Car-Charge--Streamline-Ultimate.png";
+import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
 import businessCardIcon from "@assets/Business-Card-1--Streamline-Ultimate.png";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
@@ -63,7 +63,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-amber-500 bg-gradient-to-b from-white to-amber-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <img src={electricCarChargeIcon} alt="Electric Car Charge" className="h-10 w-10 filter brightness-0 invert" />
+              <img src={carRepairIcon} alt="Car Repair" className="h-10 w-10" />
             </div>
             <h3 className="text-xl mb-3 text-amber-600">Incident Report</h3>
             <p className="text-gray-600 mb-6 flex-grow">
