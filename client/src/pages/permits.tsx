@@ -15,6 +15,7 @@ import checkCircleIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import calendarWarningIcon from "@assets/Calendar-Warning--Streamline-Ultimate.png";
 import paperWriteIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
+import eyeIcon from "@assets/Make-Up-Eye--Streamline-Ultimate.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PermitsPage() {
@@ -402,7 +403,7 @@ export default function PermitsPage() {
                           onClick={() => handleViewPDF(permit)}
                           className="flex items-center gap-1"
                         >
-                          <Eye className="h-3 w-3" />
+                          <img src={eyeIcon} alt="Eye" className="h-3 w-3" />
                           View PDF
                         </Button>
                       )}
