@@ -595,19 +595,19 @@ export default function EmployeeDashboard() {
                           <div>
                             <span>Additional Tax Payments:</span>
                             <p className="text-xs text-gray-500 mt-0.5">
-                              Credit applied toward tax obligations from negative cash turn-in
+                              Cash payments made to cover tax obligations
                             </p>
                           </div>
-                          <span>${paySummary.totalMoneyOwed.toFixed(2)}</span>
+                          <span>${paySummary.totalAdditionalTaxPayments.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-sm font-bold pt-1 border-t border-blue-200">
                           <div>
                             <span>Net Tax Obligation:</span>
                             <p className="text-xs text-gray-500 mt-0.5 font-normal">
-                              Final tax amount after subtracting money owed to you
+                              Final tax amount after subtracting money owed and additional tax payments
                             </p>
                           </div>
-                          <span>${Math.max(0, paySummary.totalTax - paySummary.totalMoneyOwed).toFixed(2)}</span>
+                          <span>${Math.max(0, paySummary.totalTax - paySummary.totalMoneyOwed - paySummary.totalAdditionalTaxPayments).toFixed(2)}</span>
                         </div>
                       </div>
                     </div>
