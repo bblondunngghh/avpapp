@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-react";
-import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
+import carIcon from "@assets/Sports-Car-2--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 import electricCarChargeIcon from "@assets/Electric-Car-Charge--Streamline-Ultimate.png";
 import businessCardIcon from "@assets/Business-Card-1--Streamline-Ultimate.png";
