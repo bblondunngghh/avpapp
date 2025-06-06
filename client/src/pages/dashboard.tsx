@@ -6,6 +6,7 @@ import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-rea
 import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 import electricCarChargeIcon from "@assets/Electric-Car-Charge--Streamline-Ultimate.png";
+import businessCardIcon from "@assets/Business-Card-1--Streamline-Ultimate.png";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 
@@ -100,7 +101,7 @@ export default function Dashboard() {
         <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-purple-500 bg-gradient-to-b from-white to-purple-50/30">
           <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
             <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-              <FileText className="h-10 w-10 text-white" />
+              <img src={businessCardIcon} alt="Business Card" className="h-10 w-10 filter brightness-0 invert" />
             </div>
             <h3 className="text-xl mb-3 text-purple-600">Company Permits</h3>
             <p className="text-gray-600 mb-6 flex-grow">
