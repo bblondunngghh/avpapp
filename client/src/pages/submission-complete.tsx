@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Car, DollarSign, Users, AlertTriangle, Shield } from "lucide-react";
+import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
 import { LOCATIONS } from "@/lib/constants";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ShiftReport, Employee } from "@shared/schema";
@@ -355,7 +356,7 @@ export default function SubmissionComplete() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="bg-white p-3 rounded-md border border-blue-100">
                 <div className="flex items-center mb-2">
-                  <Car className="h-4 w-4 text-blue-600 mr-2" />
+                  <img src={carIcon} alt="Car" className="h-4 w-4 mr-2" />
                   <h4 className="font-medium text-blue-800">Cars Summary</h4>
                 </div>
                 <div className="space-y-1 pl-6">
