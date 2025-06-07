@@ -2340,7 +2340,7 @@ export default function AdminPanel() {
                               ${employee.totalMoneyOwed}
                             </TableCell>
                             <TableCell className="text-right font-medium text-blue-800">
-                              ${employee.totalEarnings.toFixed(2)}
+                              ${employee.totalEarnings}
                             </TableCell>
                             <TableCell className="text-right text-red-700">
                               ${estimatedTax.toFixed(2)}
