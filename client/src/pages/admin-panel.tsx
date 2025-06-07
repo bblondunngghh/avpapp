@@ -458,8 +458,11 @@ export default function AdminPanel() {
     total: number;
   }>>([]);
 
-  // Employee accounting month filter - default to all time
-  const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>("all");
+  // Employee accounting month filter - default to current month
+  const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
   
   // Employee accounting data state
   const [employeeAccountingData, setEmployeeAccountingData] = useState<Array<{
