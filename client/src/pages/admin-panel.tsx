@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate } from "@/lib/employee-utils";
+import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate, parseEmployeesData } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 import checkCompleteIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import deleteIncompleteIcon from "@assets/Delete-1--Streamline-Ultimate.png";
@@ -4155,27 +4155,8 @@ export default function AdminPanel() {
                       return false;
                     }
 
-                    // Then filter by employee participation
-                    let reportEmployees = [];
-                    try {
-                      if (typeof report.employees === 'string') {
-                        reportEmployees = JSON.parse(report.employees);
-                      } else if (Array.isArray(report.employees)) {
-                        reportEmployees = report.employees;
-                      } else {
-                        console.warn("employees is not an array, converting to empty array:", report.employees);
-                        reportEmployees = [];
-                      }
-                    } catch (e) {
-                      console.warn("Failed to parse employees:", e);
-                      reportEmployees = [];
-                    }
-                    
-                    const worked = employeeWorkedInShift(report, employee);
-                    
-
-                    
-                    return worked;
+                    // Then filter by employee participation using proper utility function
+                    return employeeWorkedInShift(report, employee);
                   });
 
                   // Calculate totals for this employee
@@ -4186,20 +4167,8 @@ export default function AdminPanel() {
                   let totalHours = 0;
 
                   employeeReports.forEach((report: any) => {
-                    let employees = [];
-                    try {
-                      if (typeof report.employees === 'string') {
-                        employees = JSON.parse(report.employees);
-                      } else if (Array.isArray(report.employees)) {
-                        employees = report.employees;
-                      }
-                    } catch (e) {
-                      employees = [];
-                    }
-
-                    const employeeData = employees.find((emp: any) => 
-                      emp.name?.toLowerCase() === employee.key?.toLowerCase()
-                    );
+                    const employees = parseEmployeesData(report.employees);
+                    const employeeData = findEmployeeInShift(employees, employee);
 
                     if (employeeData) {
                       const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
