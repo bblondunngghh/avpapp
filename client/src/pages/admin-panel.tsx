@@ -1512,22 +1512,7 @@ export default function AdminPanel() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2 justify-end">
-          <Button 
-            variant="outline" 
-            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-            onClick={() => {
-              const password = prompt("Please enter the password to access the Accountant Section:");
-              if (password === "bbonly") {
-                navigate("/admin/tax-payments");
-              } else if (password !== null) {
-                // Only show error if user didn't cancel
-                alert("Incorrect password. Access denied.");
-              }
-            }}
-          >
-            <img src={accountingBillStackIcon} alt="Accounting Bill Stack" className="mr-2 h-4 w-4" />
-            Accountant Section
-          </Button>
+
           <Button 
             variant="outline" 
             onClick={() => {
@@ -4501,7 +4486,6 @@ export default function AdminPanel() {
                             <TableHead className="text-right">Advance</TableHead>
                             <TableHead className="text-right">Tax Obligation (22%)</TableHead>
                             <TableHead className="text-right">Additional Tax Payments</TableHead>
-                            <TableHead className="text-right">Money After Tax Coverage</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -4526,9 +4510,6 @@ export default function AdminPanel() {
                               <TableCell className="text-right">${employee.totalTax.toFixed(2)}</TableCell>
                               <TableCell className="text-right text-blue-600">
                                 ${employee.totalAdditionalTaxPayments.toFixed(2)}
-                              </TableCell>
-                              <TableCell className="text-right text-purple-600 font-medium">
-                                ${employee.moneyOwedAfterTax.toFixed(2)}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -4560,9 +4541,6 @@ export default function AdminPanel() {
                             </TableCell>
                             <TableCell className="text-right text-blue-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalAdditionalTaxPayments, 0).toFixed(2)}
-                            </TableCell>
-                            <TableCell className="text-right text-purple-600">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.moneyOwedAfterTax, 0).toFixed(2)}
                             </TableCell>
                           </TableRow>
                         </TableBody>
