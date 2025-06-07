@@ -4253,8 +4253,7 @@ export default function AdminPanel() {
                       'Money Owed',
                       'Advance',
                       'Tax Obligation (22%)',
-                      'Additional Tax Payments',
-                      'Money After Tax Coverage'
+                      'Additional Tax Payments'
                     ];
 
                     const csvContent = [
@@ -4269,8 +4268,7 @@ export default function AdminPanel() {
                         emp.totalMoneyOwed,
                         emp.advance,
                         emp.totalTax,
-                        emp.totalAdditionalTaxPayments,
-                        emp.moneyOwedAfterTax
+                        emp.totalAdditionalTaxPayments
                       ].join(','))
                     ].join('\n');
 
