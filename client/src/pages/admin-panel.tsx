@@ -4259,20 +4259,8 @@ export default function AdminPanel() {
                   let totalTipsOnly = 0;
                   
                   employeeReports.forEach((report: any) => {
-                    let employees = [];
-                    try {
-                      if (typeof report.employees === 'string') {
-                        employees = JSON.parse(report.employees);
-                      } else if (Array.isArray(report.employees)) {
-                        employees = report.employees;
-                      }
-                    } catch (e) {
-                      employees = [];
-                    }
-
-                    const employeeData = employees.find((emp: any) => 
-                      emp.name?.toLowerCase() === employee.key?.toLowerCase()
-                    );
+                    const employees = parseEmployeesData(report.employees);
+                    const employeeData = findEmployeeInShift(employees, employee);
 
                     if (employeeData) {
                       const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
@@ -4285,6 +4273,7 @@ export default function AdminPanel() {
                       else if (locationId === 2) commissionRate = 9;
                       else if (locationId === 3) commissionRate = 7;
                       else if (locationId === 4) commissionRate = 6;
+                      else if (locationId === 7) commissionRate = 2;
 
                       const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
                       const totalCommission = (report.creditTransactions * commissionRate) + 
@@ -4295,6 +4284,8 @@ export default function AdminPanel() {
                       let perCarPrice = 15; // Default rate
                       if (report.locationId === 4) { // BOA uses $13
                         perCarPrice = 13;
+                      } else if (locationId === 7) { // PPS uses $6
+                        perCarPrice = 6;
                       } else if (report.locationId >= 5) { // New locations use dynamic rates
                         const currentLocation = locations?.find((loc: any) => loc.id === report.locationId);
                         perCarPrice = currentLocation?.curbsideRate || 15;
