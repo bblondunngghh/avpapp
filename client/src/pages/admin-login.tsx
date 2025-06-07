@@ -127,10 +127,11 @@ export default function AdminLogin() {
         },
       });
 
-      if (credential) {
+      if (credential && 'rawId' in credential) {
         // Store credential ID for later authentication (encode as base64)
         const publicKeyCredential = credential as PublicKeyCredential;
-        const credentialId = btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(publicKeyCredential.rawId))));
+        const rawIdArray = Array.from(new Uint8Array(publicKeyCredential.rawId));
+        const credentialId = btoa(String.fromCharCode.apply(null, rawIdArray as any));
         localStorage.setItem('admin_biometric_credential', credentialId);
         setBiometricSetup(true);
         
