@@ -577,7 +577,6 @@ export default function AdminPanel() {
   const { data: taxPayments = [], refetch: refetchTaxPayments } = useQuery({
     queryKey: ["/api/tax-payments"],
     queryFn: getQueryFn({ on401: "returnNull" }),
-    refetchInterval: 5000, // Refresh every 5 seconds to show new tax payments
   });
 
   // Helper function to check if employee has completed training
