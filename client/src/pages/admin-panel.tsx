@@ -458,11 +458,8 @@ export default function AdminPanel() {
     total: number;
   }>>([]);
 
-  // Employee accounting month filter
-  const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  });
+  // Employee accounting month filter - default to all time
+  const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>("all");
   const EXPENSES_EDIT_PASSWORD = "bbonly";
   
   // Load saved expenses from localStorage on initial render
@@ -4099,6 +4096,7 @@ export default function AdminPanel() {
                       <SelectValue placeholder="Select a month" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="all">All Time</SelectItem>
                       <SelectItem value="2025-01">January 2025</SelectItem>
                       <SelectItem value="2025-02">February 2025</SelectItem>
                       <SelectItem value="2025-03">March 2025</SelectItem>
@@ -4136,7 +4134,7 @@ export default function AdminPanel() {
                         const reportDate = parseLocalDate(report.date);
                         const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
                         
-                        if (selectedAccountingMonth && reportMonth !== selectedAccountingMonth) {
+                        if (selectedAccountingMonth && selectedAccountingMonth !== "all" && reportMonth !== selectedAccountingMonth) {
                           return false;
                         }
 
