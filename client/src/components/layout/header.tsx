@@ -59,14 +59,7 @@ export default function Header() {
                     <img src={dashboardIcon} alt="Dashboard" className="mr-2 h-5 w-5" />
                     Dashboard
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="justify-start" 
-                    onClick={() => handleNavigation('/reports')}
-                  >
-                    <img src={reportsIcon} alt="Reports" className="mr-2 h-5 w-5" />
-                    All Reports
-                  </Button>
+
                   <Button 
                     variant="ghost" 
                     className="justify-start" 
