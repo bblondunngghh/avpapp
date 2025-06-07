@@ -4369,24 +4369,11 @@ export default function AdminPanel() {
 
                       // Tax calculations
                       const tax = empEarnings * 0.22;
-                      // Get cash paid from both shift report and tax payment records
-                      const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
                       
-                      // Find tax payments for this employee and report
-                      const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
-                      const employeeTaxPayments = taxPayments.filter((payment: any) => 
-                        payment.employeeId === employeeRecord?.id && payment.reportId === report.id
-                      );
-                      const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
-                        sum + Number(payment.paidAmount || 0), 0
-                      );
-                      
-                      // Use the maximum of shift report cash paid or tax record cash paid to avoid double counting
-                      const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
-                      
-                      // Additional tax payments = total cash paid by employee
-                      // This represents all cash the employee has paid toward their tax obligations
-                      const additionalTaxPayments = cashPaid;
+                      // Additional tax payments = cash paid when there's a tax shortfall (matching employee dashboard logic)
+                      const taxNotCoveredByMoneyOwed = Math.max(0, tax - moneyOwed);
+                      const employeeCashPaid = Number(employeeData.cashPaid || 0);
+                      const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? employeeCashPaid : 0;
                       
 
 
@@ -4475,69 +4462,69 @@ export default function AdminPanel() {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Employee</TableHead>
-                            <TableHead className="text-right">Hours</TableHead>
-                            <TableHead className="text-right">Shifts</TableHead>
-                            <TableHead className="text-right">Commission</TableHead>
-                            <TableHead className="text-right">Tips</TableHead>
-                            <TableHead className="text-right">Total Earnings</TableHead>
-                            <TableHead className="text-right">Money Owed</TableHead>
-                            <TableHead className="text-right">Advance</TableHead>
-                            <TableHead className="text-right">Tax Obligation (22%)</TableHead>
-                            <TableHead className="text-right">Additional Tax Payments</TableHead>
+                            <TableHead className="text-center">Hours</TableHead>
+                            <TableHead className="text-center">Shifts</TableHead>
+                            <TableHead className="text-center">Commission</TableHead>
+                            <TableHead className="text-center">Tips</TableHead>
+                            <TableHead className="text-center">Total Earnings</TableHead>
+                            <TableHead className="text-center">Money Owed</TableHead>
+                            <TableHead className="text-center">Advance</TableHead>
+                            <TableHead className="text-center">Tax Obligation (22%)</TableHead>
+                            <TableHead className="text-center">Additional Tax Payments</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {employeeAccountingData.map((employee) => (
                             <TableRow key={employee.key}>
                               <TableCell className="font-medium">{employee.name}</TableCell>
-                              <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
-                              <TableCell className="text-right">{employee.shiftsWorked}</TableCell>
-                              <TableCell className="text-right text-blue-600 font-medium">
+                              <TableCell className="text-center">{employee.totalHours.toFixed(1)}</TableCell>
+                              <TableCell className="text-center">{employee.shiftsWorked}</TableCell>
+                              <TableCell className="text-center text-blue-600 font-medium">
                                 ${employee.totalCommission.toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-right text-green-600 font-medium">
+                              <TableCell className="text-center text-green-600 font-medium">
                                 ${employee.totalTips.toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-right">${employee.totalEarnings.toFixed(2)}</TableCell>
-                              <TableCell className="text-right text-green-600 font-medium">
+                              <TableCell className="text-center">${employee.totalEarnings.toFixed(2)}</TableCell>
+                              <TableCell className="text-center text-green-600 font-medium">
                                 ${employee.totalMoneyOwed.toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-right text-orange-600 font-bold">
+                              <TableCell className="text-center text-orange-600 font-bold">
                                 ${employee.advance.toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-right">${employee.totalTax.toFixed(2)}</TableCell>
-                              <TableCell className="text-right text-blue-600">
+                              <TableCell className="text-center">${employee.totalTax.toFixed(2)}</TableCell>
+                              <TableCell className="text-center text-blue-600">
                                 ${employee.totalAdditionalTaxPayments.toFixed(2)}
                               </TableCell>
                             </TableRow>
                           ))}
                           <TableRow className="bg-muted/50 font-bold">
                             <TableCell>TOTALS</TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-center">
                               {employeeAccountingData.reduce((sum, emp) => sum + emp.totalHours, 0).toFixed(1)}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-center">
                               {employeeAccountingData.reduce((sum, emp) => sum + emp.shiftsWorked, 0)}
                             </TableCell>
-                            <TableCell className="text-right text-blue-600">
+                            <TableCell className="text-center text-blue-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalCommission, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right text-green-600">
+                            <TableCell className="text-center text-green-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTips, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-center">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalEarnings, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right text-green-600">
+                            <TableCell className="text-center text-green-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right text-orange-600">
+                            <TableCell className="text-center text-orange-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.advance, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-center">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right text-blue-600">
+                            <TableCell className="text-center text-blue-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalAdditionalTaxPayments, 0).toFixed(2)}
                             </TableCell>
                           </TableRow>
