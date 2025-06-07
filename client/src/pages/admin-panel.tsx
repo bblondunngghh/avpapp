@@ -460,6 +460,22 @@ export default function AdminPanel() {
 
   // Employee accounting month filter - default to all time
   const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>("all");
+  
+  // Employee accounting data state
+  const [employeeAccountingData, setEmployeeAccountingData] = useState<Array<{
+    name: string;
+    key: string;
+    totalHours: string;
+    totalCommission: string;
+    totalTips: string;
+    totalEarnings: string;
+    totalTax: string;
+    totalMoneyOwed: string;
+    totalAdditionalTaxPayments: string;
+    moneyOwedAfterTax: string;
+    advance: string;
+    shiftsWorked: number;
+  }>>([]);
   const EXPENSES_EDIT_PASSWORD = "bbonly";
   
   // Load saved expenses from localStorage on initial render
@@ -476,6 +492,8 @@ export default function AdminPanel() {
       console.error("Error loading saved expenses:", error);
     }
   }, []);
+
+
   
   // Date filter state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -582,6 +600,121 @@ export default function AdminPanel() {
       ack.employeeName.toLowerCase() === employeeName.toLowerCase()
     );
   };
+
+  // Calculate employee accounting data when dependencies change
+  useEffect(() => {
+    if (!employeeRecords.length || !reports.length) {
+      setEmployeeAccountingData([]);
+      return;
+    }
+
+    const calculatedData = employeeRecords.map(employee => {
+      const employeeReports = reports.filter((report: any) => {
+        const reportDate = parseLocalDate(report.date);
+        const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+        
+        if (selectedAccountingMonth && selectedAccountingMonth !== "all" && reportMonth !== selectedAccountingMonth) {
+          return false;
+        }
+
+        return employeeWorkedInShift(report, employee);
+      });
+
+      let totalEarnings = 0;
+      let totalTax = 0;
+      let totalMoneyOwed = 0;
+      let totalAdditionalTaxPayments = 0;
+      let totalHours = 0;
+      let totalCommissionOnly = 0;
+      let totalTipsOnly = 0;
+
+      employeeReports.forEach((report: any) => {
+        const employees = parseEmployeesData(report.employees);
+        const employeeData = findEmployeeInShift(employees, employee);
+
+        if (employeeData) {
+          const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
+          const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+
+          // Commission calculation
+          const locationId = report.locationId;
+          let commissionRate = 4;
+          if (locationId === 1) commissionRate = 4;
+          else if (locationId === 2) commissionRate = 9;
+          else if (locationId === 3) commissionRate = 7;
+          else if (locationId === 4) commissionRate = 6;
+          else if (locationId === 7) commissionRate = 2;
+
+          const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+          const totalCommission = (report.creditTransactions * commissionRate) + 
+                                 (cashCars * commissionRate) + 
+                                 (report.totalReceipts * commissionRate);
+          
+          // Tips calculations
+          let perCarPrice = 15;
+          if (locationId === 4) perCarPrice = 13;
+          else if (locationId === 7) perCarPrice = 6;
+
+          const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+          const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
+          const receiptTips = report.totalReceipts * 3;
+          const totalTips = creditCardTips + cashTips + receiptTips;
+
+          const empCommission = hoursPercent * totalCommission;
+          const empTips = hoursPercent * totalTips;
+          const empEarnings = empCommission + empTips;
+
+          // Money owed calculation
+          const turnIn = report.totalTurnIn || 0;
+          const collections = (report.totalCreditSales || 0) + (report.totalReceiptSales || 0);
+          const moneyOwed = Math.max(0, collections - turnIn) * hoursPercent;
+
+          // Tax calculations
+          const tax = empEarnings * 0.22;
+          const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
+          
+          const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
+          const employeeTaxPayments = (taxPayments as any[])?.filter((payment: any) => 
+            payment.employeeId === employeeRecord?.id && payment.reportId === report.id
+          ) || [];
+          const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
+            sum + Number(payment.paidAmount || 0), 0
+          );
+          
+          const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
+          const additionalTaxPayments = cashPaid;
+
+          totalEarnings += empEarnings;
+          totalTax += tax;
+          totalMoneyOwed += moneyOwed;
+          totalAdditionalTaxPayments += additionalTaxPayments;
+          totalHours += employeeData.hours;
+          totalCommissionOnly += empCommission;
+          totalTipsOnly += empTips;
+        }
+      });
+
+      const advance = totalCommissionOnly + totalTipsOnly - totalMoneyOwed;
+      const moneyOwedAfterTax = Math.max(0, totalTax - totalMoneyOwed - totalAdditionalTaxPayments);
+
+      return {
+        name: employee.fullName,
+        key: employee.key,
+        totalHours: totalHours.toFixed(1),
+        totalCommission: totalCommissionOnly.toFixed(2),
+        totalTips: totalTipsOnly.toFixed(2),
+        totalEarnings: totalEarnings.toFixed(2),
+        totalTax: totalTax.toFixed(2),
+        totalMoneyOwed: totalMoneyOwed.toFixed(2),
+        totalAdditionalTaxPayments: totalAdditionalTaxPayments.toFixed(2),
+        moneyOwedAfterTax: moneyOwedAfterTax.toFixed(2),
+        advance: advance.toFixed(2),
+        shiftsWorked: employeeReports.length
+      };
+    });
+
+    setEmployeeAccountingData(calculatedData);
+  }, [employeeRecords, reports, selectedAccountingMonth, taxPayments]);
 
   // Helper function to get training completion date
   const getTrainingCompletionDate = (employeeName: string) => {
@@ -2164,7 +2297,7 @@ export default function AdminPanel() {
             <CardContent>
               {isLoading ? (
                 <div className="text-center py-8">Loading employee data...</div>
-              ) : employeeStats.length === 0 ? (
+              ) : employeeAccountingData.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   No employee data found.
                 </div>
@@ -2187,24 +2320,24 @@ export default function AdminPanel() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {employeeStats.map((employee) => {
-                        const estimatedTax = employee.totalEarnings * 0.22;
-                        const cashPaid = employee.totalCashPaid || 0;
-                        const taxBalance = Math.max(0, estimatedTax - employee.totalMoneyOwed - cashPaid);
+                      {employeeAccountingData.map((employee) => {
+                        const estimatedTax = parseFloat(employee.totalEarnings) * 0.22;
+                        const cashPaid = parseFloat(employee.totalAdditionalTaxPayments) || 0;
+                        const taxBalance = Math.max(0, estimatedTax - parseFloat(employee.totalMoneyOwed) - cashPaid);
                         
                         return (
-                          <TableRow key={employee.name}>
+                          <TableRow key={employee.key}>
                             <TableCell className="font-medium">
-                              {EMPLOYEE_NAMES[employee.name] || employee.name}
+                              {employee.name}
                             </TableCell>
-                            <TableCell className="text-right">{employee.totalHours.toFixed(1)}</TableCell>
+                            <TableCell className="text-right">{employee.totalHours}</TableCell>
                             <TableCell className="text-right">
-                              {LOCATIONS.find(loc => loc.id === employee.locationId)?.name || '-'}
+                              -
                             </TableCell>
-                            <TableCell className="text-right">${employee.totalCommission.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${employee.totalTips.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${employee.totalCommission}</TableCell>
+                            <TableCell className="text-right">${employee.totalTips}</TableCell>
                             <TableCell className="text-right text-blue-700">
-                              ${employee.totalMoneyOwed.toFixed(2)}
+                              ${employee.totalMoneyOwed}
                             </TableCell>
                             <TableCell className="text-right font-medium text-blue-800">
                               ${employee.totalEarnings.toFixed(2)}
