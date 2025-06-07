@@ -4141,6 +4141,171 @@ export default function AdminPanel() {
                 >
                   Current Month
                 </Button>
+
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    // Calculate employee accounting data with month filtering
+                    const employeeAccountingData = employeeRecords.map(employee => {
+                      const employeeReports = reports.filter((report: any) => {
+                        const reportDate = parseLocalDate(report.date);
+                        const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+                        
+                        if (selectedAccountingMonth && reportMonth !== selectedAccountingMonth) {
+                          return false;
+                        }
+
+                        return employeeWorkedInShift(report, employee);
+                      });
+
+                      let totalEarnings = 0;
+                      let totalTax = 0;
+                      let totalMoneyOwed = 0;
+                      let totalAdditionalTaxPayments = 0;
+                      let totalHours = 0;
+                      let totalCommissionOnly = 0;
+                      let totalTipsOnly = 0;
+
+                      employeeReports.forEach((report: any) => {
+                        const employees = parseEmployeesData(report.employees);
+                        const employeeData = findEmployeeInShift(employees, employee);
+
+                        if (employeeData) {
+                          const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
+                          const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+
+                          // Commission calculation
+                          const locationId = report.locationId;
+                          let commissionRate = 4;
+                          if (locationId === 1) commissionRate = 4;
+                          else if (locationId === 2) commissionRate = 9;
+                          else if (locationId === 3) commissionRate = 7;
+                          else if (locationId === 4) commissionRate = 6;
+                          else if (locationId === 7) commissionRate = 2;
+
+                          const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+                          const totalCommission = (report.creditTransactions * commissionRate) + 
+                                                 (cashCars * commissionRate) + 
+                                                 (report.totalReceipts * commissionRate);
+                          
+                          // Tips calculations
+                          let perCarPrice = 15;
+                          if (locationId === 4) perCarPrice = 13;
+                          else if (locationId === 7) perCarPrice = 6;
+                          else if (locationId >= 5) {
+                            const currentLocation = locations?.find((loc: any) => loc.id === locationId);
+                            perCarPrice = currentLocation?.curbsideRate || 15;
+                          }
+                          
+                          const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+                          const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
+                          const receiptTips = report.totalReceipts * 3;
+                          const totalTips = creditCardTips + cashTips + receiptTips;
+                          
+                          const empCommission = totalCommission * hoursPercent;
+                          const empTips = totalTips * hoursPercent;
+                          const empEarnings = empCommission + empTips;
+
+                          // Money owed calculation
+                          const receiptSales = report.totalReceipts * 18;
+                          const totalCollections = report.totalCreditSales + receiptSales;
+                          const totalMoneyOwedOnShift = Math.max(0, totalCollections - report.totalTurnIn);
+                          const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
+
+                          // Tax calculations
+                          const tax = empEarnings * 0.22;
+                          const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
+                          
+                          const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
+                          const employeeTaxPayments = taxPayments.filter((payment: any) => 
+                            payment.employeeId === employeeRecord?.id && payment.reportId === report.id
+                          );
+                          const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
+                            sum + Number(payment.paidAmount || 0), 0
+                          );
+                          
+                          const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
+                          const additionalTaxPayments = cashPaid;
+
+                          totalEarnings += empEarnings;
+                          totalTax += tax;
+                          totalMoneyOwed += moneyOwed;
+                          totalAdditionalTaxPayments += additionalTaxPayments;
+                          totalHours += employeeData.hours;
+                          totalCommissionOnly += empCommission;
+                          totalTipsOnly += empTips;
+                        }
+                      });
+
+                      const advance = totalCommissionOnly + totalTipsOnly - totalMoneyOwed;
+                      const moneyOwedAfterTax = Math.max(0, totalTax - totalMoneyOwed - totalAdditionalTaxPayments);
+
+                      return {
+                        name: employee.fullName,
+                        key: employee.key,
+                        totalHours: totalHours.toFixed(1),
+                        totalCommission: totalCommissionOnly.toFixed(2),
+                        totalTips: totalTipsOnly.toFixed(2),
+                        totalEarnings: totalEarnings.toFixed(2),
+                        totalTax: totalTax.toFixed(2),
+                        totalMoneyOwed: totalMoneyOwed.toFixed(2),
+                        totalAdditionalTaxPayments: totalAdditionalTaxPayments.toFixed(2),
+                        moneyOwedAfterTax: moneyOwedAfterTax.toFixed(2),
+                        advance: advance.toFixed(2),
+                        shiftsWorked: employeeReports.length
+                      };
+                    });
+
+                    // Create CSV content
+                    const headers = [
+                      'Employee',
+                      'Hours',
+                      'Shifts',
+                      'Commission',
+                      'Tips', 
+                      'Total Earnings',
+                      'Money Owed',
+                      'Advance',
+                      'Tax Obligation (22%)',
+                      'Additional Tax Payments',
+                      'Money After Tax Coverage'
+                    ];
+
+                    const csvContent = [
+                      headers.join(','),
+                      ...employeeAccountingData.map(emp => [
+                        `"${emp.name}"`,
+                        emp.totalHours,
+                        emp.shiftsWorked,
+                        emp.totalCommission,
+                        emp.totalTips,
+                        emp.totalEarnings,
+                        emp.totalMoneyOwed,
+                        emp.advance,
+                        emp.totalTax,
+                        emp.totalAdditionalTaxPayments,
+                        emp.moneyOwedAfterTax
+                      ].join(','))
+                    ].join('\n');
+
+                    // Download CSV
+                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    const monthLabel = selectedAccountingMonth ? 
+                      ` - ${selectedAccountingMonth}` : ' - All Months';
+                    a.download = `employee-accounting${monthLabel}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                  }}
+                >
+                  Export CSV
+                </Button>
               </div>
 
               {(() => {
