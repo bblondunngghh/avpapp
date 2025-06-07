@@ -9,6 +9,7 @@ import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import newReportIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
+import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_1749313201026.png";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -71,9 +72,17 @@ export default function Header() {
                   <Button 
                     variant="ghost" 
                     className="justify-start" 
+                    onClick={() => handleNavigation('/employee-login')}
+                  >
+                    <img src={employeeIcon} alt="Employee" className="mr-2 h-5 w-5" />
+                    Employee Login
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="justify-start" 
                     onClick={() => handleNavigation('/admin-login')}
                   >
-                    <img src={employeeIcon} alt="Admin" className="mr-2 h-5 w-5" />
+                    <img src={lockShieldIcon} alt="Admin" className="mr-2 h-5 w-5" />
                     Admin Login
                   </Button>
                 </div>
