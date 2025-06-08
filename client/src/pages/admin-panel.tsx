@@ -5167,9 +5167,9 @@ export default function AdminPanel() {
                                             )}
                                             
                                             {/* Photos */}
-                                            {((report.photoUrls && report.photoUrls.length > 0) || (report.photoData && report.photoData.length > 0)) && (
-                                              <div>
-                                                <Label className="text-base font-semibold text-gray-900">Photos ({Math.max(report.photoUrls?.length || 0, report.photoData?.length || 0)})</Label>
+                                            <div>
+                                              <Label className="text-base font-semibold text-gray-900">Photos ({Math.max(report.photoUrls?.length || 0, report.photoData?.length || 0)})</Label>
+                                              {((report.photoUrls && report.photoUrls.length > 0) || (report.photoData && report.photoData.length > 0)) ? (
                                                 <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-3">
                                                   {(report.photoUrls || []).map((url: string, index: number) => {
                                                     // Use base64 data if URL is broken or doesn't exist
@@ -5183,14 +5183,73 @@ export default function AdminPanel() {
                                                           alt={`Incident photo ${index + 1}`}
                                                           className="w-full h-24 object-cover rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                                                           onClick={() => window.open(imageSrc, '_blank')}
+                                                          onError={(e) => {
+                                                            // Show placeholder if image fails to load
+                                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk0YTNiOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1pc3NpbmcgSW1hZ2U8L3RleHQ+PC9zdmc+';
+                                                          }}
                                                         />
                                                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all"></div>
                                                       </div>
                                                     );
                                                   })}
                                                 </div>
+                                              ) : (
+                                                <div className="mt-2 text-gray-500 italic">No photos attached to this incident report</div>
+                                              )}
+                                              
+                                              {/* Add Photo Button for existing reports */}
+                                              <div className="mt-3">
+                                                <Button
+                                                  variant="outline"
+                                                  size="sm"
+                                                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                                  onClick={() => {
+                                                    // Create file input and trigger it
+                                                    const input = document.createElement('input');
+                                                    input.type = 'file';
+                                                    input.accept = 'image/*';
+                                                    input.multiple = true;
+                                                    input.onchange = async (e) => {
+                                                      const files = (e.target as HTMLInputElement).files;
+                                                      if (!files || files.length === 0) return;
+                                                      
+                                                      // Convert files to base64 and add to report
+                                                      const newPhotoData: string[] = [];
+                                                      const newPhotoUrls: string[] = [];
+                                                      
+                                                      for (const file of Array.from(files)) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = async (e) => {
+                                                          if (e.target?.result) {
+                                                            const base64 = (e.target.result as string).split(',')[1];
+                                                            newPhotoData.push(base64);
+                                                            newPhotoUrls.push(`data:${file.type};base64,${base64}`);
+                                                            
+                                                            // When all files are processed, update the report
+                                                            if (newPhotoData.length === files.length) {
+                                                              const updatedPhotoUrls = [...(report.photoUrls || []), ...newPhotoUrls];
+                                                              const updatedPhotoData = [...(report.photoData || []), ...newPhotoData];
+                                                              
+                                                              updateIncidentMutation.mutate({
+                                                                reportId: report.id,
+                                                                updates: {
+                                                                  photoUrls: updatedPhotoUrls,
+                                                                  photoData: updatedPhotoData
+                                                                }
+                                                              });
+                                                            }
+                                                          }
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                      }
+                                                    };
+                                                    input.click();
+                                                  }}
+                                                >
+                                                  Add Photos
+                                                </Button>
                                               </div>
-                                            )}
+                                            </div>
                                           
                                             {/* Fault Determination Section */}
                                             <div className="mb-8">
