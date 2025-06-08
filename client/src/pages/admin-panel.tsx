@@ -5081,17 +5081,17 @@ export default function AdminPanel() {
                                           View
                                         </Button>
                                       </DialogTrigger>
-                                      <DialogContent className="max-w-4xl max-h-[95vh] flex flex-col">
-                                        <DialogHeader className="flex-shrink-0">
-                                          <DialogTitle>Incident Report Details</DialogTitle>
-                                          <DialogDescription>
+                                      <DialogContent className="w-[95vw] max-w-4xl h-[90vh] max-h-[90vh] flex flex-col p-4 sm:p-6">
+                                        <DialogHeader className="flex-shrink-0 pb-2 sm:pb-4">
+                                          <DialogTitle className="text-lg sm:text-xl">Incident Report Details</DialogTitle>
+                                          <DialogDescription className="text-sm">
                                             Submitted on {new Date(report.submittedAt).toLocaleString()}
                                           </DialogDescription>
                                         </DialogHeader>
-                                        <div className="flex-1 overflow-y-auto pr-2 pb-4">
-                                          <div className="space-y-6">
+                                        <div className="flex-1 overflow-y-auto px-1 pb-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+                                          <div className="space-y-4 sm:space-y-6">
                                             {/* Customer & Incident Info */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                               <div className="space-y-3">
                                                 <div>
                                                   <Label className="text-base font-semibold text-gray-900">Customer Information</Label>
@@ -5120,7 +5120,7 @@ export default function AdminPanel() {
                                             <div>
                                               <Label className="text-base font-semibold text-gray-900">Vehicle Information</Label>
                                               <div className="mt-2 bg-gray-50 p-3 rounded-lg">
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                                   <div className="text-sm"><span className="font-medium">Vehicle:</span> {report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
                                                   <div className="text-sm"><span className="font-medium">Color:</span> {report.vehicleColor}</div>
                                                   <div className="text-sm"><span className="font-medium">License:</span> {report.vehicleLicensePlate}</div>
@@ -5170,7 +5170,7 @@ export default function AdminPanel() {
                                             <div>
                                               <Label className="text-base font-semibold text-gray-900">Photos ({Math.max(report.photoUrls?.length || 0, report.photoData?.length || 0)})</Label>
                                               {((report.photoUrls && report.photoUrls.length > 0) || (report.photoData && report.photoData.length > 0)) ? (
-                                                <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                                                   {(report.photoUrls || []).map((url: string, index: number) => {
                                                     // Use base64 data if URL is broken or doesn't exist
                                                     const base64Data = report.photoData?.[index];
@@ -5181,7 +5181,7 @@ export default function AdminPanel() {
                                                         <img 
                                                           src={imageSrc} 
                                                           alt={`Incident photo ${index + 1}`}
-                                                          className="w-full h-24 object-cover rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                                          className="w-full h-16 sm:h-24 object-cover rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                                                           onClick={() => window.open(imageSrc, '_blank')}
                                                           onError={(e) => {
                                                             // Show placeholder if image fails to load
@@ -5262,8 +5262,11 @@ export default function AdminPanel() {
                                         </div>
                                         
                                         {/* Footer with Save Button */}
-                                        <div className="flex-shrink-0 border-t pt-4 mt-4">
-                                          <div className="flex justify-end">
+                                        <div className="flex-shrink-0 border-t pt-3 sm:pt-4 mt-4 bg-white">
+                                          <div className="flex justify-between items-center gap-3">
+                                            <div className="text-xs sm:text-sm text-gray-500">
+                                              Changes are saved automatically
+                                            </div>
                                             <Button 
                                               onClick={() => {
                                                 // All changes are already handled by individual components
@@ -5272,9 +5275,10 @@ export default function AdminPanel() {
                                                   description: "All incident report updates have been saved successfully.",
                                                 });
                                               }}
-                                              className="w-32"
+                                              className="w-24 sm:w-32 text-sm"
+                                              size="sm"
                                             >
-                                              Save Changes
+                                              Done
                                             </Button>
                                           </div>
                                         </div>
