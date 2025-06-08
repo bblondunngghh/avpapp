@@ -304,6 +304,7 @@ export const incidentReports = pgTable("incident_reports", {
   damageDescription: text("damage_description").notNull(),
   additionalNotes: text("additional_notes"),
   photoUrls: text("photo_urls").array().default([]),
+  photoData: text("photo_data").array().default([]), // Base64 encoded photo data
   faultStatus: text("fault_status"), // "at-fault", "not-at-fault", null
   repairCost: numeric("repair_cost"),
   repairStatus: text("repair_status"), // "pending", "completed", null

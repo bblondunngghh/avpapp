@@ -5167,21 +5167,27 @@ export default function AdminPanel() {
                                             )}
                                             
                                             {/* Photos */}
-                                            {report.photoUrls && report.photoUrls.length > 0 && (
+                                            {((report.photoUrls && report.photoUrls.length > 0) || (report.photoData && report.photoData.length > 0)) && (
                                               <div>
-                                                <Label className="text-base font-semibold text-gray-900">Photos ({report.photoUrls.length})</Label>
+                                                <Label className="text-base font-semibold text-gray-900">Photos ({Math.max(report.photoUrls?.length || 0, report.photoData?.length || 0)})</Label>
                                                 <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-3">
-                                                  {report.photoUrls.map((url: string, index: number) => (
-                                                    <div key={index} className="relative group">
-                                                      <img 
-                                                        src={url} 
-                                                        alt={`Incident photo ${index + 1}`}
-                                                        className="w-full h-24 object-cover rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                                                        onClick={() => window.open(url, '_blank')}
-                                                      />
-                                                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all"></div>
-                                                    </div>
-                                                  ))}
+                                                  {(report.photoUrls || []).map((url: string, index: number) => {
+                                                    // Use base64 data if URL is broken or doesn't exist
+                                                    const base64Data = report.photoData?.[index];
+                                                    const imageSrc = base64Data ? `data:image/jpeg;base64,${base64Data}` : url;
+                                                    
+                                                    return (
+                                                      <div key={index} className="relative group">
+                                                        <img 
+                                                          src={imageSrc} 
+                                                          alt={`Incident photo ${index + 1}`}
+                                                          className="w-full h-24 object-cover rounded-lg border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                                          onClick={() => window.open(imageSrc, '_blank')}
+                                                        />
+                                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all"></div>
+                                                      </div>
+                                                    );
+                                                  })}
                                                 </div>
                                               </div>
                                             )}

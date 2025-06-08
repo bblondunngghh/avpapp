@@ -1202,11 +1202,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Process uploaded photos
       const photoUrls: string[] = [];
+      const photoData: string[] = [];
       if (req.files && Array.isArray(req.files)) {
         for (const file of req.files) {
           // Generate a URL path for the uploaded file
           const photoUrl = `/uploads/${file.filename}`;
           photoUrls.push(photoUrl);
+          
+          // Convert photo to base64 and store in database
+          const fs = require('fs');
+          try {
+            const photoBuffer = fs.readFileSync(file.path);
+            const base64Data = photoBuffer.toString('base64');
+            photoData.push(base64Data);
+          } catch (error) {
+            console.error('Error reading photo file:', error);
+            // Still add empty string to maintain array alignment
+            photoData.push('');
+          }
         }
       }
 
@@ -1230,6 +1243,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         damageDescription,
         additionalNotes: additionalNotes || null,
         photoUrls,
+        photoData,
       };
 
       const report = await storage.createIncidentReport(incidentData);
