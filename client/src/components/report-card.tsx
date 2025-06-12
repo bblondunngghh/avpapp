@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -61,6 +63,8 @@ export default function ReportCard({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   
   // Find location name
   const location = LOCATIONS.find(loc => loc.id === locationId)?.name || 'Unknown Location';
@@ -111,9 +115,25 @@ export default function ReportCard({
     navigate(`/edit-report/${id}`);
   };
   
-  // Handle delete report
+  // Handle delete report with password verification
   const handleDelete = () => {
-    deleteMutation.mutate();
+    if (deletePassword === "bbonly") {
+      deleteMutation.mutate();
+      setShowPasswordDialog(false);
+      setDeletePassword("");
+    } else {
+      toast({
+        title: "Access Denied",
+        description: "Incorrect password. Unable to delete report.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Handle password dialog submit
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleDelete();
   };
   
   // Get the color scheme based on location ID
@@ -243,33 +263,15 @@ export default function ReportCard({
                 <span className="sr-only">Edit</span>
               </Button>
               
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-gray-500 hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">Delete</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete the shift report for {location} on {formattedDate}.
-                      This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowPasswordDialog(true)}
+                className="h-8 w-8 text-gray-500 hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Delete</span>
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -501,6 +503,53 @@ export default function ReportCard({
               Edit Report
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Password Protection Dialog for Delete */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Confirmation Required</DialogTitle>
+            <DialogDescription>
+              Enter the password to delete this shift report for {location} on {formattedDate}.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="delete-password">Password</Label>
+              <Input
+                id="delete-password"
+                type="password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                placeholder="Enter password"
+                autoFocus
+                className="w-full"
+              />
+            </div>
+            
+            <DialogFooter className="gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => {
+                  setShowPasswordDialog(false);
+                  setDeletePassword("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                variant="destructive"
+                disabled={!deletePassword}
+              >
+                Delete Report
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>
