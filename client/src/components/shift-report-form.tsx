@@ -352,9 +352,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
         
         // Calculate expected cash payment based on the actual requirement
-        // Employee only needs to pay cash if their tax exceeds money owed
-        // If money owed >= tax, no cash payment required
-        const expectedCashPayment = Math.max(0, taxObligation - moneyOwed);
+        // Employee only needs to pay cash if their tax exceeds (money owed + receipts)
+        // Receipts provide additional tax coverage
+        const receiptCoverage = values.totalReceipts * hoursPercent * 18; // Receipt value coverage
+        const totalTaxCoverage = moneyOwed + receiptCoverage;
+        const expectedCashPayment = Math.max(0, taxObligation - totalTaxCoverage);
         
 
         
@@ -1561,8 +1563,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
                                     const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
-                                    // Add to sum only if tax exceeds money owed
-                                    return sum + (empTax > empMoneyOwed ? Math.ceil(empTax - empMoneyOwed) : 0);
+                                    // Add to sum only if tax exceeds (money owed + receipt coverage)
+                                    const receiptCoverage = totalReceipts * employeeHoursPercent * 18;
+                                    const totalTaxCoverage = empMoneyOwed + receiptCoverage;
+                                    return sum + (empTax > totalTaxCoverage ? Math.ceil(empTax - totalTaxCoverage) : 0);
                                   }, 0);
                                   
                                   // Add console logs to debug the values
@@ -1587,12 +1591,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
                                     const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
-                                    // Check if either cash paid covers tax or if money owed covers tax
+                                    // Check if cash paid covers tax considering money owed + receipts
                                     const cashPaid = parseFloat(String(emp.cashPaid)) || 0;
-                                    const taxObligation = Math.max(0, empTax - empMoneyOwed);
+                                    const receiptCoverage = totalReceipts * employeeHoursPercent * 18;
+                                    const totalTaxCoverage = empMoneyOwed + receiptCoverage;
+                                    const taxObligation = Math.max(0, empTax - totalTaxCoverage);
                                     
-                                    // Tax is covered if either money owed covers it OR cash paid covers it
-                                    return empMoneyOwed >= empTax || cashPaid >= Math.ceil(taxObligation);
+                                    // Tax is covered if (money owed + receipts) covers it OR cash paid covers it
+                                    return totalTaxCoverage >= empTax || cashPaid >= Math.ceil(taxObligation);
                                   });
                                   
                                   // Only show "All Taxes Covered" if all employees have covered their taxes
