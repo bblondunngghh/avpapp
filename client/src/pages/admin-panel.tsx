@@ -2263,6 +2263,8 @@ export default function AdminPanel() {
                             turnInRate = 11;
                         }
                         const expectedTurnIn = report.totalCars * turnInRate;
+                        const actualCash = report.companyCashTurnIn || 0;
+                        const moneyOwed = Math.max(0, expectedTurnIn - actualCash);
                         
                         return (
                           <TableRow key={report.id}>
@@ -2277,7 +2279,7 @@ export default function AdminPanel() {
                             </TableCell>
                             <TableCell className="text-center">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
                             <TableCell className="text-center">
-                              ${Math.max(0, expectedTurnIn - (report.companyCashTurnIn || 0)).toFixed(2)}
+                              ${moneyOwed.toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center">${expectedTurnIn.toFixed(2)}</TableCell>
                           </TableRow>
