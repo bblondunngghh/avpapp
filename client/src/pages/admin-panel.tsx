@@ -2131,12 +2131,23 @@ export default function AdminPanel() {
             <CardContent>
               {isLoading ? (
                 <div className="text-center py-8">Loading reports...</div>
-              ) : reports.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No reports found. Create a report to get started.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
+              ) : (() => {
+                const filteredReports = reports.filter((report) => {
+                  const reportDate = parseLocalDate(report.date);
+                  const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+                  return reportMonth === currentReportsMonth;
+                });
+                
+                if (filteredReports.length === 0) {
+                  return (
+                    <div className="text-center py-8 text-gray-500">
+                      No reports found for {getCurrentMonthName()}. {reports.length === 0 ? 'Create a report to get started.' : 'Navigate to a different month to view other reports.'}
+                    </div>
+                  );
+                }
+                
+                return (
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableCaption>A list of all shift reports.</TableCaption>
                     <TableHeader>
@@ -2237,7 +2248,9 @@ export default function AdminPanel() {
                       })}
                     </TableBody>
                   </Table>
-                </div>
+                    </div>
+                  );
+                })()
               )}
 
               {/* Summary Totals Table */}
