@@ -249,7 +249,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight } from "lucide-react";
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
 import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
@@ -463,6 +463,33 @@ export default function AdminPanel() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
+  
+  // Shift reports pagination - default to current month
+  const [currentReportsMonth, setCurrentReportsMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+
+  // Navigation functions for shift reports pagination
+  const goToPreviousMonth = () => {
+    const [year, month] = currentReportsMonth.split('-').map(Number);
+    const prevDate = new Date(year, month - 2); // month - 2 because months are 0-indexed
+    const newMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
+    setCurrentReportsMonth(newMonth);
+  };
+
+  const goToNextMonth = () => {
+    const [year, month] = currentReportsMonth.split('-').map(Number);
+    const nextDate = new Date(year, month); // month is already correct for next month
+    const newMonth = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}`;
+    setCurrentReportsMonth(newMonth);
+  };
+
+  const getCurrentMonthName = () => {
+    const [year, month] = currentReportsMonth.split('-').map(Number);
+    const date = new Date(year, month - 1);
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  };
   
   // Employee accounting data state
   const [employeeAccountingData, setEmployeeAccountingData] = useState<Array<{
@@ -2044,31 +2071,60 @@ export default function AdminPanel() {
         
         <TabsContent value="reports">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <CardTitle>Shift Reports</CardTitle>
-                <CardDescription>
-                  View all shift reports across all locations
-                </CardDescription>
+            <CardHeader className="space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <CardTitle>Shift Reports - {getCurrentMonthName()}</CardTitle>
+                  <CardDescription>
+                    View shift reports for the selected month
+                  </CardDescription>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={exportReportsToCSV}
+                    className="flex items-center gap-1"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Export CSV
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={exportReportsToPDF}
+                    className="flex items-center gap-1"
+                  >
+                    <Download className="h-4 w-4" />
+                    Export PDF
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={exportReportsToCSV}
-                  className="flex items-center gap-1"
+              
+              {/* Month Navigation Controls */}
+              <div className="flex items-center justify-center gap-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToPreviousMonth}
+                  className="flex items-center gap-2"
                 >
-                  <FileDown className="h-4 w-4" />
-                  Export CSV
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous Month
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={exportReportsToPDF}
-                  className="flex items-center gap-1"
+                
+                <div className="text-sm font-medium text-center min-w-[150px]">
+                  {getCurrentMonthName()}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToNextMonth}
+                  className="flex items-center gap-2"
                 >
-                  <Download className="h-4 w-4" />
-                  Export PDF
+                  Next Month
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             </CardHeader>
@@ -2097,7 +2153,14 @@ export default function AdminPanel() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {reports.map((report) => {
+                      {reports
+                        .filter((report) => {
+                          // Filter reports by selected month
+                          const reportDate = parseLocalDate(report.date);
+                          const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+                          return reportMonth === currentReportsMonth;
+                        })
+                        .map((report) => {
                         // Parse date safely to avoid timezone issues
                         let date;
                         try {
