@@ -2167,15 +2167,16 @@ export default function AdminPanel() {
                                       report.locationId === parseInt(selectedReportsLocation);
                   
                   // Debug logging
-                  if (selectedReportsLocation !== "all") {
-                    console.log("Filtering debug:", {
-                      selectedLocation: selectedReportsLocation,
-                      reportLocationId: report.locationId,
-                      parsedLocation: parseInt(selectedReportsLocation),
-                      locationMatch,
-                      monthMatch
-                    });
-                  }
+                  console.log("Filtering debug:", {
+                    selectedLocation: selectedReportsLocation,
+                    reportLocationId: report.locationId,
+                    reportDate: report.date,
+                    currentMonth: currentReportsMonth,
+                    reportMonth,
+                    parsedLocation: parseInt(selectedReportsLocation),
+                    locationMatch,
+                    monthMatch
+                  });
                   
                   return monthMatch && locationMatch;
                 });
