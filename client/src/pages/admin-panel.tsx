@@ -2200,7 +2200,13 @@ export default function AdminPanel() {
                           // Filter reports by selected month
                           const reportDate = parseLocalDate(report.date);
                           const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
-                          return reportMonth === currentReportsMonth;
+                          const monthMatch = reportMonth === currentReportsMonth;
+                          
+                          // Filter by location
+                          const locationMatch = selectedReportsLocation === "all" || 
+                                              report.locationId === parseInt(selectedReportsLocation);
+                          
+                          return monthMatch && locationMatch;
                         })
                         .map((report) => {
                         // Parse date safely to avoid timezone issues
