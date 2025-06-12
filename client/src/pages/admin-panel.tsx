@@ -2157,10 +2157,10 @@ export default function AdminPanel() {
                         <TableHead>Location</TableHead>
                         <TableHead>Shift</TableHead>
                         <TableHead>Leader</TableHead>
-                        <TableHead className="text-right">Cars</TableHead>
-                        <TableHead className="text-right">Cash</TableHead>
-                        <TableHead className="text-right">Credit Card Sales</TableHead>
-                        <TableHead className="text-right">Turn-In</TableHead>
+                        <TableHead className="text-center">Cars</TableHead>
+                        <TableHead className="text-center">Cash</TableHead>
+                        <TableHead className="text-center">Credit Card Sales</TableHead>
+                        <TableHead className="text-center">Turn-In</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2233,12 +2233,12 @@ export default function AdminPanel() {
                             <TableCell>{getLocationName(report.locationId)}</TableCell>
                             <TableCell>{report.shift}</TableCell>
                             <TableCell>{EMPLOYEE_NAMES[report.manager] || report.manager}</TableCell>
-                            <TableCell className="text-right">{report.totalCars}</TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-center">{report.totalCars}</TableCell>
+                            <TableCell className="text-center">
                               ${(report.companyCashTurnIn || 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${expectedTurnIn.toFixed(2)}</TableCell>
+                            <TableCell className="text-center">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
+                            <TableCell className="text-center">${expectedTurnIn.toFixed(2)}</TableCell>
                           </TableRow>
                         );
                       })}
