@@ -2191,6 +2191,7 @@ export default function AdminPanel() {
                         <TableHead className="text-center">Cars</TableHead>
                         <TableHead className="text-center">Cash</TableHead>
                         <TableHead className="text-center">Credit Card Sales</TableHead>
+                        <TableHead className="text-center">Receipt Sales</TableHead>
                         <TableHead className="text-center">Money Owed</TableHead>
                         <TableHead className="text-center">Turn-In</TableHead>
                       </TableRow>
@@ -2263,8 +2264,8 @@ export default function AdminPanel() {
                             turnInRate = 11;
                         }
                         const expectedTurnIn = report.totalCars * turnInRate;
-                        const actualCash = report.companyCashTurnIn || 0;
-                        const moneyOwed = Math.max(0, expectedTurnIn - actualCash);
+                        const totalSales = (report.totalCreditSales || 0) + (report.totalReceiptSales || 0);
+                        const moneyOwed = Math.max(0, totalSales - expectedTurnIn);
                         
                         return (
                           <TableRow key={report.id}>
@@ -2278,6 +2279,7 @@ export default function AdminPanel() {
                               ${(report.companyCashTurnIn || 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
+                            <TableCell className="text-center">${(report.totalReceiptSales || 0).toFixed(2)}</TableCell>
                             <TableCell className="text-center">
                               ${moneyOwed.toFixed(2)}
                             </TableCell>
@@ -2304,6 +2306,7 @@ export default function AdminPanel() {
                         const totalCars = filteredReports.reduce((sum, report) => sum + (report.totalCars || 0), 0);
                         const totalCash = filteredReports.reduce((sum, report) => sum + (report.companyCashTurnIn || 0), 0);
                         const totalCreditSales = filteredReports.reduce((sum, report) => sum + (report.totalCreditSales || 0), 0);
+                        const totalReceiptSales = filteredReports.reduce((sum, report) => sum + (report.totalReceiptSales || 0), 0);
                         const totalTurnIn = filteredReports.reduce((sum, report) => {
                           // Calculate expected turn-in for each report
                           let expectedTurnIn = report.totalCars * 11; // Default rate
@@ -2318,7 +2321,8 @@ export default function AdminPanel() {
                           if (report.locationId === 2) expectedTurnIn = report.totalCars * 6; // Bob's
                           else if (report.locationId === 3) expectedTurnIn = report.totalCars * 8; // Truluck's
                           else if (report.locationId === 4) expectedTurnIn = report.totalCars * 7; // BOA
-                          const moneyOwed = Math.max(0, expectedTurnIn - (report.companyCashTurnIn || 0));
+                          const totalSales = (report.totalCreditSales || 0) + (report.totalReceiptSales || 0);
+                          const moneyOwed = Math.max(0, totalSales - expectedTurnIn);
                           return sum + moneyOwed;
                         }, 0);
                         
@@ -2333,6 +2337,7 @@ export default function AdminPanel() {
                               <TableCell className="text-center font-bold">{totalCars}</TableCell>
                               <TableCell className="text-center font-bold">${totalCash.toFixed(2)}</TableCell>
                               <TableCell className="text-center font-bold">${totalCreditSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold">${totalReceiptSales.toFixed(2)}</TableCell>
                               <TableCell className="text-center font-bold">${totalMoneyOwed.toFixed(2)}</TableCell>
                               <TableCell className="text-center font-bold">${totalTurnIn.toFixed(2)}</TableCell>
                             </TableRow>
