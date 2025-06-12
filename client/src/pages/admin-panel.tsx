@@ -2191,8 +2191,8 @@ export default function AdminPanel() {
                         <TableHead className="text-center">Cars</TableHead>
                         <TableHead className="text-center">Cash</TableHead>
                         <TableHead className="text-center">Credit Card Sales</TableHead>
-                        <TableHead className="text-center">Turn-In</TableHead>
                         <TableHead className="text-center">Money Owed</TableHead>
+                        <TableHead className="text-center">Turn-In</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2276,10 +2276,10 @@ export default function AdminPanel() {
                               ${(report.companyCashTurnIn || 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
-                            <TableCell className="text-center">${expectedTurnIn.toFixed(2)}</TableCell>
                             <TableCell className="text-center">
                               ${Math.max(0, expectedTurnIn - (report.companyCashTurnIn || 0)).toFixed(2)}
                             </TableCell>
+                            <TableCell className="text-center">${expectedTurnIn.toFixed(2)}</TableCell>
                           </TableRow>
                         );
                       })}
@@ -2331,8 +2331,8 @@ export default function AdminPanel() {
                               <TableCell className="text-center font-bold">{totalCars}</TableCell>
                               <TableCell className="text-center font-bold">${totalCash.toFixed(2)}</TableCell>
                               <TableCell className="text-center font-bold">${totalCreditSales.toFixed(2)}</TableCell>
-                              <TableCell className="text-center font-bold">${totalTurnIn.toFixed(2)}</TableCell>
                               <TableCell className="text-center font-bold">${totalMoneyOwed.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold">${totalTurnIn.toFixed(2)}</TableCell>
                             </TableRow>
                           );
                         }
