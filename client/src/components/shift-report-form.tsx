@@ -1680,8 +1680,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   }
                                   const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
                                   
-                                  // Calculate total money owed to employees
-                                  const calculatedMoneyOwed = companyCashTurnIn < 0 ? Math.abs(companyCashTurnIn) : 0;
+                                  // Calculate total money owed to employees using correct formula
+                                  const receiptSales = totalReceipts * 18;
+                                  const totalCollections = totalCreditSales + receiptSales;
+                                  const calculatedMoneyOwed = Math.max(0, totalCollections - totalTurnIn);
                                   
                                   // Calculate net tax obligation (tax amount minus any money owed to employees)
                                   const netTaxObligationTotal = Math.max(0, totalTaxAmount - calculatedMoneyOwed);
