@@ -249,7 +249,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight, User } from "lucide-react";
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
 import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
