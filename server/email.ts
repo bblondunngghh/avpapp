@@ -235,3 +235,197 @@ export async function sendIncidentNotification(data: IncidentEmailData): Promise
     return false;
   }
 }
+
+export interface CustomerConfirmationData {
+  customerName: string;
+  customerEmail: string;
+  claimNumber: string;
+  incidentDate: string;
+  incidentTime: string;
+  incidentLocation: string;
+}
+
+export function formatCustomerConfirmationEmail(data: CustomerConfirmationData): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Incident Report Confirmation</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f4f4f4;
+        }
+        .email-container {
+          background-color: white;
+          border-radius: 10px;
+          padding: 30px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+          text-align: center;
+          border-bottom: 3px solid #ff6b35;
+          padding-bottom: 20px;
+          margin-bottom: 30px;
+        }
+        .logo {
+          font-size: 24px;
+          font-weight: bold;
+          color: #ff6b35;
+          margin-bottom: 10px;
+        }
+        .claim-number {
+          background-color: #ff6b35;
+          color: white;
+          padding: 15px;
+          border-radius: 8px;
+          text-align: center;
+          margin: 20px 0;
+          font-size: 18px;
+          font-weight: bold;
+        }
+        .section {
+          margin-bottom: 25px;
+        }
+        .section h3 {
+          color: #ff6b35;
+          border-bottom: 2px solid #ff6b35;
+          padding-bottom: 8px;
+          margin-bottom: 15px;
+        }
+        .field {
+          margin-bottom: 10px;
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .field-label {
+          font-weight: bold;
+          min-width: 120px;
+          color: #555;
+        }
+        .field-value {
+          flex: 1;
+          color: #333;
+        }
+        .contact-info {
+          background-color: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+          border-left: 4px solid #ff6b35;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #ddd;
+          color: #666;
+          font-size: 14px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <div class="logo">Access Valet Parking</div>
+          <h2>Incident Report Confirmation</h2>
+        </div>
+
+        <p>Dear ${data.customerName},</p>
+        
+        <p>Thank you for submitting an incident report. We have received your report and it has been assigned the following claim number:</p>
+
+        <div class="claim-number">
+          Claim #${data.claimNumber}
+        </div>
+
+        <div class="section">
+          <h3>Report Summary</h3>
+          <div class="field">
+            <span class="field-label">Date:</span>
+            <span class="field-value">${data.incidentDate}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Time:</span>
+            <span class="field-value">${data.incidentTime}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Location:</span>
+            <span class="field-value">${data.incidentLocation}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>What Happens Next?</h3>
+          <ul>
+            <li>Our team will review your incident report within 24 hours</li>
+            <li>We will contact you directly to discuss next steps</li>
+            <li>Please keep your claim number for reference: <strong>${data.claimNumber}</strong></li>
+            <li>If you have any questions, please contact us using the information below</li>
+          </ul>
+        </div>
+
+        <div class="contact-info">
+          <h3 style="margin-top: 0; color: #ff6b35;">Contact Information</h3>
+          <div class="field">
+            <span class="field-label">Company:</span>
+            <span class="field-value">Access Valet Parking</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Phone:</span>
+            <span class="field-value">(512) 775-5739</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Email:</span>
+            <span class="field-value">info@accessvaletparking.com</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Address:</span>
+            <span class="field-value">Austin, Texas</span>
+          </div>
+        </div>
+
+        <p>We appreciate your patience and understanding. Our goal is to resolve this matter promptly and professionally.</p>
+
+        <div class="footer">
+          <p>© 2025 Access Valet Parking. All rights reserved.</p>
+          <p>This is an automated confirmation email. Please do not reply directly to this message.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+export async function sendCustomerConfirmation(data: CustomerConfirmationData): Promise<boolean> {
+  const transporter = createEmailTransporter();
+  
+  if (!transporter) {
+    console.error('Email transporter not available for customer confirmation');
+    return false;
+  }
+
+  const htmlContent = formatCustomerConfirmationEmail(data);
+  
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: data.customerEmail,
+    subject: `Incident Report Confirmation - Claim #${data.claimNumber}`,
+    html: htmlContent,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Customer confirmation email sent to ${data.customerEmail} for claim #${data.claimNumber}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to send customer confirmation email:', error);
+    return false;
+  }
+}

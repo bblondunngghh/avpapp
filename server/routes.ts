@@ -32,7 +32,7 @@ import {
   processShiftReportsCSV, 
   processTicketDistributionsCSV 
 } from "./csv-upload";
-import { sendIncidentNotification, type IncidentEmailData } from "./email";
+import { sendIncidentNotification, sendCustomerConfirmation, type IncidentEmailData, type CustomerConfirmationData } from "./email";
 import { 
   validateShiftReportMiddleware, 
   dataIntegrityLoggingMiddleware 
