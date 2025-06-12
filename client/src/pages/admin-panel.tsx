@@ -2250,9 +2250,18 @@ export default function AdminPanel() {
                   </Table>
                     </div>
                   );
-                })()
-              )}
-
+                })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="reports">
+          <Card>
+            <CardHeader>
+              <CardTitle>Summary Report</CardTitle>
+              <CardDescription>Monthly totals and statistics</CardDescription>
+            </CardHeader>
+            <CardContent>
               {/* Summary Totals Table */}
               {!isLoading && reports.length > 0 && (() => {
                 // Filter reports based on date range
