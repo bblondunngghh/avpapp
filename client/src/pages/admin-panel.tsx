@@ -2242,6 +2242,44 @@ export default function AdminPanel() {
                           </TableRow>
                         );
                       })}
+                      
+                      {/* Totals Row */}
+                      {(() => {
+                        const filteredReports = reports.filter((report) => {
+                          const reportDate = parseLocalDate(report.date);
+                          const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+                          return reportMonth === currentReportsMonth;
+                        });
+                        
+                        const totalCars = filteredReports.reduce((sum, report) => sum + (report.totalCars || 0), 0);
+                        const totalCash = filteredReports.reduce((sum, report) => sum + (report.companyCashTurnIn || 0), 0);
+                        const totalCreditSales = filteredReports.reduce((sum, report) => sum + (report.totalCreditSales || 0), 0);
+                        const totalTurnIn = filteredReports.reduce((sum, report) => {
+                          // Calculate expected turn-in for each report
+                          let expectedTurnIn = report.totalCars * 11; // Default rate
+                          if (report.locationId === 2) expectedTurnIn = report.totalCars * 6; // Bob's
+                          else if (report.locationId === 3) expectedTurnIn = report.totalCars * 8; // Truluck's
+                          else if (report.locationId === 4) expectedTurnIn = report.totalCars * 7; // BOA
+                          return sum + expectedTurnIn;
+                        }, 0);
+                        
+                        if (filteredReports.length > 0) {
+                          return (
+                            <TableRow className="bg-gray-50 font-semibold border-t-2">
+                              <TableCell className="font-bold">TOTAL</TableCell>
+                              <TableCell></TableCell>
+                              <TableCell></TableCell>
+                              <TableCell></TableCell>
+                              <TableCell></TableCell>
+                              <TableCell className="text-center font-bold">{totalCars}</TableCell>
+                              <TableCell className="text-center font-bold">${totalCash.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold">${totalCreditSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold">${totalTurnIn.toFixed(2)}</TableCell>
+                            </TableRow>
+                          );
+                        }
+                        return null;
+                      })()}
                     </TableBody>
                   </Table>
                     </div>
