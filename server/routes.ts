@@ -1248,10 +1248,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const report = await storage.createIncidentReport(incidentData);
 
+      // Generate claim number using report ID and date
+      const claimNumber = `AVP-${report.id.toString().padStart(4, '0')}-${new Date().getFullYear()}`;
+
+      // Prepare email data for admin notification
+      const emailData: IncidentEmailData = {
+        customerName,
+        customerEmail,
+        customerPhone,
+        incidentDate,
+        incidentTime,
+        incidentLocation,
+        employeeName: employeeId ? 'Employee ID: ' + employeeId : 'Not specified',
+        incidentDescription,
+        witnessName: witnessName || undefined,
+        witnessPhone: witnessPhone || undefined,
+        vehicleMake,
+        vehicleModel,
+        vehicleYear,
+        vehicleColor,
+        vehicleLicensePlate,
+        damageDescription,
+        additionalNotes: additionalNotes || undefined
+      };
+
+      // Prepare customer confirmation email data
+      const customerEmailData: CustomerConfirmationData = {
+        customerName,
+        customerEmail,
+        claimNumber,
+        incidentDate,
+        incidentTime,
+        incidentLocation
+      };
+
+      // Send admin notification email (don't block on failure)
+      sendIncidentNotification(emailData).catch(error => {
+        console.error('Failed to send admin notification email:', error);
+      });
+
+      // Send customer confirmation email (don't block on failure)
+      sendCustomerConfirmation(customerEmailData).catch(error => {
+        console.error('Failed to send customer confirmation email:', error);
+      });
+
       res.status(201).json({ 
         success: true, 
         message: 'Incident report saved successfully',
-        reportId: report.id
+        reportId: report.id,
+        claimNumber
       });
     } catch (error) {
       console.error('Error processing incident report:', error);

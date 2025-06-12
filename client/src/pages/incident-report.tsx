@@ -130,12 +130,13 @@ export default function IncidentReport() {
       const response = await apiRequest("POST", "/api/incident-reports", formData);
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       toast({
         title: "Incident Report Submitted",
         description: "Your incident report has been successfully submitted.",
       });
-      navigate("/incident-submitted");
+      // Navigate to success page with claim number
+      navigate(`/incident-submitted?claimNumber=${response.claimNumber}`);
     },
     onError: (error: Error) => {
       toast({
