@@ -352,10 +352,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
         
         // Calculate expected cash payment based on the actual requirement
-        // Employee must pay their full tax obligation (22% of earnings)
-        // Money owed reduces the cash requirement only if it's less than tax owed
-        // If money owed exceeds tax, employee still owes the full tax amount
-        const expectedCashPayment = taxObligation;
+        // Employee only needs to pay cash if their tax exceeds money owed
+        // If money owed >= tax, no cash payment required
+        const expectedCashPayment = Math.max(0, taxObligation - moneyOwed);
         
 
         
