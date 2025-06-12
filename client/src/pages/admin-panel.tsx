@@ -2834,12 +2834,6 @@ export default function AdminPanel() {
                       );
                     })}
                   </div>
-                  
-                  {/* Partner Pay Calculator */}
-                  <div className="mb-8 border p-4 rounded-lg bg-white shadow">
-                    <h3 className="text-lg font-medium mb-4">Partner Pay Distribution Calculator</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="text-md font-medium mb-3 text-gray-700">Monthly Revenue</h4>
                         
