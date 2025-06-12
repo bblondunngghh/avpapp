@@ -2159,8 +2159,8 @@ export default function AdminPanel() {
                         <TableHead>Leader</TableHead>
                         <TableHead className="text-right">Cars</TableHead>
                         <TableHead className="text-right">Turn-In</TableHead>
-                        <TableHead className="text-right">Employees</TableHead>
-                        <TableHead className="text-right">Submitted</TableHead>
+                        <TableHead className="text-right">Cash</TableHead>
+                        <TableHead className="text-right">Credit Card Sales</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2236,13 +2236,9 @@ export default function AdminPanel() {
                             <TableCell className="text-right">{report.totalCars}</TableCell>
                             <TableCell className="text-right">${expectedTurnIn.toFixed(2)}</TableCell>
                             <TableCell className="text-right">
-                              {typeof report.employees === 'string' 
-                                ? JSON.parse(report.employees).length 
-                                : Array.isArray(report.employees) 
-                                  ? report.employees.length 
-                                  : 0}
+                              ${(report.totalCashCollected || 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right">{submittedDate.toLocaleDateString()}</TableCell>
+                            <TableCell className="text-right">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
                           </TableRow>
                         );
                       })}
