@@ -2236,7 +2236,7 @@ export default function AdminPanel() {
                             <TableCell className="text-right">{report.totalCars}</TableCell>
                             <TableCell className="text-right">${expectedTurnIn.toFixed(2)}</TableCell>
                             <TableCell className="text-right">
-                              ${(report.totalCashCollected || 0).toFixed(2)}
+                              ${(report.companyCashTurnIn || 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-right">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
                           </TableRow>
