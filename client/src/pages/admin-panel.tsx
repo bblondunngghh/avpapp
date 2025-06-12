@@ -432,7 +432,31 @@ export default function AdminPanel() {
     locationId: number;
   }[]>([]);
   
-
+  // Partner pay state
+  const [monthlyRevenue, setMonthlyRevenue] = useState<number>(0);
+  const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
+  const [currentMonth, setCurrentMonth] = useState<string>("");
+  const [savedExpenses, setSavedExpenses] = useState<Record<string, number>>({});
+  const [isEditingExpenses, setIsEditingExpenses] = useState<boolean>(false);
+  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
+  const [expensesPassword, setExpensesPassword] = useState<string>("");
+  const manualRevenue = useMemo(() => ({
+    // Pre-set monthly revenue values
+    "2025-01": 17901,
+    "2025-02": 27556,
+    "2025-03": 25411,
+    "2025-04": 20974,
+    "2025-05": 19431
+  } as Record<string, number>), []);
+  
+  // Partner pay history data for table display
+  const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
+    month: string;
+    brandon: number;
+    ryan: number;
+    dave: number;
+    total: number;
+  }>>([]);
 
   // Employee accounting month filter - default to current month
   const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {
@@ -580,9 +604,22 @@ export default function AdminPanel() {
     advance: string;
     shiftsWorked: number;
   }>>([]);
-
+  const EXPENSES_EDIT_PASSWORD = "bbonly";
   
-
+  // Load saved expenses from localStorage on initial render
+  useEffect(() => {
+    try {
+      const savedExpensesFromStorage = localStorage.getItem('savedMonthlyExpenses');
+      if (savedExpensesFromStorage) {
+        setSavedExpenses(JSON.parse(savedExpensesFromStorage));
+      }
+      
+      // Initialize empty partner payment history to prevent errors
+      setPartnerPaymentHistory([]);
+    } catch (error) {
+      console.error("Error loading saved expenses:", error);
+    }
+  }, []);
 
 
   
@@ -2797,8 +2834,477 @@ export default function AdminPanel() {
                       );
                     })}
                   </div>
-                
-                  {/* Detailed Performance Table */}
+                  
+                  {/* Partner Pay Calculator */}
+                  <div className="mb-8 border p-4 rounded-lg bg-white shadow">
+                    <h3 className="text-lg font-medium mb-4">Partner Pay Distribution Calculator</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-md font-medium mb-3 text-gray-700">Monthly Revenue</h4>
+                        
+                        <div className="space-y-4">
+                          {/* Month Selector */}
+                          <div className="grid grid-cols-1 gap-2">
+                            <Label htmlFor="month-selector">Select Month</Label>
+                            <select 
+                              id="month-selector"
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                              onChange={(e) => {
+                                const selectedMonth = e.target.value;
+                                if (!selectedMonth) return;
+                                
+                                setCurrentMonth(selectedMonth);
+                                
+                                // Get monthly data for the selected month
+                                const [year, month] = selectedMonth.split('-');
+                                
+                                // Calculate total sales for the selected month across all locations
+                                let totalMonthlyIncome = 0;
+                                
+                                // Filter reports by selected month
+                                const monthlyReports = reports.filter(report => {
+                                  const reportDate = new Date(report.date);
+                                  return reportDate.getFullYear().toString() === year && 
+                                         (reportDate.getMonth() + 1).toString().padStart(2, '0') === month;
+                                });
+                                
+                                // Check if this is June 2025 or later - use calculated revenue from cars parked
+                                const selectedDate = new Date(selectedMonth + '-01');
+                                const juneThreshold = new Date('2025-06-01');
+                                
+                                if (selectedDate >= juneThreshold) {
+                                  // For June 2025 onwards: calculate revenue from actual cars parked data
+                                  // Calculate total income based on cars parked * turn-in rate for each location
+                                  monthlyReports.forEach(report => {
+                                    // Get the appropriate turn-in rate based on location
+                                    let turnInRate = 0;
+                                    
+                                    // Set turn-in rates for each location
+                                    switch(report.locationId) {
+                                      case 1: // Capital Grille: $11 per car
+                                        turnInRate = 11;
+                                        break;
+                                      case 2: // Bob's Steak and Chop House: $6 per car
+                                        turnInRate = 6;
+                                        break;
+                                      case 3: // Truluck's: $8 per car
+                                        turnInRate = 8;
+                                        break;
+                                      case 4: // BOA Steakhouse: $7 per car
+                                        turnInRate = 7;
+                                        break;
+                                      default:
+                                        turnInRate = 0;
+                                    }
+                                    
+                                    // Calculate revenue: number of cars × location-specific turn-in rate
+                                    totalMonthlyIncome += report.totalCars * turnInRate;
+                                  });
+                                  
+                                  // Update state with the calculated monthly revenue
+                                  setMonthlyRevenue(totalMonthlyIncome);
+                                } else if (manualRevenue[selectedMonth]) {
+                                  // For January through May 2025: use manually set revenue values
+                                  setMonthlyRevenue(manualRevenue[selectedMonth]);
+                                } else {
+                                  // Default case: calculate from reports if no manual value exists
+                                  // Calculate total income based on cars parked * turn-in rate for each location
+                                  monthlyReports.forEach(report => {
+                                    // Get the appropriate turn-in rate based on location
+                                    let turnInRate = 0;
+                                    
+                                    // Set turn-in rates for each location
+                                    switch(report.locationId) {
+                                      case 1: // Capital Grille: $11 per car
+                                        turnInRate = 11;
+                                        break;
+                                      case 2: // Bob's Steak and Chop House: $6 per car
+                                        turnInRate = 6;
+                                        break;
+                                      case 3: // Truluck's: $8 per car
+                                        turnInRate = 8;
+                                        break;
+                                      case 4: // BOA Steakhouse: $7 per car
+                                        turnInRate = 7;
+                                        break;
+                                      default:
+                                        turnInRate = 0;
+                                    }
+                                    
+                                    // Calculate revenue: number of cars × location-specific turn-in rate
+                                    totalMonthlyIncome += report.totalCars * turnInRate;
+                                  });
+                                  
+                                  // Update state with the calculated monthly revenue
+                                  setMonthlyRevenue(totalMonthlyIncome);
+                                }
+                                
+                                // Set saved expenses for this month if they exist
+                                if (savedExpenses[selectedMonth]) {
+                                  setMonthlyExpenses(savedExpenses[selectedMonth]);
+                                } else {
+                                  setMonthlyExpenses(0);
+                                }
+                              }}
+                            >
+                              <option value="">Select a month</option>
+                              {Array.from({ length: 12 }).map((_, i) => {
+                                const currentYear = new Date().getFullYear();
+                                const month = i + 1;
+                                const monthStr = month.toString().padStart(2, '0');
+                                
+                                // Only show 2025
+                                const years = [2025];
+                                
+                                return years.map(year => (
+                                  <option key={`${year}-${monthStr}`} value={`${year}-${monthStr}`}>
+                                    {new Date(year, i).toLocaleString('default', { month: 'long' })} {year}
+                                  </option>
+                                ));
+                              }).flat()}
+                            </select>
+                          </div>
+                          
+                          {/* Monthly Revenue and Expenses */}
+                          <div className="grid grid-cols-1 gap-4">
+                            <div>
+                              <Label htmlFor="monthly-revenue">Total Monthly Revenue</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-blue-50 px-3 font-medium">
+                                ${monthlyRevenue.toFixed(2)}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="monthly-expenses">Monthly Expenses</Label>
+                              <div className="flex h-10 w-full rounded-md border border-input">
+                                <span className="flex items-center px-3 text-gray-500 border-r">$</span>
+                                <input
+                                  id="monthly-expenses"
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  className="w-full h-full px-3 py-2 rounded-r-md focus:outline-none"
+                                  value={monthlyExpenses}
+                                  onChange={(e) => {
+                                    if (savedExpenses[currentMonth] !== undefined && !isEditingExpenses) {
+                                      // Show password modal if trying to edit locked expenses
+                                      setShowPasswordModal(true);
+                                      return;
+                                    }
+                                    setMonthlyExpenses(parseFloat(e.target.value) || 0);
+                                  }}
+                                  disabled={savedExpenses[currentMonth] !== undefined && !isEditingExpenses}
+                                />
+                              </div>
+                              
+                              {/* Save/Edit expenses buttons */}
+                              {currentMonth && (
+                                <div className="mt-2 flex gap-2">
+                                  {savedExpenses[currentMonth] === undefined ? (
+                                    // Save button - only shown for new expenses
+                                    (<Button 
+                                      size="sm" 
+                                      className="bg-green-600 hover:bg-green-700"
+                                      onClick={() => {
+                                        if (!currentMonth) return;
+                                        
+                                        // Save the expenses for this month in state
+                                        setSavedExpenses(prev => ({
+                                          ...prev,
+                                          [currentMonth]: monthlyExpenses
+                                        }));
+                                        
+                                        // Also persist to localStorage for persistence across sessions
+                                        try {
+                                          // Get existing saved expenses
+                                          const existingSavedExpenses = localStorage.getItem('savedMonthlyExpenses');
+                                          const parsedExpenses = existingSavedExpenses ? 
+                                            JSON.parse(existingSavedExpenses) : {};
+                                          
+                                          // Update with new value
+                                          parsedExpenses[currentMonth] = monthlyExpenses;
+                                          
+                                          // Save back to localStorage
+                                          localStorage.setItem('savedMonthlyExpenses', 
+                                            JSON.stringify(parsedExpenses));
+                                            
+                                          toast({
+                                            title: "Expenses saved",
+                                            description: `Monthly expenses for ${new Date(parseInt(currentMonth.split('-')[0]), 
+                                              parseInt(currentMonth.split('-')[1])-1).toLocaleString('default', 
+                                              { month: 'long', year: 'numeric' })} saved successfully.`,
+                                          });
+                                          
+                                          // Expenses are now locked
+                                          setIsEditingExpenses(false);
+                                        } catch (error) {
+                                          console.error("Error saving expenses:", error);
+                                          toast({
+                                            title: "Error saving expenses",
+                                            description: "There was a problem saving your expenses data.",
+                                            variant: "destructive",
+                                          });
+                                        }
+                                      }}
+                                    >Save Expenses
+                                                                          </Button>)
+                                  ) : isEditingExpenses ? (
+                                    // Update button - shown when editing existing expenses
+                                    (<>
+                                      <Button 
+                                        size="sm" 
+                                        className="bg-amber-600 hover:bg-amber-700"
+                                        onClick={() => {
+                                          if (!currentMonth) return;
+                                          
+                                          // Update the expenses for this month in state
+                                          setSavedExpenses(prev => ({
+                                            ...prev,
+                                            [currentMonth]: monthlyExpenses
+                                          }));
+                                          
+                                          // Also persist to localStorage for persistence across sessions
+                                          try {
+                                            // Get existing saved expenses
+                                            const existingSavedExpenses = localStorage.getItem('savedMonthlyExpenses');
+                                            const parsedExpenses = existingSavedExpenses ? 
+                                              JSON.parse(existingSavedExpenses) : {};
+                                            
+                                            // Update with new value
+                                            parsedExpenses[currentMonth] = monthlyExpenses;
+                                            
+                                            // Save back to localStorage
+                                            localStorage.setItem('savedMonthlyExpenses', 
+                                              JSON.stringify(parsedExpenses));
+                                              
+                                            toast({
+                                              title: "Expenses updated",
+                                              description: `Monthly expenses for ${new Date(parseInt(currentMonth.split('-')[0]), 
+                                                parseInt(currentMonth.split('-')[1])-1).toLocaleString('default', 
+                                                { month: 'long', year: 'numeric' })} updated successfully.`,
+                                            });
+                                            
+                                            // Exit edit mode
+                                            setIsEditingExpenses(false);
+                                          } catch (error) {
+                                            console.error("Error updating expenses:", error);
+                                            toast({
+                                              title: "Error updating expenses",
+                                              description: "There was a problem updating your expenses data.",
+                                              variant: "destructive",
+                                            });
+                                          }
+                                        }}
+                                      >
+                                        Update Expenses
+                                      </Button>
+                                      <Button 
+                                        size="sm" 
+                                        variant="outline"
+                                        onClick={() => {
+                                          // Cancel edit - revert to saved value
+                                          setMonthlyExpenses(savedExpenses[currentMonth]);
+                                          setIsEditingExpenses(false);
+                                        }}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </>)
+                                  ) : (
+                                    // Edit button - shown for saved expenses
+                                    (<Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => {
+                                        // Show password modal
+                                        setShowPasswordModal(true);
+                                      }}
+                                    >Edit Expenses
+                                                                          </Button>)
+                                  )}
+                                  
+                                  {savedExpenses[currentMonth] !== undefined && !isEditingExpenses && (
+                                    <div className="text-sm self-center text-green-600 ml-2">
+                                      ✓ Expenses saved and locked
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              
+                              {/* Password Modal */}
+                              {showPasswordModal && (
+                                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                                  <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                                    <h3 className="text-lg font-medium mb-4">Enter Password</h3>
+                                    <p className="text-sm text-gray-600 mb-4">
+                                      Enter the password to edit saved expenses.
+                                    </p>
+                                    
+                                    <div className="mb-4">
+                                      <input 
+                                        type="password"
+                                        className="w-full p-2 border rounded"
+                                        placeholder="Password"
+                                        value={expensesPassword}
+                                        onChange={(e) => setExpensesPassword(e.target.value)}
+                                      />
+                                    </div>
+                                    
+                                    <div className="flex justify-end gap-2">
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          setShowPasswordModal(false);
+                                          setExpensesPassword("");
+                                        }}
+                                      >
+                                        Cancel
+                                      </Button>
+                                      
+                                      <Button
+                                        size="sm"
+                                        onClick={() => {
+                                          if (expensesPassword === EXPENSES_EDIT_PASSWORD) {
+                                            // Correct password
+                                            setIsEditingExpenses(true);
+                                            setShowPasswordModal(false);
+                                            setExpensesPassword("");
+                                            
+                                            toast({
+                                              title: "Expenses unlocked",
+                                              description: "You can now edit the saved expenses.",
+                                            });
+                                          } else {
+                                            // Incorrect password
+                                            toast({
+                                              title: "Incorrect password",
+                                              description: "The password you entered is incorrect.",
+                                              variant: "destructive",
+                                            });
+                                          }
+                                        }}
+                                      >
+                                        Submit
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="distributable-income">Distributable Income</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-green-50 px-3 font-medium text-green-800">
+                                ${(monthlyRevenue - monthlyExpenses).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-md font-medium mb-3 text-gray-700">Partner Distribution</h4>
+                        
+                        <div className="space-y-4">
+                          {/* Fixed Partner Shares */}
+                          <div className="border border-blue-100 rounded-md p-3 bg-blue-50">
+                            <p className="mb-2 text-sm">Fixed Partner Shares:</p>
+                            <ul className="space-y-1">
+                              <li className="flex justify-between items-center">
+                                <span>Brandon:</span> 
+                                <span className="font-medium">50%</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Ryan:</span> 
+                                <span className="font-medium">40%</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Dave:</span> 
+                                <span className="font-medium">10%</span>
+                              </li>
+                            </ul>
+                          </div>
+                          
+                          {/* Calculated Distributions */}
+                          <div className="space-y-3">
+                            <div>
+                              <Label className="text-blue-800">Brandon (50%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-blue-300 bg-blue-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.5).toFixed(2)}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label className="text-indigo-800">Ryan (40%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-indigo-300 bg-indigo-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.4).toFixed(2)}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label className="text-teal-800">Dave (10%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-teal-300 bg-teal-50 px-3 font-medium">
+                                ${((monthlyRevenue - monthlyExpenses) * 0.1).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Partner Payment Distribution History Table */}
+                    <div className="mt-8 border border-gray-200 rounded-lg p-4 bg-white">
+                      <h3 className="text-lg font-semibold mb-4">Partner Payment Distribution History</h3>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Month</TableHead>
+                            <TableHead className="text-blue-800 text-center">Brandon (50%)</TableHead>
+                            <TableHead className="text-indigo-800 text-center">Ryan (40%)</TableHead>
+                            <TableHead className="text-teal-800 text-center">Dave (10%)</TableHead>
+                            <TableHead className="text-right">Total After Expenses</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {partnerPaymentHistory.map((entry, index) => (
+                            <TableRow key={index}>
+                              <TableCell className="font-medium">{entry.month}</TableCell>
+                              <TableCell className="text-blue-800 font-medium text-center">${entry.brandon.toFixed(2)}</TableCell>
+                              <TableCell className="text-indigo-800 font-medium text-center">${entry.ryan.toFixed(2)}</TableCell>
+                              <TableCell className="text-teal-800 font-medium text-center">${entry.dave.toFixed(2)}</TableCell>
+                              <TableCell className="text-right font-semibold">${entry.total.toFixed(2)}</TableCell>
+                            </TableRow>
+                          ))}
+                          {partnerPaymentHistory.length === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={5} className="text-center text-gray-500">
+                                No partner payment history available. Select a month and add expenses to generate history.
+                              </TableCell>
+                            </TableRow>
+                          )}
+                          {partnerPaymentHistory.length > 0 && (
+                            <TableRow className="bg-muted/50 font-semibold border-t-2">
+                              <TableCell className="font-bold">TOTALS</TableCell>
+                              <TableCell className="text-blue-800 font-bold text-center">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.brandon, 0).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-indigo-800 font-bold text-center">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.ryan, 0).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-teal-800 font-bold text-center">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.dave, 0).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right font-bold">
+                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.total, 0).toFixed(2)}
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
                 
                   {/* Detailed Performance Table */}
                   <div className="overflow-x-auto">
