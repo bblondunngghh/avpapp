@@ -1394,7 +1394,24 @@ export default function AdminPanel() {
     const tableRows = reports.map(report => {
       const date = new Date(report.date).toLocaleDateString();
       const locationName = getLocationName(report.locationId);
-      const turnInRate = report.locationId === 2 ? 6 : 11;
+      // Set correct turn-in rates for each location
+      let turnInRate = 11; // Default for Capital Grille
+      switch(report.locationId) {
+        case 1: // Capital Grille: $11 per car
+          turnInRate = 11;
+          break;
+        case 2: // Bob's Steak and Chop House: $6 per car
+          turnInRate = 6;
+          break;
+        case 3: // Truluck's: $8 per car
+          turnInRate = 8;
+          break;
+        case 4: // BOA Steakhouse: $7 per car
+          turnInRate = 7;
+          break;
+        default:
+          turnInRate = 11;
+      }
       const expectedTurnIn = report.totalCars * turnInRate;
       const leaderName = EMPLOYEE_NAMES[report.manager] || report.manager;
       const employeeCount = typeof report.employees === 'string' 
@@ -2115,7 +2132,24 @@ export default function AdminPanel() {
                         // For submitted date, use current date for all CSV imported reports
                         // CSV imports don't have reliable createdAt timestamps
                         const submittedDate = new Date();
-                        const turnInRate = report.locationId === 2 ? 6 : 11;
+                        // Set correct turn-in rates for each location
+                        let turnInRate = 11; // Default for Capital Grille
+                        switch(report.locationId) {
+                          case 1: // Capital Grille: $11 per car
+                            turnInRate = 11;
+                            break;
+                          case 2: // Bob's Steak and Chop House: $6 per car
+                            turnInRate = 6;
+                            break;
+                          case 3: // Truluck's: $8 per car
+                            turnInRate = 8;
+                            break;
+                          case 4: // BOA Steakhouse: $7 per car
+                            turnInRate = 7;
+                            break;
+                          default:
+                            turnInRate = 11;
+                        }
                         const expectedTurnIn = report.totalCars * turnInRate;
                         
                         return (
