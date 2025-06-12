@@ -7,6 +7,7 @@ import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate, parseEmploy
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 import checkCompleteIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import deleteIncompleteIcon from "@assets/Delete-1--Streamline-Ultimate.png";
+import deleteIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
 import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
@@ -172,28 +173,41 @@ function FaultDeterminationSection({ report }: { report: any }) {
   );
 }
 
-function RepairStatusDropdown({ report, updateMutation }: { report: any; updateMutation: any }) {
+function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { report: any; updateMutation: any; deleteMutation: any }) {
   const [selectedStatus, setSelectedStatus] = useState(report.repairStatus || '');
   const [showSaveButton, setShowSaveButton] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   return (
     <div className="space-y-2">
-      <Select
-        value={selectedStatus}
-        onValueChange={(value) => {
-          setSelectedStatus(value);
-          setShowSaveButton(value !== (report.repairStatus || ''));
-        }}
-      >
-        <SelectTrigger className="w-[140px]">
-          <SelectValue placeholder="Select status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="completed">Completed</SelectItem>
-          <SelectItem value="not_set">Not Set</SelectItem>
-        </SelectContent>
-      </Select>
+      <div className="flex gap-2">
+        <Select
+          value={selectedStatus}
+          onValueChange={(value) => {
+            setSelectedStatus(value);
+            setShowSaveButton(value !== (report.repairStatus || ''));
+          }}
+        >
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="not_set">Not Set</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={() => setShowDeleteConfirm(true)}
+          disabled={deleteMutation.isPending}
+          className="px-3"
+        >
+          <img src={binIcon} alt="Delete" className="h-4 w-4" />
+        </Button>
+      </div>
       
       {showSaveButton && (
         <Button
@@ -208,6 +222,34 @@ function RepairStatusDropdown({ report, updateMutation }: { report: any; updateM
         >
           {updateMutation.isPending ? 'Saving...' : 'Save Status'}
         </Button>
+      )}
+      
+      {showDeleteConfirm && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+          <p className="text-sm text-red-800 mb-3">Delete this incident report?</p>
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                deleteMutation.mutate(report.id);
+                setShowDeleteConfirm(false);
+              }}
+              disabled={deleteMutation.isPending}
+              className="flex-1"
+            >
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDeleteConfirm(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -5554,6 +5596,7 @@ export default function AdminPanel() {
                                     <RepairStatusDropdown 
                                       report={report} 
                                       updateMutation={updateIncidentMutation} 
+                                      deleteMutation={deleteIncidentMutation}
                                     />
                                   </div>
                                 </TableCell>
