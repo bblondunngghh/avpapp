@@ -2164,7 +2164,7 @@ export default function AdminPanel() {
                   
                   // Filter by location
                   const locationMatch = selectedReportsLocation === "all" || 
-                                      report.locationId.toString() === selectedReportsLocation;
+                                      report.locationId === parseInt(selectedReportsLocation);
                   
                   return monthMatch && locationMatch;
                 });
@@ -2284,7 +2284,7 @@ export default function AdminPanel() {
                           
                           // Filter by location
                           const locationMatch = selectedReportsLocation === "all" || 
-                                              report.locationId.toString() === selectedReportsLocation;
+                                              report.locationId === parseInt(selectedReportsLocation);
                           
                           return monthMatch && locationMatch;
                         });
