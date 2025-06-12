@@ -463,6 +463,10 @@ export default function AdminPanel() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
+
+  // Employee shift breakdown modal state
+  const [selectedEmployeeShifts, setSelectedEmployeeShifts] = useState<any>(null);
+  const [showEmployeeShiftsModal, setShowEmployeeShiftsModal] = useState(false);
   
   // Shift reports pagination - default to current month
   const [currentReportsMonth, setCurrentReportsMonth] = useState<string>(() => {
