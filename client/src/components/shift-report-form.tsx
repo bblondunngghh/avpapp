@@ -351,8 +351,20 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         const totalMoneyOwedOnShift = Math.max(0, totalCollections - values.totalTurnIn);
         const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
         
-        // Calculate expected cash payment (tax obligation minus money owed)
-        const expectedCashPayment = Math.max(0, taxObligation - moneyOwed);
+        // Calculate expected cash payment based on the actual requirement
+        // Employee must pay their full tax obligation (22% of earnings)
+        // Money owed reduces the cash requirement only if it's less than tax owed
+        // If money owed exceeds tax, employee still owes the full tax amount
+        const expectedCashPayment = taxObligation;
+        
+        // Debug logging
+        console.log(`Validation for ${employee.name}:`, {
+          taxObligation: taxObligation.toFixed(2),
+          moneyOwed: moneyOwed.toFixed(2),
+          expectedCashPayment: expectedCashPayment.toFixed(2),
+          actualCashPaid: employee.cashPaid.toFixed(2),
+          sufficient: employee.cashPaid >= expectedCashPayment
+        });
         
         // Check if employee has paid sufficient cash
         if (employee.cashPaid < expectedCashPayment) {
