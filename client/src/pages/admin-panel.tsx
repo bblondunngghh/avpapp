@@ -2192,6 +2192,7 @@ export default function AdminPanel() {
                         <TableHead className="text-center">Cash</TableHead>
                         <TableHead className="text-center">Credit Card Sales</TableHead>
                         <TableHead className="text-center">Turn-In</TableHead>
+                        <TableHead className="text-center">Money Owed</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2276,6 +2277,9 @@ export default function AdminPanel() {
                             </TableCell>
                             <TableCell className="text-center">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
                             <TableCell className="text-center">${expectedTurnIn.toFixed(2)}</TableCell>
+                            <TableCell className="text-center">
+                              ${Math.max(0, expectedTurnIn - (report.companyCashTurnIn || 0)).toFixed(2)}
+                            </TableCell>
                           </TableRow>
                         );
                       })}
@@ -2306,6 +2310,15 @@ export default function AdminPanel() {
                           else if (report.locationId === 4) expectedTurnIn = report.totalCars * 7; // BOA
                           return sum + expectedTurnIn;
                         }, 0);
+                        const totalMoneyOwed = filteredReports.reduce((sum, report) => {
+                          // Calculate expected turn-in for each report
+                          let expectedTurnIn = report.totalCars * 11; // Default rate
+                          if (report.locationId === 2) expectedTurnIn = report.totalCars * 6; // Bob's
+                          else if (report.locationId === 3) expectedTurnIn = report.totalCars * 8; // Truluck's
+                          else if (report.locationId === 4) expectedTurnIn = report.totalCars * 7; // BOA
+                          const moneyOwed = Math.max(0, expectedTurnIn - (report.companyCashTurnIn || 0));
+                          return sum + moneyOwed;
+                        }, 0);
                         
                         if (filteredReports.length > 0) {
                           return (
@@ -2319,6 +2332,7 @@ export default function AdminPanel() {
                               <TableCell className="text-center font-bold">${totalCash.toFixed(2)}</TableCell>
                               <TableCell className="text-center font-bold">${totalCreditSales.toFixed(2)}</TableCell>
                               <TableCell className="text-center font-bold">${totalTurnIn.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold">${totalMoneyOwed.toFixed(2)}</TableCell>
                             </TableRow>
                           );
                         }
