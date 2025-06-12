@@ -292,14 +292,82 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   
   // Handle form submission
   const onSubmit = (values: FormValues) => {
-    setIsSubmitting(true);
-    
-    // Make sure employees array is properly included
+    // Validate tax coverage before submission
     const employees = (values.employees || []).map(employee => ({
       name: employee.name || '',
       hours: employee.hours || 0,
       cashPaid: employee.cashPaid || 0
     }));
+
+    // Calculate total hours for percentage calculation
+    const totalHours = employees.reduce((sum, emp) => sum + emp.hours, 0);
+    
+    // Validate each employee's tax coverage
+    for (const employee of employees) {
+      if (employee.hours > 0) {
+        const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
+        
+        // Calculate commission based on location rates
+        let commissionRate = 4;
+        if (values.locationId === 1) commissionRate = 4;
+        else if (values.locationId === 2) commissionRate = 9;
+        else if (values.locationId === 3) commissionRate = 7;
+        else if (values.locationId === 4) commissionRate = 6;
+        else if (values.locationId === 7) commissionRate = 2;
+        else if (values.locationId >= 5) {
+          const location = locations?.find((loc: any) => loc.id === values.locationId);
+          commissionRate = location?.employeeCommission || 4;
+        }
+
+        const cashCars = values.totalCars - values.creditTransactions - values.totalReceipts;
+        const totalCommission = (values.creditTransactions * commissionRate) + 
+                               (cashCars * commissionRate) + 
+                               (values.totalReceipts * commissionRate);
+        
+        // Calculate tips based on location
+        let perCarPrice = 15;
+        if (values.locationId === 4) perCarPrice = 13;
+        else if (values.locationId === 7) perCarPrice = 6;
+        else if (values.locationId >= 5) {
+          const location = locations?.find((loc: any) => loc.id === values.locationId);
+          perCarPrice = location?.curbsideRate || 15;
+        }
+        
+        const creditCardTips = Math.abs(values.creditTransactions * perCarPrice - values.totalCreditSales);
+        const cashTips = Math.abs(cashCars * perCarPrice - (values.totalCashCollected - values.companyCashTurnIn));
+        const receiptTips = values.totalReceipts * 3;
+        const totalTips = creditCardTips + cashTips + receiptTips;
+        
+        const empCommission = totalCommission * hoursPercent;
+        const empTips = totalTips * hoursPercent;
+        const empEarnings = empCommission + empTips;
+        
+        // Calculate tax obligation (22%)
+        const taxObligation = empEarnings * 0.22;
+        
+        // Calculate money owed
+        const receiptSales = values.totalReceipts * 18;
+        const totalCollections = values.totalCreditSales + receiptSales;
+        const totalMoneyOwedOnShift = Math.max(0, totalCollections - values.totalTurnIn);
+        const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
+        
+        // Calculate expected cash payment (tax obligation minus money owed)
+        const expectedCashPayment = Math.max(0, taxObligation - moneyOwed);
+        
+        // Check if employee has paid sufficient cash
+        if (employee.cashPaid < expectedCashPayment) {
+          setIsSubmitting(false);
+          toast({
+            title: "Insufficient Tax Payment",
+            description: `${employee.name} must pay $${expectedCashPayment.toFixed(2)} in cash to cover tax obligations. Currently paid: $${employee.cashPaid.toFixed(2)}. Shortfall: $${(expectedCashPayment - employee.cashPaid).toFixed(2)}`,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+    }
+    
+    setIsSubmitting(true);
     
     // Ensure all required fields are included and preserve date format
     const formData = {
