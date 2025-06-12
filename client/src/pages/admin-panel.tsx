@@ -2158,9 +2158,9 @@ export default function AdminPanel() {
                         <TableHead>Shift</TableHead>
                         <TableHead>Leader</TableHead>
                         <TableHead className="text-right">Cars</TableHead>
-                        <TableHead className="text-right">Turn-In</TableHead>
                         <TableHead className="text-right">Cash</TableHead>
                         <TableHead className="text-right">Credit Card Sales</TableHead>
+                        <TableHead className="text-right">Turn-In</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2234,11 +2234,11 @@ export default function AdminPanel() {
                             <TableCell>{report.shift}</TableCell>
                             <TableCell>{EMPLOYEE_NAMES[report.manager] || report.manager}</TableCell>
                             <TableCell className="text-right">{report.totalCars}</TableCell>
-                            <TableCell className="text-right">${expectedTurnIn.toFixed(2)}</TableCell>
                             <TableCell className="text-right">
                               ${(report.companyCashTurnIn || 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-right">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
+                            <TableCell className="text-right">${expectedTurnIn.toFixed(2)}</TableCell>
                           </TableRow>
                         );
                       })}
