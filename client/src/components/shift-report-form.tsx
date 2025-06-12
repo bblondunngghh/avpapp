@@ -1533,8 +1533,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     const empEarnings = empCommission + empTips;
                                     const empTax = empEarnings * 0.22;
                                     
-                                    // Money owed calculation
-                                    const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
+                                    // Money owed calculation using correct formula
+                                    const receiptSales = totalReceipts * 18;
+                                    const totalCollections = totalCreditSales + receiptSales;
+                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
+                                    const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
                                     totalTax += empTax;
                                     totalMoneyOwed += empMoneyOwed;
@@ -1552,7 +1555,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     const empTips = tips * employeeHoursPercent;
                                     const empEarnings = empCommission + empTips;
                                     const empTax = empEarnings * 0.22;
-                                    const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
+                                    
+                                    // Money owed calculation using correct formula
+                                    const receiptSales = totalReceipts * 18;
+                                    const totalCollections = totalCreditSales + receiptSales;
+                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
+                                    const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
                                     // Add to sum only if tax exceeds money owed
                                     return sum + (empTax > empMoneyOwed ? Math.ceil(empTax - empMoneyOwed) : 0);
@@ -1573,7 +1581,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     const empTips = tips * employeeHoursPercent;
                                     const empEarnings = empCommission + empTips;
                                     const empTax = empEarnings * 0.22;
-                                    const empMoneyOwed = Math.max(0, empEarnings - (companyCashTurnIn > 0 ? companyCashTurnIn * employeeHoursPercent : 0));
+                                    
+                                    // Money owed calculation using correct formula
+                                    const receiptSales = totalReceipts * 18;
+                                    const totalCollections = totalCreditSales + receiptSales;
+                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
+                                    const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
                                     // Check if either cash paid covers tax or if money owed covers tax
                                     const cashPaid = parseFloat(String(emp.cashPaid)) || 0;
