@@ -379,11 +379,11 @@ export function formatCustomerConfirmationEmail(data: CustomerConfirmationData):
           </div>
           <div class="field">
             <span class="field-label">Phone:</span>
-            <span class="field-value">(512) 775-5739</span>
+            <span class="field-value">512-934-4859</span>
           </div>
           <div class="field">
             <span class="field-label">Email:</span>
-            <span class="field-value">info@accessvaletparking.com</span>
+            <span class="field-value">ryan@accessvaletparking.com</span>
           </div>
           <div class="field">
             <span class="field-label">Address:</span>

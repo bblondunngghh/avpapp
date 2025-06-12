@@ -96,7 +96,7 @@ export default function IncidentSubmitted() {
               <Phone className="h-5 w-5 text-orange-600" />
               <div>
                 <span className="font-medium text-gray-900">Phone:</span>
-                <span className="ml-2 text-gray-700">(512) 775-5739</span>
+                <span className="ml-2 text-gray-700">512-934-4859</span>
               </div>
             </div>
             
@@ -104,7 +104,7 @@ export default function IncidentSubmitted() {
               <Mail className="h-5 w-5 text-orange-600" />
               <div>
                 <span className="font-medium text-gray-900">Email:</span>
-                <span className="ml-2 text-gray-700">info@accessvaletparking.com</span>
+                <span className="ml-2 text-gray-700">ryan@accessvaletparking.com</span>
               </div>
             </div>
             
