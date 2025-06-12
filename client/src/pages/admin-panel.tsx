@@ -469,6 +469,9 @@ export default function AdminPanel() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
+  
+  // Location filter for shift reports - default to "all"
+  const [selectedReportsLocation, setSelectedReportsLocation] = useState<string>("all");
 
   // Navigation functions for shift reports pagination
   const goToPreviousMonth = () => {
@@ -2101,31 +2104,52 @@ export default function AdminPanel() {
                 </div>
               </div>
               
-              {/* Month Navigation Controls */}
-              <div className="flex items-center justify-center gap-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToPreviousMonth}
-                  className="flex items-center gap-2"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous Month
-                </Button>
-                
-                <div className="text-sm font-medium text-center min-w-[150px]">
-                  {getCurrentMonthName()}
+              {/* Month Navigation and Location Filter Controls */}
+              <div className="space-y-3 bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+                {/* Month Navigation */}
+                <div className="flex items-center justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToPreviousMonth}
+                    className="flex items-center gap-2"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous Month
+                  </Button>
+                  
+                  <div className="text-sm font-medium text-center min-w-[150px]">
+                    {getCurrentMonthName()}
+                  </div>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToNextMonth}
+                    className="flex items-center gap-2"
+                  >
+                    Next Month
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
                 </div>
                 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToNextMonth}
-                  className="flex items-center gap-2"
-                >
-                  Next Month
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+                {/* Location Filter */}
+                <div className="flex items-center justify-center gap-2">
+                  <Label htmlFor="location-filter" className="text-sm font-medium">Filter by Location:</Label>
+                  <Select value={selectedReportsLocation} onValueChange={setSelectedReportsLocation}>
+                    <SelectTrigger className="w-[200px]" id="location-filter">
+                      <SelectValue placeholder="Select location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Locations</SelectItem>
+                      {locations && locations.map((location: any) => (
+                        <SelectItem key={location.id} value={location.id.toString()}>
+                          {location.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -2133,9 +2157,16 @@ export default function AdminPanel() {
                 <div className="text-center py-8">Loading reports...</div>
               ) : (() => {
                 const filteredReports = reports.filter((report) => {
+                  // Filter by month
                   const reportDate = parseLocalDate(report.date);
                   const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
-                  return reportMonth === currentReportsMonth;
+                  const monthMatch = reportMonth === currentReportsMonth;
+                  
+                  // Filter by location
+                  const locationMatch = selectedReportsLocation === "all" || 
+                                      report.locationId.toString() === selectedReportsLocation;
+                  
+                  return monthMatch && locationMatch;
                 });
                 
                 if (filteredReports.length === 0) {
@@ -2246,9 +2277,16 @@ export default function AdminPanel() {
                       {/* Totals Row */}
                       {(() => {
                         const filteredReports = reports.filter((report) => {
+                          // Filter by month
                           const reportDate = parseLocalDate(report.date);
                           const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
-                          return reportMonth === currentReportsMonth;
+                          const monthMatch = reportMonth === currentReportsMonth;
+                          
+                          // Filter by location
+                          const locationMatch = selectedReportsLocation === "all" || 
+                                              report.locationId.toString() === selectedReportsLocation;
+                          
+                          return monthMatch && locationMatch;
                         });
                         
                         const totalCars = filteredReports.reduce((sum, report) => sum + (report.totalCars || 0), 0);
