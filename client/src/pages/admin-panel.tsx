@@ -177,6 +177,8 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
   const [selectedStatus, setSelectedStatus] = useState(report.repairStatus || '');
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   
   return (
     <div className="space-y-2">
@@ -199,11 +201,11 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
         </Select>
         
         <Button
-          variant="destructive"
+          variant="outline"
           size="sm"
-          onClick={() => setShowDeleteConfirm(true)}
+          onClick={() => setShowPasswordPrompt(true)}
           disabled={deleteMutation.isPending}
-          className="px-3"
+          className="px-3 border-gray-300 hover:bg-gray-50"
         >
           <img src={binIcon} alt="Delete" className="h-4 w-4" />
         </Button>
@@ -224,9 +226,69 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
         </Button>
       )}
       
+      {showPasswordPrompt && (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <p className="text-sm text-gray-800 mb-3">Enter password to delete incident report:</p>
+          <input
+            type="password"
+            value={deletePassword}
+            onChange={(e) => setDeletePassword(e.target.value)}
+            placeholder="Password"
+            className="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-3"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (deletePassword === 'bbonly') {
+                  setShowPasswordPrompt(false);
+                  setShowDeleteConfirm(true);
+                  setDeletePassword('');
+                } else {
+                  toast({
+                    title: "Access Denied",
+                    description: "Incorrect password",
+                    variant: "destructive",
+                  });
+                }
+              }
+            }}
+          />
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                if (deletePassword === 'bbonly') {
+                  setShowPasswordPrompt(false);
+                  setShowDeleteConfirm(true);
+                  setDeletePassword('');
+                } else {
+                  toast({
+                    title: "Access Denied",
+                    description: "Incorrect password",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              className="flex-1"
+            >
+              Verify
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setShowPasswordPrompt(false);
+                setDeletePassword('');
+              }}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+      
       {showDeleteConfirm && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-sm text-red-800 mb-3">Delete this incident report?</p>
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <p className="text-sm text-gray-800 mb-3">Delete this incident report?</p>
           <div className="flex gap-2">
             <Button
               variant="destructive"
