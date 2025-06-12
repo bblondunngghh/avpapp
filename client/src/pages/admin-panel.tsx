@@ -2156,6 +2156,9 @@ export default function AdminPanel() {
               {isLoading ? (
                 <div className="text-center py-8">Loading reports...</div>
               ) : (() => {
+                console.log("All reports:", reports.map(r => ({id: r.id, locationId: r.locationId, date: r.date})));
+                console.log("Current filter:", {currentReportsMonth, selectedReportsLocation});
+                
                 const filteredReports = reports.filter((report) => {
                   // Filter by month
                   const reportDate = parseLocalDate(report.date);
@@ -2166,10 +2169,10 @@ export default function AdminPanel() {
                   const locationMatch = selectedReportsLocation === "all" || 
                                       report.locationId === parseInt(selectedReportsLocation);
                   
-
-                  
                   return monthMatch && locationMatch;
                 });
+                
+                console.log("Filtered reports:", filteredReports.map(r => ({id: r.id, locationId: r.locationId, date: r.date})));
                 
                 if (filteredReports.length === 0) {
                   return (
