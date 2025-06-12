@@ -467,6 +467,97 @@ export default function AdminPanel() {
   // Employee shift breakdown modal state
   const [selectedEmployeeShifts, setSelectedEmployeeShifts] = useState<any>(null);
   const [showEmployeeShiftsModal, setShowEmployeeShiftsModal] = useState(false);
+
+  // Function to generate employee shift breakdown data
+  const generateEmployeeShiftBreakdown = (employee: any) => {
+    const employeeReports = reports.filter((report: any) => {
+      const reportDate = parseLocalDate(report.date);
+      const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (selectedAccountingMonth && selectedAccountingMonth !== "all" && reportMonth !== selectedAccountingMonth) {
+        return false;
+      }
+
+      return employeeWorkedInShift(report, employee);
+    });
+
+    return employeeReports.map((report: any) => {
+      const employees = parseEmployeesData(report.employees);
+      const employeeData = findEmployeeInShift(employees, employee);
+
+      if (!employeeData) return null;
+
+      const totalJobHours = report.totalJobHours || employees.reduce((sum: any, emp: any) => sum + (emp.hours || 0), 0);
+      const hoursPercent = totalJobHours > 0 ? employeeData.hours / totalJobHours : 0;
+
+      // Commission calculation
+      const locationId = report.locationId;
+      let commissionRate = 4;
+      if (locationId === 1) commissionRate = 4;
+      else if (locationId === 2) commissionRate = 9;
+      else if (locationId === 3) commissionRate = 7;
+      else if (locationId === 4) commissionRate = 6;
+      else if (locationId === 7) commissionRate = 2;
+
+      const cashCars = report.totalCars - report.creditTransactions - report.totalReceipts;
+      const totalCommission = (report.creditTransactions * commissionRate) + 
+                             (cashCars * commissionRate) + 
+                             (report.totalReceipts * commissionRate);
+      
+      // Tips calculations
+      let perCarPrice = 15;
+      if (locationId === 4) perCarPrice = 13;
+      else if (locationId === 7) perCarPrice = 6;
+      else if (locationId >= 5) {
+        const currentLocation = locations?.find((loc: any) => loc.id === locationId);
+        perCarPrice = currentLocation?.curbsideRate || 15;
+      }
+      
+      const creditCardTips = Math.abs(report.creditTransactions * perCarPrice - report.totalCreditSales);
+      const cashTips = Math.abs(cashCars * perCarPrice - (report.totalCashCollected - report.companyCashTurnIn));
+      const receiptTips = report.totalReceipts * 3;
+      const totalTips = creditCardTips + cashTips + receiptTips;
+      
+      const empCommission = totalCommission * hoursPercent;
+      const empTips = totalTips * hoursPercent;
+      const empEarnings = empCommission + empTips;
+
+      // Money owed calculation
+      const receiptSales = report.totalReceipts * 18;
+      const totalCollections = report.totalCreditSales + receiptSales;
+      const totalMoneyOwedOnShift = Math.max(0, totalCollections - report.totalTurnIn);
+      const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
+
+      // Tax calculations
+      const tax = empEarnings * 0.22;
+      const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
+      
+      const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
+      const employeeTaxPayments = taxPayments.filter((payment: any) => 
+        payment.employeeId === employeeRecord?.id && payment.reportId === report.id
+      );
+      const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
+        sum + Number(payment.paidAmount || 0), 0
+      );
+      
+      const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
+
+      return {
+        reportId: report.id,
+        date: report.date,
+        location: getLocationName(report.locationId),
+        shift: report.shift,
+        hours: employeeData.hours,
+        hoursPercent: (hoursPercent * 100).toFixed(1) + '%',
+        commission: empCommission.toFixed(2),
+        tips: empTips.toFixed(2),
+        earnings: empEarnings.toFixed(2),
+        moneyOwed: moneyOwed.toFixed(2),
+        tax: tax.toFixed(2),
+        cashPaid: cashPaid.toFixed(2)
+      };
+    }).filter(shift => shift !== null);
+  };
   
   // Shift reports pagination - default to current month
   const [currentReportsMonth, setCurrentReportsMonth] = useState<string>(() => {
@@ -4831,7 +4922,25 @@ export default function AdminPanel() {
                         <TableBody>
                           {employeeAccountingData.map((employee) => (
                             <TableRow key={employee.key}>
-                              <TableCell className="font-medium">{employee.name}</TableCell>
+                              <TableCell className="font-medium">
+                                <Button
+                                  variant="link"
+                                  className="p-0 h-auto font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                  onClick={() => {
+                                    const employeeRecord = employeeRecords.find(emp => emp.fullName === employee.name);
+                                    if (employeeRecord) {
+                                      const shiftBreakdowns = generateEmployeeShiftBreakdown(employeeRecord);
+                                      setSelectedEmployeeShifts({
+                                        employee: employeeRecord,
+                                        shifts: shiftBreakdowns
+                                      });
+                                      setShowEmployeeShiftsModal(true);
+                                    }
+                                  }}
+                                >
+                                  {employee.name}
+                                </Button>
+                              </TableCell>
                               <TableCell className="text-center">{employee.totalHours.toFixed(1)}</TableCell>
                               <TableCell className="text-center">{employee.shiftsWorked}</TableCell>
                               <TableCell className="text-center text-blue-600 font-medium">
@@ -5989,6 +6098,103 @@ export default function AdminPanel() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Employee Shift Breakdown Modal */}
+      <Dialog open={showEmployeeShiftsModal} onOpenChange={setShowEmployeeShiftsModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              {selectedEmployeeShifts?.employee?.fullName} - Shift Breakdown
+            </DialogTitle>
+            <DialogDescription>
+              Individual shift details showing breakdown of hours, commission, tips, and earnings
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedEmployeeShifts && (
+            <div className="space-y-4">
+              <div className="text-sm text-gray-600">
+                Showing {selectedEmployeeShifts.shifts.length} shifts for {selectedAccountingMonth === 'all' ? 'all time' : `${selectedAccountingMonth}`}
+              </div>
+              
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Shift</TableHead>
+                      <TableHead className="text-center">Hours</TableHead>
+                      <TableHead className="text-center">Hours %</TableHead>
+                      <TableHead className="text-center">Commission</TableHead>
+                      <TableHead className="text-center">Tips</TableHead>
+                      <TableHead className="text-center">Earnings</TableHead>
+                      <TableHead className="text-center">Money Owed</TableHead>
+                      <TableHead className="text-center">Tax (22%)</TableHead>
+                      <TableHead className="text-center">Cash Paid</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedEmployeeShifts.shifts.map((shift: any, index: number) => (
+                      <TableRow key={shift.reportId || index}>
+                        <TableCell>{new Date(shift.date).toLocaleDateString()}</TableCell>
+                        <TableCell>{shift.location}</TableCell>
+                        <TableCell>{shift.shift}</TableCell>
+                        <TableCell className="text-center">{shift.hours}</TableCell>
+                        <TableCell className="text-center">{shift.hoursPercent}</TableCell>
+                        <TableCell className="text-center text-blue-600">${shift.commission}</TableCell>
+                        <TableCell className="text-center text-green-600">${shift.tips}</TableCell>
+                        <TableCell className="text-center font-medium">${shift.earnings}</TableCell>
+                        <TableCell className="text-center text-green-600">${shift.moneyOwed}</TableCell>
+                        <TableCell className="text-center">${shift.tax}</TableCell>
+                        <TableCell className="text-center text-blue-600">${shift.cashPaid}</TableCell>
+                      </TableRow>
+                    ))}
+                    
+                    {/* Totals Row */}
+                    {selectedEmployeeShifts.shifts.length > 0 && (
+                      <TableRow className="bg-gray-50 font-bold border-t-2">
+                        <TableCell>TOTALS</TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell className="text-center">
+                          {selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.hours), 0).toFixed(1)}
+                        </TableCell>
+                        <TableCell></TableCell>
+                        <TableCell className="text-center text-blue-600">
+                          ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.commission), 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-green-600">
+                          ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.tips), 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center font-medium">
+                          ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.earnings), 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-green-600">
+                          ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.moneyOwed), 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.tax), 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-blue-600">
+                          ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.cashPaid), 0).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              
+              {selectedEmployeeShifts.shifts.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  No shifts found for this employee in the selected time period.
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
