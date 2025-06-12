@@ -357,14 +357,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         // If money owed exceeds tax, employee still owes the full tax amount
         const expectedCashPayment = taxObligation;
         
-        // Debug logging
-        console.log(`Validation for ${employee.name}:`, {
-          taxObligation: taxObligation.toFixed(2),
-          moneyOwed: moneyOwed.toFixed(2),
-          expectedCashPayment: expectedCashPayment.toFixed(2),
-          actualCashPaid: employee.cashPaid.toFixed(2),
-          sufficient: employee.cashPaid >= expectedCashPayment
-        });
+
         
         // Check if employee has paid sufficient cash
         if (employee.cashPaid < expectedCashPayment) {
