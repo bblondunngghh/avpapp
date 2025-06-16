@@ -354,7 +354,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight, User, Plus } from "lucide-react";
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
 import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
@@ -3896,6 +3896,65 @@ export default function AdminPanel() {
                                 >
                                   <ArrowUpDown className="h-4 w-4" />
                                   <span className="sr-only">Update</span>
+                                </Button>
+                                
+                                {/* Add Tickets button */}
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="px-2 h-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                  onClick={async () => {
+                                    const additionalTickets = parseInt(prompt("Enter number of tickets to add:", "0") || "0");
+                                    
+                                    if (isNaN(additionalTickets) || additionalTickets <= 0) {
+                                      alert("Please enter a valid positive number of tickets to add.");
+                                      return;
+                                    }
+                                    
+                                    const newAllocatedTickets = distribution.allocatedTickets + additionalTickets;
+                                    
+                                    try {
+                                      const updateData = {
+                                        locationId: distribution.locationId,
+                                        allocatedTickets: newAllocatedTickets,
+                                        usedTickets: distribution.usedTickets,
+                                        batchNumber: distribution.batchNumber,
+                                        notes: distribution.notes
+                                      };
+                                      
+                                      const response = await fetch(`/api/ticket-distributions/${distribution.id}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify(updateData),
+                                      });
+                                      
+                                      if (response.ok) {
+                                        const updatedDistribution = await response.json();
+                                        
+                                        // Update the state with the new data
+                                        setTicketDistributions(
+                                          ticketDistributions.map(d => 
+                                            d.id === updatedDistribution.id ? updatedDistribution : d
+                                          )
+                                        );
+                                        
+                                        // Show success message
+                                        alert(`Successfully added ${additionalTickets} tickets. New total: ${newAllocatedTickets}`);
+                                      } else {
+                                        const errorData = await response.json();
+                                        console.error("Error adding tickets:", errorData);
+                                        alert("Error adding tickets: " + (errorData.message || "Unknown error"));
+                                      }
+                                    } catch (error) {
+                                      console.error("Error:", error);
+                                      alert("Failed to add tickets");
+                                    }
+                                  }}
+                                >
+                                  <Plus className="h-4 w-4" />
+                                  <span className="sr-only">Add Tickets</span>
                                 </Button>
                                 
                                 {/* Delete button */}
