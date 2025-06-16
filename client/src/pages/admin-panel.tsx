@@ -5084,13 +5084,36 @@ export default function AdminPanel() {
         <TabsContent value="hours-tracker">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Weekly Hours Tracker
-              </CardTitle>
-              <CardDescription>
-                Monitor employee weekly hours and receive alerts when approaching 40-hour limit
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    Weekly Hours Tracker
+                  </CardTitle>
+                  <CardDescription>
+                    Monitor employee weekly hours and receive alerts when approaching 40-hour limit
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSelectedWeekOffset(Math.min(selectedWeekOffset + 1, 5))}
+                    disabled={selectedWeekOffset >= 5}
+                    className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    ← Previous Week
+                  </button>
+                  <span className="text-sm text-gray-600">
+                    {selectedWeekOffset === 0 ? 'Current Week' : `${selectedWeekOffset} week${selectedWeekOffset > 1 ? 's' : ''} ago`}
+                  </span>
+                  <button
+                    onClick={() => setSelectedWeekOffset(Math.max(selectedWeekOffset - 1, 0))}
+                    disabled={selectedWeekOffset <= 0}
+                    className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next Week →
+                  </button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               {(() => {
@@ -5283,7 +5306,8 @@ export default function AdminPanel() {
 
                     {/* Weekly Period Info */}
                     <div className="text-sm text-gray-600 text-center">
-                      Selected week: {selectedWeekStart.toLocaleDateString()} - {selectedWeekEnd.toLocaleDateString()}
+                      Week of {selectedWeekStart.toLocaleDateString()} - {selectedWeekEnd.toLocaleDateString()}
+                      {selectedWeekOffset === 0 && <span className="ml-2 text-blue-600 font-medium">(Current Week)</span>}
                     </div>
                   </div>
                 );
