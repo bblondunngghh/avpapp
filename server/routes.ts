@@ -495,6 +495,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to delete ticket distribution' });
     }
   });
+
+  // Auto-consume tickets using FIFO approach
+  apiRouter.post('/ticket-distributions/consume', async (req, res) => {
+    try {
+      const { locationId, ticketsToConsume } = req.body;
+      
+      if (!locationId || !ticketsToConsume || ticketsToConsume <= 0) {
+        return res.status(400).json({ message: 'Invalid location ID or tickets to consume' });
+      }
+      
+      // Get all ticket distributions for the location, sorted by creation date (oldest first)
+      const distributions = await storage.getTicketDistributionsByLocation(locationId);
+      const sortedDistributions = distributions.sort((a, b) => 
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+      
+      let remainingTickets = ticketsToConsume;
+      const updates = [];
+      
+      // Process distributions using FIFO
+      for (const distribution of sortedDistributions) {
+        if (remainingTickets <= 0) break;
+        
+        const availableTickets = distribution.allocatedTickets - distribution.usedTickets;
+        if (availableTickets > 0) {
+          const ticketsToUse = Math.min(availableTickets, remainingTickets);
+          const newUsedTickets = distribution.usedTickets + ticketsToUse;
+          
+          // Update the distribution
+          const updatedDistribution = await storage.updateTicketDistribution(distribution.id, {
+            locationId: distribution.locationId,
+            allocatedTickets: distribution.allocatedTickets,
+            usedTickets: newUsedTickets,
+            batchNumber: distribution.batchNumber,
+            notes: distribution.notes
+          });
+          
+          if (updatedDistribution) {
+            updates.push({
+              batchNumber: distribution.batchNumber,
+              ticketsUsed: ticketsToUse,
+              newTotal: newUsedTickets,
+              remaining: distribution.allocatedTickets - newUsedTickets
+            });
+          }
+          
+          remainingTickets -= ticketsToUse;
+        }
+      }
+      
+      res.json({
+        success: true,
+        ticketsConsumed: ticketsToConsume - remainingTickets,
+        ticketsRemaining: remainingTickets,
+        updates
+      });
+    } catch (error) {
+      console.error('Error consuming tickets:', error);
+      res.status(500).json({ message: 'Failed to consume tickets' });
+    }
+  });
   
   // Employee routes
   

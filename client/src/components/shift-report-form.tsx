@@ -213,31 +213,20 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       const response = await apiRequest('POST', '/api/shift-reports', data);
       const reportData = await response.json();
       
-      // Update ticket usage based on totalCars in the report
-      const locationTickets = ticketDistributions
-        .filter(dist => dist.locationId === data.locationId)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      
-      // If there are ticket distributions for this location
-      if (locationTickets.length > 0) {
-        const latestDistribution = locationTickets[0];
-        // Calculate new used tickets count
-        const newUsedTickets = Math.min(
-          latestDistribution.allocatedTickets,
-          latestDistribution.usedTickets + data.totalCars
-        );
-        
-        // Update the ticket distribution
-        await apiRequest('PUT', `/api/ticket-distributions/${latestDistribution.id}`, {
-          locationId: latestDistribution.locationId,
-          allocatedTickets: latestDistribution.allocatedTickets,
-          usedTickets: newUsedTickets,
-          batchNumber: latestDistribution.batchNumber,
-          notes: latestDistribution.notes
-        });
-        
-        // Invalidate ticket distributions query to refresh data
-        queryClient.invalidateQueries({ queryKey: ['/api/ticket-distributions'] });
+      // Update ticket usage using FIFO (First-In-First-Out) approach
+      if (data.totalCars > 0) {
+        try {
+          await apiRequest('POST', '/api/ticket-distributions/consume', {
+            locationId: data.locationId,
+            ticketsToConsume: data.totalCars
+          });
+          
+          // Invalidate ticket distributions query to refresh data
+          queryClient.invalidateQueries({ queryKey: ['/api/ticket-distributions'] });
+        } catch (error) {
+          console.error('Error consuming tickets:', error);
+          // Continue with report creation even if ticket consumption fails
+        }
       }
       
       return reportData;
