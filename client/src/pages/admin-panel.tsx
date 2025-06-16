@@ -457,6 +457,7 @@ export default function AdminPanel() {
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [selectedWeekOffset, setSelectedWeekOffset] = useState(0); // 0 = current week, 1 = last week, etc.
   
   // Initial setup - check authentication and adapt UI for mobile
   useEffect(() => {
@@ -1948,12 +1949,12 @@ export default function AdminPanel() {
               // Calculate badge count for critical/warning employees
               const weeklyHours: Record<string, { totalHours: number }> = {};
               const today = new Date();
-              const currentWeekStart = new Date(today);
-              currentWeekStart.setDate(today.getDate() - today.getDay());
-              currentWeekStart.setHours(0, 0, 0, 0);
-              const currentWeekEnd = new Date(currentWeekStart);
-              currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
-              currentWeekEnd.setHours(23, 59, 59, 999);
+              const weekStart = new Date(today);
+              weekStart.setDate(today.getDate() - today.getDay() - (selectedWeekOffset * 7));
+              weekStart.setHours(0, 0, 0, 0);
+              const weekEnd = new Date(weekStart);
+              weekEnd.setDate(weekStart.getDate() + 6);
+              weekEnd.setHours(23, 59, 59, 999);
 
               // Only process if we have reports data
               if (Array.isArray(reports) && reports.length > 0) {
@@ -5111,22 +5112,22 @@ export default function AdminPanel() {
                   };
                 });
 
-                // Get current week start (Sunday)
+                // Get selected week start (Sunday)
                 const today = new Date();
-                const currentWeekStart = new Date(today);
-                currentWeekStart.setDate(today.getDate() - today.getDay());
-                currentWeekStart.setHours(0, 0, 0, 0);
+                const selectedWeekStart = new Date(today);
+                selectedWeekStart.setDate(today.getDate() - today.getDay() - (selectedWeekOffset * 7));
+                selectedWeekStart.setHours(0, 0, 0, 0);
 
-                const currentWeekEnd = new Date(currentWeekStart);
-                currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
-                currentWeekEnd.setHours(23, 59, 59, 999);
+                const selectedWeekEnd = new Date(selectedWeekStart);
+                selectedWeekEnd.setDate(selectedWeekStart.getDate() + 6);
+                selectedWeekEnd.setHours(23, 59, 59, 999);
 
-                // Process reports for current week
+                // Process reports for selected week
                 reports.forEach((report: any) => {
                   // Parse date correctly to avoid timezone issues
                   const reportDate = parseReportDate(report.date);
                   
-                  if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
+                  if (reportDate >= selectedWeekStart && reportDate <= selectedWeekEnd) {
                     let reportEmployees = [];
                     try {
                       if (typeof report.employees === 'string') {
@@ -5282,7 +5283,7 @@ export default function AdminPanel() {
 
                     {/* Weekly Period Info */}
                     <div className="text-sm text-gray-600 text-center">
-                      Current week: {currentWeekStart.toLocaleDateString()} - {currentWeekEnd.toLocaleDateString()}
+                      Selected week: {selectedWeekStart.toLocaleDateString()} - {selectedWeekEnd.toLocaleDateString()}
                     </div>
                   </div>
                 );
