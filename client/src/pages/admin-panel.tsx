@@ -1960,7 +1960,7 @@ export default function AdminPanel() {
               if (Array.isArray(reports) && reports.length > 0) {
                 reports.forEach((report: any) => {
                   const reportDate = parseReportDate(report.date);
-                  if (reportDate >= currentWeekStart && reportDate <= currentWeekEnd) {
+                  if (reportDate >= weekStart && reportDate <= weekEnd) {
                     let weeklyEmployees = [];
                     try {
                       if (typeof report.employees === 'string') {
