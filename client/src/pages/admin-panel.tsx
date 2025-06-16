@@ -757,6 +757,11 @@ export default function AdminPanel() {
     notes: ''
   });
   
+  // Add tickets modal state
+  const [isAddTicketsOpen, setIsAddTicketsOpen] = useState(false);
+  const [selectedDistributionForAdd, setSelectedDistributionForAdd] = useState<TicketDistribution | null>(null);
+  const [additionalTickets, setAdditionalTickets] = useState(0);
+  
   // Employee management state - using employeeRecords from API instead
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isEditEmployeeOpen, setIsEditEmployeeOpen] = useState(false);
@@ -3767,6 +3772,123 @@ export default function AdminPanel() {
               </div>
             </CardHeader>
             
+            {/* Add Tickets Modal */}
+            <Dialog open={isAddTicketsOpen} onOpenChange={setIsAddTicketsOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Tickets</DialogTitle>
+                  <DialogDescription>
+                    Add additional tickets to {selectedDistributionForAdd ? `batch "${selectedDistributionForAdd.batchNumber}"` : 'the selected batch'}.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="grid gap-4 py-4">
+                  {selectedDistributionForAdd && (
+                    <div className="grid gap-2">
+                      <Label className="text-sm text-gray-600">Current Information</Label>
+                      <div className="bg-gray-50 p-3 rounded-md text-sm">
+                        <div><strong>Batch:</strong> {selectedDistributionForAdd.batchNumber}</div>
+                        <div><strong>Location:</strong> {LOCATIONS.find(loc => loc.id === selectedDistributionForAdd.locationId)?.name}</div>
+                        <div><strong>Current Allocated:</strong> {selectedDistributionForAdd.allocatedTickets}</div>
+                        <div><strong>Used:</strong> {selectedDistributionForAdd.usedTickets}</div>
+                        <div><strong>Remaining:</strong> {selectedDistributionForAdd.allocatedTickets - selectedDistributionForAdd.usedTickets}</div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="additionalTickets">Number of Tickets to Add</Label>
+                    <input 
+                      id="additionalTickets"
+                      type="number"
+                      min="1"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Enter number of tickets"
+                      value={additionalTickets}
+                      onChange={(e) => setAdditionalTickets(parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+                  
+                  {additionalTickets > 0 && selectedDistributionForAdd && (
+                    <div className="bg-blue-50 p-3 rounded-md text-sm">
+                      <div><strong>New Total:</strong> {selectedDistributionForAdd.allocatedTickets + additionalTickets}</div>
+                    </div>
+                  )}
+                </div>
+                
+                <DialogFooter>
+                  <Button 
+                    type="button" 
+                    variant="secondary"
+                    onClick={() => {
+                      setIsAddTicketsOpen(false);
+                      setSelectedDistributionForAdd(null);
+                      setAdditionalTickets(0);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="button"
+                    onClick={async () => {
+                      if (!selectedDistributionForAdd || additionalTickets <= 0) {
+                        alert("Please enter a valid number of tickets to add.");
+                        return;
+                      }
+                      
+                      const newAllocatedTickets = selectedDistributionForAdd.allocatedTickets + additionalTickets;
+                      
+                      try {
+                        const updateData = {
+                          locationId: selectedDistributionForAdd.locationId,
+                          allocatedTickets: newAllocatedTickets,
+                          usedTickets: selectedDistributionForAdd.usedTickets,
+                          batchNumber: selectedDistributionForAdd.batchNumber,
+                          notes: selectedDistributionForAdd.notes
+                        };
+                        
+                        const response = await fetch(`/api/ticket-distributions/${selectedDistributionForAdd.id}`, {
+                          method: 'PUT',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify(updateData),
+                        });
+                        
+                        if (response.ok) {
+                          const updatedDistribution = await response.json();
+                          
+                          // Update the state with the new data
+                          setTicketDistributions(
+                            ticketDistributions.map(d => 
+                              d.id === updatedDistribution.id ? updatedDistribution : d
+                            )
+                          );
+                          
+                          // Close modal and reset
+                          setIsAddTicketsOpen(false);
+                          setSelectedDistributionForAdd(null);
+                          setAdditionalTickets(0);
+                          
+                          // Show success message
+                          alert(`Successfully added ${additionalTickets} tickets. New total: ${newAllocatedTickets}`);
+                        } else {
+                          const errorData = await response.json();
+                          console.error("Error adding tickets:", errorData);
+                          alert("Error adding tickets: " + (errorData.message || "Unknown error"));
+                        }
+                      } catch (error) {
+                        console.error("Error:", error);
+                        alert("Failed to add tickets");
+                      }
+                    }}
+                  >
+                    Add Tickets
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            
             <CardContent>
               {isLoadingDistributions ? (
                 <div className="text-center py-8">Loading ticket data...</div>
@@ -3903,54 +4025,10 @@ export default function AdminPanel() {
                                   variant="outline" 
                                   size="sm"
                                   className="px-2 h-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                  onClick={async () => {
-                                    const additionalTickets = parseInt(prompt("Enter number of tickets to add:", "0") || "0");
-                                    
-                                    if (isNaN(additionalTickets) || additionalTickets <= 0) {
-                                      alert("Please enter a valid positive number of tickets to add.");
-                                      return;
-                                    }
-                                    
-                                    const newAllocatedTickets = distribution.allocatedTickets + additionalTickets;
-                                    
-                                    try {
-                                      const updateData = {
-                                        locationId: distribution.locationId,
-                                        allocatedTickets: newAllocatedTickets,
-                                        usedTickets: distribution.usedTickets,
-                                        batchNumber: distribution.batchNumber,
-                                        notes: distribution.notes
-                                      };
-                                      
-                                      const response = await fetch(`/api/ticket-distributions/${distribution.id}`, {
-                                        method: 'PUT',
-                                        headers: {
-                                          'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify(updateData),
-                                      });
-                                      
-                                      if (response.ok) {
-                                        const updatedDistribution = await response.json();
-                                        
-                                        // Update the state with the new data
-                                        setTicketDistributions(
-                                          ticketDistributions.map(d => 
-                                            d.id === updatedDistribution.id ? updatedDistribution : d
-                                          )
-                                        );
-                                        
-                                        // Show success message
-                                        alert(`Successfully added ${additionalTickets} tickets. New total: ${newAllocatedTickets}`);
-                                      } else {
-                                        const errorData = await response.json();
-                                        console.error("Error adding tickets:", errorData);
-                                        alert("Error adding tickets: " + (errorData.message || "Unknown error"));
-                                      }
-                                    } catch (error) {
-                                      console.error("Error:", error);
-                                      alert("Failed to add tickets");
-                                    }
+                                  onClick={() => {
+                                    setSelectedDistributionForAdd(distribution);
+                                    setAdditionalTickets(0);
+                                    setIsAddTicketsOpen(true);
                                   }}
                                 >
                                   <Plus className="h-4 w-4" />
