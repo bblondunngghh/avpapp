@@ -1989,7 +1989,7 @@ export default function AdminPanel() {
                 });
               }
 
-              const alertCount = Object.values(weeklyHours).filter(emp => emp.totalHours >= 35).length;
+              const alertCount = Object.values(weeklyHours).filter(emp => emp.totalHours >= 30).length;
               
 
               return alertCount > 0 ? (
@@ -5179,7 +5179,7 @@ export default function AdminPanel() {
                         // Determine status
                         if (weeklyHours[employee.key].totalHours >= 38) {
                           weeklyHours[employee.key].status = 'critical';
-                        } else if (weeklyHours[employee.key].totalHours >= 35) {
+                        } else if (weeklyHours[employee.key].totalHours >= 30) {
                           weeklyHours[employee.key].status = 'warning';
                         }
                       }
@@ -5217,7 +5217,7 @@ export default function AdminPanel() {
                               <Clock className="h-4 w-4 text-yellow-600" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-yellow-800">Warning (35+ hours)</p>
+                              <p className="text-sm font-medium text-yellow-800">Warning (30+ hours)</p>
                               <p className="text-2xl font-bold text-yellow-900">{warningEmployees.length}</p>
                             </div>
                           </div>
