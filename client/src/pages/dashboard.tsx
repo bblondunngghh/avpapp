@@ -21,7 +21,7 @@ export default function Dashboard() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-400 via-gray-300 to-gray-500">
       <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-0">
         <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden">
           <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
