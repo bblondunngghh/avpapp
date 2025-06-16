@@ -21,28 +21,27 @@ export default function Dashboard() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-400 via-gray-300 to-gray-500">
-      <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-0">
-        <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden">
-          <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
-            style={{ 
-              backgroundImage: "radial-gradient(circle at 25px 25px, rgba(255,255,255,0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255,255,255,0.15) 2%, transparent 0%)",
-              backgroundSize: "100px 100px" 
-            }}>
-          </div>
-          <div className="flex flex-col items-center justify-center relative z-10">
-            <img 
-              src="/assets/AVP LOGO 2024 - 2 HQ.jpg" 
-              alt="AVP Logo 2024" 
-              className="h-36 mb-4 object-contain bg-white p-2 rounded-lg"
-            />
-            <p className="text-blue-50 max-w-2xl mx-auto text-lg">
-              Welcome to the Access Valet Parking Management Portal. Please select from the following options.
-            </p>
-          </div>
+    <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0">
+      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden">
+        <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
+          style={{ 
+            backgroundImage: "radial-gradient(circle at 25px 25px, rgba(255,255,255,0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255,255,255,0.15) 2%, transparent 0%)",
+            backgroundSize: "100px 100px" 
+          }}>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="flex flex-col items-center justify-center relative z-10">
+          <img 
+            src="/assets/AVP LOGO 2024 - 2 HQ.jpg" 
+            alt="AVP Logo 2024" 
+            className="h-36 mb-4 object-contain bg-white p-2 rounded-lg"
+          />
+          <p className="text-blue-50 max-w-2xl mx-auto text-lg">
+            Welcome to the Access Valet Parking Management Portal. Please select from the following options.
+          </p>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Submit Shift Report Card */}
           <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30">
             <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
@@ -120,27 +119,26 @@ export default function Dashboard() {
           </Card>
         </div>
         
-        {/* Admin and Employee Login Links */}
-        <div className="text-center mt-8 pt-6 border-t border-gray-200 pb-24">
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-500 mb-3">View your hours, earnings and tax information:</p>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/employee-login")}
-              className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center justify-center gap-2"
-            >
-              <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
-              Employee Login
-            </Button>
-          </div>
+      {/* Admin and Employee Login Links */}
+      <div className="text-center mt-8 pt-6 border-t border-gray-200 pb-24">
+        <div className="flex flex-col items-center justify-center">
+          <p className="text-gray-500 mb-3">View your hours, earnings and tax information:</p>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/employee-login")}
+            className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center justify-center gap-2"
+          >
+            <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
+            Employee Login
+          </Button>
         </div>
-        
-        {/* Location selection modal */}
-        <LocationSelectorModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-        />
       </div>
+      
+      {/* Location selection modal */}
+      <LocationSelectorModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 }
