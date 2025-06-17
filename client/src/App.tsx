@@ -27,6 +27,7 @@ import PermitsPage from "@/pages/permits";
 import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
+import ThemeWrapper from "@/components/theme-wrapper";
 import avpLogo from "@assets/AVP LOGO 2024 - 2 HQ.jpg";
 
 // Theme Context
@@ -43,11 +44,12 @@ export const useTheme = () => {
   return context;
 };
 
-function Router() {
+function RouterContent() {
   const [location, setLocation] = useLocation();
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [wasInProtectedArea, setWasInProtectedArea] = useState(false);
   const [lastActivity, setLastActivity] = useState(Date.now());
+  const { isDark } = useTheme();
   
   // Enhanced detection for mobile devices - iPhone only for mobile admin
   useEffect(() => {
@@ -165,8 +167,6 @@ function Router() {
   // Determine if we're on an admin or employee page to show/hide normal navigation
   const isAdminPage = location.startsWith('/admin');
   const isEmployeePage = location.startsWith('/employee-dashboard');
-  
-  const { isDark } = useTheme();
   
   return (
     <div className="flex flex-col min-h-screen pb-16">
@@ -294,6 +294,8 @@ function SplashScreen() {
   );
 }
 
+
+
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -344,7 +346,80 @@ function App() {
           <div className={isDark ? 'dark' : ''}>
             <Toaster />
             <FullscreenSupport />
-            {showSplash && isMobile ? <SplashScreen /> : <Router />}
+            {showSplash && isMobile ? <SplashScreen /> : (
+              <ThemeWrapper>
+                <Switch>
+                  <Route path="/" component={Dashboard} />
+                  <Route path="/report-selection" component={ReportSelection} />
+                  <Route path="/new-report">
+                    {() => <ReportForm />}
+                  </Route>
+                  <Route path="/edit-report/:id">
+                    {(params: {id: string}) => <ReportForm reportId={parseInt(params.id)} />}
+                  </Route>
+                  <Route path="/submission-complete/:reportId?">
+                    {(params: {reportId?: string}) => <SubmissionComplete />}
+                  </Route>
+                  <Route path="/incident-report" component={IncidentReport} />
+                  <Route path="/incident-submitted" component={IncidentSubmitted} />
+                  <Route path="/regulations" component={Regulations} />
+                  <Route path="/admin-login">
+                    {() => <AdminLogin />}
+                  </Route>
+                  <Route path="/mobile-admin" component={SimpleMobileAdmin} />
+                  <Route path="/simple-admin" component={SimpleMobileAdmin} />
+                  <Route path="/basic-admin" component={SimpleMobileAdmin} />
+                  <Route path="/admin-redirect" component={SimpleMobileAdmin} />
+                  <Route path="/admin">
+                    {() => {
+                      const isIPad = /iPad/i.test(navigator.userAgent) || 
+                                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                      const isIPhone = /iPhone/i.test(navigator.userAgent);
+                      
+                      if (isIPad) {
+                        console.log("iPad detected - using desktop admin panel");
+                        return <AdminPanel />;
+                      }
+                      
+                      if (isIPhone) {
+                        console.log("iPhone detected - using mobile admin panel");
+                        return <MobileAdminPanel />;
+                      }
+                      
+                      console.log("Desktop/other device - using desktop admin panel");
+                      return <AdminPanel />;
+                    }}
+                  </Route>
+                  <Route path="/admin-panel">
+                    {() => {
+                      const isIPad = /iPad/i.test(navigator.userAgent) || 
+                                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                      const isIPhone = /iPhone/i.test(navigator.userAgent);
+                      
+                      if (isIPad) {
+                        console.log("iPad detected - using desktop admin panel");
+                        return <AdminPanel />;
+                      }
+                      
+                      if (isIPhone) {
+                        console.log("iPhone detected - using mobile admin panel");
+                        return <MobileAdminPanel />;
+                      }
+                      
+                      console.log("Desktop/other device - using desktop admin panel");
+                      return <AdminPanel />;
+                    }}
+                  </Route>
+                  <Route path="/admin/csv-upload" component={CSVUploadPage} />
+                  <Route path="/admin/tax-payments" component={AccountantPage} />
+                  <Route path="/reports" component={ReportsWrapper} />
+                  <Route path="/permits" component={PermitsPage} />
+                  <Route path="/employee-login" component={EmployeeLogin} />
+                  <Route path="/employee-dashboard" component={EmployeeDashboard} />
+                  <Route component={NotFound} />
+                </Switch>
+              </ThemeWrapper>
+            )}
           </div>
         </TooltipProvider>
       </ThemeContext.Provider>

@@ -25,10 +25,13 @@ export default function Dashboard() {
   return (
     <div className={isDark 
       ? "min-h-screen bg-gradient-to-br from-[#020203] via-[#1a1a1b] to-[#2a2a2b]" 
-      : "max-w-4xl mx-auto px-4 mt-8 md:mt-0"
+      : ""
     }>
-      <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-0">
-        <div className="relative bg-gradient-to-r from-[#9c46df] to-[#35afe9] text-center mb-10 p-8 rounded-xl shadow-2xl overflow-hidden border border-[#536975]/20">
+      <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0">
+        <div className={isDark 
+          ? "relative bg-gradient-to-r from-[#9c46df] to-[#35afe9] text-center mb-10 p-8 rounded-xl shadow-2xl overflow-hidden border border-[#536975]/20"
+          : "relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden"
+        }>
           <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
             style={{ 
               backgroundImage: "radial-gradient(circle at 25px 25px, rgba(255,255,255,0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255,255,255,0.15) 2%, transparent 0%)",
