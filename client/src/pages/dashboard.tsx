@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-react";
+import { useTheme } from "@/App";
 import shiftReportIcon from "@assets/Task-List-Add--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
@@ -15,13 +16,17 @@ import LocationSelectorModal from "@/components/location-selector-modal";
 export default function Dashboard() {
   const [, navigate] = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isDark } = useTheme();
   
   const handleNewReport = () => {
     setIsModalOpen(true);
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#020203] via-[#1a1a1b] to-[#2a2a2b]">
+    <div className={isDark 
+      ? "min-h-screen bg-gradient-to-br from-[#020203] via-[#1a1a1b] to-[#2a2a2b]" 
+      : "max-w-4xl mx-auto px-4 mt-8 md:mt-0"
+    }>
       <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-0">
         <div className="relative bg-gradient-to-r from-[#9c46df] to-[#35afe9] text-center mb-10 p-8 rounded-xl shadow-2xl overflow-hidden border border-[#536975]/20">
           <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 

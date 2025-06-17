@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { Switch, Route, useLocation, RouteComponentProps } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -28,6 +28,20 @@ import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPa
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 import avpLogo from "@assets/AVP LOGO 2024 - 2 HQ.jpg";
+
+// Theme Context
+const ThemeContext = createContext<{
+  isDark: boolean;
+  toggleTheme: () => void;
+} | null>(null);
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
 
 function Router() {
   const [location, setLocation] = useLocation();
@@ -151,6 +165,8 @@ function Router() {
   // Determine if we're on an admin or employee page to show/hide normal navigation
   const isAdminPage = location.startsWith('/admin');
   const isEmployeePage = location.startsWith('/employee-dashboard');
+  
+  const { isDark } = useTheme();
   
   return (
     <div className="flex flex-col min-h-screen pb-16">
@@ -281,6 +297,19 @@ function SplashScreen() {
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    // Check localStorage for saved theme preference
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark';
+  });
+
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const newTheme = !prev;
+      localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+      return newTheme;
+    });
+  };
 
   useEffect(() => {
     // Check if device is mobile
@@ -310,11 +339,15 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <FullscreenSupport />
-        {showSplash && isMobile ? <SplashScreen /> : <Router />}
-      </TooltipProvider>
+      <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+        <TooltipProvider>
+          <div className={isDark ? 'dark' : ''}>
+            <Toaster />
+            <FullscreenSupport />
+            {showSplash && isMobile ? <SplashScreen /> : <Router />}
+          </div>
+        </TooltipProvider>
+      </ThemeContext.Provider>
     </QueryClientProvider>
   );
 }
