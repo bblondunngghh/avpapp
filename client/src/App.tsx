@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Switch, Route, useLocation, RouteComponentProps } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -27,22 +27,7 @@ import PermitsPage from "@/pages/permits";
 import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
-import ThemeWrapper from "@/components/theme-wrapper";
 import avpLogo from "@assets/AVP LOGO 2024 - 2 HQ.jpg";
-
-// Theme Context
-const ThemeContext = createContext<{
-  isDark: boolean;
-  toggleTheme: () => void;
-} | null>(null);
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
 
 function Router() {
   const [location, setLocation] = useLocation();
@@ -293,24 +278,9 @@ function SplashScreen() {
   );
 }
 
-
-
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDark, setIsDark] = useState(() => {
-    // Check localStorage for saved theme preference
-    const saved = localStorage.getItem('theme');
-    return saved === 'dark';
-  });
-
-  const toggleTheme = () => {
-    setIsDark(prev => {
-      const newTheme = !prev;
-      localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-      return newTheme;
-    });
-  };
 
   useEffect(() => {
     // Check if device is mobile
@@ -340,15 +310,11 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeContext.Provider value={{ isDark, toggleTheme }}>
-        <TooltipProvider>
-          <div className={isDark ? 'dark' : ''}>
-            <Toaster />
-            <FullscreenSupport />
-            {showSplash && isMobile ? <SplashScreen /> : <Router />}
-          </div>
-        </TooltipProvider>
-      </ThemeContext.Provider>
+      <TooltipProvider>
+        <Toaster />
+        <FullscreenSupport />
+        {showSplash && isMobile ? <SplashScreen /> : <Router />}
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }
