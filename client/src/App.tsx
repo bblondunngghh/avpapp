@@ -44,12 +44,11 @@ export const useTheme = () => {
   return context;
 };
 
-function RouterContent() {
+function Router() {
   const [location, setLocation] = useLocation();
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [wasInProtectedArea, setWasInProtectedArea] = useState(false);
   const [lastActivity, setLastActivity] = useState(Date.now());
-  const { isDark } = useTheme();
   
   // Enhanced detection for mobile devices - iPhone only for mobile admin
   useEffect(() => {
@@ -346,80 +345,7 @@ function App() {
           <div className={isDark ? 'dark' : ''}>
             <Toaster />
             <FullscreenSupport />
-            {showSplash && isMobile ? <SplashScreen /> : (
-              <ThemeWrapper>
-                <Switch>
-                  <Route path="/" component={Dashboard} />
-                  <Route path="/report-selection" component={ReportSelection} />
-                  <Route path="/new-report">
-                    {() => <ReportForm />}
-                  </Route>
-                  <Route path="/edit-report/:id">
-                    {(params: {id: string}) => <ReportForm reportId={parseInt(params.id)} />}
-                  </Route>
-                  <Route path="/submission-complete/:reportId?">
-                    {(params: {reportId?: string}) => <SubmissionComplete />}
-                  </Route>
-                  <Route path="/incident-report" component={IncidentReport} />
-                  <Route path="/incident-submitted" component={IncidentSubmitted} />
-                  <Route path="/regulations" component={Regulations} />
-                  <Route path="/admin-login">
-                    {() => <AdminLogin />}
-                  </Route>
-                  <Route path="/mobile-admin" component={SimpleMobileAdmin} />
-                  <Route path="/simple-admin" component={SimpleMobileAdmin} />
-                  <Route path="/basic-admin" component={SimpleMobileAdmin} />
-                  <Route path="/admin-redirect" component={SimpleMobileAdmin} />
-                  <Route path="/admin">
-                    {() => {
-                      const isIPad = /iPad/i.test(navigator.userAgent) || 
-                                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-                      const isIPhone = /iPhone/i.test(navigator.userAgent);
-                      
-                      if (isIPad) {
-                        console.log("iPad detected - using desktop admin panel");
-                        return <AdminPanel />;
-                      }
-                      
-                      if (isIPhone) {
-                        console.log("iPhone detected - using mobile admin panel");
-                        return <MobileAdminPanel />;
-                      }
-                      
-                      console.log("Desktop/other device - using desktop admin panel");
-                      return <AdminPanel />;
-                    }}
-                  </Route>
-                  <Route path="/admin-panel">
-                    {() => {
-                      const isIPad = /iPad/i.test(navigator.userAgent) || 
-                                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-                      const isIPhone = /iPhone/i.test(navigator.userAgent);
-                      
-                      if (isIPad) {
-                        console.log("iPad detected - using desktop admin panel");
-                        return <AdminPanel />;
-                      }
-                      
-                      if (isIPhone) {
-                        console.log("iPhone detected - using mobile admin panel");
-                        return <MobileAdminPanel />;
-                      }
-                      
-                      console.log("Desktop/other device - using desktop admin panel");
-                      return <AdminPanel />;
-                    }}
-                  </Route>
-                  <Route path="/admin/csv-upload" component={CSVUploadPage} />
-                  <Route path="/admin/tax-payments" component={AccountantPage} />
-                  <Route path="/reports" component={ReportsWrapper} />
-                  <Route path="/permits" component={PermitsPage} />
-                  <Route path="/employee-login" component={EmployeeLogin} />
-                  <Route path="/employee-dashboard" component={EmployeeDashboard} />
-                  <Route component={NotFound} />
-                </Switch>
-              </ThemeWrapper>
-            )}
+            {showSplash && isMobile ? <SplashScreen /> : <Router />}
           </div>
         </TooltipProvider>
       </ThemeContext.Provider>

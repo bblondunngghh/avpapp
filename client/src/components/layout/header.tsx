@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Car, Home, ClipboardList, PlusCircle, User, Sun, Moon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useTheme } from "@/App";
 import navCarIcon from "@assets/Car-Dashboard-Steering--Streamline-Ultimate.png";
 import carToolKeysIcon from "@assets/Car-Tool-Keys--Streamline-Ultimate.png";
 import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
@@ -15,7 +14,17 @@ import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_17493132010
 export default function Header() {
   const [, navigate] = useLocation();
   const [open, setOpen] = useState(false);
-  const { isDark, toggleTheme } = useTheme();
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark';
+  });
+
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark', newTheme);
+  };
   
   const handleNavigation = (path: string) => {
     navigate(path);
