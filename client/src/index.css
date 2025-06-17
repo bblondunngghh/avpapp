@@ -285,83 +285,91 @@ input[type="date"].paperform-input {
 }
 
 :root {
-  /* Modern sleek theme - Indigo/Teal color scheme */
-  --background: 210 40% 98%;
-  --foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 47.4% 11.2%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 47.4% 11.2%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --primary: 210 100% 50%; /* Vibrant Blue */
-  --primary-foreground: 210 40% 98%;
-  --secondary: 174 84% 32%; /* Teal accent */
-  --secondary-foreground: 210 40% 98%;
-  --accent: 200 98% 61%; /* Sky blue accent */
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --ring: 210 100% 50%;
-  --radius: 0.75rem; /* Slightly more rounded */
+  /* Dark Modern Design - Custom Color Palette */
+  --color-dark: 2 3% 1%;        /* #020203 */
+  --color-slate: 200 15% 36%;   /* #536975 */
+  --color-purple: 276 73% 58%;  /* #9c46df */
+  --color-pink: 353 56% 78%;    /* #edb7bf */
+  --color-blue: 199 90% 58%;    /* #35afe9 */
   
-  /* Chart colors */
-  --chart-1: 210 100% 50%; /* Vibrant Blue */
-  --chart-2: 174 84% 32%; /* Teal */
-  --chart-3: 200 98% 61%; /* Sky Blue */
-  --chart-4: 335 78% 60%; /* Pink */
-  --chart-5: 32 95% 44%;  /* Orange */
+  /* Light theme using the custom colors */
+  --background: 0 0% 98%;
+  --foreground: var(--color-dark);
+  --muted: 200 15% 95%;
+  --muted-foreground: var(--color-slate);
+  --popover: 0 0% 100%;
+  --popover-foreground: var(--color-dark);
+  --card: 0 0% 100%;
+  --card-foreground: var(--color-dark);
+  --border: 200 15% 85%;
+  --input: 200 15% 90%;
+  --primary: var(--color-purple);
+  --primary-foreground: 0 0% 100%;
+  --secondary: var(--color-blue);
+  --secondary-foreground: 0 0% 100%;
+  --accent: var(--color-pink);
+  --accent-foreground: var(--color-dark);
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: var(--color-purple);
+  --radius: 0.75rem;
+  
+  /* Chart colors using custom palette */
+  --chart-1: var(--color-purple);
+  --chart-2: var(--color-blue);
+  --chart-3: var(--color-pink);
+  --chart-4: var(--color-slate);
+  --chart-5: var(--color-dark);
   
   /* Sidebar colors */
-  --sidebar-background: 243 75% 59%;
+  --sidebar-background: var(--color-slate);
   --sidebar-foreground: 0 0% 100%;
   --sidebar-primary: 0 0% 100%;
-  --sidebar-primary-foreground: 243 75% 59%;
-  --sidebar-accent: 174 84% 32%;
+  --sidebar-primary-foreground: var(--color-slate);
+  --sidebar-accent: var(--color-purple);
   --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 243 65% 69%;
-  --sidebar-ring: 243 65% 69%;
+  --sidebar-border: 200 15% 75%;
+  --sidebar-ring: 200 15% 75%;
 }
 
 .dark {
-  --background: 240 10% 4%;
-  --foreground: 213 31% 91%;
-  --muted: 240 4% 16%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --popover: 240 10% 4%;
-  --popover-foreground: 213 31% 91%;
-  --card: 240 10% 4%;
-  --card-foreground: 213 31% 91%;
-  --border: 240 4% 16%;
-  --input: 240 4% 16%;
-  --primary: 243 75% 59%; /* Indigo - slightly brighter */
-  --primary-foreground: 213 31% 91%;
-  --secondary: 174 84% 32%; /* Teal accent */
-  --secondary-foreground: 213 31% 91%;
-  --accent: 200 98% 61%; /* Sky blue accent */
-  --accent-foreground: 213 31% 91%;
+  /* Dark Modern Design using custom colors */
+  --background: var(--color-dark);
+  --foreground: 0 0% 95%;
+  --muted: 200 15% 15%;
+  --muted-foreground: var(--color-slate);
+  --popover: var(--color-dark);
+  --popover-foreground: 0 0% 95%;
+  --card: 200 15% 8%;
+  --card-foreground: 0 0% 95%;
+  --border: 200 15% 20%;
+  --input: 200 15% 15%;
+  --primary: var(--color-purple);
+  --primary-foreground: 0 0% 100%;
+  --secondary: var(--color-blue);
+  --secondary-foreground: 0 0% 100%;
+  --accent: var(--color-pink);
+  --accent-foreground: var(--color-dark);
   --destructive: 0 84% 60%;
-  --destructive-foreground: 213 31% 91%;
-  --ring: 210 100% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: var(--color-purple);
   
-  /* Chart colors - Slightly adjusted for dark mode */
-  --chart-1: 243 75% 69%; /* Brighter Indigo */
-  --chart-2: 174 84% 42%; /* Brighter Teal */
-  --chart-3: 262 83% 68%; /* Brighter Purple */
-  --chart-4: 335 78% 70%; /* Brighter Pink */
-  --chart-5: 32 95% 54%;  /* Brighter Orange */
+  /* Chart colors using custom palette with adjusted brightness */
+  --chart-1: 276 73% 68%; /* Brighter purple */
+  --chart-2: 199 90% 68%; /* Brighter blue */
+  --chart-3: 353 56% 85%; /* Brighter pink */
+  --chart-4: 200 15% 55%; /* Brighter slate */
+  --chart-5: 0 0% 25%;    /* Lighter dark */
   
   /* Sidebar colors */
-  --sidebar-background: 240 21% 12%;
-  --sidebar-foreground: 213 31% 91%;
-  --sidebar-primary: 213 31% 91%;
-  --sidebar-primary-foreground: 240 21% 12%;
-  --sidebar-accent: 174 84% 32%;
-  --sidebar-accent-foreground: 213 31% 91%;
-  --sidebar-border: 240 21% 22%;
-  --sidebar-ring: 240 21% 22%;
+  --sidebar-background: 200 15% 12%;
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 0 0% 95%;
+  --sidebar-primary-foreground: 200 15% 12%;
+  --sidebar-accent: var(--color-purple);
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 200 15% 25%;
+  --sidebar-ring: 200 15% 25%;
 }
 
 @layer base {
