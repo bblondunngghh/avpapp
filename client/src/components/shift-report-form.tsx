@@ -23,6 +23,7 @@ import smartphonePayIcon from "@assets/Smartphone-Pay-Dollar--Streamline-Ultimat
 import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate_1750259103346.png";
 import notesTasksIcon from "@assets/Notes-Tasks--Streamline-Ultimate_1750259256665.png";
 import accountingBillsIcon from "@assets/Accounting-Bills-1--Streamline-Ultimate_1750259340305.png";
+import houseIcon from "@assets/House-3--Streamline-Ultimate_1750259532490.png";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
@@ -456,9 +457,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           <Button 
             variant="outline" 
             onClick={handleBack} 
-            className="mb-4 px-4 py-2 text-sm font-medium"
+            className="mb-4 p-2 h-10 w-10"
           >
-            Back
+            <img src={houseIcon} alt="Home" className="w-5 h-5" />
           </Button>
           <Skeleton className="h-8 w-64" />
         </div>
@@ -568,9 +569,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
         <Button 
           variant="outline" 
           onClick={handleBack} 
-          className="mb-4 px-4 py-2 text-sm font-medium"
+          className="mb-4 p-2 h-10 w-10"
         >
-          Back
+          <img src={houseIcon} alt="Home" className="w-5 h-5" />
         </Button>
         
         <div className="form-header-container">
