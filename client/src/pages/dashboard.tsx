@@ -33,7 +33,7 @@ export default function Dashboard() {
           <img 
             src="/assets/av-logo-transparent.png" 
             alt="AV Parking Logo" 
-            className="h-48 mb-4 object-contain"
+            className="h-48 mb-4 object-contain mx-auto block"
             style={{
               filter: 'drop-shadow(0px 0px 1px white) drop-shadow(0px 0px 2px rgba(255,255,255,0.6))'
             }}
