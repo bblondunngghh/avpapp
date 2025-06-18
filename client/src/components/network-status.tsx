@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NetworkMonitor, OfflineStorage } from "@/lib/offline-storage";
 import { Wifi, WifiOff, Clock, CheckCircle } from "lucide-react";
+import wifiCheckIcon from "@assets/Wifi-Check--Streamline-Ultimate_1750257859991.png";
 
 export function NetworkStatus() {
   const [isOnline, setIsOnline] = useState(NetworkMonitor.getStatus());
@@ -96,7 +97,7 @@ export function NetworkStatusBanner() {
     return (
       <div className="w-full p-2 text-center text-xs bg-green-50 text-green-700 border-b border-green-100 rounded-lg mb-4">
         <div className="flex items-center justify-center gap-2">
-          <Wifi className="w-3 h-3" />
+          <img src={wifiCheckIcon} alt="Connected" className="w-3 h-3" />
           <span>Connected - Reports will submit immediately</span>
         </div>
       </div>
