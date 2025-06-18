@@ -23,6 +23,9 @@ import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
 import RestaurantIcon from "@/components/restaurant-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCurrentDateCentral } from "@/lib/timezone";
+import { OfflineStorage, NetworkMonitor } from "@/lib/offline-storage";
+import { NetworkStatusBanner } from "@/components/network-status";
+import { Wifi, WifiOff, Clock } from "lucide-react";
 
 // Import hardcoded images for original locations
 import capGrilleImage from "@assets/CAP GRILLE image.jpg";
@@ -92,6 +95,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const initialLocationId = locationIdParam ? parseInt(locationIdParam) : (locations?.[0]?.id || 1);
   const [selectedLocationId, setSelectedLocationId] = useState(initialLocationId);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOnline, setIsOnline] = useState(NetworkMonitor.getStatus());
+
+  // Initialize network monitoring
+  useEffect(() => {
+    NetworkMonitor.init();
+    const unsubscribe = NetworkMonitor.addCallback((online) => {
+      setIsOnline(online);
+    });
+    return unsubscribe;
+  }, []);
   
   // Find location name
   const locationName = locations?.find((loc: any) => loc.id === selectedLocationId)?.name || '';
