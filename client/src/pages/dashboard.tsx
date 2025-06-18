@@ -32,9 +32,10 @@ export default function Dashboard() {
         <div className="flex flex-col items-center justify-center relative z-10">
           <div className="bg-white rounded-2xl px-24 py-3 mb-4 shadow-lg max-w-xl mx-auto">
             <img 
-              src="/assets/av-logo-clean.png" 
+              src="/assets/av-logo-hd.png" 
               alt="AV Parking Logo" 
               className="h-36 object-contain mx-auto block"
+              style={{ imageRendering: 'crisp-edges' }}
             />
           </div>
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
