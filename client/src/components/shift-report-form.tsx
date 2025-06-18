@@ -1519,8 +1519,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   }
                                   const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
                                   
-                                  // Get total turn-in from form
-                                  const totalTurnIn = form.watch('totalTurnIn') || 0;
+                                  // Calculate total turn-in using the same logic as the main component
+                                  const totalTurnInCalculated = totalCars * (() => {
+                                    if (locationId === 1) return 11; // Capital Grille
+                                    if (locationId === 2) return 6;  // Bob's Steak
+                                    if (locationId === 3) return 8;  // Truluck's
+                                    if (locationId === 4) return 7;  // BOA Steakhouse
+                                    
+                                    // Use dynamic rates for new locations (ID 5+)
+                                    return locations?.find((loc: any) => loc.id === locationId)?.turnInRate || 11;
+                                  })();
                                   
                                   // Calculate total earnings for all employees
                                   const totalEarnings = commission + tips;
@@ -1538,7 +1546,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     // Money owed calculation using correct formula
                                     const receiptSales = totalReceipts * 18;
                                     const totalCollections = totalCreditSales + receiptSales;
-                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
+                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnInCalculated);
                                     const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
                                     totalTax += empTax;
@@ -1595,7 +1603,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     // Money owed calculation using correct formula
                                     const receiptSales = totalReceipts * 18;
                                     const totalCollections = totalCreditSales + receiptSales;
-                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
+                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnInCalculated);
                                     const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
                                     // Check if cash paid covers tax considering only money owed
@@ -1686,13 +1694,17 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   const totalTaxAmount = totalEarnings * 0.22;
                                   
                                   // Calculate money owed using correct formula
-                                  const totalTurnIn = form.watch('totalTurnIn') || 0;
                                   const receiptSales = totalReceipts * 18;
                                   const totalCollections = totalCreditSales + receiptSales;
-                                  const calculatedMoneyOwed = Math.max(0, totalCollections - totalTurnIn);
+                                  const calculatedMoneyOwed = Math.max(0, totalCollections - totalTurnInCalculated);
                                   
                                   // Calculate net tax obligation (tax amount minus any money owed to employees)
                                   const netTaxObligationTotal = Math.max(0, totalTaxAmount - calculatedMoneyOwed);
+                                  
+                                  // Debug the calculation
+                                  console.log('Blue Box - Tax Amount:', totalTaxAmount);
+                                  console.log('Blue Box - Calculated Money Owed:', calculatedMoneyOwed);
+                                  console.log('Blue Box - Net Tax Obligation:', netTaxObligationTotal);
                                   
                                   return (
                                     <>
