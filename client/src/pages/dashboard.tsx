@@ -30,7 +30,7 @@ export default function Dashboard() {
           }}>
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
-          <div className="bg-white rounded-2xl px-16 py-6 mb-4 shadow-lg max-w-lg mx-auto">
+          <div className="bg-white rounded-2xl px-24 py-3 mb-4 shadow-lg max-w-xl mx-auto">
             <img 
               src="/assets/av-logo-clean.png" 
               alt="AV Parking Logo" 
