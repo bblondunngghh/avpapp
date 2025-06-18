@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { NetworkMonitor, OfflineStorage } from "@/lib/offline-storage";
 import { Wifi, WifiOff, Clock, CheckCircle } from "lucide-react";
 import wifiCheckIcon from "@assets/Wifi-Check--Streamline-Ultimate_1750257859991.png";
+import wifiQuestionIcon from "@assets/Wifi-Question--Streamline-Ultimate_1750258014461.png";
 
 export function NetworkStatus() {
   const [isOnline, setIsOnline] = useState(NetworkMonitor.getStatus());
@@ -105,14 +106,14 @@ export function NetworkStatusBanner() {
   }
 
   return (
-    <div className={`w-full p-3 text-center text-sm font-medium ${
+    <div className={`w-full p-2 text-center text-xs ${
       !isOnline 
-        ? 'bg-red-50 text-red-800 border-b border-red-200' 
-        : 'bg-orange-50 text-orange-800 border-b border-orange-200'
-    }`}>
+        ? 'bg-red-50 text-red-700 border-b border-red-100' 
+        : 'bg-orange-50 text-orange-700 border-b border-orange-100'
+    } rounded-lg mb-4`}>
       {!isOnline ? (
         <div className="flex items-center justify-center gap-2">
-          <WifiOff className="w-4 h-4" />
+          <img src={wifiQuestionIcon} alt="Offline" className="w-3 h-3" />
           <span>
             You're working offline. Reports will be saved locally and submitted when connection is restored.
           </span>
@@ -124,7 +125,7 @@ export function NetworkStatusBanner() {
         </div>
       ) : (
         <div className="flex items-center justify-center gap-2">
-          <Clock className="w-4 h-4" />
+          <Clock className="w-3 h-3" />
           <span>
             Submitting {pendingCount} saved report{pendingCount !== 1 ? 's' : ''}...
           </span>
