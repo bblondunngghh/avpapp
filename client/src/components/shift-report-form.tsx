@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft, Plus } from "lucide-react";
 import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
+import calendarIcon from "@assets/Calendar-Date--Streamline-Ultimate_1750258792058.png";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
@@ -648,7 +649,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">SHIFT INFORMATION</h3>
+            <h3 className="section-title uppercase font-bold flex items-center gap-2">
+              <img src={calendarIcon} alt="Calendar" className="w-4 h-4" />
+              SHIFT INFORMATION
+            </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               <FormField
