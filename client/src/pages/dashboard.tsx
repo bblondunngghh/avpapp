@@ -31,7 +31,7 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
           <img 
-            src="/assets/av-logo-transparent.png" 
+            src="/assets/av-logo-cropped.png" 
             alt="AV Parking Logo" 
             className="h-48 mb-4 object-contain mx-auto block"
             style={{
