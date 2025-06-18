@@ -453,8 +453,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     return (
       <div className="form-section">
         <div className="form-title">
-          <Button variant="ghost" onClick={handleBack} className="mr-2 p-0 h-8 w-8">
-            <ChevronLeft className="h-5 w-5" />
+          <Button 
+            variant="outline" 
+            onClick={handleBack} 
+            className="mb-4 px-4 py-2 text-sm font-medium"
+          >
+            Back
           </Button>
           <Skeleton className="h-8 w-64" />
         </div>
@@ -561,8 +565,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   return (
     <div className="form-section">
       <div className="form-outer-container">
-        <Button variant="ghost" onClick={handleBack} className="p-0 h-8 w-8 self-start absolute left-4 top-4">
-          <ChevronLeft className="h-5 w-5" />
+        <Button 
+          variant="outline" 
+          onClick={handleBack} 
+          className="mb-4 px-4 py-2 text-sm font-medium"
+        >
+          Back
         </Button>
         
         <div className="form-header-container">
