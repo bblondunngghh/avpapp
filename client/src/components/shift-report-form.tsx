@@ -1584,7 +1584,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   console.log('Tax Summary - Money Owed:', totalMoneyOwed);
                                   console.log('Tax Summary - Cash Paid:', totalCashPaid);
                                   console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
-                                  console.log('Debug - Total Turn In:', totalTurnIn);
+                                  console.log('Debug - Total Turn In:', totalTurnInCalculated);
                                   console.log('Debug - Total Credit Sales:', totalCreditSales);
                                   console.log('Debug - Total Receipts:', totalReceipts);
                                   console.log('Debug - Receipt Sales:', totalReceipts * 18);
@@ -1693,10 +1693,21 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   const totalEarnings = totalCommission + totalTips;
                                   const totalTaxAmount = totalEarnings * 0.22;
                                   
+                                  // Calculate total turn-in for blue box calculation
+                                  const totalTurnInForBlueBox = totalCars * (() => {
+                                    if (locationId === 1) return 11; // Capital Grille
+                                    if (locationId === 2) return 6;  // Bob's Steak
+                                    if (locationId === 3) return 8;  // Truluck's
+                                    if (locationId === 4) return 7;  // BOA Steakhouse
+                                    
+                                    // Use dynamic rates for new locations (ID 5+)
+                                    return locations?.find((loc: any) => loc.id === locationId)?.turnInRate || 11;
+                                  })();
+                                  
                                   // Calculate money owed using correct formula
                                   const receiptSales = totalReceipts * 18;
                                   const totalCollections = totalCreditSales + receiptSales;
-                                  const calculatedMoneyOwed = Math.max(0, totalCollections - totalTurnInCalculated);
+                                  const calculatedMoneyOwed = Math.max(0, totalCollections - totalTurnInForBlueBox);
                                   
                                   // Calculate net tax obligation (tax amount minus any money owed to employees)
                                   const netTaxObligationTotal = Math.max(0, totalTaxAmount - calculatedMoneyOwed);
