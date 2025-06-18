@@ -35,7 +35,7 @@ export default function Dashboard() {
             alt="AV Parking Logo" 
             className="h-48 mb-4 object-contain"
             style={{
-              filter: 'drop-shadow(0px 0px 4px white) drop-shadow(0px 0px 8px white) drop-shadow(0px 0px 12px rgba(255,255,255,0.8))'
+              filter: 'drop-shadow(0px 0px 1px white) drop-shadow(0px 0px 2px rgba(255,255,255,0.6))'
             }}
           />
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
