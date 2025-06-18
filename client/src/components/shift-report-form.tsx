@@ -20,6 +20,7 @@ import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
 import calendarIcon from "@assets/Calendar-Date--Streamline-Ultimate_1750258792058.png";
 import taskListCashIcon from "@assets/Task-List-Cash--Streamline-Ultimate_1750258880864.png";
 import smartphonePayIcon from "@assets/Smartphone-Pay-Dollar--Streamline-Ultimate_1750259046528.png";
+import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate_1750259103346.png";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
@@ -1154,7 +1155,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">EMPLOYEE PAYROLL</h3>
+            <h3 className="section-title uppercase font-bold flex items-center gap-2">
+              <img src={cashUserIcon} alt="Cash User" className="w-4 h-4" />
+              EMPLOYEE PAYROLL
+            </h3>
             
             <div className="space-y-6">
               <FormField
