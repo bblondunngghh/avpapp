@@ -31,8 +31,8 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
           <img 
-            src="/assets/AVP LOGO 2024 - 2 HQ.jpg" 
-            alt="AVP Logo 2024" 
+            src="/assets/new logo maybe_1750260737327.png" 
+            alt="AV Parking Logo" 
             className="h-36 mb-4 object-contain bg-white p-2 rounded-lg"
           />
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
