@@ -91,8 +91,16 @@ export function NetworkStatusBanner() {
     };
   }, []);
 
+  // Always show a subtle status indicator
   if (isOnline && pendingCount === 0) {
-    return null;
+    return (
+      <div className="w-full p-2 text-center text-xs bg-green-50 text-green-700 border-b border-green-100">
+        <div className="flex items-center justify-center gap-2">
+          <Wifi className="w-3 h-3" />
+          <span>Connected - Reports will submit immediately</span>
+        </div>
+      </div>
+    );
   }
 
   return (
