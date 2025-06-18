@@ -31,12 +31,9 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
           <img 
-            src="/assets/av-logo-final.png" 
+            src="/assets/av-logo-clean.png" 
             alt="AV Parking Logo" 
             className="h-48 mb-4 object-contain mx-auto block"
-            style={{
-              filter: 'drop-shadow(0px 0px 1px white) drop-shadow(0px 0px 2px rgba(255,255,255,0.6))'
-            }}
           />
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
             Welcome to the Access Valet Parking Management Portal. Please select from the following options.
