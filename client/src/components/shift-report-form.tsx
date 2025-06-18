@@ -103,7 +103,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     const unsubscribe = NetworkMonitor.addCallback((online) => {
       setIsOnline(online);
     });
-    return unsubscribe;
+    return () => unsubscribe();
   }, []);
   
   // Find location name
@@ -219,39 +219,65 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
     },
   });
 
-  // Create mutation for submitting new reports
+  // Create mutation for submitting new reports with offline support
   const createMutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      // First create the shift report
-      const response = await apiRequest('POST', '/api/shift-reports', data);
-      const reportData = await response.json();
-      
-      // Update ticket usage using FIFO (First-In-First-Out) approach
-      if (data.totalCars > 0) {
-        try {
-          await apiRequest('POST', '/api/ticket-distributions/consume', {
-            locationId: data.locationId,
-            ticketsToConsume: data.totalCars
+      try {
+        // First create the shift report
+        const response = await apiRequest('POST', '/api/shift-reports', data);
+        const reportData = await response.json();
+        
+        // Update ticket usage using FIFO (First-In-First-Out) approach
+        if (data.totalCars > 0) {
+          try {
+            await apiRequest('POST', '/api/ticket-distributions/consume', {
+              locationId: data.locationId,
+              ticketsToConsume: data.totalCars
+            });
+            
+            // Invalidate ticket distributions query to refresh data
+            queryClient.invalidateQueries({ queryKey: ['/api/ticket-distributions'] });
+          } catch (error) {
+            console.error('Error consuming tickets:', error);
+            // Continue with report creation even if ticket consumption fails
+          }
+        }
+        
+        return reportData;
+      } catch (error) {
+        // If network fails, save to offline storage
+        if (!isOnline || (error instanceof Error && (
+          error.message.includes('fetch') || 
+          error.message.includes('network') || 
+          error.message.includes('timeout')
+        ))) {
+          const offlineId = OfflineStorage.savePendingReport(data, 'shift-report');
+          console.log('Report saved offline with ID:', offlineId);
+          
+          toast({
+            title: "Saved Offline",
+            description: "Poor network detected. Your report has been saved and will be submitted when connection improves.",
+            variant: "default",
           });
           
-          // Invalidate ticket distributions query to refresh data
-          queryClient.invalidateQueries({ queryKey: ['/api/ticket-distributions'] });
-        } catch (error) {
-          console.error('Error consuming tickets:', error);
-          // Continue with report creation even if ticket consumption fails
+          // Navigate to success page even for offline submissions
+          navigate('/submission-complete/offline');
+          return { id: 'offline', offline: true };
         }
+        
+        throw error;
       }
-      
-      return reportData;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/shift-reports'] });
-      toast({
-        title: "Success!",
-        description: "Report has been submitted successfully and ticket usage has been updated.",
-      });
-      // Redirect to submission complete page with the report ID
-      navigate(`/submission-complete/${data.id}`);
+      if (!data.offline) {
+        queryClient.invalidateQueries({ queryKey: ['/api/shift-reports'] });
+        toast({
+          title: "Success!",
+          description: "Report has been submitted successfully and ticket usage has been updated.",
+        });
+        // Redirect to submission complete page with the report ID
+        navigate(`/submission-complete/${data.id}`);
+      }
     },
     onError: (error) => {
       toast({
@@ -618,6 +644,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           })()}
         </div>
       </div>
+      <NetworkStatusBanner />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="form-card">
