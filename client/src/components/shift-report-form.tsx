@@ -1546,7 +1546,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     // Money owed calculation using correct formula
                                     const receiptSales = totalReceipts * 18;
                                     const totalCollections = totalCreditSales + receiptSales;
-                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnInCalculated);
+                                    const turnInRate = locationId === 1 ? 11 : locationId === 2 ? 6 : locationId === 3 ? 8 : locationId === 4 ? 7 : 11;
+                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - (totalCars * turnInRate));
                                     const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
                                     totalTax += empTax;
@@ -1579,16 +1580,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   }, 0);
                                   
                                   // Add console logs to debug the values
-                                  console.log('Tax Summary - Total Tax:', totalTax);
-                                  console.log('Tax Summary - Total Earnings:', totalEarnings);
-                                  console.log('Tax Summary - Money Owed:', totalMoneyOwed);
-                                  console.log('Tax Summary - Cash Paid:', totalCashPaid);
-                                  console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
-                                  console.log('Debug - Total Turn In:', totalTurnInCalculated);
-                                  console.log('Debug - Total Credit Sales:', totalCreditSales);
-                                  console.log('Debug - Total Receipts:', totalReceipts);
-                                  console.log('Debug - Receipt Sales:', totalReceipts * 18);
-                                  console.log('Debug - Total Collections:', totalCreditSales + (totalReceipts * 18));
+
                                   
                                   // Check if all employees have covered their taxes
                                   const allEmployeesTaxCovered = formEmployees.every(emp => {
@@ -1603,7 +1595,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     // Money owed calculation using correct formula
                                     const receiptSales = totalReceipts * 18;
                                     const totalCollections = totalCreditSales + receiptSales;
-                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnInCalculated);
+                                    const turnInRateForEmployee = locationId === 1 ? 11 : locationId === 2 ? 6 : locationId === 3 ? 8 : locationId === 4 ? 7 : 11;
+                                    const totalMoneyOwedOnShift = Math.max(0, totalCollections - (totalCars * turnInRateForEmployee));
                                     const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
                                     // Check if cash paid covers tax considering only money owed
