@@ -18,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft, Plus } from "lucide-react";
 import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
 import calendarIcon from "@assets/Calendar-Date--Streamline-Ultimate_1750258792058.png";
+import taskListCashIcon from "@assets/Task-List-Cash--Streamline-Ultimate_1750258880864.png";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
@@ -807,7 +808,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="form-card">
-            <h3 className="section-title uppercase font-bold">SHIFT DETAILS</h3>
+            <h3 className="section-title uppercase font-bold flex items-center gap-2">
+              <img src={taskListCashIcon} alt="Task List Cash" className="w-4 h-4" />
+              SHIFT DETAILS
+            </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               <FormField
