@@ -1576,6 +1576,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   console.log('Tax Summary - Money Owed:', totalMoneyOwed);
                                   console.log('Tax Summary - Cash Paid:', totalCashPaid);
                                   console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
+                                  console.log('Debug - Total Turn In:', totalTurnIn);
+                                  console.log('Debug - Total Credit Sales:', totalCreditSales);
+                                  console.log('Debug - Total Receipts:', totalReceipts);
+                                  console.log('Debug - Receipt Sales:', totalReceipts * 18);
+                                  console.log('Debug - Total Collections:', totalCreditSales + (totalReceipts * 18));
                                   
                                   // Check if all employees have covered their taxes
                                   const allEmployeesTaxCovered = formEmployees.every(emp => {
@@ -1593,14 +1598,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     const totalMoneyOwedOnShift = Math.max(0, totalCollections - totalTurnIn);
                                     const empMoneyOwed = totalMoneyOwedOnShift * employeeHoursPercent;
                                     
-                                    // Check if cash paid covers tax considering money owed + receipts
+                                    // Check if cash paid covers tax considering only money owed
                                     const cashPaid = parseFloat(String(emp.cashPaid)) || 0;
-                                    const receiptCoverage = totalReceipts * employeeHoursPercent * 18;
-                                    const totalTaxCoverage = empMoneyOwed + receiptCoverage;
-                                    const taxObligation = Math.max(0, empTax - totalTaxCoverage);
+                                    const taxObligation = Math.max(0, empTax - empMoneyOwed);
                                     
-                                    // Tax is covered if (money owed + receipts) covers it OR cash paid covers it
-                                    return totalTaxCoverage >= empTax || cashPaid >= Math.ceil(taxObligation);
+                                    // Tax is covered if money owed covers it OR cash paid covers the remaining obligation
+                                    return empMoneyOwed >= empTax || cashPaid >= Math.ceil(taxObligation);
                                   });
                                   
                                   // Only show "All Taxes Covered" if all employees have covered their taxes
@@ -1695,7 +1698,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     <>
                                       <div className="flex justify-between items-center mb-1">
                                         <span className="text-sm font-medium text-blue-800">Total Cash for Taxes:</span>
-                                        <span className="text-sm font-bold text-blue-900">${totalCashPaid.toFixed(2)}</span>
+                                        <span className="text-sm font-bold text-blue-900">${Math.ceil(netTaxObligationTotal).toFixed(2)}</span>
                                       </div>
                                       <p className="text-xs text-blue-700">
                                         The total cash needed to fulfill your tax obligation is ${Math.ceil(netTaxObligationTotal).toFixed(2)}. 
