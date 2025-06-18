@@ -1851,7 +1851,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="py-8 flex justify-center">
-            <Button type="submit" disabled={isSubmitting} className="w-full max-w-md py-6 text-lg">
+            <Button type="submit" disabled={isSubmitting} className="w-full max-w-md py-6 text-lg shadow-lg">
               {isSubmitting ? (
                 <>
                   <span className="mr-2">Submitting...</span>
