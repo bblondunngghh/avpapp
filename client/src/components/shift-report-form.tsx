@@ -22,6 +22,7 @@ import taskListCashIcon from "@assets/Task-List-Cash--Streamline-Ultimate_175025
 import smartphonePayIcon from "@assets/Smartphone-Pay-Dollar--Streamline-Ultimate_1750259046528.png";
 import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate_1750259103346.png";
 import notesTasksIcon from "@assets/Notes-Tasks--Streamline-Ultimate_1750259256665.png";
+import accountingBillsIcon from "@assets/Accounting-Bills-1--Streamline-Ultimate_1750259340305.png";
 import { InputMoney } from "@/components/ui/input-money";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
@@ -992,7 +993,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           
           <div className="form-card">
             <h3 className="section-title uppercase font-bold flex items-center gap-2">
-              <img src={smartphonePayIcon} alt="Smartphone Pay Dollar" className="w-4 h-4" />
+              <img src={accountingBillsIcon} alt="Accounting Bills" className="w-4 h-4" />
               FINANCIAL SUMMARY
             </h3>
             
