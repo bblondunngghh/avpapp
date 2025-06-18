@@ -628,10 +628,23 @@ export default function AdminPanel() {
       const empTips = totalTips * hoursPercent;
       const empEarnings = empCommission + empTips;
 
-      // Money owed calculation
+      // Money owed calculation using correct turn-in rates
       const receiptSales = report.totalReceipts * 18;
       const totalCollections = report.totalCreditSales + receiptSales;
-      const totalMoneyOwedOnShift = Math.max(0, totalCollections - report.totalTurnIn);
+      
+      // Calculate total turn-in using same logic as shift report form
+      let turnInRate = 11; // Default rate
+      if (locationId === 1) turnInRate = 11; // Capital Grille
+      else if (locationId === 2) turnInRate = 6;  // Bob's Steak
+      else if (locationId === 3) turnInRate = 8;  // Truluck's
+      else if (locationId === 4) turnInRate = 7;  // BOA Steakhouse
+      else if (locationId >= 5) {
+        const currentLocation = locations?.find((loc: any) => loc.id === locationId);
+        turnInRate = currentLocation?.turnInRate || 11;
+      }
+      
+      const calculatedTotalTurnIn = report.totalCars * turnInRate;
+      const totalMoneyOwedOnShift = Math.max(0, totalCollections - calculatedTotalTurnIn);
       const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
 
       // Tax calculations
