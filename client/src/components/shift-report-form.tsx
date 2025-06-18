@@ -1479,10 +1479,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   
                                   // Set commission rate based on location
                                   let commissionRate = 4; // Default for most locations
-                                  if (locationId === 3) { // Truluck's
+                                  if (locationId === 1) { // Capital Grille
+                                    commissionRate = 4;
+                                  } else if (locationId === 2) { // Bob's Steak and Chop House
+                                    commissionRate = 9;
+                                  } else if (locationId === 3) { // Truluck's
                                     commissionRate = 7;
                                   } else if (locationId === 4) { // BOA Steakhouse
                                     commissionRate = 6;
+                                  } else if (locationId === 7) { // Test location
+                                    commissionRate = 2;
                                   }
                                   
                                   const creditCardCommission = creditTransactions * commissionRate;
@@ -1512,6 +1518,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     perCarRate = 7;
                                   }
                                   const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
+                                  
+                                  // Get total turn-in from form
+                                  const totalTurnIn = form.watch('totalTurnIn') || 0;
+                                  
+                                  // Calculate total earnings for all employees
+                                  const totalEarnings = commission + tips;
                                   
                                   // Calculate for each employee
                                   formEmployees.forEach(emp => {
@@ -1560,6 +1572,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   
                                   // Add console logs to debug the values
                                   console.log('Tax Summary - Total Tax:', totalTax);
+                                  console.log('Tax Summary - Total Earnings:', totalEarnings);
                                   console.log('Tax Summary - Money Owed:', totalMoneyOwed);
                                   console.log('Tax Summary - Cash Paid:', totalCashPaid);
                                   console.log('Tax Summary - Expected Amount:', totalExpectedAmount);
