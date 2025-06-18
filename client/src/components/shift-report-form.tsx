@@ -1648,10 +1648,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   
                                   // Commission rates
                                   let commissionRate = 4; // Default for most locations
-                                  if (locationId === 3) { // Truluck's
+                                  if (locationId === 1) { // Capital Grille
+                                    commissionRate = 4;
+                                  } else if (locationId === 2) { // Bob's Steak and Chop House
+                                    commissionRate = 9;
+                                  } else if (locationId === 3) { // Truluck's
                                     commissionRate = 7;
                                   } else if (locationId === 4) { // BOA Steakhouse
                                     commissionRate = 6;
+                                  } else if (locationId === 7) { // Test location
+                                    commissionRate = 2;
                                   }
                                   
                                   // Commission calculations
@@ -1676,18 +1682,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   const totalEarnings = totalCommission + totalTips;
                                   const totalTaxAmount = totalEarnings * 0.22;
                                   
-                                  // Calculate money owed (if company cash turn in is negative)
-                                  let perCarRate = 11; // Default to Capital Grille rate
-                                  if (locationId === 2) { // Bob's Steak and Chop House
-                                    perCarRate = 6;
-                                  } else if (locationId === 3) { // Truluck's
-                                    perCarRate = 8;
-                                  } else if (locationId === 4) { // BOA Steakhouse
-                                    perCarRate = 7;
-                                  }
-                                  const companyCashTurnIn = totalCars * perCarRate - totalCreditSales;
-                                  
-                                  // Calculate total money owed to employees using correct formula
+                                  // Calculate money owed using correct formula
+                                  const totalTurnIn = form.watch('totalTurnIn') || 0;
                                   const receiptSales = totalReceipts * 18;
                                   const totalCollections = totalCreditSales + receiptSales;
                                   const calculatedMoneyOwed = Math.max(0, totalCollections - totalTurnIn);
