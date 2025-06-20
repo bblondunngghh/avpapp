@@ -30,11 +30,11 @@ export default function Dashboard() {
           }}>
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
-          <div className="bg-white rounded-2xl px-32 py-3 mb-4 shadow-lg max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl px-4 sm:px-8 md:px-16 lg:px-32 py-3 mb-4 shadow-lg max-w-2xl mx-auto">
             <img 
               src="/assets/av-parking-final-v2.png" 
               alt="Access Valet Parking Logo" 
-              className="h-36 object-contain mx-auto block"
+              className="h-24 sm:h-28 md:h-32 lg:h-36 object-contain mx-auto block"
               style={{ imageRendering: 'crisp-edges' }}
             />
           </div>
