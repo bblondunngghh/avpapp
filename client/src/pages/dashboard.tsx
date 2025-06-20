@@ -30,12 +30,14 @@ export default function Dashboard() {
           }}>
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
-          <img 
-            src="/assets/logoplease_1750438408525.jpg?v=1" 
-            alt="Access Valet Parking Logo" 
-            className="w-full max-w-2xl h-auto object-contain mx-auto mb-4 rounded-2xl shadow-lg"
-            style={{ imageRendering: 'auto' }}
-          />
+          <div className="w-full max-w-2xl mx-auto mb-4 aspect-[2.5/1] overflow-hidden rounded-2xl shadow-lg">
+            <img 
+              src="/assets/logoplease_1750438408525.jpg?v=1" 
+              alt="Access Valet Parking Logo" 
+              className="w-full h-full object-cover object-center"
+              style={{ imageRendering: 'auto' }}
+            />
+          </div>
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
             Welcome to the Access Valet Parking Management Portal. Please select from the following options.
           </p>
