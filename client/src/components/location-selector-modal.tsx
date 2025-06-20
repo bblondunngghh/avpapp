@@ -29,18 +29,18 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
-        <DialogHeader className="text-center space-y-4 pb-2">
-          <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-            <MapPin className="h-8 w-8 text-white" />
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
+        <DialogHeader className="text-center space-y-3 pb-2">
+          <div className="mx-auto w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
+            <MapPin className="h-6 w-6 text-white" />
           </div>
-          <DialogTitle className="text-2xl font-bold text-blue-900 text-center">Select Location</DialogTitle>
-          <DialogDescription className="text-center text-blue-700 text-lg">
+          <DialogTitle className="text-xl font-bold text-blue-900 text-center">Select Location</DialogTitle>
+          <DialogDescription className="text-center text-blue-700">
             Choose a location to create a new shift report
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 gap-4 mt-6 px-2">
+        <div className="grid grid-cols-1 gap-3 mt-4 px-1">
           {isLoading ? (
             <Card className="border-blue-200 shadow-md">
               <CardContent className="text-center py-8">
@@ -57,16 +57,16 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                 className="border-blue-200 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-white hover:bg-blue-50 border-2 hover:border-blue-400"
                 onClick={() => handleLocationSelect(location.id)}
               >
-                <CardContent className="flex items-center space-x-4 py-6 px-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                    <Building2 className="h-6 w-6 text-white" />
+                <CardContent className="flex items-center space-x-3 py-4 px-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                    <Building2 className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-blue-900">{location.name}</h3>
-                    <p className="text-blue-600 text-sm">Click to create report</p>
+                    <h3 className="text-lg font-bold text-blue-900">{location.name}</h3>
+                    <p className="text-blue-600 text-xs">Click to create report</p>
                   </div>
                   <div className="text-blue-400">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
