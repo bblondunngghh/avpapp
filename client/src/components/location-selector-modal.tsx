@@ -31,8 +31,12 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
         <DialogHeader className="text-center space-y-3 pb-2">
-          <div className="mx-auto w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-            <MapPin className="h-6 w-6 text-white" />
+          <div className="mx-auto w-12 h-12 flex items-center justify-center">
+            <img 
+              src="/assets/pin-location-icon.png" 
+              alt="Location Pin" 
+              className="w-12 h-12 object-contain"
+            />
           </div>
           <DialogTitle className="text-xl font-bold text-blue-900 text-center">Select Location</DialogTitle>
           <DialogDescription className="text-center text-blue-700">
