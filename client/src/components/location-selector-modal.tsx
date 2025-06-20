@@ -66,6 +66,15 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                     />
                   );
                 }
+                if (locationName.toLowerCase().includes('capital grille')) {
+                  return (
+                    <img 
+                      src="/assets/capital-grille-icon.png" 
+                      alt="Capital Grille BBQ" 
+                      className="w-6 h-6 object-contain"
+                    />
+                  );
+                }
                 return <Building2 className="h-5 w-5 text-white" />;
               };
 
