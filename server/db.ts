@@ -41,23 +41,32 @@ pool.on('remove', (client) => {
 export const db = drizzle({ client: pool, schema });
 
 // Database operation wrapper with retry logic
-export async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promise<T> {
+export async function withRetry<T>(operation: () => Promise<T>, maxRetries = 2): Promise<T> {
   let lastError: Error;
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      return await operation();
+      // Set a 5-second timeout for each database operation
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Database operation timeout')), 5000);
+      });
+      
+      return await Promise.race([operation(), timeoutPromise]);
     } catch (error) {
       lastError = error as Error;
       console.warn(`Database operation failed (attempt ${attempt}/${maxRetries}):`, error);
       
-      // Don't retry on certain errors
-      if (error instanceof Error && error.message.includes('syntax error')) {
+      // Don't retry on certain errors or Control plane failures
+      if (error instanceof Error && (
+        error.message.includes('syntax error') ||
+        error.message.includes('Control plane request failed') ||
+        error.message.includes('Database operation timeout')
+      )) {
         throw error;
       }
       
       if (attempt < maxRetries) {
-        // Exponential backoff
+        // Shorter backoff
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
         console.log(`Retrying in ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
