@@ -31,12 +31,12 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
           <img 
-            src="/assets/logoplease_1750438408525.jpg?v=1" 
+            src="/assets/logoplease_1750438969305.jpg?v=1" 
             alt="Access Valet Parking Logo" 
             className="w-full max-w-2xl h-auto object-contain mx-auto mb-4 rounded-2xl shadow-lg"
             style={{ 
               imageRendering: 'auto',
-              clipPath: 'inset(15% 0 20% 0)'
+              clipPath: 'inset(12% 0 15% 0)'
             }}
           />
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
