@@ -25,8 +25,8 @@ export default function Dashboard() {
     <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0 relative">
       <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg shadow-lg overflow-hidden">
         {/* Version display in top right corner - flush with blue container */}
-        <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-bl-lg rounded-tr-lg px-3 py-1 shadow-sm z-10">
-          <span className="text-xs text-gray-600 font-medium">{getVersionDisplay()}</span>
+        <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-bl-lg rounded-tr-lg px-2 py-0.5 shadow-sm z-10">
+          <span className="text-[10px] text-gray-600 font-medium">{getVersionDisplay()}</span>
         </div>
         <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
           style={{ 
