@@ -30,12 +30,12 @@ export default function Dashboard() {
           }}>
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
-          <div className="bg-white rounded-2xl mb-4 shadow-lg max-w-2xl mx-auto w-full overflow-hidden">
+          <div className="bg-white rounded-2xl mb-4 shadow-lg max-w-2xl mx-auto w-full">
             <img 
               src="/assets/logoplease_1750438408525.jpg?v=1" 
               alt="Access Valet Parking Logo" 
-              className="w-full h-32 sm:h-36 md:h-40 lg:h-44 object-cover"
-              style={{ imageRendering: 'crisp-edges' }}
+              className="w-full h-32 sm:h-36 md:h-40 lg:h-44 object-contain"
+              style={{ imageRendering: 'auto' }}
             />
           </div>
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
