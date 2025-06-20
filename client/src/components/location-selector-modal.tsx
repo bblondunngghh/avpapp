@@ -55,28 +55,43 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               </CardContent>
             </Card>
           ) : (
-            locations?.filter((location: any) => location.active)?.map((location: any) => (
-              <Card 
-                key={location.id}
-                className="border-blue-200 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-white hover:bg-blue-50 border-2 hover:border-blue-400"
-                onClick={() => handleLocationSelect(location.id)}
-              >
-                <CardContent className="flex items-center space-x-3 py-4 px-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                    <Building2 className="h-5 w-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-blue-900">{location.name}</h3>
-                    <p className="text-blue-600 text-xs">Click to create report</p>
-                  </div>
-                  <div className="text-blue-400">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </CardContent>
-              </Card>
-            )) || (
+            locations?.filter((location: any) => location.active)?.map((location: any) => {
+              const getLocationIcon = (locationName: string) => {
+                if (locationName.toLowerCase().includes('truluck')) {
+                  return (
+                    <img 
+                      src="/assets/trulucks-crab-icon.png" 
+                      alt="Truluck's Crab" 
+                      className="w-6 h-6 object-contain"
+                    />
+                  );
+                }
+                return <Building2 className="h-5 w-5 text-white" />;
+              };
+
+              return (
+                <Card 
+                  key={location.id}
+                  className="border-blue-200 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-white hover:bg-blue-50 border-2 hover:border-blue-400"
+                  onClick={() => handleLocationSelect(location.id)}
+                >
+                  <CardContent className="flex items-center space-x-3 py-4 px-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                      {getLocationIcon(location.name)}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-blue-900">{location.name}</h3>
+                      <p className="text-blue-600 text-xs">Click to create report</p>
+                    </div>
+                    <div className="text-blue-400">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            }) || (
               <Card className="border-blue-200 shadow-md">
                 <CardContent className="text-center py-8">
                   <div className="flex flex-col items-center space-y-3">
