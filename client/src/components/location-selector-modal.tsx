@@ -84,6 +84,15 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                     />
                   );
                 }
+                if (locationName.toLowerCase().includes('bob')) {
+                  return (
+                    <img 
+                      src="/assets/bobs-steak-icon.png" 
+                      alt="Bob's Steak" 
+                      className="w-6 h-6 object-contain"
+                    />
+                  );
+                }
                 return <Building2 className="h-5 w-5 text-white" />;
               };
 
