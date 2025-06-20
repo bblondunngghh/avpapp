@@ -16,11 +16,23 @@ interface LocationSelectorModalProps {
 export default function LocationSelectorModal({ isOpen, onClose }: LocationSelectorModalProps) {
   const [, navigate] = useLocation();
   
-  // Fetch locations from API
-  const { data: locations, isLoading } = useQuery({
+  // Fetch locations from API with fallback
+  const { data: locations, isLoading, error } = useQuery({
     queryKey: ["/api/locations"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: 2,
+    retryDelay: 1000,
   });
+
+  // Fallback locations if API fails
+  const fallbackLocations = [
+    { id: 1, name: "The Capital Grille", active: true },
+    { id: 2, name: "Bob's Steak & Chop House", active: true },
+    { id: 3, name: "Truluck's", active: true },
+    { id: 4, name: "BOA Steakhouse", active: true }
+  ];
+
+  const displayLocations = locations || (error ? fallbackLocations : null);
   
   const handleLocationSelect = (locationId: number) => {
     navigate(`/new-report?locationId=${locationId}`);
@@ -45,7 +57,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
         </DialogHeader>
         
         <div className="grid grid-cols-1 gap-3 mt-4 px-1">
-          {isLoading ? (
+          {isLoading && !error ? (
             <Card className="border-blue-200 shadow-md">
               <CardContent className="text-center py-8">
                 <div className="animate-pulse flex flex-col items-center space-y-3">
@@ -55,7 +67,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               </CardContent>
             </Card>
           ) : (
-            locations?.filter((location: any) => location.active)?.map((location: any) => {
+            displayLocations?.filter((location: any) => location.active)?.map((location: any) => {
               const getLocationIcon = (locationName: string) => {
                 if (locationName.toLowerCase().includes('truluck')) {
                   return (

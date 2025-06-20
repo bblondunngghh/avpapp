@@ -7,6 +7,7 @@ import * as schema from "@shared/schema";
 neonConfig.webSocketConstructor = ws;
 neonConfig.useSecureWebSocket = true;
 neonConfig.pipelineConnect = false;
+neonConfig.poolQueryViaFetch = true;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -17,12 +18,12 @@ if (!process.env.DATABASE_URL) {
 // Enhanced connection configuration for production stability
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  max: 5, // Further reduced for serverless stability
-  idleTimeoutMillis: 30000, // Increase idle timeout
-  connectionTimeoutMillis: 10000, // Increase connection timeout
-  keepAlive: true,
-  maxUses: 7500, // Limit connection reuse
-  allowExitOnIdle: false,
+  max: 3, // Reduce max connections
+  idleTimeoutMillis: 20000, // Reduce idle timeout
+  connectionTimeoutMillis: 5000, // Reduce connection timeout
+  keepAlive: false, // Disable keepAlive for serverless
+  maxUses: 1000, // Reduce connection reuse
+  allowExitOnIdle: true,
 });
 
 // Add connection error handling
