@@ -30,7 +30,7 @@ export default function Dashboard() {
           }}>
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
-          <div className="bg-white rounded-2xl mb-4 shadow-lg max-w-2xl mx-auto w-full aspect-[3/1] overflow-hidden">
+          <div className="bg-white rounded-2xl mb-4 shadow-lg max-w-2xl mx-auto w-full aspect-[4/1] overflow-hidden">
             <img 
               src="/assets/logoplease_1750438408525.jpg?v=1" 
               alt="Access Valet Parking Logo" 
