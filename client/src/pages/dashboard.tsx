@@ -36,7 +36,7 @@ export default function Dashboard() {
             className="w-full max-w-2xl h-auto object-contain mx-auto mb-4 shadow-lg"
             style={{ 
               imageRendering: 'auto',
-              clipPath: 'inset(18% 0 30% 0)',
+              clipPath: 'inset(18% 0 15% 0)',
               borderRadius: '1rem'
             }}
           />
