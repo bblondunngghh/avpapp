@@ -219,18 +219,6 @@ export class DatabaseStorage implements IStorage {
       // Fallback to hardcoded locations during DB outage - data preserved in DB
       return [
         {
-          id: 3,
-          name: "Truluck's",
-          phone: "(214) 220-2401",
-          active: true,
-          curbsideRate: 12.00,
-          turnInRate: 7.00,
-          employeeCommission: 0.75,
-          logoUrl: null,
-          address: "2401 McKinney Ave, Dallas, TX 75201",
-          website: null
-        },
-        {
           id: 1,
           name: "The Capital Grille",
           phone: "(214) 303-0500",
@@ -252,6 +240,18 @@ export class DatabaseStorage implements IStorage {
           employeeCommission: 0.60,
           logoUrl: null,
           address: "4300 Lemmon Ave, Dallas, TX 75219",
+          website: null
+        },
+        {
+          id: 3,
+          name: "Truluck's",
+          phone: "(214) 220-2401",
+          active: true,
+          curbsideRate: 12.00,
+          turnInRate: 7.00,
+          employeeCommission: 0.75,
+          logoUrl: null,
+          address: "2401 McKinney Ave, Dallas, TX 75201",
           website: null
         },
         {
