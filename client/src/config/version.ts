@@ -1,6 +1,6 @@
 // Update this number each time you deploy the application
-export const APP_VERSION = "1.0.0";
-export const DEPLOYMENT_COUNT = 1;
+export const APP_VERSION = "2.0.7";
+export const DEPLOYMENT_COUNT = 7;
 
-// Format: "v{DEPLOYMENT_COUNT}.0.0" or custom format
-export const getVersionDisplay = () => `v${DEPLOYMENT_COUNT}.0.0`;
+// Format: "v2.0.{DEPLOYMENT_COUNT}" starting from 2.0.7
+export const getVersionDisplay = () => `v2.0.${DEPLOYMENT_COUNT}`;
