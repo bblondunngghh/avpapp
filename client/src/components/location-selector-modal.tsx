@@ -33,8 +33,8 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
         <DialogHeader className="text-center space-y-3 pb-2">
           <div className="mx-auto w-12 h-12 flex items-center justify-center">
             <img 
-              src="/assets/pin-location-icon.png" 
-              alt="Location Pin" 
+              src="/assets/shop-pin-icon.png" 
+              alt="Shop Location Pin" 
               className="w-12 h-12 object-contain"
             />
           </div>
