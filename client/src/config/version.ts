@@ -1,5 +1,5 @@
 // Update this number each time you deploy the application
-export const DEPLOYMENT_COUNT = 10;
+export const DEPLOYMENT_COUNT = 11;
 
 // Semantic versioning with automatic rollover
 // After v2.0.10, versions become v2.1.1, v2.1.2, etc.
