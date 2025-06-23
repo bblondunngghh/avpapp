@@ -47,15 +47,6 @@ export default function Dashboard() {
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
             Welcome to the Access Valet Parking Management Portal. Please select from the following options.
           </p>
-          <div className="mt-4">
-            <a 
-              href="/app-icon-preview.html" 
-              target="_blank"
-              className="inline-block bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm transition-all duration-200"
-            >
-              View App Icon Preview
-            </a>
-          </div>
         </div>
       </div>
       
