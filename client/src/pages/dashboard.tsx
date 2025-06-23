@@ -9,7 +9,7 @@ import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png"
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import roadSignTurnRightIcon from "@assets/Road-Sign-Turn-Right-1--Streamline-Ultimate.png";
-import newLogoImage from "@assets/screenshot_new-1.png";
+import newLogoImage from "@assets/22555 [Recovered]_1750699448543.jpg";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 import { getVersionDisplay } from "@/config/version";
