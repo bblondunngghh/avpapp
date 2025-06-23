@@ -5295,10 +5295,15 @@ export default function AdminPanel() {
                 selectedWeekEnd.setDate(selectedWeekStart.getDate() + 6);
                 selectedWeekEnd.setHours(23, 59, 59, 999);
 
+                // Debug: Log the selected week range
+                console.log('Selected week range:', selectedWeekStart.toISOString(), 'to', selectedWeekEnd.toISOString());
+                console.log('Available reports:', reports.length);
+
                 // Process reports for selected week
                 reports.forEach((report: any) => {
                   // Parse date correctly to avoid timezone issues
                   const reportDate = parseReportDate(report.date);
+                  console.log('Checking report:', report.date, 'parsed as:', reportDate.toISOString(), 'in range?', reportDate >= selectedWeekStart && reportDate <= selectedWeekEnd);
                   
                   if (reportDate >= selectedWeekStart && reportDate <= selectedWeekEnd) {
                     let reportEmployees = [];
@@ -5317,6 +5322,11 @@ export default function AdminPanel() {
                       reportEmployees = [];
                     }
 
+                    // Debug logging to see what data we're working with
+                    if (reportEmployees.length > 0) {
+                      console.log('Processing report from', report.date, 'with employees:', reportEmployees);
+                    }
+
                     if (Array.isArray(reportEmployees) && reportEmployees.length > 0) {
                       reportEmployees.forEach((emp: any) => {
                         // Employee data is stored with 'name' field containing the employee key
@@ -5326,12 +5336,16 @@ export default function AdminPanel() {
                           weeklyHours[emp.name].weeklyBreakdown[dayName] = (weeklyHours[emp.name].weeklyBreakdown[dayName] || 0) + emp.hours;
                           weeklyHours[emp.name].totalHours += emp.hours;
                           
+                          console.log(`Added ${emp.hours} hours for ${emp.name} on ${dayName}. Total: ${weeklyHours[emp.name].totalHours}`);
+                          
                           // Determine status
                           if (weeklyHours[emp.name].totalHours >= 38) {
                             weeklyHours[emp.name].status = 'critical';
                           } else if (weeklyHours[emp.name].totalHours >= 30) {
                             weeklyHours[emp.name].status = 'warning';
                           }
+                        } else {
+                          console.log('Employee not found or invalid hours:', emp);
                         }
                       });
                     }
