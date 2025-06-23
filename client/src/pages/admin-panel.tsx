@@ -1996,11 +1996,11 @@ export default function AdminPanel() {
                     }
 
                     weeklyEmployees.forEach((emp: any) => {
-                      if (emp && emp.key && typeof emp.hours === 'number') {
-                        if (!weeklyHours[emp.key]) {
-                          weeklyHours[emp.key] = { totalHours: 0 };
+                      if (emp && emp.name && typeof emp.hours === 'number') {
+                        if (!weeklyHours[emp.name]) {
+                          weeklyHours[emp.name] = { totalHours: 0 };
                         }
-                        weeklyHours[emp.key].totalHours += emp.hours;
+                        weeklyHours[emp.name].totalHours += emp.hours;
                       }
                     });
                   }
@@ -5319,20 +5319,20 @@ export default function AdminPanel() {
 
                     if (Array.isArray(reportEmployees) && reportEmployees.length > 0) {
                       reportEmployees.forEach((emp: any) => {
-                        // Find employee by name since shift reports store employee.name, not employee.key
-                      const employee = (employeeRecords || []).find((e: any) => e.fullName === emp.name || e.key === emp.name);
-                      if (employee && weeklyHours[employee.key]) {
-                        const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
-                        weeklyHours[employee.key].weeklyBreakdown[dayName] = (weeklyHours[employee.key].weeklyBreakdown[dayName] || 0) + emp.hours;
-                        weeklyHours[employee.key].totalHours += emp.hours;
-                        
-                        // Determine status
-                        if (weeklyHours[employee.key].totalHours >= 38) {
-                          weeklyHours[employee.key].status = 'critical';
-                        } else if (weeklyHours[employee.key].totalHours >= 30) {
-                          weeklyHours[employee.key].status = 'warning';
+                        // Employee data is stored with 'name' field containing the employee key
+                        // Check if we have this employee in our weeklyHours tracking
+                        if (emp.name && weeklyHours[emp.name] && typeof emp.hours === 'number') {
+                          const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
+                          weeklyHours[emp.name].weeklyBreakdown[dayName] = (weeklyHours[emp.name].weeklyBreakdown[dayName] || 0) + emp.hours;
+                          weeklyHours[emp.name].totalHours += emp.hours;
+                          
+                          // Determine status
+                          if (weeklyHours[emp.name].totalHours >= 38) {
+                            weeklyHours[emp.name].status = 'critical';
+                          } else if (weeklyHours[emp.name].totalHours >= 30) {
+                            weeklyHours[emp.name].status = 'warning';
+                          }
                         }
-                      }
                       });
                     }
                   }
