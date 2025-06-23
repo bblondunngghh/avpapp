@@ -9,7 +9,7 @@ import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png"
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import roadSignTurnRightIcon from "@assets/Road-Sign-Turn-Right-1--Streamline-Ultimate.png";
-import newLogoImage from "@assets/AVPLOGO PROPER_1750710670867.png";
+import newLogoImage from "@assets/AVPLOGO PROPER_1750710771603.png";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 import { getVersionDisplay } from "@/config/version";
@@ -39,7 +39,7 @@ export default function Dashboard() {
           <img 
             src={newLogoImage} 
             alt="Access Valet Parking Logo" 
-            className="w-48 h-auto object-contain mx-auto mb-4"
+            className="w-64 h-auto object-contain mx-auto mb-4"
             style={{ 
               imageRendering: 'auto'
             }}
