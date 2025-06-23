@@ -1999,7 +1999,7 @@ export default function AdminPanel() {
                       // If JSON parsing fails, try alternative parsing for malformed data
                       try {
                         if (typeof report.employees === 'string') {
-                          // Handle the specific format from the database: {"{"name":"ryan","hours":5,"cashPaid":0}"}
+                          // Handle the specific format from the database: {"{"name":"ryan","hours":5,"cashPaid":0}","{"name":"jacob","hours":7.5,"cashPaid":0}"}
                           let cleanedData = report.employees;
                           
                           // Remove outer braces and quotes
@@ -2010,8 +2010,29 @@ export default function AdminPanel() {
                           // Fix escaped quotes
                           cleanedData = cleanedData.replace(/\\"/g, '"');
                           
-                          // Wrap in array brackets if it's a single object
-                          if (!cleanedData.startsWith('[')) {
+                          // Handle multiple employee objects separated by commas with quotes
+                          // Pattern: {"name":"devin","hours":8,"cashPaid":0}","{"name":"jacob","hours":7.5,"cashPaid":0}
+                          if (cleanedData.includes('"},"{')) {
+                            const parts = cleanedData.split('"},"{');
+                            cleanedData = '[' + parts.map((part, index) => {
+                              // Add missing braces
+                              if (index === 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index === parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              if (index > 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index < parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              return part;
+                            }).join(',') + ']';
+                          } else if (cleanedData.includes('},{')) {
+                            // Handle the case where it's just },{ without quotes
+                            const parts = cleanedData.split('},{');
+                            cleanedData = '[' + parts.map((part, index) => {
+                              if (index === 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index === parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              if (index > 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index < parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              return part;
+                            }).join(',') + ']';
+                          } else if (!cleanedData.startsWith('[')) {
                             cleanedData = '[' + cleanedData + ']';
                           }
                           
@@ -5353,7 +5374,7 @@ export default function AdminPanel() {
                       // If JSON parsing fails, try alternative parsing for malformed data
                       try {
                         if (typeof report.employees === 'string') {
-                          // Handle the specific format from the database: {"{"name":"ryan","hours":5,"cashPaid":0}"}
+                          // Handle the specific format from the database: {"{"name":"ryan","hours":5,"cashPaid":0}","{"name":"jacob","hours":7.5,"cashPaid":0}"}
                           let cleanedData = report.employees;
                           
                           // Remove outer braces and quotes
@@ -5364,8 +5385,29 @@ export default function AdminPanel() {
                           // Fix escaped quotes
                           cleanedData = cleanedData.replace(/\\"/g, '"');
                           
-                          // Wrap in array brackets if it's a single object
-                          if (!cleanedData.startsWith('[')) {
+                          // Handle multiple employee objects separated by commas with quotes
+                          // Pattern: {"name":"devin","hours":8,"cashPaid":0}","{"name":"jacob","hours":7.5,"cashPaid":0}
+                          if (cleanedData.includes('"},"{')) {
+                            const parts = cleanedData.split('"},"{');
+                            cleanedData = '[' + parts.map((part, index) => {
+                              // Add missing braces
+                              if (index === 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index === parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              if (index > 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index < parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              return part;
+                            }).join(',') + ']';
+                          } else if (cleanedData.includes('},{')) {
+                            // Handle the case where it's just },{ without quotes
+                            const parts = cleanedData.split('},{');
+                            cleanedData = '[' + parts.map((part, index) => {
+                              if (index === 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index === parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              if (index > 0 && !part.startsWith('{')) part = '{' + part;
+                              if (index < parts.length - 1 && !part.endsWith('}')) part = part + '}';
+                              return part;
+                            }).join(',') + ']';
+                          } else if (!cleanedData.startsWith('[')) {
                             cleanedData = '[' + cleanedData + ']';
                           }
                           
