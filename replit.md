@@ -1,0 +1,100 @@
+# Access Valet Parking Management System
+
+## Overview
+
+This is a comprehensive valet parking shift management system built for restaurant clients including The Capital Grille, Bob's Steak and Chop House, Truluck's, and BOA Steakhouse. The application provides both employee and admin interfaces for shift reporting, employee management, and financial tracking.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **UI Library**: Radix UI components with Tailwind CSS for styling
+- **State Management**: TanStack Query for server state management
+- **Routing**: Wouter for lightweight client-side routing
+- **Form Handling**: React Hook Form with Zod validation
+
+### Backend Architecture
+- **Runtime**: Node.js with Express server
+- **Database**: PostgreSQL via Neon serverless
+- **ORM**: Drizzle ORM for type-safe database operations
+- **File Uploads**: Multer for handling multipart/form-data
+- **Email**: Nodemailer with configurable SMTP providers
+
+### Data Storage Solutions
+- **Primary Database**: PostgreSQL (Neon serverless)
+- **File Storage**: Local filesystem for uploaded documents/images
+- **Session Storage**: PostgreSQL-based sessions using connect-pg-simple
+- **Client Storage**: localStorage for authentication state
+
+## Key Components
+
+### Employee Management
+- Employee records with SSN-based key generation
+- Payroll tracking with commission and tip calculations
+- Shift leader designation and active status management
+- Contact information and hire date tracking
+
+### Shift Reporting
+- Location-specific shift reports (Lunch/Dinner)
+- Financial tracking (cash, credit card, receipts)
+- Employee hour logging with automatic payroll calculations
+- Manager assignment and notes
+
+### Location Management
+- Four restaurant locations with unique configurations
+- Location-specific reporting and analytics
+- Ticket distribution tracking per location
+
+### Authentication System
+- Admin authentication with configurable session timeout
+- Employee login using employee ID and last 4 SSN digits
+- Biometric authentication support for compatible devices
+
+### Mobile Optimization
+- Responsive design with mobile-first approach
+- Platform-specific handling for iOS devices
+- Progressive Web App capabilities
+
+## Data Flow
+
+1. **Shift Entry**: Managers submit shift reports through location-specific forms
+2. **Employee Tracking**: System automatically calculates payroll based on shift data
+3. **Financial Processing**: Real-time calculations for commissions, tips, and taxes
+4. **Data Validation**: Server-side validation prevents data integrity issues
+5. **Reporting**: Admin dashboard provides comprehensive analytics and export capabilities
+
+## External Dependencies
+
+### Core Dependencies
+- `@neondatabase/serverless`: PostgreSQL database connection
+- `drizzle-orm`: Type-safe database operations
+- `@tanstack/react-query`: Server state management
+- `@radix-ui/*`: UI component primitives
+- `react-hook-form`: Form state management
+- `zod`: Runtime type validation
+
+### Email Integration
+- `nodemailer`: Email sending capability
+- `@sendgrid/mail`: Alternative email provider
+
+### File Processing
+- `multer`: File upload handling
+- Support for PDF documents and images
+
+## Deployment Strategy
+
+- **Platform**: Replit with autoscale deployment
+- **Database**: Neon PostgreSQL serverless
+- **Build Process**: Vite production build with Express server bundling
+- **Environment**: Node.js 20 with PostgreSQL 16 module
+- **Port Configuration**: Internal port 5000, external port 80
+
+## Changelog
+
+Changelog:
+- June 23, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
