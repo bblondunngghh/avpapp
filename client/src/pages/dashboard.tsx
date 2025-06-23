@@ -9,6 +9,7 @@ import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png"
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import roadSignTurnRightIcon from "@assets/Road-Sign-Turn-Right-1--Streamline-Ultimate.png";
+import newLogoImage from "@assets/screenshot_new-1.png";
 
 import LocationSelectorModal from "@/components/location-selector-modal";
 import { getVersionDisplay } from "@/config/version";
@@ -36,7 +37,7 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
           <img 
-            src="/assets/screenshot_new-1.png" 
+            src={newLogoImage} 
             alt="Access Valet Parking Logo" 
             className="w-full max-w-2xl h-auto object-contain mx-auto mb-4 shadow-lg rounded-2xl"
             style={{ 
