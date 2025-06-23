@@ -90,10 +90,12 @@ This is a comprehensive valet parking shift management system built for restaura
 - **Environment**: Node.js 20 with PostgreSQL 16 module
 - **Port Configuration**: Internal port 5000, external port 80
 
-## Changelog
+## Recent Changes
 
-Changelog:
-- June 23, 2025. Initial setup
+- June 23, 2025: Fixed hours tracker in admin panel - resolved JSON parsing issues for employee hours data
+- June 23, 2025: Updated hours tracker to handle multiple employee data formats from database
+- June 23, 2025: Hours tracker now correctly displays weekly employee hours and overtime alerts
+- June 23, 2025: Initial system setup with automated versioning
 
 ## User Preferences
 

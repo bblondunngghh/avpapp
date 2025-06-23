@@ -5338,6 +5338,7 @@ export default function AdminPanel() {
                   };
                 });
 
+
                 // Get selected week start (Sunday)
                 const today = new Date();
                 const selectedWeekStart = new Date(today);
