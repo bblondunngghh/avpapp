@@ -36,7 +36,7 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
           <img 
-            src="/assets/access-valet-newest-logo.png" 
+            src="/assets/screenshot_new-1.png" 
             alt="Access Valet Parking Logo" 
             className="w-full max-w-2xl h-auto object-contain mx-auto mb-4 shadow-lg rounded-2xl"
             style={{ 
