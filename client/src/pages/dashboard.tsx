@@ -36,6 +36,9 @@ export default function Dashboard() {
           }}>
         </div>
         <div className="flex flex-col items-center justify-center relative z-10">
+          <p className="text-blue-50 max-w-2xl mx-auto text-lg mb-4">
+            Welcome to the Access Valet Parking Management Portal.
+          </p>
           <img 
             src={newLogoImage} 
             alt="Access Valet Parking Logo" 
@@ -45,7 +48,7 @@ export default function Dashboard() {
             }}
           />
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">
-            Welcome to the Access Valet Parking Management Portal. Please select from the following options.
+            Please select from the following options.
           </p>
         </div>
       </div>
