@@ -26,7 +26,7 @@ export default function Dashboard() {
     <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0 relative">
       <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg overflow-hidden">
         {/* Version display in top right corner */}
-        <span className="absolute top-3 right-3 text-xs text-white/80 font-medium z-10">
+        <span className="absolute top-3 right-3 text-xs text-white/80 font-medium z-10" style={{ fontFamily: 'Roboto, sans-serif' }}>
           Version {getVersionDisplay().replace('v', '')}
         </span>
         <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
