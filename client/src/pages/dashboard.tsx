@@ -26,9 +26,9 @@ export default function Dashboard() {
     <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0 relative">
       <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg overflow-hidden">
         {/* Version display in top right corner */}
-        <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm border border-gray-300 rounded-lg px-3 py-1 shadow-lg z-10">
-          <span className="text-xs text-gray-700 font-semibold">{getVersionDisplay()}</span>
-        </div>
+        <span className="absolute top-3 right-3 text-xs text-white/80 font-medium z-10">
+          Version {getVersionDisplay().replace('v', '')}
+        </span>
         <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
           style={{ 
             backgroundImage: "radial-gradient(circle at 25px 25px, rgba(255,255,255,0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255,255,255,0.15) 2%, transparent 0%)",
