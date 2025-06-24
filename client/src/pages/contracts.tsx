@@ -693,10 +693,10 @@ export default function Contracts() {
           firstPage.drawEllipse({
             x: coords.x,
             y: coords.y,
-            xScale: width / 2,
-            yScale: 6, // Reduced height for more pill-like shape
+            xScale: width / 1.5, // Increased horizontal stretch
+            yScale: 4, // Much smaller vertical scale for pill shape
             borderColor: rgb(0, 0, 0),
-            borderWidth: 1.2,
+            borderWidth: 1.0,
             opacity: 0,
           });
         }
