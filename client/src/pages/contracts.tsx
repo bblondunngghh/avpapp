@@ -227,20 +227,172 @@ export default function Contracts() {
   const generateTemporaryValetPDF = async () => {
     setIsGenerating(true);
     try {
-      // Create PDF with form fields filled
       const pdf = new jsPDF();
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 20;
+      const margin = 15;
       let yPosition = margin;
+
+      // Helper function to add form field lines
+      const addFormField = (label: string, value: string, x: number, y: number, width: number = 60) => {
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.text(label, x, y);
+        
+        // Draw underline for form field
+        pdf.line(x, y + 2, x + width, y + 2);
+        
+        // Add the value above the line
+        if (value) {
+          pdf.setFontSize(8);
+          pdf.text(value, x + 2, y - 1);
+        }
+      };
 
       // Header
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       pdf.text('Austin Transportation Department', pageWidth / 2, yPosition, { align: 'center' });
-      yPosition += 5;
+      yPosition += 6;
       pdf.text('Right of Way Management Division', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 6;
+      pdf.text('P.O. Box 1088, Austin, Texas 78767', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 15;
+
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Application for Valet Zone - Temporary', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 20;
+
+      // APPLICANT INFORMATION Section
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('APPLICANT INFORMATION:', margin, yPosition);
       yPosition += 5;
+      
+      pdf.setFontSize(8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('The Applicant listed here MUST sign on page 2 of this application. Applicant must provide Certificate of Insurance if not', margin, yPosition);
+      yPosition += 4;
+      pdf.text('already on file.', margin, yPosition);
+      yPosition += 8;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Applicant Contact Information:', margin, yPosition);
+      yPosition += 8;
+
+      // Company Name field
+      addFormField('Company Name', temporaryValetData.companyName, margin, yPosition, 120);
+      yPosition += 10;
+
+      // Primary Contact Name field
+      addFormField('Primary Contact Name', temporaryValetData.primaryContact, margin, yPosition, 120);
+      yPosition += 10;
+
+      // Phone Number and Alternative Phone fields (side by side)
+      addFormField('Phone Number', temporaryValetData.phoneNumber, margin, yPosition, 55);
+      addFormField('Alternative Phone Number', temporaryValetData.altPhoneNumber, margin + 100, yPosition, 55);
+      yPosition += 10;
+
+      // Mailing Address fields
+      addFormField('Mailing Address', temporaryValetData.mailingAddress, margin, yPosition, 70);
+      addFormField('City', temporaryValetData.city, margin + 80, yPosition, 35);
+      addFormField('State', temporaryValetData.state, margin + 125, yPosition, 15);
+      addFormField('Zip', temporaryValetData.zip, margin + 150, yPosition, 25);
+      yPosition += 10;
+
+      // Email Address field
+      addFormField('Email Address', temporaryValetData.email, margin, yPosition, 120);
+      yPosition += 15;
+
+      // PROPOSED ZONE INFORMATION Section
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.text('PROPOSED ZONE INFORMATION:', margin, yPosition);
+      yPosition += 8;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Proposed Valet Location:', margin, yPosition);
+      yPosition += 8;
+
+      // Block Number, Street Name, Number of Spaces fields
+      addFormField('Block Number', temporaryValetData.blockNumber, margin, yPosition, 25);
+      addFormField('Street Name', temporaryValetData.streetName, margin + 35, yPosition, 70);
+      addFormField('Number of Spaces Requested', temporaryValetData.spacesRequested, margin + 115, yPosition, 20);
+      yPosition += 10;
+
+      // Curb Side and Block End with circles
+      pdf.text('Curb Side (circle one) -- North South East West', margin, yPosition);
+      pdf.text('Block End (circle one) -- North South East West Midblock', margin + 100, yPosition);
+      
+      // Circle the selected options
+      if (temporaryValetData.curbSide) {
+        const curbOptions = ['North', 'South', 'East', 'West'];
+        const curbIndex = curbOptions.indexOf(temporaryValetData.curbSide);
+        if (curbIndex !== -1) {
+          pdf.circle(margin + 45 + (curbIndex * 12), yPosition - 2, 3);
+        }
+      }
+      
+      if (temporaryValetData.blockEnd) {
+        const blockOptions = ['North', 'South', 'East', 'West', 'Midblock'];
+        const blockIndex = blockOptions.indexOf(temporaryValetData.blockEnd);
+        if (blockIndex !== -1) {
+          pdf.circle(margin + 145 + (blockIndex * 12), yPosition - 2, 3);
+        }
+      }
+      yPosition += 10;
+
+      // Pay Station/Meter Numbers
+      pdf.text('Pay Station or Meter Numbers:', margin, yPosition);
+      yPosition += 6;
+      for (let i = 0; i < 4; i++) {
+        addFormField(`PS# / Meter #`, temporaryValetData.payStationNumbers[i] || '', margin + (i * 45), yPosition, 40);
+      }
+      yPosition += 10;
+
+      pdf.text('AND/OR', margin, yPosition);
+      yPosition += 6;
+      addFormField('Description of Unmetered Area', temporaryValetData.unmmeteredDescription, margin, yPosition, 150);
+      yPosition += 8;
+      pdf.setFontSize(7);
+      pdf.text('(If an area does NOT have marked parking spaces, then one space will be assessed for every 22 feet in curb length.)', margin, yPosition);
+      yPosition += 10;
+
+      // Proposed Valet Time and Date
+      pdf.setFontSize(9);
+      pdf.text('Proposed Valet Time and Date:', margin, yPosition);
+      yPosition += 8;
+
+      addFormField('Date(s):', temporaryValetData.eventDates, margin, yPosition, 80);
+      yPosition += 10;
+
+      addFormField('From:', temporaryValetData.fromTime, margin, yPosition, 25);
+      addFormField('To:', temporaryValetData.toTime, margin + 40, yPosition, 25);
+      
+      // Days checkboxes
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      pdf.text('Monday Tuesday Wednesday Thursday Friday Saturday Sunday', margin + 80, yPosition);
+      days.forEach((day, index) => {
+        const isSelected = temporaryValetData.selectedDays.includes(day);
+        if (isSelected) {
+          pdf.rect(margin + 80 + (index * 19), yPosition - 4, 3, 3, 'F');
+        } else {
+          pdf.rect(margin + 80 + (index * 19), yPosition - 4, 3, 3);
+        }
+      });
+      
+      // Add page 2 for LICENSED VALET OPERATOR INFORMATION
+      pdf.addPage();
+      yPosition = margin;
+
+      // Page 2 Header
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Austin Transportation Department', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 6;
+      pdf.text('Right of Way Management Division', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 6;
       pdf.text('P.O. Box 1088, Austin, Texas 78767', pageWidth / 2, yPosition, { align: 'center' });
       yPosition += 15;
 
@@ -248,115 +400,104 @@ export default function Contracts() {
       pdf.text('Application for Valet Zone - Temporary', pageWidth / 2, yPosition, { align: 'center' });
       yPosition += 20;
 
-      // Applicant Information
+      // LICENSED VALET OPERATOR INFORMATION
       pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('APPLICANT INFORMATION:', margin, yPosition);
-      yPosition += 10;
-
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Company Name: ${temporaryValetData.companyName}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`Primary Contact Name: ${temporaryValetData.primaryContact}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`Phone Number: ${temporaryValetData.phoneNumber}`, margin, yPosition);
-      pdf.text(`Alternative Phone Number: ${temporaryValetData.altPhoneNumber}`, margin + 100, yPosition);
-      yPosition += 5;
-      pdf.text(`Mailing Address: ${temporaryValetData.mailingAddress}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`City: ${temporaryValetData.city}`, margin, yPosition);
-      pdf.text(`State: ${temporaryValetData.state}`, margin + 60, yPosition);
-      pdf.text(`Zip: ${temporaryValetData.zip}`, margin + 100, yPosition);
-      yPosition += 5;
-      pdf.text(`Email Address: ${temporaryValetData.email}`, margin, yPosition);
-      yPosition += 15;
-
-      // Proposed Zone Information
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('PROPOSED ZONE INFORMATION:', margin, yPosition);
-      yPosition += 10;
-
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Block Number: ${temporaryValetData.blockNumber}`, margin, yPosition);
-      pdf.text(`Street Name: ${temporaryValetData.streetName}`, margin + 60, yPosition);
-      pdf.text(`Number of Spaces Requested: ${temporaryValetData.spacesRequested}`, margin + 120, yPosition);
-      yPosition += 5;
-      pdf.text(`Curb Side: ${temporaryValetData.curbSide}`, margin, yPosition);
-      pdf.text(`Block End: ${temporaryValetData.blockEnd}`, margin + 80, yPosition);
-      yPosition += 8;
-
-      // Pay Station Numbers
-      const payStations = temporaryValetData.payStationNumbers.filter(ps => ps.trim()).join(', ');
-      pdf.text(`Pay Station/Meter Numbers: ${payStations}`, margin, yPosition);
-      yPosition += 5;
-      if (temporaryValetData.unmmeteredDescription) {
-        pdf.text(`Unmetered Area Description: ${temporaryValetData.unmmeteredDescription}`, margin, yPosition);
-        yPosition += 5;
-      }
-      yPosition += 5;
-
-      // Time and Date
-      pdf.text(`Date(s): ${temporaryValetData.eventDates}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`From: ${temporaryValetData.fromTime} To: ${temporaryValetData.toTime}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`Days: ${temporaryValetData.selectedDays.join(', ')}`, margin, yPosition);
-      yPosition += 15;
-
-      // Valet Operator Information
-      pdf.setFont('helvetica', 'bold');
       pdf.text('LICENSED VALET OPERATOR INFORMATION:', margin, yPosition);
+      yPosition += 5;
+      pdf.setFontSize(8);
+      pdf.text('The Valet Operator requesting the License will be the Permit Holder of record.', margin, yPosition);
       yPosition += 10;
 
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Licensed Valet Operator Name: ${temporaryValetData.valetOperatorName}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`Primary Contact Name: ${temporaryValetData.valetContact}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`24 Hour Emergency Number: ${temporaryValetData.emergencyNumber}`, margin, yPosition);
-      pdf.text(`Alternative Phone Number: ${temporaryValetData.valetAltPhone}`, margin + 100, yPosition);
-      yPosition += 5;
-      pdf.text(`Mailing Address: ${temporaryValetData.valetAddress}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`City: ${temporaryValetData.valetCity}`, margin, yPosition);
-      pdf.text(`State: ${temporaryValetData.valetState}`, margin + 60, yPosition);
-      pdf.text(`Zip: ${temporaryValetData.valetZip}`, margin + 100, yPosition);
-      yPosition += 5;
-      pdf.text(`Email Address: ${temporaryValetData.valetEmail}`, margin, yPosition);
-      yPosition += 5;
-      pdf.text(`Permit Expiration: ${temporaryValetData.permitExpiration}`, margin, yPosition);
-      pdf.text(`Insurance Expiration: ${temporaryValetData.insuranceExpiration}`, margin + 100, yPosition);
+      addFormField('Licensed Valet Operator Name', temporaryValetData.valetOperatorName, margin, yPosition, 120);
+      yPosition += 10;
+      addFormField('Primary Contact Name', temporaryValetData.valetContact, margin, yPosition, 120);
+      yPosition += 10;
+      addFormField('24 Hour Emergency Number', temporaryValetData.emergencyNumber, margin, yPosition, 55);
+      addFormField('Alternative Phone Number', temporaryValetData.valetAltPhone, margin + 100, yPosition, 55);
+      yPosition += 10;
+      addFormField('Mailing Address', temporaryValetData.valetAddress, margin, yPosition, 70);
+      addFormField('City', temporaryValetData.valetCity, margin + 80, yPosition, 35);
+      addFormField('State', temporaryValetData.valetState, margin + 125, yPosition, 15);
+      addFormField('Zip', temporaryValetData.valetZip, margin + 150, yPosition, 25);
+      yPosition += 10;
+      addFormField('Email Address', temporaryValetData.valetEmail, margin, yPosition, 120);
+      yPosition += 10;
+      addFormField('Expiration date of Valet Operator Permit', temporaryValetData.permitExpiration, margin, yPosition, 55);
+      addFormField('Expiration date of Valet Operator Insurance', temporaryValetData.insuranceExpiration, margin + 100, yPosition, 55);
       yPosition += 15;
 
-      // Vehicle Storage
+      // VEHICLE STORAGE
+      pdf.setFontSize(10);
       pdf.setFont('helvetica', 'bold');
       pdf.text('VEHICLE STORAGE:', margin, yPosition);
       yPosition += 8;
-
+      
       pdf.setFont('helvetica', 'normal');
-      pdf.text(`Will vehicles be parked on the Permit Holder's premises? ${temporaryValetData.onPremisesParking ? 'Yes' : 'No'}`, margin, yPosition);
-      yPosition += 10;
+      pdf.setFontSize(9);
+      pdf.text('Will vehicles be parked on the Permit Holder\'s premises?', margin, yPosition);
+      
+      // Yes/No checkboxes
+      if (temporaryValetData.onPremisesParking) {
+        pdf.rect(margin + 120, yPosition - 4, 3, 3, 'F'); // Yes filled
+        pdf.rect(margin + 135, yPosition - 4, 3, 3); // No empty
+      } else {
+        pdf.rect(margin + 120, yPosition - 4, 3, 3); // Yes empty
+        pdf.rect(margin + 135, yPosition - 4, 3, 3, 'F'); // No filled
+      }
+      pdf.text('Yes', margin + 125, yPosition);
+      pdf.text('No', margin + 140, yPosition);
+      yPosition += 8;
 
       if (!temporaryValetData.onPremisesParking) {
-        pdf.text(`Parking Facility Location: ${temporaryValetData.parkingFacilityAddress}`, margin, yPosition);
-        yPosition += 5;
-        pdf.text(`City: ${temporaryValetData.parkingFacilityCity}, State: ${temporaryValetData.parkingFacilityState}, Zip: ${temporaryValetData.parkingFacilityZip}`, margin, yPosition);
-        yPosition += 5;
-        pdf.text(`Type of Parking Facility: ${temporaryValetData.facilityType}`, margin, yPosition);
-        yPosition += 5;
-        pdf.text(`Number of Spaces Available: ${temporaryValetData.availableSpaces}`, margin, yPosition);
-        yPosition += 5;
-        pdf.text(`Date of Contract: ${temporaryValetData.contractDate}`, margin, yPosition);
-        pdf.text(`Term/Expiration: ${temporaryValetData.contractExpiration}`, margin + 80, yPosition);
-        yPosition += 5;
-        pdf.text(`Facility Contact: ${temporaryValetData.facilityContactName}`, margin, yPosition);
-        yPosition += 5;
-        pdf.text(`Phone: ${temporaryValetData.facilityContactPhone}`, margin, yPosition);
-        pdf.text(`Email: ${temporaryValetData.facilityContactEmail}`, margin + 80, yPosition);
+        pdf.text('(If you checked "Yes", no additional information required. If you checked "No", provide details below.)', margin, yPosition);
+        yPosition += 10;
+        
+        pdf.text('Parking Facility Location:', margin, yPosition);
+        yPosition += 8;
+        addFormField('Address', temporaryValetData.parkingFacilityAddress, margin, yPosition, 70);
+        addFormField('City', temporaryValetData.parkingFacilityCity, margin + 80, yPosition, 35);
+        addFormField('State', temporaryValetData.parkingFacilityState, margin + 125, yPosition, 15);
+        addFormField('Zip', temporaryValetData.parkingFacilityZip, margin + 150, yPosition, 25);
+        yPosition += 10;
+        
+        pdf.text('Type of Parking Facility:', margin, yPosition);
+        yPosition += 8;
+        
+        // Parking facility type checkboxes
+        const isGarage = temporaryValetData.facilityType === 'Parking Garage';
+        const isSurface = temporaryValetData.facilityType === 'Surface Lot';
+        
+        if (isGarage) {
+          pdf.rect(margin + 5, yPosition - 4, 3, 3, 'F');
+        } else {
+          pdf.rect(margin + 5, yPosition - 4, 3, 3);
+        }
+        pdf.text('Parking Garage', margin + 12, yPosition);
+        
+        if (isSurface) {
+          pdf.rect(margin + 55, yPosition - 4, 3, 3, 'F');
+        } else {
+          pdf.rect(margin + 55, yPosition - 4, 3, 3);
+        }
+        pdf.text('Surface Lot', margin + 62, yPosition);
+        yPosition += 10;
+        
+        pdf.text('Terms of Parking Facility Contract:', margin, yPosition);
+        yPosition += 8;
+        addFormField('Number of Spaces Available', temporaryValetData.availableSpaces, margin, yPosition, 20);
+        addFormField('Date of Contract', temporaryValetData.contractDate, margin + 50, yPosition, 40);
+        addFormField('Term/Expiration Date of Contract', temporaryValetData.contractExpiration, margin + 100, yPosition, 40);
+        yPosition += 10;
+        
+        pdf.text('Contact Information for Facility Owner Manager:', margin, yPosition);
+        yPosition += 8;
+        addFormField('Name', temporaryValetData.facilityContactName, margin, yPosition, 50);
+        addFormField('Phone Number', temporaryValetData.facilityContactPhone, margin + 60, yPosition, 40);
+        addFormField('Email Address', temporaryValetData.facilityContactEmail, margin + 110, yPosition, 50);
       }
 
       // Save the PDF
-      const fileName = `Temporary_Valet_Zone_Application_${temporaryValetData.location}_${new Date().getTime()}.pdf`;
+      const fileName = `Temporary_Valet_Zone_Application_${temporaryValetData.location || 'Form'}_${new Date().getTime()}.pdf`;
       pdf.save(fileName);
 
       toast({
