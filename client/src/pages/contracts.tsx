@@ -756,61 +756,7 @@ export default function Contracts() {
                 ))}
               </div>
               
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                <h4 className="text-sm font-medium text-blue-900 mb-2">Quick Presets:</h4>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      // Truluck's schedule
-                      const trulucksSchedule = {
-                        monday: { enabled: true, startTime: '16:00', endTime: '22:00' },
-                        tuesday: { enabled: true, startTime: '16:00', endTime: '22:00' },
-                        wednesday: { enabled: true, startTime: '16:00', endTime: '22:00' },
-                        thursday: { enabled: true, startTime: '16:00', endTime: '22:00' },
-                        friday: { enabled: true, startTime: '16:00', endTime: '00:00' },
-                        saturday: { enabled: true, startTime: '16:00', endTime: '00:00' },
-                        sunday: { enabled: true, startTime: '16:00', endTime: '21:00' }
-                      };
-                      setContractData(prev => ({
-                        ...prev,
-                        daySchedules: trulucksSchedule,
-                        daysOfWeek: Object.keys(trulucksSchedule).filter(day => trulucksSchedule[day as keyof typeof trulucksSchedule].enabled)
-                      }));
-                    }}
-                    className="text-xs"
-                  >
-                    Truluck's Schedule
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      // Standard dinner schedule
-                      const standardSchedule = {
-                        monday: { enabled: true, startTime: '17:00', endTime: '23:00' },
-                        tuesday: { enabled: true, startTime: '17:00', endTime: '23:00' },
-                        wednesday: { enabled: true, startTime: '17:00', endTime: '23:00' },
-                        thursday: { enabled: true, startTime: '17:00', endTime: '23:00' },
-                        friday: { enabled: true, startTime: '17:00', endTime: '23:00' },
-                        saturday: { enabled: true, startTime: '17:00', endTime: '23:00' },
-                        sunday: { enabled: false, startTime: '17:00', endTime: '21:00' }
-                      };
-                      setContractData(prev => ({
-                        ...prev,
-                        daySchedules: standardSchedule,
-                        daysOfWeek: Object.keys(standardSchedule).filter(day => standardSchedule[day as keyof typeof standardSchedule].enabled)
-                      }));
-                    }}
-                    className="text-xs"
-                  >
-                    Standard Dinner
-                  </Button>
-                </div>
-              </div>
+
             </div>
           </div>
 
