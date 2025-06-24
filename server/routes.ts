@@ -279,7 +279,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/pdf-template/boa-renewal', async (req, res) => {
     try {
-      const filePath = '/home/runner/workspace/attached_assets/BOA ZONE COPY APP_1750788766383.pdf';
+      const filePath = '/home/runner/workspace/attached_assets/BOA ZONE COPY APP_1750788922208.pdf';
       const fileBuffer = await fs.promises.readFile(filePath);
       
       res.set({
