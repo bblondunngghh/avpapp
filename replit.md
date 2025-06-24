@@ -92,6 +92,9 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Added 5-category document upload system to Capital Grille renewal generator
+- June 24, 2025: Document categories: Authorized Agent, Resolution of Authority, Valet Insurance, Business Insurance, Notarized Vehicle Storage
+- June 24, 2025: Fixed PDF document merging - uploads now seamlessly integrated as additional pages
 - June 24, 2025: Created Capital Grille Renewal PDF editor with three editable date fields
 - June 24, 2025: Fixed PDF template loading and text overlay positioning system
 - June 24, 2025: Fine-tuned text positioning coordinates for precise form field alignment

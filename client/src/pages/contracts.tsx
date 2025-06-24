@@ -145,6 +145,7 @@ export default function Contracts() {
     { category: "resolution_authority", file: null as File | null, uploaded: false },
     { category: "valet_insurance", file: null as File | null, uploaded: false },
     { category: "business_insurance", file: null as File | null, uploaded: false },
+    { category: "notarized_vehicle_storage", file: null as File | null, uploaded: false },
   ]);
 
   const [temporaryValetData, setTemporaryValetData] = useState<TemporaryValetData>({
@@ -290,6 +291,7 @@ export default function Contracts() {
       resolution_authority: "Resolution of Authority",
       valet_insurance: "Valet Certificate of Insurance",
       business_insurance: "Business Certificate of Insurance",
+      notarized_vehicle_storage: "Notarized Vehicle Storage",
     };
     return names[category as keyof typeof names] || category;
   };
