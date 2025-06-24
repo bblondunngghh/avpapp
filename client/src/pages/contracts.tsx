@@ -224,6 +224,157 @@ export default function Contracts() {
     }
   };
 
+  const generateTemporaryValetPDF = async () => {
+    setIsGenerating(true);
+    try {
+      // Create PDF with form fields filled
+      const pdf = new jsPDF();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 20;
+      let yPosition = margin;
+
+      // Header
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Austin Transportation Department', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 5;
+      pdf.text('Right of Way Management Division', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 5;
+      pdf.text('P.O. Box 1088, Austin, Texas 78767', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 15;
+
+      pdf.setFontSize(14);
+      pdf.text('Application for Valet Zone - Temporary', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 20;
+
+      // Applicant Information
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('APPLICANT INFORMATION:', margin, yPosition);
+      yPosition += 10;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Company Name: ${temporaryValetData.companyName}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`Primary Contact Name: ${temporaryValetData.primaryContact}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`Phone Number: ${temporaryValetData.phoneNumber}`, margin, yPosition);
+      pdf.text(`Alternative Phone Number: ${temporaryValetData.altPhoneNumber}`, margin + 100, yPosition);
+      yPosition += 5;
+      pdf.text(`Mailing Address: ${temporaryValetData.mailingAddress}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`City: ${temporaryValetData.city}`, margin, yPosition);
+      pdf.text(`State: ${temporaryValetData.state}`, margin + 60, yPosition);
+      pdf.text(`Zip: ${temporaryValetData.zip}`, margin + 100, yPosition);
+      yPosition += 5;
+      pdf.text(`Email Address: ${temporaryValetData.email}`, margin, yPosition);
+      yPosition += 15;
+
+      // Proposed Zone Information
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PROPOSED ZONE INFORMATION:', margin, yPosition);
+      yPosition += 10;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Block Number: ${temporaryValetData.blockNumber}`, margin, yPosition);
+      pdf.text(`Street Name: ${temporaryValetData.streetName}`, margin + 60, yPosition);
+      pdf.text(`Number of Spaces Requested: ${temporaryValetData.spacesRequested}`, margin + 120, yPosition);
+      yPosition += 5;
+      pdf.text(`Curb Side: ${temporaryValetData.curbSide}`, margin, yPosition);
+      pdf.text(`Block End: ${temporaryValetData.blockEnd}`, margin + 80, yPosition);
+      yPosition += 8;
+
+      // Pay Station Numbers
+      const payStations = temporaryValetData.payStationNumbers.filter(ps => ps.trim()).join(', ');
+      pdf.text(`Pay Station/Meter Numbers: ${payStations}`, margin, yPosition);
+      yPosition += 5;
+      if (temporaryValetData.unmmeteredDescription) {
+        pdf.text(`Unmetered Area Description: ${temporaryValetData.unmmeteredDescription}`, margin, yPosition);
+        yPosition += 5;
+      }
+      yPosition += 5;
+
+      // Time and Date
+      pdf.text(`Date(s): ${temporaryValetData.eventDates}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`From: ${temporaryValetData.fromTime} To: ${temporaryValetData.toTime}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`Days: ${temporaryValetData.selectedDays.join(', ')}`, margin, yPosition);
+      yPosition += 15;
+
+      // Valet Operator Information
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('LICENSED VALET OPERATOR INFORMATION:', margin, yPosition);
+      yPosition += 10;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Licensed Valet Operator Name: ${temporaryValetData.valetOperatorName}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`Primary Contact Name: ${temporaryValetData.valetContact}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`24 Hour Emergency Number: ${temporaryValetData.emergencyNumber}`, margin, yPosition);
+      pdf.text(`Alternative Phone Number: ${temporaryValetData.valetAltPhone}`, margin + 100, yPosition);
+      yPosition += 5;
+      pdf.text(`Mailing Address: ${temporaryValetData.valetAddress}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`City: ${temporaryValetData.valetCity}`, margin, yPosition);
+      pdf.text(`State: ${temporaryValetData.valetState}`, margin + 60, yPosition);
+      pdf.text(`Zip: ${temporaryValetData.valetZip}`, margin + 100, yPosition);
+      yPosition += 5;
+      pdf.text(`Email Address: ${temporaryValetData.valetEmail}`, margin, yPosition);
+      yPosition += 5;
+      pdf.text(`Permit Expiration: ${temporaryValetData.permitExpiration}`, margin, yPosition);
+      pdf.text(`Insurance Expiration: ${temporaryValetData.insuranceExpiration}`, margin + 100, yPosition);
+      yPosition += 15;
+
+      // Vehicle Storage
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('VEHICLE STORAGE:', margin, yPosition);
+      yPosition += 8;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Will vehicles be parked on the Permit Holder's premises? ${temporaryValetData.onPremisesParking ? 'Yes' : 'No'}`, margin, yPosition);
+      yPosition += 10;
+
+      if (!temporaryValetData.onPremisesParking) {
+        pdf.text(`Parking Facility Location: ${temporaryValetData.parkingFacilityAddress}`, margin, yPosition);
+        yPosition += 5;
+        pdf.text(`City: ${temporaryValetData.parkingFacilityCity}, State: ${temporaryValetData.parkingFacilityState}, Zip: ${temporaryValetData.parkingFacilityZip}`, margin, yPosition);
+        yPosition += 5;
+        pdf.text(`Type of Parking Facility: ${temporaryValetData.facilityType}`, margin, yPosition);
+        yPosition += 5;
+        pdf.text(`Number of Spaces Available: ${temporaryValetData.availableSpaces}`, margin, yPosition);
+        yPosition += 5;
+        pdf.text(`Date of Contract: ${temporaryValetData.contractDate}`, margin, yPosition);
+        pdf.text(`Term/Expiration: ${temporaryValetData.contractExpiration}`, margin + 80, yPosition);
+        yPosition += 5;
+        pdf.text(`Facility Contact: ${temporaryValetData.facilityContactName}`, margin, yPosition);
+        yPosition += 5;
+        pdf.text(`Phone: ${temporaryValetData.facilityContactPhone}`, margin, yPosition);
+        pdf.text(`Email: ${temporaryValetData.facilityContactEmail}`, margin + 80, yPosition);
+      }
+
+      // Save the PDF
+      const fileName = `Temporary_Valet_Zone_Application_${temporaryValetData.location}_${new Date().getTime()}.pdf`;
+      pdf.save(fileName);
+
+      toast({
+        title: "Success",
+        description: "Temporary Valet Zone application PDF generated successfully",
+      });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const generateContract = async () => {
     if (!contractData.businessName || !contractData.businessAddress || !contractData.contactName) {
       toast({
