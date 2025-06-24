@@ -5392,9 +5392,45 @@ export default function AdminPanel() {
                           // Fix escaped quotes
                           rawData = rawData.replace(/\\"/g, '"');
                           
-                          // Now we should have: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}
-                          // Split by "},"{" and rebuild as proper JSON array
-                          if (rawData.includes('},{')) {
+                          // Add debugging for Friday/Saturday
+                          if (report.date === '2025-06-20' || report.date === '2025-06-21') {
+                            console.log('DEBUG - Cleaned data for', report.date, ':', rawData);
+                            console.log('DEBUG - includes },{ ?', rawData.includes('},{'));
+                            console.log('DEBUG - includes "," ?', rawData.includes('","'));
+                          }
+                          
+                          // Handle comma-separated JSON objects pattern first (more specific)
+                          if (rawData.includes('","')) {
+                            // Pattern: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}
+                            const jsonObjects = rawData.split('","');
+                            const employees = [];
+                            
+                            if (report.date === '2025-06-20' || report.date === '2025-06-21') {
+                              console.log('DEBUG - Split by "," resulted in', jsonObjects.length, 'parts:', jsonObjects);
+                            }
+                            
+                            for (let i = 0; i < jsonObjects.length; i++) {
+                              let jsonStr = jsonObjects[i];
+                              
+                              // Remove leading/trailing quotes
+                              if (i === 0 && jsonStr.startsWith('"')) jsonStr = jsonStr.substring(1);
+                              if (i === jsonObjects.length - 1 && jsonStr.endsWith('"')) jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+                              
+                              try {
+                                const emp = JSON.parse(jsonStr);
+                                employees.push(emp);
+                                if (report.date === '2025-06-20' || report.date === '2025-06-21') {
+                                  console.log('DEBUG - Successfully parsed employee:', emp);
+                                }
+                              } catch (e) {
+                                if (report.date === '2025-06-20' || report.date === '2025-06-21') {
+                                  console.log('DEBUG - Failed to parse:', jsonStr, 'Error:', e.message);
+                                }
+                              }
+                            }
+                            
+                            reportEmployees = employees;
+                          } else if (rawData.includes('},{')) {
                             // Split on },{ boundary
                             const parts = rawData.split('},{');
                             const employees = [];
@@ -5412,7 +5448,7 @@ export default function AdminPanel() {
                                 const emp = JSON.parse(part);
                                 employees.push(emp);
                               } catch (e) {
-                                console.log('Failed to parse employee part:', part);
+                                // Silent fail
                               }
                             }
                             
@@ -5439,6 +5475,10 @@ export default function AdminPanel() {
 
 
                     if (Array.isArray(reportEmployees) && reportEmployees.length > 0) {
+                      if (report.date === '2025-06-20' || report.date === '2025-06-21') {
+                        console.log('DEBUG - Processing', reportEmployees.length, 'employees for', report.date);
+                      }
+                      
                       reportEmployees.forEach((emp: any) => {
                         // Employee data is stored with 'name' field containing the employee key
                         // Check if we have this employee in our weeklyHours tracking
@@ -5447,7 +5487,9 @@ export default function AdminPanel() {
                           weeklyHours[emp.name].weeklyBreakdown[dayName] = (weeklyHours[emp.name].weeklyBreakdown[dayName] || 0) + emp.hours;
                           weeklyHours[emp.name].totalHours += emp.hours;
                           
-
+                          if (report.date === '2025-06-20' || report.date === '2025-06-21') {
+                            console.log('DEBUG - Added', emp.hours, 'hours for', emp.name, 'on', dayName);
+                          }
                           
                           // Determine status
                           if (weeklyHours[emp.name].totalHours >= 38) {
