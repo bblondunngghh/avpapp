@@ -18,6 +18,53 @@ interface DaySchedule {
   endTime: string;
 }
 
+interface TemporaryValetData {
+  location: string;
+  companyName: string;
+  primaryContact: string;
+  phoneNumber: string;
+  altPhoneNumber: string;
+  mailingAddress: string;
+  city: string;
+  state: string;
+  zip: string;
+  email: string;
+  blockNumber: string;
+  streetName: string;
+  spacesRequested: string;
+  curbSide: string;
+  blockEnd: string;
+  payStationNumbers: string[];
+  unmmeteredDescription: string;
+  eventDates: string;
+  fromTime: string;
+  toTime: string;
+  selectedDays: string[];
+  valetOperatorName: string;
+  valetContact: string;
+  emergencyNumber: string;
+  valetAltPhone: string;
+  valetAddress: string;
+  valetCity: string;
+  valetState: string;
+  valetZip: string;
+  valetEmail: string;
+  permitExpiration: string;
+  insuranceExpiration: string;
+  onPremisesParking: boolean;
+  parkingFacilityAddress: string;
+  parkingFacilityCity: string;
+  parkingFacilityState: string;
+  parkingFacilityZip: string;
+  facilityType: string;
+  availableSpaces: string;
+  contractDate: string;
+  contractExpiration: string;
+  facilityContactName: string;
+  facilityContactPhone: string;
+  facilityContactEmail: string;
+}
+
 interface ContractData {
   businessName: string;
   businessEntityType: string;
@@ -53,6 +100,7 @@ export default function Contracts() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [documentType, setDocumentType] = useState<'contract' | 'temporary-valet' | 'permanent-valet'>('contract');
 
   const [contractData, setContractData] = useState<ContractData>({
     businessName: '',
@@ -81,6 +129,53 @@ export default function Contracts() {
     paymentTerms: '7',
     terminationNotice: '30',
     specialTerms: ''
+  });
+
+  const [temporaryValetData, setTemporaryValetData] = useState<TemporaryValetData>({
+    location: '',
+    companyName: '',
+    primaryContact: '',
+    phoneNumber: '',
+    altPhoneNumber: '',
+    mailingAddress: '',
+    city: 'Austin',
+    state: 'TX',
+    zip: '',
+    email: '',
+    blockNumber: '',
+    streetName: '',
+    spacesRequested: '',
+    curbSide: '',
+    blockEnd: '',
+    payStationNumbers: ['', '', '', ''],
+    unmmeteredDescription: '',
+    eventDates: '',
+    fromTime: '',
+    toTime: '',
+    selectedDays: [],
+    valetOperatorName: 'Access Valet Parking LLC',
+    valetContact: '',
+    emergencyNumber: '',
+    valetAltPhone: '',
+    valetAddress: '14910 Hartsmith Dr.',
+    valetCity: 'Austin',
+    valetState: 'TX',
+    valetZip: '78725',
+    valetEmail: '',
+    permitExpiration: '',
+    insuranceExpiration: '',
+    onPremisesParking: true,
+    parkingFacilityAddress: '',
+    parkingFacilityCity: '',
+    parkingFacilityState: '',
+    parkingFacilityZip: '',
+    facilityType: '',
+    availableSpaces: '',
+    contractDate: '',
+    contractExpiration: '',
+    facilityContactName: '',
+    facilityContactPhone: '',
+    facilityContactEmail: ''
   });
 
   const handleInputChange = (field: keyof ContractData, value: string) => {
@@ -799,5 +894,333 @@ export default function Contracts() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+// Temporary Valet Form Component
+function TemporaryValetForm({ 
+  data, 
+  onChange, 
+  onGenerate, 
+  isGenerating 
+}: { 
+  data: TemporaryValetData; 
+  onChange: (data: TemporaryValetData) => void; 
+  onGenerate: () => void;
+  isGenerating: boolean;
+}) {
+  const handleInputChange = (field: keyof TemporaryValetData, value: string | boolean | string[]) => {
+    onChange({ ...data, [field]: value });
+  };
+
+  const handleLocationPreset = (location: string) => {
+    const locationPresets: Record<string, Partial<TemporaryValetData>> = {
+      'trulucks': {
+        companyName: 'Truluck\'s Restaurant',
+        streetName: 'West 6th Street',
+        city: 'Austin',
+        state: 'TX',
+        zip: '78701'
+      },
+      'capital-grille': {
+        companyName: 'The Capital Grille',
+        streetName: 'West 6th Street', 
+        city: 'Austin',
+        state: 'TX',
+        zip: '78701'
+      },
+      'bobs-steak': {
+        companyName: 'Bob\'s Steak & Chop House',
+        streetName: 'Lamar Boulevard',
+        city: 'Austin', 
+        state: 'TX',
+        zip: '78704'
+      },
+      'boa': {
+        companyName: 'BOA Steakhouse',
+        streetName: 'West 4th Street',
+        city: 'Austin',
+        state: 'TX', 
+        zip: '78701'
+      }
+    };
+
+    const preset = locationPresets[location];
+    if (preset) {
+      onChange({ ...data, location, ...preset });
+    }
+  };
+
+  return (
+    <>
+      {/* Location Selection */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Location Selection</h3>
+        <Select value={data.location} onValueChange={(value) => handleLocationPreset(value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select location" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="trulucks">Truluck's</SelectItem>
+            <SelectItem value="capital-grille">The Capital Grille</SelectItem>
+            <SelectItem value="bobs-steak">Bob's Steak & Chop House</SelectItem>
+            <SelectItem value="boa">BOA Steakhouse</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Applicant Information */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Applicant Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company Name *</Label>
+            <Input
+              id="companyName"
+              value={data.companyName}
+              onChange={(e) => handleInputChange('companyName', e.target.value)}
+              placeholder="Restaurant name"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="primaryContact">Primary Contact Name *</Label>
+            <Input
+              id="primaryContact"
+              value={data.primaryContact}
+              onChange={(e) => handleInputChange('primaryContact', e.target.value)}
+              placeholder="Contact person"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">Phone Number *</Label>
+            <Input
+              id="phoneNumber"
+              value={data.phoneNumber}
+              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+              placeholder="(512) 555-0123"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="altPhoneNumber">Alternative Phone</Label>
+            <Input
+              id="altPhoneNumber"
+              value={data.altPhoneNumber}
+              onChange={(e) => handleInputChange('altPhoneNumber', e.target.value)}
+              placeholder="(512) 555-0124"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="mailingAddress">Mailing Address *</Label>
+            <Input
+              id="mailingAddress"
+              value={data.mailingAddress}
+              onChange={(e) => handleInputChange('mailingAddress', e.target.value)}
+              placeholder="Street address"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address *</Label>
+            <Input
+              id="email"
+              type="email"
+              value={data.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              placeholder="contact@restaurant.com"
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-2">
+              <Label htmlFor="city">City *</Label>
+              <Input
+                id="city"
+                value={data.city}
+                onChange={(e) => handleInputChange('city', e.target.value)}
+                placeholder="Austin"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="state">State *</Label>
+              <Input
+                id="state"
+                value={data.state}
+                onChange={(e) => handleInputChange('state', e.target.value)}
+                placeholder="TX"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="zip">Zip *</Label>
+              <Input
+                id="zip"
+                value={data.zip}
+                onChange={(e) => handleInputChange('zip', e.target.value)}
+                placeholder="78701"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Proposed Zone Information */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Proposed Zone Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="blockNumber">Block Number</Label>
+            <Input
+              id="blockNumber"
+              value={data.blockNumber}
+              onChange={(e) => handleInputChange('blockNumber', e.target.value)}
+              placeholder="Block #"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="streetName">Street Name *</Label>
+            <Input
+              id="streetName"
+              value={data.streetName}
+              onChange={(e) => handleInputChange('streetName', e.target.value)}
+              placeholder="Street name"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="spacesRequested">Spaces Requested *</Label>
+            <Input
+              id="spacesRequested"
+              value={data.spacesRequested}
+              onChange={(e) => handleInputChange('spacesRequested', e.target.value)}
+              placeholder="Number of spaces"
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="curbSide">Curb Side</Label>
+            <Select value={data.curbSide} onValueChange={(value) => handleInputChange('curbSide', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select curb side" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="North">North</SelectItem>
+                <SelectItem value="South">South</SelectItem>
+                <SelectItem value="East">East</SelectItem>
+                <SelectItem value="West">West</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="blockEnd">Block End</Label>
+            <Select value={data.blockEnd} onValueChange={(value) => handleInputChange('blockEnd', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select block end" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="North">North</SelectItem>
+                <SelectItem value="South">South</SelectItem>
+                <SelectItem value="East">East</SelectItem>
+                <SelectItem value="West">West</SelectItem>
+                <SelectItem value="Midblock">Midblock</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Pay Station/Meter Numbers</Label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {data.payStationNumbers.map((num, index) => (
+              <Input
+                key={index}
+                value={num}
+                onChange={(e) => {
+                  const newNumbers = [...data.payStationNumbers];
+                  newNumbers[index] = e.target.value;
+                  handleInputChange('payStationNumbers', newNumbers);
+                }}
+                placeholder={`PS/Meter #${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="unmmeteredDescription">Unmetered Area Description</Label>
+          <Input
+            id="unmmeteredDescription"
+            value={data.unmmeteredDescription}
+            onChange={(e) => handleInputChange('unmmeteredDescription', e.target.value)}
+            placeholder="Description if area has no marked spaces"
+          />
+        </div>
+      </div>
+
+      {/* Event Time and Date */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Event Time and Date</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="eventDates">Date(s) *</Label>
+            <Input
+              id="eventDates"
+              value={data.eventDates}
+              onChange={(e) => handleInputChange('eventDates', e.target.value)}
+              placeholder="e.g., December 31, 2024"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="fromTime">From Time *</Label>
+            <Input
+              id="fromTime"
+              value={data.fromTime}
+              onChange={(e) => handleInputChange('fromTime', e.target.value)}
+              placeholder="6:00 PM"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="toTime">To Time *</Label>
+            <Input
+              id="toTime"
+              value={data.toTime}
+              onChange={(e) => handleInputChange('toTime', e.target.value)}
+              placeholder="12:00 AM"
+            />
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <Label>Days of Week</Label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
+              <div key={day} className="flex items-center space-x-2">
+                <Checkbox
+                  id={day}
+                  checked={data.selectedDays.includes(day)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      handleInputChange('selectedDays', [...data.selectedDays, day]);
+                    } else {
+                      handleInputChange('selectedDays', data.selectedDays.filter(d => d !== day));
+                    }
+                  }}
+                />
+                <Label htmlFor={day} className="text-sm">{day}</Label>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Generate Button */}
+      <div className="pt-6">
+        <Button 
+          onClick={onGenerate} 
+          disabled={isGenerating}
+          className="w-full"
+          size="lg"
+        >
+          {isGenerating ? 'Generating...' : 'Generate Temporary Valet Zone PDF'}
+        </Button>
+      </div>
+    </>
   );
 }
