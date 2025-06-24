@@ -228,606 +228,206 @@ export default function Contracts() {
   const generateTemporaryValetPDF = async () => {
     setIsGenerating(true);
     try {
-      // Create a new PDF document that matches the exact layout of the original form
-      const pdfDoc = await PDFDocument.create();
-      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      // Load the original PDF template and fill it out
+      const templateUrl = '/attached_assets/Valet Temporary Zone Application (10)_1750782335056.pdf';
       
-      // Page 1
-      const page1 = pdfDoc.addPage([612, 792]); // Standard US Letter size
-      const { width, height } = page1.getSize();
-      
-      let y = height - 50; // Start from top
-
-      // Header
-      page1.drawText('Austin Transportation Department', {
-        x: 156,
-        y: y,
-        size: 12,
-        font: helveticaBoldFont,
-      });
-      y -= 15;
-      
-      page1.drawText('Right of Way Management Division', {
-        x: 156,
-        y: y,
-        size: 12,
-        font: helveticaBoldFont,
-      });
-      y -= 15;
-      
-      page1.drawText('P.O. Box 1088, Austin, Texas 78767', {
-        x: 156,
-        y: y,
-        size: 12,
-        font: helveticaBoldFont,
-      });
-      y -= 40;
-
-      // Title
-      page1.drawText('Application for Valet Zone - Temporary', {
-        x: 150,
-        y: y,
-        size: 16,
-        font: helveticaBoldFont,
-      });
-      y -= 30;
-
-      // APPLICANT INFORMATION
-      page1.drawText('APPLICANT INFORMATION:', {
-        x: 50,
-        y: y,
-        size: 10,
-        font: helveticaBoldFont,
-      });
-      y -= 15;
-
-      page1.drawText('The Applicant listed here MUST sign on page 2 of this application. Applicant must provide Certificate of Insurance if not', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      y -= 10;
-
-      page1.drawText('already on file.', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      y -= 15;
-
-      page1.drawText('Applicant Contact Information:', {
-        x: 50,
-        y: y,
-        size: 9,
-        font: helveticaFont,
-      });
-      y -= 20;
-
-      // Company Name
-      page1.drawText('Company Name', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 400, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.companyName) {
-        page1.drawText(temporaryValetData.companyName, {
-          x: 55,
-          y: y - 2,
-          size: 9,
+      let pdfDoc;
+      try {
+        const existingPdfBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
+        pdfDoc = await PDFDocument.load(existingPdfBytes);
+      } catch (error) {
+        console.log('Could not load template PDF, creating new document');
+        // Fallback to creating new document if template not available
+        pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([612, 792]);
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        
+        // Basic form creation as fallback
+        page.drawText('Austin Transportation Department - Temporary Valet Zone Application', {
+          x: 50,
+          y: 750,
+          size: 14,
           font: helveticaFont,
         });
-      }
-      y -= 25;
-
-      // Primary Contact Name
-      page1.drawText('Primary Contact Name', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 400, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.primaryContact) {
-        page1.drawText(temporaryValetData.primaryContact, {
-          x: 55,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-      y -= 25;
-
-      // Phone Numbers (side by side)
-      page1.drawText('Phone Number', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 200, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.phoneNumber) {
-        page1.drawText(temporaryValetData.phoneNumber, {
-          x: 55,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('Alternative Phone Number', {
-        x: 250,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 250, y: y - 5 },
-        end: { x: 400, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.altPhoneNumber) {
-        page1.drawText(temporaryValetData.altPhoneNumber, {
-          x: 255,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-      y -= 25;
-
-      // Address fields
-      page1.drawText('Mailing Address', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 200, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.mailingAddress) {
-        page1.drawText(temporaryValetData.mailingAddress, {
-          x: 55,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('City', {
-        x: 220,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 220, y: y - 5 },
-        end: { x: 300, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.city) {
-        page1.drawText(temporaryValetData.city, {
-          x: 225,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('State', {
-        x: 320,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 320, y: y - 5 },
-        end: { x: 350, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.state) {
-        page1.drawText(temporaryValetData.state, {
-          x: 325,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('Zip', {
-        x: 370,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 370, y: y - 5 },
-        end: { x: 420, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.zip) {
-        page1.drawText(temporaryValetData.zip, {
-          x: 375,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-      y -= 25;
-
-      // Email Address
-      page1.drawText('Email Address', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 400, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.email) {
-        page1.drawText(temporaryValetData.email, {
-          x: 55,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-      y -= 35;
-
-      // PROPOSED ZONE INFORMATION
-      page1.drawText('PROPOSED ZONE INFORMATION:', {
-        x: 50,
-        y: y,
-        size: 10,
-        font: helveticaBoldFont,
-      });
-      y -= 15;
-
-      page1.drawText('Proposed Valet Location:', {
-        x: 50,
-        y: y,
-        size: 9,
-        font: helveticaFont,
-      });
-      y -= 20;
-
-      // Block Number, Street Name, Number of Spaces
-      page1.drawText('Block Number', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 120, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.blockNumber) {
-        page1.drawText(temporaryValetData.blockNumber, {
-          x: 55,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('Street Name', {
-        x: 140,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 140, y: y - 5 },
-        end: { x: 280, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.streetName) {
-        page1.drawText(temporaryValetData.streetName, {
-          x: 145,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('Number of Spaces Requested', {
-        x: 300,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 300, y: y - 5 },
-        end: { x: 350, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.spacesRequested) {
-        page1.drawText(temporaryValetData.spacesRequested, {
-          x: 305,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-      y -= 25;
-
-      // Curb Side and Block End
-      page1.drawText('Curb Side (circle one) -- North South East West', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-
-      // Circle the selected curb side
-      const curbOptions = ['North', 'South', 'East', 'West'];
-      curbOptions.forEach((option, index) => {
-        const x = 190 + (index * 30);
-        if (temporaryValetData.curbSide === option) {
-          page1.drawCircle({
-            x: x,
-            y: y - 2,
-            size: 6,
-            borderWidth: 1,
-          });
-        }
-      });
-
-      page1.drawText('Block End (circle one) -- North South East West Midblock', {
-        x: 320,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-
-      // Circle the selected block end
-      const blockOptions = ['North', 'South', 'East', 'West', 'Midblock'];
-      blockOptions.forEach((option, index) => {
-        const x = 460 + (index * 25);
-        if (temporaryValetData.blockEnd === option) {
-          page1.drawCircle({
-            x: x,
-            y: y - 2,
-            size: 6,
-            borderWidth: 1,
-          });
-        }
-      });
-      y -= 25;
-
-      // Pay Station Numbers
-      page1.drawText('Pay Station or Meter Numbers:', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      y -= 15;
-
-      for (let i = 0; i < 4; i++) {
-        const x = 50 + (i * 100);
-        page1.drawText(`PS# / Meter #`, {
-          x: x,
-          y: y,
-          size: 8,
-          font: helveticaFont,
-        });
-        page1.drawLine({
-          start: { x: x, y: y - 5 },
-          end: { x: x + 80, y: y - 5 },
-          thickness: 1,
-        });
-        if (temporaryValetData.payStationNumbers[i]) {
-          page1.drawText(temporaryValetData.payStationNumbers[i], {
-            x: x + 5,
-            y: y - 2,
-            size: 9,
+        
+        // Add form data as text
+        const formData = [
+          `Company: ${temporaryValetData.companyName}`,
+          `Contact: ${temporaryValetData.primaryContact}`,
+          `Phone: ${temporaryValetData.phoneNumber}`,
+          `Address: ${temporaryValetData.mailingAddress}`,
+          `Location: ${temporaryValetData.blockNumber} ${temporaryValetData.streetName}`,
+          `Spaces: ${temporaryValetData.spacesRequested}`,
+          `Dates: ${temporaryValetData.eventDates}`,
+          `Times: ${temporaryValetData.fromTime} - ${temporaryValetData.toTime}`,
+          `Days: ${temporaryValetData.selectedDays.join(', ')}`,
+          `Valet Operator: ${temporaryValetData.valetOperatorName}`,
+          `Emergency: ${temporaryValetData.emergencyNumber}`
+        ];
+        
+        formData.forEach((line, index) => {
+          page.drawText(line, {
+            x: 50,
+            y: 700 - (index * 20),
+            size: 10,
             font: helveticaFont,
           });
+        });
+        
+        // Generate and download
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Temporary_Valet_Zone_Application_${temporaryValetData.location || 'Form'}_${new Date().getTime()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        toast({
+          title: "Success",
+          description: "Temporary Valet Zone application PDF generated (basic format)",
+        });
+        return;
+      }
+
+      // If we successfully loaded the template, try to fill form fields
+      const form = pdfDoc.getForm();
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      
+      // Try to fill form fields if the PDF has interactive fields
+      try {
+        const fields = form.getFields();
+        console.log('Available form fields:', fields.map(f => f.getName()));
+        
+        // Attempt to fill common field names
+        const fieldMappings = {
+          'CompanyName': temporaryValetData.companyName,
+          'Company Name': temporaryValetData.companyName,
+          'PrimaryContact': temporaryValetData.primaryContact,
+          'Primary Contact Name': temporaryValetData.primaryContact,
+          'PhoneNumber': temporaryValetData.phoneNumber,
+          'Phone Number': temporaryValetData.phoneNumber,
+          'MailingAddress': temporaryValetData.mailingAddress,
+          'Mailing Address': temporaryValetData.mailingAddress,
+          'City': temporaryValetData.city,
+          'State': temporaryValetData.state,
+          'Zip': temporaryValetData.zip,
+          'Email': temporaryValetData.email,
+          'EmailAddress': temporaryValetData.email,
+          'BlockNumber': temporaryValetData.blockNumber,
+          'Block Number': temporaryValetData.blockNumber,
+          'StreetName': temporaryValetData.streetName,
+          'Street Name': temporaryValetData.streetName,
+          'SpacesRequested': temporaryValetData.spacesRequested,
+          'Number of Spaces Requested': temporaryValetData.spacesRequested,
+          'EventDates': temporaryValetData.eventDates,
+          'Date(s)': temporaryValetData.eventDates,
+          'FromTime': temporaryValetData.fromTime,
+          'From': temporaryValetData.fromTime,
+          'ToTime': temporaryValetData.toTime,
+          'To': temporaryValetData.toTime,
+          'ValetOperatorName': temporaryValetData.valetOperatorName,
+          'Licensed Valet Operator Name': temporaryValetData.valetOperatorName,
+          'ValetContact': temporaryValetData.valetContact,
+          'EmergencyNumber': temporaryValetData.emergencyNumber,
+          '24 Hour Emergency Number': temporaryValetData.emergencyNumber,
+          'ValetAddress': temporaryValetData.valetAddress,
+          'ValetCity': temporaryValetData.valetCity,
+          'ValetState': temporaryValetData.valetState,
+          'ValetZip': temporaryValetData.valetZip,
+          'ValetEmail': temporaryValetData.valetEmail,
+          'PermitExpiration': temporaryValetData.permitExpiration,
+          'InsuranceExpiration': temporaryValetData.insuranceExpiration
+        };
+
+        // Fill text fields
+        Object.entries(fieldMappings).forEach(([fieldName, value]) => {
+          try {
+            const field = form.getTextField(fieldName);
+            if (field && value) {
+              field.setText(value);
+            }
+          } catch (e) {
+            // Field doesn't exist or isn't a text field, continue
+          }
+        });
+
+        // Handle checkboxes for days of week
+        const dayFields = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        dayFields.forEach(day => {
+          try {
+            const field = form.getCheckBox(day);
+            if (field) {
+              if (temporaryValetData.selectedDays.includes(day)) {
+                field.check();
+              } else {
+                field.uncheck();
+              }
+            }
+          } catch (e) {
+            // Field doesn't exist, continue
+          }
+        });
+
+        // Handle radio buttons for curb side and block end
+        try {
+          const curbField = form.getRadioGroup('CurbSide');
+          if (curbField && temporaryValetData.curbSide) {
+            curbField.select(temporaryValetData.curbSide);
+          }
+        } catch (e) {
+          // Field doesn't exist, continue
+        }
+
+        try {
+          const blockField = form.getRadioGroup('BlockEnd');
+          if (blockField && temporaryValetData.blockEnd) {
+            blockField.select(temporaryValetData.blockEnd);
+          }
+        } catch (e) {
+          // Field doesn't exist, continue
+        }
+
+      } catch (e) {
+        console.log('Form does not have interactive fields, adding text overlay');
+        
+        // If no form fields, add text overlay on existing pages
+        const pages = pdfDoc.getPages();
+        if (pages.length > 0) {
+          const firstPage = pages[0];
+          
+          // Add basic form data as text overlay
+          const overlayData = [
+            { text: temporaryValetData.companyName, x: 150, y: 650 },
+            { text: temporaryValetData.primaryContact, x: 150, y: 620 },
+            { text: temporaryValetData.phoneNumber, x: 150, y: 590 },
+            { text: temporaryValetData.mailingAddress, x: 150, y: 560 },
+            { text: temporaryValetData.email, x: 150, y: 530 },
+            { text: temporaryValetData.blockNumber, x: 150, y: 450 },
+            { text: temporaryValetData.streetName, x: 250, y: 450 },
+            { text: temporaryValetData.spacesRequested, x: 450, y: 450 },
+            { text: temporaryValetData.eventDates, x: 150, y: 350 },
+            { text: temporaryValetData.fromTime, x: 150, y: 320 },
+            { text: temporaryValetData.toTime, x: 250, y: 320 }
+          ];
+
+          overlayData.forEach(({ text, x, y }) => {
+            if (text) {
+              firstPage.drawText(text, {
+                x,
+                y,
+                size: 10,
+                font: helveticaFont,
+                color: rgb(0, 0, 0),
+              });
+            }
+          });
         }
       }
-      y -= 25;
-
-      page1.drawText('AND/OR', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      y -= 15;
-
-      page1.drawText('Description of Unmetered Area', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 500, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.unmmeteredDescription) {
-        page1.drawText(temporaryValetData.unmmeteredDescription, {
-          x: 55,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-      y -= 15;
-
-      page1.drawText('(If an area does NOT have marked parking spaces, then one space will be assessed for every 22 feet in curb length.)', {
-        x: 50,
-        y: y,
-        size: 7,
-        font: helveticaFont,
-      });
-      y -= 25;
-
-      // Proposed Valet Time and Date
-      page1.drawText('Proposed Valet Time and Date:', {
-        x: 50,
-        y: y,
-        size: 9,
-        font: helveticaFont,
-      });
-      y -= 20;
-
-      page1.drawText('Date(s):', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 200, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.eventDates) {
-        page1.drawText(temporaryValetData.eventDates, {
-          x: 55,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-      y -= 20;
-
-      page1.drawText('From:', {
-        x: 50,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 80, y: y - 5 },
-        end: { x: 130, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.fromTime) {
-        page1.drawText(temporaryValetData.fromTime, {
-          x: 85,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('(am/pm) To:', {
-        x: 140,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-      page1.drawLine({
-        start: { x: 190, y: y - 5 },
-        end: { x: 240, y: y - 5 },
-        thickness: 1,
-      });
-      if (temporaryValetData.toTime) {
-        page1.drawText(temporaryValetData.toTime, {
-          x: 195,
-          y: y - 2,
-          size: 9,
-          font: helveticaFont,
-        });
-      }
-
-      page1.drawText('(am/pm)', {
-        x: 250,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-
-      const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-      page1.drawText('Monday Tuesday Wednesday Thursday Friday Saturday Sunday', {
-        x: 320,
-        y: y,
-        size: 8,
-        font: helveticaFont,
-      });
-
-      // Draw checkboxes for days
-      dayNames.forEach((day, index) => {
-        const x = 320 + (index * 35);
-        const isSelected = temporaryValetData.selectedDays.includes(day);
-        
-        page1.drawRectangle({
-          x: x,
-          y: y - 8,
-          width: 8,
-          height: 8,
-          borderWidth: 1,
-          color: isSelected ? rgb(0, 0, 0) : undefined,
-        });
-      });
-
-      // Add Page 2
-      const page2 = pdfDoc.addPage([612, 792]);
-      y = height - 50;
-
-      // Page 2 Header
-      page2.drawText('Austin Transportation Department', {
-        x: 156,
-        y: y,
-        size: 12,
-        font: helveticaBoldFont,
-      });
-      y -= 15;
-      
-      page2.drawText('Right of Way Management Division', {
-        x: 156,
-        y: y,
-        size: 12,
-        font: helveticaBoldFont,
-      });
-      y -= 15;
-      
-      page2.drawText('P.O. Box 1088, Austin, Texas 78767', {
-        x: 156,
-        y: y,
-        size: 12,
-        font: helveticaBoldFont,
-      });
-      y -= 40;
-
-      page2.drawText('Application for Valet Zone - Temporary', {
-        x: 150,
-        y: y,
-        size: 16,
-        font: helveticaBoldFont,
-      });
-      y -= 30;
-
-      // Continue with valet operator information, vehicle storage, etc. on page 2
-      // ... (similar structure for page 2)
 
       // Generate and download the PDF
       const pdfBytes = await pdfDoc.save();
