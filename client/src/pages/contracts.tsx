@@ -275,8 +275,8 @@ export default function Contracts() {
       // Page 2: Valet Operator Permit Expiration (final positioning)
       if (renewalData.valetPermitExpiration && secondPage) {
         secondPage.drawText(renewalData.valetPermitExpiration, {
-          x: 250, // Left position maintained
-          y: 64, // Fine-tuned Y coordinate
+          x: 235, // Adjusted left position
+          y: 61, // Final Y coordinate
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
@@ -287,7 +287,7 @@ export default function Contracts() {
       if (renewalData.valetInsuranceExpiration && secondPage) {
         secondPage.drawText(renewalData.valetInsuranceExpiration, {
           x: 499, // Right position maintained
-          y: 64, // Fine-tuned Y coordinate
+          y: 61, // Final Y coordinate
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
