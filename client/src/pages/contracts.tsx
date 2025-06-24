@@ -371,7 +371,7 @@ export default function Contracts() {
           
           // Month/Day field
           page5.drawText(monthDay, {
-            x: 180, // Updated X coordinate for month/day field
+            x: 120, // Updated X coordinate for month/day field
             y: 140, // Adjust based on PDF positioning
             size: 9,
             font: helveticaFont,
@@ -380,7 +380,7 @@ export default function Contracts() {
           
           // Year field (separated)
           page5.drawText(year, {
-            x: 225, // Updated X coordinate for year field
+            x: 245, // Updated X coordinate for year field
             y: 140, // Same Y coordinate as month/day
             size: 9,
             font: helveticaFont,
