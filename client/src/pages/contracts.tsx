@@ -101,7 +101,7 @@ export default function Contracts() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [documentType, setDocumentType] = useState<'contract' | 'temporary-valet' | 'permanent-valet'>('contract');
+  const [documentType, setDocumentType] = useState<'contract' | 'temporary-valet' | 'permanent-valet' | 'capital-grille-renewal'>('contract');
 
   const [contractData, setContractData] = useState<ContractData>({
     businessName: '',
@@ -130,6 +130,13 @@ export default function Contracts() {
     paymentTerms: '7',
     terminationNotice: '30',
     specialTerms: ''
+  });
+
+  // Simple renewal form data for Capital Grille
+  const [renewalData, setRenewalData] = useState({
+    businessInsuranceExpiration: '',
+    valetPermitExpiration: '',
+    valetInsuranceExpiration: ''
   });
 
   const [temporaryValetData, setTemporaryValetData] = useState<TemporaryValetData>({
@@ -222,6 +229,88 @@ export default function Contracts() {
       endDate.setFullYear(endDate.getFullYear() + 1); // Set to 1 year from start date
       
       handleInputChange('endDate', endDate.toISOString().split('T')[0]);
+    }
+  };
+
+  const generateCapitalGrilleRenewal = async () => {
+    setIsGenerating(true);
+    try {
+      // Load the Capital Grille renewal PDF template
+      const response = await fetch('/api/pdf-template/capital-grille-renewal');
+      
+      let pdfDoc;
+      if (!response.ok) {
+        throw new Error('Could not load PDF template');
+      }
+      
+      const existingPdfBytes = await response.arrayBuffer();
+      pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const pages = pdfDoc.getPages();
+      const firstPage = pages[0];
+      const secondPage = pages[1];
+
+      // Add text overlays for the three editable fields
+      // Page 1: Business Insurance Expiration Date (adjust coordinates as needed)
+      if (renewalData.businessInsuranceExpiration) {
+        firstPage.drawText(renewalData.businessInsuranceExpiration, {
+          x: 200, // Adjust this X coordinate to match your PDF
+          y: 400, // Adjust this Y coordinate to match your PDF
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0),
+        });
+      }
+
+      // Page 2: Valet Operator Permit Expiration
+      if (renewalData.valetPermitExpiration && secondPage) {
+        secondPage.drawText(renewalData.valetPermitExpiration, {
+          x: 200, // Adjust this X coordinate to match your PDF
+          y: 100, // Adjust this Y coordinate to match your PDF
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0),
+        });
+      }
+
+      // Page 2: Valet Operator Insurance Expiration
+      if (renewalData.valetInsuranceExpiration && secondPage) {
+        secondPage.drawText(renewalData.valetInsuranceExpiration, {
+          x: 400, // Adjust this X coordinate to match your PDF
+          y: 100, // Adjust this Y coordinate to match your PDF
+          size: 10,
+          font: helveticaFont,
+          color: rgb(0, 0, 0),
+        });
+      }
+
+      // Generate and download the completed PDF
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Capital_Grille_Renewal_${new Date().getTime()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Success",
+        description: "Capital Grille renewal PDF generated successfully",
+      });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -822,6 +911,7 @@ export default function Contracts() {
                 <SelectItem value="contract">Contract Generator</SelectItem>
                 <SelectItem value="temporary-valet">Temporary Valet Zone</SelectItem>
                 <SelectItem value="permanent-valet">Permanent Valet Zone</SelectItem>
+                <SelectItem value="capital-grille-renewal">Capital Grille Renewal</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1108,6 +1198,15 @@ export default function Contracts() {
             <div className="text-center py-8">
               <p className="text-gray-500">Permanent Valet Zone generator coming soon...</p>
             </div>
+          )}
+
+          {documentType === 'capital-grille-renewal' && (
+            <CapitalGrilleRenewalForm 
+              data={renewalData}
+              onChange={setRenewalData}
+              onGenerate={generateCapitalGrilleRenewal}
+              isGenerating={isGenerating}
+            />
           )}
         </CardContent>
       </Card>

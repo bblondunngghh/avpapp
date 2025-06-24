@@ -161,6 +161,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
   });
+
+  app.get('/api/pdf-template/capital-grille-renewal', (req, res) => {
+    const path = require('path');
+    const filePath = path.join(__dirname, '../attached_assets/Cap Grille Annual Renewal App - 2025_1750783053650.pdf');
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving Capital Grille PDF template:', err);
+        res.status(404).send('PDF template not found');
+      }
+    });
+  });
   // Configure multer for image uploads
   const storage_config = multer.diskStorage({
     destination: (req, file, cb) => {
