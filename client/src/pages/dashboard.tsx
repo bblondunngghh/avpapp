@@ -42,9 +42,12 @@ export default function Dashboard() {
           <img 
             src={newLogoImage} 
             alt="Access Valet Parking Logo" 
-            className="w-64 h-auto object-contain mx-auto mb-4"
+            className="w-72 h-auto object-contain mx-auto mb-4"
             style={{ 
-              imageRendering: 'auto'
+              imageRendering: 'crisp-edges',
+              filter: 'contrast(1.1) saturate(1.05)',
+              maxWidth: '300px',
+              height: 'auto'
             }}
           />
           <p className="text-blue-50 max-w-2xl mx-auto text-lg">

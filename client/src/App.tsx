@@ -253,6 +253,10 @@ function SplashScreen() {
               src={avpLogo} 
               alt="Access Valet Parking Logo" 
               className="w-full h-full object-contain rounded-full"
+              style={{ 
+                imageRendering: 'crisp-edges',
+                filter: 'contrast(1.1) saturate(1.05)'
+              }}
             />
           </div>
         </div>
