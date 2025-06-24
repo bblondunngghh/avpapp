@@ -102,7 +102,8 @@ export default function Contracts() {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [documentType, setDocumentType] = useState<'contract' | 'temporary-valet' | 'annual-renewal'>('contract');
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('trulucks');
+  const [selectedTempLocation, setSelectedTempLocation] = useState<string>('trulucks');
 
   const [contractData, setContractData] = useState<ContractData>({
     businessName: '',
@@ -597,6 +598,54 @@ export default function Contracts() {
         { text: temporaryValetData.payStationNumbers[3] || '', x: 450, y: 360, page: 0 },
         
         { text: temporaryValetData.unmmeteredDescription, x: 150, y: 330, page: 0 },
+        
+        // Event Time and Date
+        { text: temporaryValetData.eventDates, x: 150, y: 280, page: 0 },
+        { text: temporaryValetData.fromTime, x: 150, y: 250, page: 0 },
+        { text: temporaryValetData.toTime, x: 250, y: 250, page: 0 },
+      ];
+
+      // Add text to the appropriate pages with location-specific coordinates
+      const overlayData = selectedTempLocation === 'trulucks' ? [
+        // Page 1 - Applicant Information (Trulucks template coordinates)
+        { text: temporaryValetData.companyName, x: 154, y: 548, page: 0 },
+        { text: temporaryValetData.primaryContact, x: 154, y: 532, page: 0 },
+        { text: temporaryValetData.phoneNumber, x: 154, y: 516, page: 0 },
+        { text: temporaryValetData.altPhoneNumber, x: 354, y: 516, page: 0 },
+        { text: temporaryValetData.mailingAddress, x: 154, y: 500, page: 0 },
+        { text: temporaryValetData.city, x: 254, y: 484, page: 0 },
+        { text: temporaryValetData.state, x: 324, y: 484, page: 0 },
+        { text: temporaryValetData.zip, x: 374, y: 484, page: 0 },
+        { text: temporaryValetData.email, x: 154, y: 468, page: 0 },
+        
+        // Proposed Zone Information
+        { text: temporaryValetData.blockNumber, x: 154, y: 398, page: 0 },
+        { text: temporaryValetData.streetName, x: 254, y: 398, page: 0 },
+        { text: temporaryValetData.spacesRequested, x: 454, y: 398, page: 0 },
+        
+        // Pay Station Numbers
+        { text: temporaryValetData.payStationNumbers[0], x: 154, y: 346, page: 0 },
+        
+        // Event Time and Date
+        { text: temporaryValetData.eventDates, x: 154, y: 280, page: 0 },
+        { text: temporaryValetData.fromTime, x: 154, y: 250, page: 0 },
+        { text: temporaryValetData.toTime, x: 250, y: 250, page: 0 },
+      ] : [
+        // Default coordinates for other templates
+        { text: temporaryValetData.companyName, x: 150, y: 700, page: 0 },
+        { text: temporaryValetData.primaryContact, x: 150, y: 670, page: 0 },
+        { text: temporaryValetData.phoneNumber, x: 150, y: 640, page: 0 },
+        { text: temporaryValetData.altPhoneNumber, x: 350, y: 640, page: 0 },
+        { text: temporaryValetData.mailingAddress, x: 150, y: 610, page: 0 },
+        { text: temporaryValetData.city, x: 250, y: 580, page: 0 },
+        { text: temporaryValetData.state, x: 320, y: 580, page: 0 },
+        { text: temporaryValetData.zip, x: 370, y: 580, page: 0 },
+        { text: temporaryValetData.email, x: 150, y: 550, page: 0 },
+        
+        // Proposed Zone Information
+        { text: temporaryValetData.blockNumber, x: 150, y: 480, page: 0 },
+        { text: temporaryValetData.streetName, x: 250, y: 480, page: 0 },
+        { text: temporaryValetData.spacesRequested, x: 450, y: 480, page: 0 },
         
         // Event Time and Date
         { text: temporaryValetData.eventDates, x: 150, y: 280, page: 0 },
