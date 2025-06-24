@@ -12,6 +12,12 @@ import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import avpLogo from "@assets/AVPLOGO PROPER3_1750780386225.png";
 import jsPDF from 'jspdf';
 
+interface DaySchedule {
+  enabled: boolean;
+  startTime: string;
+  endTime: string;
+}
+
 interface ContractData {
   businessName: string;
   businessEntityType: string;
@@ -27,6 +33,7 @@ interface ContractData {
   managementFee: string;
   hoursOfOperation: string;
   daysOfWeek: string[];
+  daySchedules: Record<string, DaySchedule>;
   paymentTerms: string;
   terminationNotice: string;
   specialTerms: string;
@@ -62,6 +69,15 @@ export default function Contracts() {
     managementFee: '800.00',
     hoursOfOperation: '',
     daysOfWeek: [],
+    daySchedules: {
+      monday: { enabled: false, startTime: '17:00', endTime: '23:00' },
+      tuesday: { enabled: false, startTime: '17:00', endTime: '23:00' },
+      wednesday: { enabled: false, startTime: '17:00', endTime: '23:00' },
+      thursday: { enabled: false, startTime: '17:00', endTime: '23:00' },
+      friday: { enabled: false, startTime: '17:00', endTime: '23:00' },
+      saturday: { enabled: false, startTime: '17:00', endTime: '23:00' },
+      sunday: { enabled: false, startTime: '17:00', endTime: '21:00' }
+    },
     paymentTerms: '7',
     terminationNotice: '30',
     specialTerms: ''
@@ -79,7 +95,27 @@ export default function Contracts() {
       ...prev,
       daysOfWeek: prev.daysOfWeek.includes(dayId)
         ? prev.daysOfWeek.filter(d => d !== dayId)
-        : [...prev.daysOfWeek, dayId]
+        : [...prev.daysOfWeek, dayId],
+      daySchedules: {
+        ...prev.daySchedules,
+        [dayId]: {
+          ...prev.daySchedules[dayId],
+          enabled: !prev.daySchedules[dayId]?.enabled
+        }
+      }
+    }));
+  };
+
+  const handleScheduleChange = (dayId: string, field: 'startTime' | 'endTime', value: string) => {
+    setContractData(prev => ({
+      ...prev,
+      daySchedules: {
+        ...prev.daySchedules,
+        [dayId]: {
+          ...prev.daySchedules[dayId],
+          [field]: value
+        }
+      }
     }));
   };
 
@@ -327,7 +363,32 @@ export default function Contracts() {
 
         addText('2. HOURS OF OPERATION', true);
         addText(`Valet services will be provided during the following hours: ${contractData.hoursOfOperation || 'As agreed upon by both parties'}`);
-        addText(`Days of operation: ${daysText}`);
+        // Days of operation with specific hours - second instance
+        const enabledDaysSecond = DAYS_OF_WEEK.filter(day => contractData.daySchedules[day.id]?.enabled);
+        
+        if (enabledDaysSecond.length > 0) {
+          addText('Days and Hours of Operation:');
+          yPosition += 2;
+          
+          enabledDaysSecond.forEach(day => {
+            const schedule = contractData.daySchedules[day.id];
+            if (schedule && schedule.enabled) {
+              const startTime = new Date(`1970-01-01T${schedule.startTime}`).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              });
+              const endTime = new Date(`1970-01-01T${schedule.endTime}`).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              });
+              addText(`${day.label}: ${startTime} - ${endTime}`, false);
+            }
+          });
+        } else {
+          addText('Days of operation: To be determined');
+        }
         yPosition += 5;
 
         addText('3. TERM', true);
@@ -635,19 +696,95 @@ export default function Contracts() {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label>Days of Operation</Label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div className="space-y-4">
+              <Label>Days and Hours of Operation</Label>
+              <div className="space-y-3">
                 {DAYS_OF_WEEK.map((day) => (
-                  <div key={day.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={day.id}
-                      checked={contractData.daysOfWeek.includes(day.id)}
-                      onCheckedChange={() => handleDayToggle(day.id)}
-                    />
-                    <Label htmlFor={day.id} className="text-sm">{day.label}</Label>
+                  <div key={day.id} className="flex items-center space-x-4 p-3 border rounded-lg">
+                    <div className="flex items-center space-x-2 min-w-[100px]">
+                      <Checkbox
+                        id={day.id}
+                        checked={contractData.daySchedules[day.id]?.enabled || false}
+                        onCheckedChange={() => handleDayToggle(day.id)}
+                      />
+                      <Label htmlFor={day.id} className="text-sm font-medium">{day.label}</Label>
+                    </div>
+                    
+                    {contractData.daySchedules[day.id]?.enabled && (
+                      <div className="flex items-center space-x-2 flex-1">
+                        <Input
+                          type="time"
+                          value={contractData.daySchedules[day.id]?.startTime || '17:00'}
+                          onChange={(e) => handleScheduleChange(day.id, 'startTime', e.target.value)}
+                          className="w-32"
+                        />
+                        <span className="text-sm text-gray-500">to</span>
+                        <Input
+                          type="time"
+                          value={contractData.daySchedules[day.id]?.endTime || '23:00'}
+                          onChange={(e) => handleScheduleChange(day.id, 'endTime', e.target.value)}
+                          className="w-32"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
+              </div>
+              
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                <h4 className="text-sm font-medium text-blue-900 mb-2">Quick Presets:</h4>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // Truluck's schedule
+                      const trulucksSchedule = {
+                        monday: { enabled: true, startTime: '16:00', endTime: '22:00' },
+                        tuesday: { enabled: true, startTime: '16:00', endTime: '22:00' },
+                        wednesday: { enabled: true, startTime: '16:00', endTime: '22:00' },
+                        thursday: { enabled: true, startTime: '16:00', endTime: '22:00' },
+                        friday: { enabled: true, startTime: '16:00', endTime: '24:00' },
+                        saturday: { enabled: true, startTime: '16:00', endTime: '24:00' },
+                        sunday: { enabled: true, startTime: '16:00', endTime: '21:00' }
+                      };
+                      setContractData(prev => ({
+                        ...prev,
+                        daySchedules: trulucksSchedule,
+                        daysOfWeek: Object.keys(trulucksSchedule).filter(day => trulucksSchedule[day as keyof typeof trulucksSchedule].enabled)
+                      }));
+                    }}
+                    className="text-xs"
+                  >
+                    Truluck's Schedule
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // Standard dinner schedule
+                      const standardSchedule = {
+                        monday: { enabled: true, startTime: '17:00', endTime: '23:00' },
+                        tuesday: { enabled: true, startTime: '17:00', endTime: '23:00' },
+                        wednesday: { enabled: true, startTime: '17:00', endTime: '23:00' },
+                        thursday: { enabled: true, startTime: '17:00', endTime: '23:00' },
+                        friday: { enabled: true, startTime: '17:00', endTime: '23:00' },
+                        saturday: { enabled: true, startTime: '17:00', endTime: '23:00' },
+                        sunday: { enabled: false, startTime: '17:00', endTime: '21:00' }
+                      };
+                      setContractData(prev => ({
+                        ...prev,
+                        daySchedules: standardSchedule,
+                        daysOfWeek: Object.keys(standardSchedule).filter(day => standardSchedule[day as keyof typeof standardSchedule].enabled)
+                      }));
+                    }}
+                    className="text-xs"
+                  >
+                    Standard Dinner
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
