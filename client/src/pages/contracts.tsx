@@ -681,9 +681,9 @@ export default function Contracts() {
         if (coords) {
           firstPage.drawRectangle({
             x: coords.x - 20,
-            y: coords.y - 6.5,
+            y: coords.y - 7.5,
             width: 40,
-            height: 13,
+            height: 15,
             borderColor: rgb(0, 0, 0),
             borderWidth: 1.5,
             opacity: 0,
