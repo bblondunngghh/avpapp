@@ -269,7 +269,7 @@ export default function Contracts() {
     const dayCoordinates = {
       'trulucks': {
         'Monday': { x: 285, y: 335 },
-        'Tuesday': { x: 340, y: 335 },
+        'Tuesday': { x: 325, y: 335 },
         'Wednesday': { x: 400, y: 335 },
         'Thursday': { x: 470, y: 335 },
         'Friday': { x: 535, y: 335 },
