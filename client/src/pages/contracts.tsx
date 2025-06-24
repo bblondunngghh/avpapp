@@ -260,34 +260,34 @@ export default function Contracts() {
       const firstPage = pages[0];
       const secondPage = pages[1];
 
-      // Add text overlays for the three editable fields with corrected coordinates
-      // Page 1: Business Insurance Expiration Date (move up to align with line)
+      // Add text overlays for the three editable fields with precise coordinates
+      // Page 1: Business Insurance Expiration Date (move left to align properly)
       if (renewalData.businessInsuranceExpiration) {
         firstPage.drawText(renewalData.businessInsuranceExpiration, {
-          x: 200, 
-          y: 440, // Moved up from 400 to align with the line
+          x: 120, // Moved left from 200 to align with form field
+          y: 440, 
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
       }
 
-      // Page 2: Valet Operator Permit Expiration (move down to align with line)
+      // Page 2: Valet Operator Permit Expiration (replace existing "5/23/25" text)
       if (renewalData.valetPermitExpiration && secondPage) {
         secondPage.drawText(renewalData.valetPermitExpiration, {
           x: 200, 
-          y: 85, // Moved down from 100 to align with the line
+          y: 70, // Moved down further to replace "5/23/25" text
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
       }
 
-      // Page 2: Valet Operator Insurance Expiration (move down to align with line)
+      // Page 2: Valet Operator Insurance Expiration (replace existing "4/1/26" text)
       if (renewalData.valetInsuranceExpiration && secondPage) {
         secondPage.drawText(renewalData.valetInsuranceExpiration, {
           x: 400, 
-          y: 85, // Moved down from 100 to align with the line
+          y: 70, // Moved down further to replace "4/1/26" text
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
