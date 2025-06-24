@@ -545,24 +545,26 @@ export default function Contracts() {
   const generateTemporaryValetPDF = async () => {
     setIsGenerating(true);
     try {
-      // Load your actual PDF template
-      const response = await fetch('/api/pdf-template/valet-temporary');
-      
-      let pdfDoc;
-      if (response.ok) {
-        const existingPdfBytes = await response.arrayBuffer();
-        pdfDoc = await PDFDocument.load(existingPdfBytes);
-      } else {
-        // If server route doesn't exist, try direct file access
-        try {
-          const directResponse = await fetch('/attached_assets/Valet Temporary Zone Application (10)_1750782335056.pdf');
-          const existingPdfBytes = await directResponse.arrayBuffer();
-          pdfDoc = await PDFDocument.load(existingPdfBytes);
-        } catch (directError) {
-          console.log('Could not load PDF template, creating fallback');
-          throw new Error('PDF template not accessible');
-        }
+      // Load the appropriate template based on location
+      let templateEndpoint = '/api/pdf-template/trulucks-temp'; // default to Trulucks
+      if (selectedTempLocation === 'trulucks') {
+        templateEndpoint = '/api/pdf-template/trulucks-temp';
+      } else if (selectedTempLocation === 'capital-grille') {
+        templateEndpoint = '/api/pdf-template/valet-temporary'; // fallback for now
+      } else if (selectedTempLocation === 'bobs') {
+        templateEndpoint = '/api/pdf-template/valet-temporary'; // fallback for now
+      } else if (selectedTempLocation === 'boa') {
+        templateEndpoint = '/api/pdf-template/valet-temporary'; // fallback for now
       }
+
+      const response = await fetch(templateEndpoint);
+      
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+      
+      const existingPdfBytes = await response.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
       const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const pages = pdfDoc.getPages();
@@ -1418,6 +1420,8 @@ export default function Contracts() {
               onChange={setTemporaryValetData}
               onGenerate={generateTemporaryValetPDF}
               isGenerating={isGenerating}
+              selectedLocation={selectedTempLocation}
+              onLocationChange={setSelectedTempLocation}
             />
           )}
 
@@ -1601,60 +1605,50 @@ function TemporaryValetForm({
   data, 
   onChange, 
   onGenerate, 
-  isGenerating 
+  isGenerating,
+  selectedLocation,
+  onLocationChange
 }: { 
   data: TemporaryValetData; 
   onChange: (data: TemporaryValetData) => void; 
   onGenerate: () => void;
   isGenerating: boolean;
+  selectedLocation: string;
+  onLocationChange: (location: string) => void;
 }) {
   const handleInputChange = (field: keyof TemporaryValetData, value: string | boolean | string[]) => {
     onChange({ ...data, [field]: value });
   };
 
   const handleLocationPreset = (location: string) => {
+    onLocationChange(location);
+    
     const locationPresets: Record<string, Partial<TemporaryValetData>> = {
       'trulucks': {
-        companyName: 'Truluck\'s Restaurant',
-        streetName: 'West 6th Street',
-        city: 'Austin',
-        state: 'TX',
-        zip: '78701'
-      },
-      'capital-grille': {
-        companyName: 'The Capital Grille',
-        streetName: 'West 6th Street', 
-        city: 'Austin',
-        state: 'TX',
-        zip: '78701'
-      },
-      'capital-grille-annual': {
-        companyName: 'Colorado Third Street, LLC / The Capital Grille',
-        primaryContact: 'Justin Bayne',
-        phoneNumber: '512-477-4500',
+        companyName: 'Access Valet Parking',
+        primaryContact: 'Brandon Blond',
+        phoneNumber: '512-775-5739',
         altPhoneNumber: '',
-        mailingAddress: '117 W. 4th Street',
+        mailingAddress: '14910 Hartsmith Dr.',
         city: 'Austin',
         state: 'TX',
-        zip: '78701',
-        email: 'jbayne@baynecommercial.com',
-        blockNumber: '100',
-        streetName: 'W 4th St.',
-        spacesRequested: '6',
+        zip: '78725',
+        email: 'brandon@accessvaletparking.com',
+        blockNumber: '300',
+        streetName: 'Colorado St.',
+        spacesRequested: '3',
         curbSide: 'South',
         blockEnd: 'Midblock',
-        payStationNumbers: ['0416', '', '', ''],
-        unmmeteredDescription: '',
-        valetOperatorName: 'Access Valet Parking #2017-054252',
+        payStationNumbers: ['39208', '', '', ''],
+        valetOperatorName: 'Access Valet Parking',
         valetContact: 'Brandon Blond',
         emergencyNumber: '512-775-5739',
-        valetAltPhone: '',
         valetAddress: '14910 Hartsmith Dr.',
         valetCity: 'Austin',
         valetState: 'TX',
         valetZip: '78725',
         valetEmail: 'brandon@accessvaletparking.com',
-        permitExpiration: '5/23/25',
+        permitExpiration: '5/23/26',
         insuranceExpiration: '4/1/26',
         onPremisesParking: false,
         parkingFacilityAddress: '405 Colorado',
@@ -1662,32 +1656,57 @@ function TemporaryValetForm({
         parkingFacilityState: 'TX',
         parkingFacilityZip: '78725',
         facilityType: 'Parking Garage',
-        availableSpaces: '90',
-        contractDate: '9/16/2021',
+        availableSpaces: '30',
+        contractDate: '1/18/24',
         contractExpiration: 'MTM',
         facilityContactName: 'Jim Riggio',
-        facilityContactPhone: '267-825-3398',
+        facilityContactPhone: '267-826-3398',
         facilityContactEmail: 'jim.riggio@bdnreit.com'
       },
-      'bobs-steak': {
-        companyName: 'Bob\'s Steak & Chop House',
-        streetName: 'Lamar Boulevard',
-        city: 'Austin', 
+      'capital-grille': {
+        companyName: 'Access Valet Parking',
+        primaryContact: 'Brandon Blond',
+        phoneNumber: '512-775-5739',
+        altPhoneNumber: '',
+        mailingAddress: '14910 Hartsmith Dr.',
+        city: 'Austin',
         state: 'TX',
-        zip: '78704'
+        zip: '78725',
+        email: 'brandon@accessvaletparking.com',
+        blockNumber: '100',
+        streetName: 'W 4th St.',
+        spacesRequested: '6',
+        curbSide: 'South',
+        blockEnd: 'Midblock',
+        payStationNumbers: ['0416', '', '', '']
+      },
+      'bobs': {
+        companyName: 'Access Valet Parking',
+        primaryContact: 'Brandon Blond',
+        phoneNumber: '512-775-5739',
+        altPhoneNumber: '',
+        mailingAddress: '14910 Hartsmith Dr.',
+        city: 'Austin',
+        state: 'TX',
+        zip: '78725',
+        email: 'brandon@accessvaletparking.com'
       },
       'boa': {
-        companyName: 'BOA Steakhouse',
-        streetName: 'West 4th Street',
+        companyName: 'Access Valet Parking',
+        primaryContact: 'Brandon Blond',
+        phoneNumber: '512-775-5739',
+        altPhoneNumber: '',
+        mailingAddress: '14910 Hartsmith Dr.',
         city: 'Austin',
-        state: 'TX', 
-        zip: '78701'
+        state: 'TX',
+        zip: '78725',
+        email: 'brandon@accessvaletparking.com'
       }
     };
 
     const preset = locationPresets[location];
     if (preset) {
-      onChange({ ...data, location, ...preset });
+      onChange({ ...data, ...preset });
     }
   };
 
@@ -1697,13 +1716,15 @@ function TemporaryValetForm({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Location Template</h3>
         <p className="text-sm text-gray-600">Select a location to auto-fill company and contact details. You can edit event-specific information below.</p>
-        <Select value={data.location} onValueChange={(value) => handleLocationPreset(value)}>
+        <Select value={selectedLocation} onValueChange={(value) => handleLocationPreset(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select location template" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="trulucks">Truluck's</SelectItem>
             <SelectItem value="capital-grille">The Capital Grille</SelectItem>
+            <SelectItem value="bobs">Bob's Steak & Chop House</SelectItem>
+            <SelectItem value="boa">BOA Steakhouse</SelectItem>
             <SelectItem value="capital-grille-annual">Capital Grille Annual Renewal</SelectItem>
             <SelectItem value="bobs-steak">Bob's Steak & Chop House</SelectItem>
             <SelectItem value="boa">BOA Steakhouse</SelectItem>

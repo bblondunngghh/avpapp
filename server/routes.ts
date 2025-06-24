@@ -193,6 +193,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // PDF template routes for Temporary Valet Zone
+  app.get('/api/pdf-template/trulucks-temp', async (req, res) => {
+    try {
+      const filePath = '/home/runner/workspace/attached_assets/TL TEMP ZONE COPY APP_1750791005405.pdf';
+      const fileBuffer = await fs.promises.readFile(filePath);
+      
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Length': fileBuffer.length
+      });
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error('Error serving Trulucks temporary zone PDF template:', error);
+      res.status(404).json({ error: 'PDF template not found' });
+    }
+  });
+
   // Document upload endpoint
   app.post('/api/upload-document', uploadDocument.single('file'), async (req, res) => {
     try {
