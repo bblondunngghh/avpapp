@@ -250,6 +250,18 @@ export default function Contracts() {
     ));
   };
 
+  // Convert military time to standard time format
+  const convertToStandardTime = (militaryTime: string): string => {
+    if (!militaryTime) return '';
+    
+    const [hours, minutes] = militaryTime.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const standardHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    
+    return `${standardHour}:${minutes} ${ampm}`;
+  };
+
   const uploadDocument = async (category: string, file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -595,8 +607,8 @@ export default function Contracts() {
         
         // Event Time and Date
         { text: temporaryValetData.eventDates, x: 135, y: 350, page: 0 },
-        { text: temporaryValetData.fromTime, x: 75, y: 335, page: 0 },
-        { text: temporaryValetData.toTime, x: 175, y: 335, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.fromTime), x: 75, y: 335, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.toTime), x: 175, y: 335, page: 0 },
       ] : [
         // Default coordinates for other templates
         { text: temporaryValetData.companyName, x: 150, y: 700, page: 0 },
@@ -616,8 +628,8 @@ export default function Contracts() {
         
         // Event Time and Date
         { text: temporaryValetData.eventDates, x: 150, y: 280, page: 0 },
-        { text: temporaryValetData.fromTime, x: 150, y: 250, page: 0 },
-        { text: temporaryValetData.toTime, x: 250, y: 250, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.fromTime), x: 150, y: 250, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.toTime), x: 250, y: 250, page: 0 },
       ];
 
       // Add text to the appropriate pages
