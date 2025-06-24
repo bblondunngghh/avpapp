@@ -260,35 +260,35 @@ export default function Contracts() {
       const firstPage = pages[0];
       const secondPage = pages[1];
 
-      // Add text overlays for the three editable fields
-      // Page 1: Business Insurance Expiration Date (adjust coordinates as needed)
+      // Add text overlays for the three editable fields with corrected coordinates
+      // Page 1: Business Insurance Expiration Date (move up to align with line)
       if (renewalData.businessInsuranceExpiration) {
         firstPage.drawText(renewalData.businessInsuranceExpiration, {
-          x: 200, // Adjust this X coordinate to match your PDF
-          y: 400, // Adjust this Y coordinate to match your PDF
-          size: 10,
+          x: 200, 
+          y: 440, // Moved up from 400 to align with the line
+          size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
       }
 
-      // Page 2: Valet Operator Permit Expiration
+      // Page 2: Valet Operator Permit Expiration (move down to align with line)
       if (renewalData.valetPermitExpiration && secondPage) {
         secondPage.drawText(renewalData.valetPermitExpiration, {
-          x: 200, // Adjust this X coordinate to match your PDF
-          y: 100, // Adjust this Y coordinate to match your PDF
-          size: 10,
+          x: 200, 
+          y: 85, // Moved down from 100 to align with the line
+          size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
       }
 
-      // Page 2: Valet Operator Insurance Expiration
+      // Page 2: Valet Operator Insurance Expiration (move down to align with line)
       if (renewalData.valetInsuranceExpiration && secondPage) {
         secondPage.drawText(renewalData.valetInsuranceExpiration, {
-          x: 400, // Adjust this X coordinate to match your PDF
-          y: 100, // Adjust this Y coordinate to match your PDF
-          size: 10,
+          x: 400, 
+          y: 85, // Moved down from 100 to align with the line
+          size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });

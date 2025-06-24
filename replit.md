@@ -92,6 +92,8 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Created Capital Grille Renewal PDF editor with three editable date fields
+- June 24, 2025: Fixed PDF template loading and text overlay positioning system
 - June 24, 2025: Added comprehensive contract generation system with PDF export and company logo
 - June 24, 2025: Contract generator includes customizable termination notice periods (30/60/90 days)
 - June 24, 2025: Removed trial period functionality - streamlined for general contract use
