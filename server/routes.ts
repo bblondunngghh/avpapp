@@ -162,25 +162,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get('/api/pdf-template/capital-grille-renewal', (req, res) => {
-    import('fs').then(fs => {
-      // Use the correct path for the PDF
-      const filePath = '/home/runner/workspace/attached_assets/Cap Grille Annual Renewal App - 2025_1750783053650.pdf';
-      
-      if (fs.existsSync(filePath)) {
-        res.sendFile(filePath, (err) => {
-          if (err) {
-            console.error('Error serving Capital Grille PDF template:', err);
-            res.status(500).json({ error: 'Failed to serve PDF template' });
-          }
-        });
-      } else {
-        console.error('Capital Grille PDF template not found at:', filePath);
-        res.status(404).json({ error: 'PDF template not found' });
-      }
-    }).catch(err => {
-      console.error('Import error:', err);
-      res.status(500).json({ error: 'Server error' });
-    });
+    // Use the correct path for the PDF
+    const filePath = '/home/runner/workspace/attached_assets/Cap Grille Annual Renewal App - 2025_1750783053650.pdf';
+    
+    if (existsSync(filePath)) {
+      res.sendFile(filePath, (err) => {
+        if (err) {
+          console.error('Error serving Capital Grille PDF template:', err);
+          res.status(500).json({ error: 'Failed to serve PDF template' });
+        }
+      });
+    } else {
+      console.error('Capital Grille PDF template not found at:', filePath);
+      res.status(404).json({ error: 'PDF template not found' });
+    }
   });
   // Configure multer for image uploads
   const storage_config = multer.diskStorage({
