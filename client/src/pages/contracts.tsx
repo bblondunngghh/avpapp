@@ -267,7 +267,12 @@ export default function Contracts() {
         doc.category === category ? { ...doc, uploaded: true } : doc
       ));
 
-      return result.filename;
+      return {
+        filename: result.filename,
+        category: result.category,
+        originalName: result.originalName,
+        mimeType: result.mimeType
+      };
     } catch (error) {
       console.error('Upload error:', error);
       toast({
@@ -307,9 +312,9 @@ export default function Contracts() {
       const uploadedFiles = [];
       for (const doc of documentUploads) {
         if (doc.file && !doc.uploaded) {
-          const filename = await uploadDocument(doc.category, doc.file);
-          if (filename) {
-            uploadedFiles.push({ category: doc.category, filename });
+          const fileInfo = await uploadDocument(doc.category, doc.file);
+          if (fileInfo) {
+            uploadedFiles.push(fileInfo);
           }
         }
       }
@@ -361,6 +366,27 @@ export default function Contracts() {
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
+      }
+
+      // Add uploaded documents as attachments
+      for (const file of uploadedFiles) {
+        try {
+          // Fetch the uploaded file
+          const fileResponse = await fetch(`/api/document/${file.filename}`);
+          if (fileResponse.ok) {
+            const fileBytes = await fileResponse.arrayBuffer();
+            
+            // Attach the file to the PDF
+            await pdfDoc.attach(fileBytes, file.originalName || file.filename, {
+              mimeType: file.mimeType || 'application/pdf',
+              description: `${getCategoryDisplayName(file.category)} - Supporting Document`,
+              creationDate: new Date(),
+              modificationDate: new Date()
+            });
+          }
+        } catch (error) {
+          console.error(`Failed to attach ${file.filename}:`, error);
+        }
       }
 
       // Generate and download the completed PDF

@@ -216,16 +216,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mimeType: req.file.mimetype
       };
 
-      // For now, we'll just return success - you can add database storage later
+      // Return success with file details
       res.json({
         success: true,
         filename: req.file.filename,
+        originalName: req.file.originalname,
+        category: category,
+        size: req.file.size,
+        mimeType: req.file.mimetype,
         message: 'Document uploaded successfully'
       });
 
     } catch (error) {
       console.error('Document upload error:', error);
       res.status(500).json({ error: 'Upload failed' });
+    }
+  });
+
+  // Serve uploaded documents
+  app.get('/api/document/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join('./uploads/documents', filename);
+    
+    if (fs.existsSync(filePath)) {
+      res.sendFile(path.resolve(filePath));
+    } else {
+      res.status(404).json({ error: 'Document not found' });
     }
   });
 
