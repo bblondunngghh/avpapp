@@ -382,33 +382,13 @@ export default function Contracts() {
               const fileBytes = await fileResponse.arrayBuffer();
               console.log(`File fetched, size: ${fileBytes.byteLength} bytes`);
               
-              // If it's a PDF, merge its pages
+              // If it's a PDF, merge its pages directly
               if (file.mimeType === 'application/pdf') {
                 try {
                   const attachedPdf = await PDFDocument.load(fileBytes);
                   const pages = await pdfDoc.copyPages(attachedPdf, attachedPdf.getPageIndices());
                   
-                  // Add a separator page with document info
-                  const separatorPage = pdfDoc.addPage([612, 792]);
-                  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-                  
-                  separatorPage.drawText(`Supporting Document: ${getCategoryDisplayName(file.category)}`, {
-                    x: 50,
-                    y: 750,
-                    size: 16,
-                    font: helveticaFont,
-                    color: rgb(0, 0, 0),
-                  });
-                  
-                  separatorPage.drawText(`Original Filename: ${file.originalName || file.filename}`, {
-                    x: 50,
-                    y: 720,
-                    size: 12,
-                    font: helveticaFont,
-                    color: rgb(0.3, 0.3, 0.3),
-                  });
-                  
-                  // Add all pages from the attached PDF
+                  // Add all pages from the attached PDF directly
                   pages.forEach((page) => pdfDoc.addPage(page));
                   
                   console.log(`Successfully merged PDF: ${file.originalName || file.filename}`);
@@ -419,24 +399,6 @@ export default function Contracts() {
                 try {
                   // For images, create a new page and embed the image
                   const imagePage = pdfDoc.addPage([612, 792]);
-                  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-                  
-                  // Add document info at top
-                  imagePage.drawText(`Supporting Document: ${getCategoryDisplayName(file.category)}`, {
-                    x: 50,
-                    y: 750,
-                    size: 16,
-                    font: helveticaFont,
-                    color: rgb(0, 0, 0),
-                  });
-                  
-                  imagePage.drawText(`Original Filename: ${file.originalName || file.filename}`, {
-                    x: 50,
-                    y: 720,
-                    size: 12,
-                    font: helveticaFont,
-                    color: rgb(0.3, 0.3, 0.3),
-                  });
                   
                   // Embed and draw the image
                   let image;
@@ -449,7 +411,7 @@ export default function Contracts() {
                   if (image) {
                     const { width, height } = image.scale(0.5); // Scale down to fit page
                     const maxWidth = 500;
-                    const maxHeight = 600;
+                    const maxHeight = 700;
                     
                     let drawWidth = width;
                     let drawHeight = height;
@@ -467,9 +429,13 @@ export default function Contracts() {
                       drawWidth = drawWidth * ratio;
                     }
                     
+                    // Center the image on the page
+                    const xOffset = (612 - drawWidth) / 2;
+                    const yOffset = (792 - drawHeight) / 2;
+                    
                     imagePage.drawImage(image, {
-                      x: 50,
-                      y: 50,
+                      x: xOffset,
+                      y: yOffset,
                       width: drawWidth,
                       height: drawHeight,
                     });
