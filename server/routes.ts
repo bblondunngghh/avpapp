@@ -152,8 +152,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve PDF templates
   // Serve PDF templates
   app.get('/api/pdf-template/valet-temporary', (req, res) => {
-    const path = require('path');
-    const filePath = path.join(__dirname, '../attached_assets/Valet Temporary Zone Application (10)_1750782335056.pdf');
+    const filePath = '/home/runner/workspace/attached_assets/Valet Temporary Zone Application (10)_1750782335056.pdf';
     res.sendFile(filePath, (err) => {
       if (err) {
         console.error('Error serving PDF template:', err);
@@ -163,13 +162,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get('/api/pdf-template/capital-grille-renewal', (req, res) => {
-    const path = require('path');
-    const filePath = path.join(__dirname, '../attached_assets/Cap Grille Annual Renewal App - 2025_1750783053650.pdf');
-    res.sendFile(filePath, (err) => {
-      if (err) {
-        console.error('Error serving Capital Grille PDF template:', err);
-        res.status(404).send('PDF template not found');
+    import('fs').then(fs => {
+      // Use the correct path for the PDF
+      const filePath = '/home/runner/workspace/attached_assets/Cap Grille Annual Renewal App - 2025_1750783053650.pdf';
+      
+      if (fs.existsSync(filePath)) {
+        res.sendFile(filePath, (err) => {
+          if (err) {
+            console.error('Error serving Capital Grille PDF template:', err);
+            res.status(500).json({ error: 'Failed to serve PDF template' });
+          }
+        });
+      } else {
+        console.error('Capital Grille PDF template not found at:', filePath);
+        res.status(404).json({ error: 'PDF template not found' });
       }
+    }).catch(err => {
+      console.error('Import error:', err);
+      res.status(500).json({ error: 'Server error' });
     });
   });
   // Configure multer for image uploads

@@ -238,13 +238,14 @@ export default function Contracts() {
       // Load the Capital Grille renewal PDF template
       const response = await fetch('/api/pdf-template/capital-grille-renewal');
       
-      let pdfDoc;
       if (!response.ok) {
-        throw new Error('Could not load PDF template');
+        const errorText = await response.text();
+        console.error('Server response:', errorText);
+        throw new Error(`Could not load PDF template: ${response.status} ${response.statusText}`);
       }
       
       const existingPdfBytes = await response.arrayBuffer();
-      pdfDoc = await PDFDocument.load(existingPdfBytes);
+      const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
       const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const pages = pdfDoc.getPages();
