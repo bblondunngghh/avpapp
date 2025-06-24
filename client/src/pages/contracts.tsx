@@ -264,26 +264,26 @@ export default function Contracts() {
     return `${standardHour}:${minutes} ${ampm}`;
   };
 
-  // Get weekday circle coordinates for PDF overlay
-  const getWeekdayCircleCoordinates = (location: string) => {
+  // Get weekday rectangle coordinates for PDF overlay (Monday-Sunday order)
+  const getWeekdayRectangleCoordinates = (location: string) => {
     const dayCoordinates = {
       'trulucks': {
-        'Sunday': { x: 45, y: 335 },
-        'Monday': { x: 85, y: 335 },
-        'Tuesday': { x: 125, y: 335 },
-        'Wednesday': { x: 165, y: 335 },
-        'Thursday': { x: 205, y: 335 },
-        'Friday': { x: 245, y: 335 },
-        'Saturday': { x: 285, y: 335 }
+        'Monday': { x: 50, y: 335 },
+        'Tuesday': { x: 90, y: 335 },
+        'Wednesday': { x: 130, y: 335 },
+        'Thursday': { x: 170, y: 335 },
+        'Friday': { x: 210, y: 335 },
+        'Saturday': { x: 250, y: 335 },
+        'Sunday': { x: 290, y: 335 }
       },
       'default': {
-        'Sunday': { x: 50, y: 250 },
-        'Monday': { x: 100, y: 250 },
-        'Tuesday': { x: 150, y: 250 },
-        'Wednesday': { x: 200, y: 250 },
-        'Thursday': { x: 250, y: 250 },
-        'Friday': { x: 300, y: 250 },
-        'Saturday': { x: 350, y: 250 }
+        'Monday': { x: 50, y: 250 },
+        'Tuesday': { x: 100, y: 250 },
+        'Wednesday': { x: 150, y: 250 },
+        'Thursday': { x: 200, y: 250 },
+        'Friday': { x: 250, y: 250 },
+        'Saturday': { x: 300, y: 250 },
+        'Sunday': { x: 350, y: 250 }
       }
     };
     
@@ -674,15 +674,16 @@ export default function Contracts() {
         }
       });
 
-      // Add circles around selected weekdays
-      const dayCoordinates = getWeekdayCircleCoordinates(selectedTempLocation);
+      // Add rectangles around selected weekdays
+      const dayCoordinates = getWeekdayRectangleCoordinates(selectedTempLocation);
       temporaryValetData.selectedWeekdays.forEach(day => {
         const coords = dayCoordinates[day];
         if (coords) {
-          firstPage.drawCircle({
-            x: coords.x,
-            y: coords.y,
-            size: 8,
+          firstPage.drawRectangle({
+            x: coords.x - 12,
+            y: coords.y - 6,
+            width: 24,
+            height: 12,
             borderColor: rgb(0, 0, 0),
             borderWidth: 1.5,
             opacity: 0,
@@ -1839,7 +1840,7 @@ function TemporaryValetForm({
         <div className="space-y-2">
           <Label>Days of Week</Label>
           <div className="flex flex-wrap gap-2">
-            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
               <label key={day} className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"

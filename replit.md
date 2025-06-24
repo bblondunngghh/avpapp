@@ -92,7 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
-- June 24, 2025: Added weekday selection with PDF circle overlays - users can select days and circles appear on same Y-axis as times
+- June 24, 2025: Updated weekday selection to Monday-Sunday order with rectangle overlays instead of circles for better visibility
 - June 24, 2025: Added standard time format conversion - times now display as 12-hour format with AM/PM instead of military time
 - June 24, 2025: Fine-tuned Trulucks temporary zone coordinates - Event date: x:135, y:350; From time: x:75, To time: x:175, y:335
 - June 24, 2025: Simplified Temporary Valet Zone form - removed unnecessary fields, only shows location selection and event details
