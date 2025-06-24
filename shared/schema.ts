@@ -104,7 +104,7 @@ export const documentAttachments = pgTable("document_attachments", {
   id: serial("id").primaryKey(),
   filename: text("filename").notNull(),
   originalName: text("original_name").notNull(),
-  category: text("category").notNull(), // authorized_agent, resolution_authority, valet_insurance, business_insurance, notarized_vehicle_storage
+  category: text("category").notNull(), // authorized_agent, resolution_authority, valet_insurance, business_insurance, parking_agreement
   filePath: text("file_path").notNull(),
   fileSize: integer("file_size"),
   mimeType: text("mime_type"),
