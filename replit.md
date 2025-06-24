@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Added Bob's Resolution of Authority date field - splits date into month/day and year format on page 5
 - June 24, 2025: Added Bob's PDF template for location-specific Annual Renewal generation - all 4 locations now complete
 - June 24, 2025: Added BOA PDF template for location-specific Annual Renewal generation  
 - June 24, 2025: Added Trulucks PDF template for location-specific Annual Renewal generation

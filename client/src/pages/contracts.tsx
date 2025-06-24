@@ -133,11 +133,12 @@ export default function Contracts() {
     specialTerms: ''
   });
 
-  // Simple renewal form data for Capital Grille
+  // Simple renewal form data for Annual Renewal
   const [renewalData, setRenewalData] = useState({
     businessInsuranceExpiration: '',
     valetPermitExpiration: '',
-    valetInsuranceExpiration: ''
+    valetInsuranceExpiration: '',
+    resolutionDate: '' // For Bob's Resolution of Authority date field
   });
 
   // Document upload state
@@ -312,10 +313,10 @@ export default function Contracts() {
       }
 
       // Validate that at least one field is filled
-      if (!renewalData.businessInsuranceExpiration && !renewalData.valetPermitExpiration && !renewalData.valetInsuranceExpiration) {
+      if (!renewalData.businessInsuranceExpiration && !renewalData.valetPermitExpiration && !renewalData.valetInsuranceExpiration && !renewalData.resolutionDate) {
         toast({
           title: "Error",
-          description: "Please enter at least one expiration date",
+          description: "Please enter at least one date field",
           variant: "destructive",
         });
         setIsGenerating(false);
@@ -359,38 +360,67 @@ export default function Contracts() {
       const firstPage = pages[0];
       const secondPage = pages[1];
 
-      // Add text overlays for the three editable fields with coordinates for your specific PDF
-      // Page 1: Business Insurance Expiration Date (after "Insurance Expiration Date")
-      if (renewalData.businessInsuranceExpiration) {
-        firstPage.drawText(renewalData.businessInsuranceExpiration, {
-          x: 165, // Adjusted to align properly with the blank line after "Insurance Expiration Date"
-          y: 440, 
-          size: 9,
-          font: helveticaFont,
-          color: rgb(0, 0, 0),
-        });
-      }
+      // Location-specific text overlay logic
+      if (selectedLocation === 'bobs' && renewalData.resolutionDate) {
+        // Bob's specific: Resolution of Authority date on page 5 (split into month/day and year)
+        const page5 = pages[4]; // Page 5 (0-indexed)
+        if (page5 && renewalData.resolutionDate) {
+          const date = new Date(renewalData.resolutionDate);
+          const monthDay = `${date.getMonth() + 1}/${date.getDate()}`;
+          const year = date.getFullYear().toString().slice(-2); // Last 2 digits of year
+          
+          // Month/Day field
+          page5.drawText(monthDay, {
+            x: 275, // Adjust based on PDF positioning
+            y: 140, // Adjust based on PDF positioning
+            size: 9,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+          
+          // Year field (separated)
+          page5.drawText(year, {
+            x: 350, // Adjust based on PDF positioning for year field
+            y: 140, // Same Y coordinate as month/day
+            size: 9,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
+      } else {
+        // Standard fields for Capital Grille, Trulucks, BOA
+        // Page 1: Business Insurance Expiration Date (after "Insurance Expiration Date")
+        if (renewalData.businessInsuranceExpiration) {
+          firstPage.drawText(renewalData.businessInsuranceExpiration, {
+            x: 165, // Adjusted to align properly with the blank line after "Insurance Expiration Date"
+            y: 440, 
+            size: 9,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
 
-      // Page 2: Valet Operator Permit Expiration (final positioning)
-      if (renewalData.valetPermitExpiration && secondPage) {
-        secondPage.drawText(renewalData.valetPermitExpiration, {
-          x: 235, // Adjusted left position
-          y: 61, // Final Y coordinate
-          size: 9,
-          font: helveticaFont,
-          color: rgb(0, 0, 0),
-        });
-      }
+        // Page 2: Valet Operator Permit Expiration (final positioning)
+        if (renewalData.valetPermitExpiration && secondPage) {
+          secondPage.drawText(renewalData.valetPermitExpiration, {
+            x: 235, // Adjusted left position
+            y: 61, // Final Y coordinate
+            size: 9,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
 
-      // Page 2: Valet Operator Insurance Expiration (final positioning)
-      if (renewalData.valetInsuranceExpiration && secondPage) {
-        secondPage.drawText(renewalData.valetInsuranceExpiration, {
-          x: 499, // Right position maintained
-          y: 61, // Final Y coordinate
-          size: 9,
-          font: helveticaFont,
-          color: rgb(0, 0, 0),
-        });
+        // Page 2: Valet Operator Insurance Expiration (final positioning)
+        if (renewalData.valetInsuranceExpiration && secondPage) {
+          secondPage.drawText(renewalData.valetInsuranceExpiration, {
+            x: 499, // Right position maintained
+            y: 61, // Final Y coordinate
+            size: 9,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
       }
 
       // Add uploaded documents by creating additional pages in the PDF
@@ -1422,8 +1452,8 @@ function AnnualRenewalForm({
   selectedLocation,
   onLocationChange
 }: { 
-  data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }; 
-  onChange: (data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }) => void; 
+  data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string; resolutionDate?: string }; 
+  onChange: (data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string; resolutionDate?: string }) => void; 
   onGenerate: () => void;
   isGenerating: boolean;
   documentUploads: Array<{ category: string; file: File | null; uploaded: boolean }>;
@@ -1500,6 +1530,24 @@ function AnnualRenewalForm({
           </div>
         </div>
       </div>
+
+      {/* Bob's Specific Resolution Date Field */}
+      {selectedLocation === 'bobs' && (
+        <div className="space-y-4 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+          <h4 className="text-md font-semibold text-blue-700">Resolution of Authority Date</h4>
+          <div className="space-y-2">
+            <Label htmlFor="resolutionDate">Resolution Date (for page 5)</Label>
+            <Input
+              id="resolutionDate"
+              type="date"
+              value={data.resolutionDate || ''}
+              onChange={(e) => handleInputChange('resolutionDate', e.target.value)}
+              className="w-full"
+            />
+            <p className="text-xs text-blue-600">This date will be split into month/day and year format on the Resolution of Authority page</p>
+          </div>
+        </div>
+      )}
 
       {/* Document Upload Section */}
       <div className="space-y-4 bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
