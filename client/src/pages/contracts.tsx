@@ -1214,6 +1214,85 @@ export default function Contracts() {
   );
 }
 
+// Capital Grille Renewal Form Component
+function CapitalGrilleRenewalForm({ 
+  data, 
+  onChange, 
+  onGenerate, 
+  isGenerating 
+}: { 
+  data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }; 
+  onChange: (data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }) => void; 
+  onGenerate: () => void;
+  isGenerating: boolean;
+}) {
+  const handleInputChange = (field: string, value: string) => {
+    onChange({ ...data, [field]: value });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-lg font-semibold text-gray-900">Capital Grille Annual Renewal</h3>
+        <p className="text-sm text-gray-600">Edit expiration dates on your existing renewal document</p>
+      </div>
+
+      <div className="space-y-4 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+        <h4 className="text-md font-semibold text-blue-700">Update Expiration Dates</h4>
+        
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="businessInsuranceExpiration">Business Insurance Expiration Date</Label>
+            <Input
+              id="businessInsuranceExpiration"
+              type="date"
+              value={data.businessInsuranceExpiration}
+              onChange={(e) => handleInputChange('businessInsuranceExpiration', e.target.value)}
+              placeholder="Select expiration date"
+            />
+            <p className="text-xs text-gray-500">This will be added to Page 1 under Business Insurance</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="valetPermitExpiration">Valet Operator Permit Expiration</Label>
+            <Input
+              id="valetPermitExpiration"
+              type="date"
+              value={data.valetPermitExpiration}
+              onChange={(e) => handleInputChange('valetPermitExpiration', e.target.value)}
+              placeholder="Select permit expiration date"
+            />
+            <p className="text-xs text-gray-500">This will be added to Page 2 at the bottom</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="valetInsuranceExpiration">Valet Operator Insurance Expiration</Label>
+            <Input
+              id="valetInsuranceExpiration"
+              type="date"
+              value={data.valetInsuranceExpiration}
+              onChange={(e) => handleInputChange('valetInsuranceExpiration', e.target.value)}
+              placeholder="Select insurance expiration date"
+            />
+            <p className="text-xs text-gray-500">This will be added to Page 2 at the bottom</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-6">
+        <Button 
+          onClick={onGenerate} 
+          disabled={isGenerating}
+          className="w-full"
+          size="lg"
+        >
+          {isGenerating ? 'Generating...' : 'Generate Capital Grille Renewal PDF'}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // Temporary Valet Form Component
 function TemporaryValetForm({ 
   data, 
