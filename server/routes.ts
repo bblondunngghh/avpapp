@@ -161,19 +161,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  app.get('/api/pdf-template/capital-grille-renewal', (req, res) => {
-    // Use the correct path for the PDF
-    const filePath = '/home/runner/workspace/attached_assets/Cap Grille Annual Renewal App - 2025_1750783053650.pdf';
-    
-    if (existsSync(filePath)) {
-      res.sendFile(filePath, (err) => {
-        if (err) {
-          console.error('Error serving Capital Grille PDF template:', err);
-          res.status(500).json({ error: 'Failed to serve PDF template' });
-        }
+  app.get('/api/pdf-template/capital-grille-renewal', async (req, res) => {
+    try {
+      const filePath = '/home/runner/workspace/attached_assets/Cap Grille Annual Renewal App - 2025_1750783053650.pdf';
+      const fileBuffer = await fs.promises.readFile(filePath);
+      
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Length': fileBuffer.length
       });
-    } else {
-      console.error('Capital Grille PDF template not found at:', filePath);
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error('Error serving Capital Grille PDF template:', error);
       res.status(404).json({ error: 'PDF template not found' });
     }
   });

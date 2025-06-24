@@ -235,13 +235,21 @@ export default function Contracts() {
   const generateCapitalGrilleRenewal = async () => {
     setIsGenerating(true);
     try {
+      // Validate that at least one field is filled
+      if (!renewalData.businessInsuranceExpiration && !renewalData.valetPermitExpiration && !renewalData.valetInsuranceExpiration) {
+        toast({
+          title: "Error",
+          description: "Please enter at least one expiration date",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Load the Capital Grille renewal PDF template
       const response = await fetch('/api/pdf-template/capital-grille-renewal');
       
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Server response:', errorText);
-        throw new Error(`Could not load PDF template: ${response.status} ${response.statusText}`);
+        throw new Error(`Server error: ${response.status}`);
       }
       
       const existingPdfBytes = await response.arrayBuffer();
