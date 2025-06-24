@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import avpLogo from "@assets/AVPLOGO PROPER3_1750780386225.png";
 import jsPDF from 'jspdf';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFArray, PDFDict, PDFName, PDFHexString } from 'pdf-lib';
 
 interface DaySchedule {
   enabled: boolean;
@@ -368,25 +368,127 @@ export default function Contracts() {
         });
       }
 
-      // Add uploaded documents as attachments
-      for (const file of uploadedFiles) {
-        try {
-          // Fetch the uploaded file
-          const fileResponse = await fetch(`/api/document/${file.filename}`);
-          if (fileResponse.ok) {
-            const fileBytes = await fileResponse.arrayBuffer();
+      // Add uploaded documents by creating additional pages in the PDF
+      if (uploadedFiles.length > 0) {
+        console.log(`Adding ${uploadedFiles.length} supporting documents to PDF...`);
+        
+        for (const file of uploadedFiles) {
+          try {
+            console.log(`Processing file: ${file.filename} (${file.category})`);
             
-            // Attach the file to the PDF
-            await pdfDoc.attach(fileBytes, file.originalName || file.filename, {
-              mimeType: file.mimeType || 'application/pdf',
-              description: `${getCategoryDisplayName(file.category)} - Supporting Document`,
-              creationDate: new Date(),
-              modificationDate: new Date()
-            });
+            // Fetch the uploaded file
+            const fileResponse = await fetch(`/api/document/${file.filename}`);
+            if (fileResponse.ok) {
+              const fileBytes = await fileResponse.arrayBuffer();
+              console.log(`File fetched, size: ${fileBytes.byteLength} bytes`);
+              
+              // If it's a PDF, merge its pages
+              if (file.mimeType === 'application/pdf') {
+                try {
+                  const attachedPdf = await PDFDocument.load(fileBytes);
+                  const pages = await pdfDoc.copyPages(attachedPdf, attachedPdf.getPageIndices());
+                  
+                  // Add a separator page with document info
+                  const separatorPage = pdfDoc.addPage([612, 792]);
+                  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                  
+                  separatorPage.drawText(`Supporting Document: ${getCategoryDisplayName(file.category)}`, {
+                    x: 50,
+                    y: 750,
+                    size: 16,
+                    font: helveticaFont,
+                    color: rgb(0, 0, 0),
+                  });
+                  
+                  separatorPage.drawText(`Original Filename: ${file.originalName || file.filename}`, {
+                    x: 50,
+                    y: 720,
+                    size: 12,
+                    font: helveticaFont,
+                    color: rgb(0.3, 0.3, 0.3),
+                  });
+                  
+                  // Add all pages from the attached PDF
+                  pages.forEach((page) => pdfDoc.addPage(page));
+                  
+                  console.log(`Successfully merged PDF: ${file.originalName || file.filename}`);
+                } catch (pdfError) {
+                  console.error(`Failed to merge PDF ${file.filename}:`, pdfError);
+                }
+              } else if (file.mimeType?.startsWith('image/')) {
+                try {
+                  // For images, create a new page and embed the image
+                  const imagePage = pdfDoc.addPage([612, 792]);
+                  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                  
+                  // Add document info at top
+                  imagePage.drawText(`Supporting Document: ${getCategoryDisplayName(file.category)}`, {
+                    x: 50,
+                    y: 750,
+                    size: 16,
+                    font: helveticaFont,
+                    color: rgb(0, 0, 0),
+                  });
+                  
+                  imagePage.drawText(`Original Filename: ${file.originalName || file.filename}`, {
+                    x: 50,
+                    y: 720,
+                    size: 12,
+                    font: helveticaFont,
+                    color: rgb(0.3, 0.3, 0.3),
+                  });
+                  
+                  // Embed and draw the image
+                  let image;
+                  if (file.mimeType === 'image/jpeg' || file.mimeType === 'image/jpg') {
+                    image = await pdfDoc.embedJpg(fileBytes);
+                  } else if (file.mimeType === 'image/png') {
+                    image = await pdfDoc.embedPng(fileBytes);
+                  }
+                  
+                  if (image) {
+                    const { width, height } = image.scale(0.5); // Scale down to fit page
+                    const maxWidth = 500;
+                    const maxHeight = 600;
+                    
+                    let drawWidth = width;
+                    let drawHeight = height;
+                    
+                    // Scale to fit within page bounds
+                    if (width > maxWidth) {
+                      const ratio = maxWidth / width;
+                      drawWidth = maxWidth;
+                      drawHeight = height * ratio;
+                    }
+                    
+                    if (drawHeight > maxHeight) {
+                      const ratio = maxHeight / drawHeight;
+                      drawHeight = maxHeight;
+                      drawWidth = drawWidth * ratio;
+                    }
+                    
+                    imagePage.drawImage(image, {
+                      x: 50,
+                      y: 50,
+                      width: drawWidth,
+                      height: drawHeight,
+                    });
+                  }
+                  
+                  console.log(`Successfully added image: ${file.originalName || file.filename}`);
+                } catch (imageError) {
+                  console.error(`Failed to embed image ${file.filename}:`, imageError);
+                }
+              }
+            } else {
+              console.error(`Failed to fetch file: ${file.filename}, status: ${fileResponse.status}`);
+            }
+          } catch (error) {
+            console.error(`Failed to process ${file.filename}:`, error);
           }
-        } catch (error) {
-          console.error(`Failed to attach ${file.filename}:`, error);
         }
+        
+        console.log(`Successfully processed ${uploadedFiles.length} supporting documents`);
       }
 
       // Generate and download the completed PDF
