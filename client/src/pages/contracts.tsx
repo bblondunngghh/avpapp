@@ -272,22 +272,22 @@ export default function Contracts() {
         });
       }
 
-      // Page 2: Valet Operator Permit Expiration (moved down 6 lines to align with blank line)
+      // Page 2: Valet Operator Permit Expiration (fine-tuned positioning)
       if (renewalData.valetPermitExpiration && secondPage) {
         secondPage.drawText(renewalData.valetPermitExpiration, {
-          x: 290, // X position for permit expiration field
-          y: 73, // Moved down significantly (6 lines = ~72 points)
+          x: 250, // Moved left 5 spaces (~40 points)
+          y: 49, // Moved down 2 more lines (~24 points)
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
       }
 
-      // Page 2: Valet Operator Insurance Expiration (moved down 6 lines to align with blank line)
+      // Page 2: Valet Operator Insurance Expiration (fine-tuned positioning)
       if (renewalData.valetInsuranceExpiration && secondPage) {
         secondPage.drawText(renewalData.valetInsuranceExpiration, {
-          x: 475, // X position for insurance expiration field
-          y: 73, // Same line as permit expiration
+          x: 499, // Moved right 3 spaces (~24 points)
+          y: 49, // Moved down 2 more lines (~24 points)
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
