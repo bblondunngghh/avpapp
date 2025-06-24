@@ -92,7 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
-- June 24, 2025: Switched to drawEllipse for true oval shapes instead of rounded rectangles for weekday selection
+- June 24, 2025: Adjusted ellipse proportions (yScale: 6) for pill-shaped ovals matching admin button style
 - June 24, 2025: Removed unwanted page 2 text overlay from temporary valet PDF generator
 - June 24, 2025: Adjusted Friday position to x:470 and reduced width to 35px for precise PDF alignment
 - June 24, 2025: Fixed weekday coordinate mapping - rectangles now align correctly with PDF day positions

@@ -694,9 +694,9 @@ export default function Contracts() {
             x: coords.x,
             y: coords.y,
             xScale: width / 2,
-            yScale: 9,
+            yScale: 6, // Reduced height for more pill-like shape
             borderColor: rgb(0, 0, 0),
-            borderWidth: 1.5,
+            borderWidth: 1.2,
             opacity: 0,
           });
         }
