@@ -572,40 +572,7 @@ export default function Contracts() {
       const firstPage = pages[0];
       const secondPage = pages[1] || pdfDoc.addPage();
 
-      // Add text overlays to the existing PDF form
-      // These coordinates need to be adjusted based on your actual PDF layout
-      const overlayData = [
-        // Page 1 - Applicant Information
-        { text: temporaryValetData.companyName, x: 150, y: 650, page: 0 },
-        { text: temporaryValetData.primaryContact, x: 150, y: 620, page: 0 },
-        { text: temporaryValetData.phoneNumber, x: 150, y: 590, page: 0 },
-        { text: temporaryValetData.altPhoneNumber, x: 350, y: 590, page: 0 },
-        { text: temporaryValetData.mailingAddress, x: 150, y: 560, page: 0 },
-        { text: temporaryValetData.city, x: 250, y: 530, page: 0 },
-        { text: temporaryValetData.state, x: 320, y: 530, page: 0 },
-        { text: temporaryValetData.zip, x: 370, y: 530, page: 0 },
-        { text: temporaryValetData.email, x: 150, y: 500, page: 0 },
-        
-        // Proposed Zone Information
-        { text: temporaryValetData.blockNumber, x: 150, y: 420, page: 0 },
-        { text: temporaryValetData.streetName, x: 250, y: 420, page: 0 },
-        { text: temporaryValetData.spacesRequested, x: 450, y: 420, page: 0 },
-        
-        // Pay Station Numbers
-        { text: temporaryValetData.payStationNumbers[0] || '', x: 150, y: 360, page: 0 },
-        { text: temporaryValetData.payStationNumbers[1] || '', x: 250, y: 360, page: 0 },
-        { text: temporaryValetData.payStationNumbers[2] || '', x: 350, y: 360, page: 0 },
-        { text: temporaryValetData.payStationNumbers[3] || '', x: 450, y: 360, page: 0 },
-        
-        { text: temporaryValetData.unmmeteredDescription, x: 150, y: 330, page: 0 },
-        
-        // Event Time and Date
-        { text: temporaryValetData.eventDates, x: 150, y: 280, page: 0 },
-        { text: temporaryValetData.fromTime, x: 150, y: 250, page: 0 },
-        { text: temporaryValetData.toTime, x: 250, y: 250, page: 0 },
-      ];
-
-      // Add text to the appropriate pages with location-specific coordinates
+      // Define location-specific coordinates for text overlay
       const overlayData = selectedTempLocation === 'trulucks' ? [
         // Page 1 - Applicant Information (Trulucks template coordinates)
         { text: temporaryValetData.companyName, x: 154, y: 548, page: 0 },
