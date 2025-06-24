@@ -228,205 +228,129 @@ export default function Contracts() {
   const generateTemporaryValetPDF = async () => {
     setIsGenerating(true);
     try {
-      // Load the original PDF template and fill it out
-      const templateUrl = '/attached_assets/Valet Temporary Zone Application (10)_1750782335056.pdf';
+      // Create a well-formatted PDF document with all the form data
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([612, 792]);
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       
-      let pdfDoc;
-      try {
-        const existingPdfBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
-        pdfDoc = await PDFDocument.load(existingPdfBytes);
-      } catch (error) {
-        console.log('Could not load template PDF, creating new document');
-        // Fallback to creating new document if template not available
-        pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage([612, 792]);
-        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      let y = 750;
+      
+      // Header
+      page.drawText('Austin Transportation Department', {
+        x: 156, y, size: 12, font: helveticaBold,
+      });
+      y -= 15;
+      page.drawText('Right of Way Management Division', {
+        x: 156, y, size: 12, font: helveticaBold,
+      });
+      y -= 15;
+      page.drawText('P.O. Box 1088, Austin, Texas 78767', {
+        x: 156, y, size: 12, font: helveticaBold,
+      });
+      y -= 30;
+      
+      page.drawText('Application for Valet Zone - Temporary', {
+        x: 150, y, size: 16, font: helveticaBold,
+      });
+      y -= 40;
+      
+      // Applicant Information
+      page.drawText('APPLICANT INFORMATION:', {
+        x: 50, y, size: 12, font: helveticaBold,
+      });
+      y -= 25;
+      
+      const formData = [
+        ['Company Name:', temporaryValetData.companyName],
+        ['Primary Contact:', temporaryValetData.primaryContact],
+        ['Phone Number:', temporaryValetData.phoneNumber],
+        ['Alternative Phone:', temporaryValetData.altPhoneNumber],
+        ['Mailing Address:', temporaryValetData.mailingAddress],
+        ['City, State, Zip:', `${temporaryValetData.city}, ${temporaryValetData.state} ${temporaryValetData.zip}`],
+        ['Email Address:', temporaryValetData.email],
+        ['', ''],
+        ['PROPOSED ZONE INFORMATION:', ''],
+        ['Block Number:', temporaryValetData.blockNumber],
+        ['Street Name:', temporaryValetData.streetName],
+        ['Spaces Requested:', temporaryValetData.spacesRequested],
+        ['Curb Side:', temporaryValetData.curbSide],
+        ['Block End:', temporaryValetData.blockEnd],
+        ['Pay Station Numbers:', temporaryValetData.payStationNumbers.filter(n => n).join(', ')],
+        ['Unmetered Description:', temporaryValetData.unmmeteredDescription],
+        ['', ''],
+        ['EVENT TIME AND DATE:', ''],
+        ['Date(s):', temporaryValetData.eventDates],
+        ['From Time:', temporaryValetData.fromTime],
+        ['To Time:', temporaryValetData.toTime],
+        ['Days:', temporaryValetData.selectedDays.join(', ')],
+        ['', ''],
+        ['VALET OPERATOR INFORMATION:', ''],
+        ['Operator Name:', temporaryValetData.valetOperatorName],
+        ['Contact Person:', temporaryValetData.valetContact],
+        ['Emergency Number:', temporaryValetData.emergencyNumber],
+        ['Alternative Phone:', temporaryValetData.valetAltPhone],
+        ['Address:', temporaryValetData.valetAddress],
+        ['City, State, Zip:', `${temporaryValetData.valetCity}, ${temporaryValetData.valetState} ${temporaryValetData.valetZip}`],
+        ['Email:', temporaryValetData.valetEmail],
+        ['Permit Expiration:', temporaryValetData.permitExpiration],
+        ['Insurance Expiration:', temporaryValetData.insuranceExpiration],
+      ];
+      
+      formData.forEach(([label, value]) => {
+        if (label === '' && value === '') {
+          y -= 10; // Add spacing
+          return;
+        }
         
-        // Basic form creation as fallback
-        page.drawText('Austin Transportation Department - Temporary Valet Zone Application', {
-          x: 50,
-          y: 750,
-          size: 14,
-          font: helveticaFont,
+        if (label.endsWith(':') && label.includes('INFORMATION') || label.includes('TIME AND DATE')) {
+          page.drawText(label, {
+            x: 50, y, size: 12, font: helveticaBold,
+          });
+          y -= 20;
+        } else if (label && value) {
+          page.drawText(label, {
+            x: 50, y, size: 10, font: helveticaFont,
+          });
+          page.drawText(value, {
+            x: 200, y, size: 10, font: helveticaFont,
+          });
+          y -= 15;
+        }
+      });
+
+      
+      // Add vehicle storage information if not on premises
+      if (!temporaryValetData.onPremisesParking) {
+        y -= 20;
+        page.drawText('VEHICLE STORAGE:', {
+          x: 50, y, size: 12, font: helveticaBold,
         });
+        y -= 20;
         
-        // Add form data as text
-        const formData = [
-          `Company: ${temporaryValetData.companyName}`,
-          `Contact: ${temporaryValetData.primaryContact}`,
-          `Phone: ${temporaryValetData.phoneNumber}`,
-          `Address: ${temporaryValetData.mailingAddress}`,
-          `Location: ${temporaryValetData.blockNumber} ${temporaryValetData.streetName}`,
-          `Spaces: ${temporaryValetData.spacesRequested}`,
-          `Dates: ${temporaryValetData.eventDates}`,
-          `Times: ${temporaryValetData.fromTime} - ${temporaryValetData.toTime}`,
-          `Days: ${temporaryValetData.selectedDays.join(', ')}`,
-          `Valet Operator: ${temporaryValetData.valetOperatorName}`,
-          `Emergency: ${temporaryValetData.emergencyNumber}`
+        const storageData = [
+          ['Parking Facility Address:', temporaryValetData.parkingFacilityAddress],
+          ['City, State, Zip:', `${temporaryValetData.parkingFacilityCity}, ${temporaryValetData.parkingFacilityState} ${temporaryValetData.parkingFacilityZip}`],
+          ['Facility Type:', temporaryValetData.facilityType],
+          ['Available Spaces:', temporaryValetData.availableSpaces],
+          ['Contract Date:', temporaryValetData.contractDate],
+          ['Contract Expiration:', temporaryValetData.contractExpiration],
+          ['Facility Contact:', temporaryValetData.facilityContactName],
+          ['Contact Phone:', temporaryValetData.facilityContactPhone],
+          ['Contact Email:', temporaryValetData.facilityContactEmail],
         ];
         
-        formData.forEach((line, index) => {
-          page.drawText(line, {
-            x: 50,
-            y: 700 - (index * 20),
-            size: 10,
-            font: helveticaFont,
-          });
-        });
-        
-        // Generate and download
-        const pdfBytes = await pdfDoc.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Temporary_Valet_Zone_Application_${temporaryValetData.location || 'Form'}_${new Date().getTime()}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        toast({
-          title: "Success",
-          description: "Temporary Valet Zone application PDF generated (basic format)",
-        });
-        return;
-      }
-
-      // If we successfully loaded the template, try to fill form fields
-      const form = pdfDoc.getForm();
-      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      
-      // Try to fill form fields if the PDF has interactive fields
-      try {
-        const fields = form.getFields();
-        console.log('Available form fields:', fields.map(f => f.getName()));
-        
-        // Attempt to fill common field names
-        const fieldMappings = {
-          'CompanyName': temporaryValetData.companyName,
-          'Company Name': temporaryValetData.companyName,
-          'PrimaryContact': temporaryValetData.primaryContact,
-          'Primary Contact Name': temporaryValetData.primaryContact,
-          'PhoneNumber': temporaryValetData.phoneNumber,
-          'Phone Number': temporaryValetData.phoneNumber,
-          'MailingAddress': temporaryValetData.mailingAddress,
-          'Mailing Address': temporaryValetData.mailingAddress,
-          'City': temporaryValetData.city,
-          'State': temporaryValetData.state,
-          'Zip': temporaryValetData.zip,
-          'Email': temporaryValetData.email,
-          'EmailAddress': temporaryValetData.email,
-          'BlockNumber': temporaryValetData.blockNumber,
-          'Block Number': temporaryValetData.blockNumber,
-          'StreetName': temporaryValetData.streetName,
-          'Street Name': temporaryValetData.streetName,
-          'SpacesRequested': temporaryValetData.spacesRequested,
-          'Number of Spaces Requested': temporaryValetData.spacesRequested,
-          'EventDates': temporaryValetData.eventDates,
-          'Date(s)': temporaryValetData.eventDates,
-          'FromTime': temporaryValetData.fromTime,
-          'From': temporaryValetData.fromTime,
-          'ToTime': temporaryValetData.toTime,
-          'To': temporaryValetData.toTime,
-          'ValetOperatorName': temporaryValetData.valetOperatorName,
-          'Licensed Valet Operator Name': temporaryValetData.valetOperatorName,
-          'ValetContact': temporaryValetData.valetContact,
-          'EmergencyNumber': temporaryValetData.emergencyNumber,
-          '24 Hour Emergency Number': temporaryValetData.emergencyNumber,
-          'ValetAddress': temporaryValetData.valetAddress,
-          'ValetCity': temporaryValetData.valetCity,
-          'ValetState': temporaryValetData.valetState,
-          'ValetZip': temporaryValetData.valetZip,
-          'ValetEmail': temporaryValetData.valetEmail,
-          'PermitExpiration': temporaryValetData.permitExpiration,
-          'InsuranceExpiration': temporaryValetData.insuranceExpiration
-        };
-
-        // Fill text fields
-        Object.entries(fieldMappings).forEach(([fieldName, value]) => {
-          try {
-            const field = form.getTextField(fieldName);
-            if (field && value) {
-              field.setText(value);
-            }
-          } catch (e) {
-            // Field doesn't exist or isn't a text field, continue
+        storageData.forEach(([label, value]) => {
+          if (label && value) {
+            page.drawText(label, {
+              x: 50, y, size: 10, font: helveticaFont,
+            });
+            page.drawText(value, {
+              x: 200, y, size: 10, font: helveticaFont,
+            });
+            y -= 15;
           }
         });
-
-        // Handle checkboxes for days of week
-        const dayFields = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        dayFields.forEach(day => {
-          try {
-            const field = form.getCheckBox(day);
-            if (field) {
-              if (temporaryValetData.selectedDays.includes(day)) {
-                field.check();
-              } else {
-                field.uncheck();
-              }
-            }
-          } catch (e) {
-            // Field doesn't exist, continue
-          }
-        });
-
-        // Handle radio buttons for curb side and block end
-        try {
-          const curbField = form.getRadioGroup('CurbSide');
-          if (curbField && temporaryValetData.curbSide) {
-            curbField.select(temporaryValetData.curbSide);
-          }
-        } catch (e) {
-          // Field doesn't exist, continue
-        }
-
-        try {
-          const blockField = form.getRadioGroup('BlockEnd');
-          if (blockField && temporaryValetData.blockEnd) {
-            blockField.select(temporaryValetData.blockEnd);
-          }
-        } catch (e) {
-          // Field doesn't exist, continue
-        }
-
-      } catch (e) {
-        console.log('Form does not have interactive fields, adding text overlay');
-        
-        // If no form fields, add text overlay on existing pages
-        const pages = pdfDoc.getPages();
-        if (pages.length > 0) {
-          const firstPage = pages[0];
-          
-          // Add basic form data as text overlay
-          const overlayData = [
-            { text: temporaryValetData.companyName, x: 150, y: 650 },
-            { text: temporaryValetData.primaryContact, x: 150, y: 620 },
-            { text: temporaryValetData.phoneNumber, x: 150, y: 590 },
-            { text: temporaryValetData.mailingAddress, x: 150, y: 560 },
-            { text: temporaryValetData.email, x: 150, y: 530 },
-            { text: temporaryValetData.blockNumber, x: 150, y: 450 },
-            { text: temporaryValetData.streetName, x: 250, y: 450 },
-            { text: temporaryValetData.spacesRequested, x: 450, y: 450 },
-            { text: temporaryValetData.eventDates, x: 150, y: 350 },
-            { text: temporaryValetData.fromTime, x: 150, y: 320 },
-            { text: temporaryValetData.toTime, x: 250, y: 320 }
-          ];
-
-          overlayData.forEach(({ text, x, y }) => {
-            if (text) {
-              firstPage.drawText(text, {
-                x,
-                y,
-                size: 10,
-                font: helveticaFont,
-                color: rgb(0, 0, 0),
-              });
-            }
-          });
-        }
       }
 
       // Generate and download the PDF
