@@ -268,13 +268,13 @@ export default function Contracts() {
   const getWeekdayRectangleCoordinates = (location: string) => {
     const dayCoordinates = {
       'trulucks': {
-        'Monday': { x: 50, y: 335 },
-        'Tuesday': { x: 90, y: 335 },
-        'Wednesday': { x: 130, y: 335 },
-        'Thursday': { x: 170, y: 335 },
-        'Friday': { x: 210, y: 335 },
-        'Saturday': { x: 250, y: 335 },
-        'Sunday': { x: 290, y: 335 }
+        'Monday': { x: 290, y: 335 },
+        'Tuesday': { x: 50, y: 335 },
+        'Wednesday': { x: 90, y: 335 },
+        'Thursday': { x: 130, y: 335 },
+        'Friday': { x: 170, y: 335 },
+        'Saturday': { x: 210, y: 335 },
+        'Sunday': { x: 250, y: 335 }
       },
       'default': {
         'Monday': { x: 50, y: 250 },
