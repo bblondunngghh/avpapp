@@ -685,6 +685,7 @@ export default function Contracts() {
             size: 8,
             borderColor: rgb(0, 0, 0),
             borderWidth: 1.5,
+            opacity: 0,
           });
         }
       });
