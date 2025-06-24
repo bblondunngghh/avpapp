@@ -92,6 +92,9 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Fixed complex JSON parsing for previous week hours - resolved multi-employee data extraction
+- June 24, 2025: Enhanced parseEmployeesData function with regex-based JSON object extraction
+- June 24, 2025: Hours tracker now correctly displays all employee hours across different data formats
 - June 23, 2025: Fixed hours tracker in admin panel - resolved JSON parsing issues for employee hours data
 - June 23, 2025: Updated hours tracker to handle multiple employee data formats from database
 - June 23, 2025: Hours tracker now correctly displays weekly employee hours and overtime alerts

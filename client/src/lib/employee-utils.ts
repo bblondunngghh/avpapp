@@ -76,7 +76,6 @@ export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
         // Or multiple employees: "{""{\""name\"":\""arturo\"",\""hours\"":5.75,\""cashPaid\"":0}"",""{\""name\"":\""ethan\"",\""hours\"":4.5,\""cashPaid\"":0}""}"
         try {
           let dbData = employeesData;
-          console.log('Complex parsing attempt, original data:', dbData);
           
           // Remove outer braces and quotes: "{""...""}" -> "..."
           if (dbData.startsWith('{"') && dbData.endsWith('"}')) {
@@ -85,20 +84,16 @@ export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
           
           // Replace escaped quotes: \""name\"" -> "name"
           dbData = dbData.replace(/\\"/g, '"');
-          console.log('After quote replacement:', dbData);
           
           // Handle multiple JSON objects in the complex format
           // After processing: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}","{"name":"dave","hours":2,"cashPaid":0}
           if (dbData.includes('","')) {
-            console.log('Found multiple JSON objects, extracting with regex');
-            
             // Use regex to extract complete JSON objects
             const jsonObjectRegex = /\{[^{}]*\}/g;
             const matches = dbData.match(jsonObjectRegex);
             const employees = [];
             
             if (matches) {
-              console.log('Found JSON object matches:', matches);
               for (const match of matches) {
                 try {
                   const employee = JSON.parse(match);
@@ -111,7 +106,6 @@ export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
               }
             }
             
-            console.log('Regex extraction result:', employees);
             return employees;
           } else {
             // Single employee case
