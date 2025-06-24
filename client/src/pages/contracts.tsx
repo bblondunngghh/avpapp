@@ -260,11 +260,11 @@ export default function Contracts() {
       const firstPage = pages[0];
       const secondPage = pages[1];
 
-      // Add text overlays for the three editable fields with precise coordinates
-      // Page 1: Business Insurance Expiration Date (move left to align properly)
+      // Add text overlays for the three editable fields with coordinates for your specific PDF
+      // Page 1: Business Insurance Expiration Date (after "Insurance Expiration Date")
       if (renewalData.businessInsuranceExpiration) {
         firstPage.drawText(renewalData.businessInsuranceExpiration, {
-          x: 120, // Moved left from 200 to align with form field
+          x: 165, // Adjusted to align properly with the blank line after "Insurance Expiration Date"
           y: 440, 
           size: 9,
           font: helveticaFont,
@@ -272,22 +272,22 @@ export default function Contracts() {
         });
       }
 
-      // Page 2: Valet Operator Permit Expiration (replace existing "5/23/25" text)
+      // Page 2: Valet Operator Permit Expiration (replace "5/23/25")
       if (renewalData.valetPermitExpiration && secondPage) {
         secondPage.drawText(renewalData.valetPermitExpiration, {
-          x: 200, 
-          y: 70, // Moved down further to replace "5/23/25" text
+          x: 290, // Position to replace "5/23/25" 
+          y: 156, // Adjusted Y coordinate for correct line position
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
         });
       }
 
-      // Page 2: Valet Operator Insurance Expiration (replace existing "4/1/26" text)
+      // Page 2: Valet Operator Insurance Expiration (replace "4/1/26")
       if (renewalData.valetInsuranceExpiration && secondPage) {
         secondPage.drawText(renewalData.valetInsuranceExpiration, {
-          x: 400, 
-          y: 70, // Moved down further to replace "4/1/26" text
+          x: 475, // Position to replace "4/1/26"
+          y: 156, // Same line as permit expiration
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
