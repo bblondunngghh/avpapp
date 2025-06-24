@@ -272,7 +272,7 @@ export default function Contracts() {
         'Tuesday': { x: 325, y: 335 },
         'Wednesday': { x: 380, y: 335 },
         'Thursday': { x: 430, y: 335 },
-        'Friday': { x: 480, y: 335 },
+        'Friday': { x: 470, y: 335 },
         'Saturday': { x: 510, y: 335 },
         'Sunday': { x: 560, y: 335 }
       },
