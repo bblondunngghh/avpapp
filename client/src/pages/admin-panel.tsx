@@ -5361,145 +5361,31 @@ export default function AdminPanel() {
                   const reportDate = parseReportDate(report.date);
                   
                   if (reportDate >= selectedWeekStart && reportDate <= selectedWeekEnd) {
-                    let reportEmployees = [];
-                    try {
-                      if (typeof report.employees === 'string') {
-                        // Handle double-escaped JSON from database
-                        let employeeData = report.employees;
+                    // Use the improved parseEmployeesData utility function
+                    const reportEmployees = parseEmployeesData(report.employees);
+                    
+                    // Skip empty employee arrays
+                    if (!Array.isArray(reportEmployees) || reportEmployees.length === 0) {
+                      return;
+                    }
+
+                    // Process each employee for this report
+                    reportEmployees.forEach((emp: any) => {
+                      // Employee data is stored with 'name' field containing the employee key
+                      // Check if we have this employee in our weeklyHours tracking
+                      if (emp.name && weeklyHours[emp.name] && typeof emp.hours === 'number') {
+                        const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
+                        weeklyHours[emp.name].weeklyBreakdown[dayName] = (weeklyHours[emp.name].weeklyBreakdown[dayName] || 0) + emp.hours;
+                        weeklyHours[emp.name].totalHours += emp.hours;
                         
-                        // If it starts with a curly brace but is wrapped in quotes, it's double-escaped
-                        if (employeeData.startsWith('"{') && employeeData.endsWith('}"')) {
-                          // Remove outer quotes and unescape inner quotes
-                          employeeData = employeeData.slice(1, -1).replace(/\\"/g, '"');
+                        // Determine status
+                        if (weeklyHours[emp.name].totalHours >= 38) {
+                          weeklyHours[emp.name].status = 'critical';
+                        } else if (weeklyHours[emp.name].totalHours >= 30) {
+                          weeklyHours[emp.name].status = 'warning';
                         }
-                        
-                        reportEmployees = JSON.parse(employeeData);
-                      } else if (Array.isArray(report.employees)) {
-                        reportEmployees = report.employees;
                       }
-                    } catch (e) {
-                      // If JSON parsing fails, try alternative parsing for malformed data
-                      try {
-                        if (typeof report.employees === 'string') {
-                          // Handle the database format: {"{"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}"}
-                          let rawData = report.employees;
-                          
-                          // Remove outer wrapper: {" ... "}
-                          if (rawData.startsWith('{"') && rawData.endsWith('"}')) {
-                            rawData = rawData.slice(2, -2);
-                          }
-                          
-                          // Fix escaped quotes
-                          rawData = rawData.replace(/\\"/g, '"');
-                          
-                          // Add debugging for Friday/Saturday
-                          if (report.date === '2025-06-20' || report.date === '2025-06-21') {
-                            console.log('DEBUG - Cleaned data for', report.date, ':', rawData);
-                            console.log('DEBUG - includes },{ ?', rawData.includes('},{'));
-                            console.log('DEBUG - includes "," ?', rawData.includes('","'));
-                          }
-                          
-                          // Handle comma-separated JSON objects pattern first (more specific)
-                          if (rawData.includes('","')) {
-                            // Pattern: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}
-                            const jsonObjects = rawData.split('","');
-                            const employees = [];
-                            
-                            if (report.date === '2025-06-20' || report.date === '2025-06-21') {
-                              console.log('DEBUG - Split by "," resulted in', jsonObjects.length, 'parts:', jsonObjects);
-                            }
-                            
-                            for (let i = 0; i < jsonObjects.length; i++) {
-                              let jsonStr = jsonObjects[i];
-                              
-                              // Remove leading/trailing quotes
-                              if (i === 0 && jsonStr.startsWith('"')) jsonStr = jsonStr.substring(1);
-                              if (i === jsonObjects.length - 1 && jsonStr.endsWith('"')) jsonStr = jsonStr.substring(0, jsonStr.length - 1);
-                              
-                              try {
-                                const emp = JSON.parse(jsonStr);
-                                employees.push(emp);
-                                if (report.date === '2025-06-20' || report.date === '2025-06-21') {
-                                  console.log('DEBUG - Successfully parsed employee:', emp);
-                                }
-                              } catch (e) {
-                                if (report.date === '2025-06-20' || report.date === '2025-06-21') {
-                                  console.log('DEBUG - Failed to parse:', jsonStr, 'Error:', e.message);
-                                }
-                              }
-                            }
-                            
-                            reportEmployees = employees;
-                          } else if (rawData.includes('},{')) {
-                            // Split on },{ boundary
-                            const parts = rawData.split('},{');
-                            const employees = [];
-                            
-                            for (let i = 0; i < parts.length; i++) {
-                              let part = parts[i];
-                              
-                              // Add missing braces for each part
-                              if (i === 0 && !part.startsWith('{')) part = '{' + part;
-                              if (i === parts.length - 1 && !part.endsWith('}')) part = part + '}';
-                              if (i > 0 && !part.startsWith('{')) part = '{' + part;
-                              if (i < parts.length - 1 && !part.endsWith('}')) part = part + '}';
-                              
-                              try {
-                                const emp = JSON.parse(part);
-                                employees.push(emp);
-                              } catch (e) {
-                                // Silent fail
-                              }
-                            }
-                            
-                            reportEmployees = employees;
-                          } else if (!rawData.startsWith('[')) {
-                            // Single employee case
-                            try {
-                              reportEmployees = [JSON.parse(rawData)];
-                            } catch (e) {
-                              reportEmployees = [];
-                            }
-                          }
-                        }
-                      } catch (e2) {
-                        reportEmployees = [];
-                      }
-                    }
-
-                    // Safety check to ensure reportEmployees is an array
-                    if (!Array.isArray(reportEmployees)) {
-                      reportEmployees = [];
-                    }
-
-
-
-                    if (Array.isArray(reportEmployees) && reportEmployees.length > 0) {
-                      if (report.date === '2025-06-20' || report.date === '2025-06-21') {
-                        console.log('DEBUG - Processing', reportEmployees.length, 'employees for', report.date);
-                      }
-                      
-                      reportEmployees.forEach((emp: any) => {
-                        // Employee data is stored with 'name' field containing the employee key
-                        // Check if we have this employee in our weeklyHours tracking
-                        if (emp.name && weeklyHours[emp.name] && typeof emp.hours === 'number') {
-                          const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
-                          weeklyHours[emp.name].weeklyBreakdown[dayName] = (weeklyHours[emp.name].weeklyBreakdown[dayName] || 0) + emp.hours;
-                          weeklyHours[emp.name].totalHours += emp.hours;
-                          
-                          if (report.date === '2025-06-20' || report.date === '2025-06-21') {
-                            console.log('DEBUG - Added', emp.hours, 'hours for', emp.name, 'on', dayName);
-                          }
-                          
-                          // Determine status
-                          if (weeklyHours[emp.name].totalHours >= 38) {
-                            weeklyHours[emp.name].status = 'critical';
-                          } else if (weeklyHours[emp.name].totalHours >= 30) {
-                            weeklyHours[emp.name].status = 'warning';
-                          }
-                        }
-                      });
-                    }
+                    });
                   }
                 });
 
