@@ -92,7 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
-- June 24, 2025: Extended rectangle width to 30 pixels for better visibility on weekday selection
+- June 24, 2025: Extended rectangle width to 35 pixels for optimal visibility on weekday selection
 - June 24, 2025: Fixed weekday coordinate mapping - rectangles now align correctly with PDF day positions
 - June 24, 2025: Added standard time format conversion - times now display as 12-hour format with AM/PM instead of military time
 - June 24, 2025: Fine-tuned Trulucks temporary zone coordinates - Event date: x:135, y:350; From time: x:75, To time: x:175, y:335
