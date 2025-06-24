@@ -92,6 +92,10 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Added comprehensive contract generation system with PDF export and company logo
+- June 24, 2025: Contract generator includes customizable termination notice periods (30/60/90 days)
+- June 24, 2025: Removed trial period functionality - streamlined for general contract use
+- June 24, 2025: Updated home screen logo to new tire gear design with enhanced quality rendering
 - June 24, 2025: Version 2.1.2 - Fixed complex JSON parsing for previous week hours - resolved multi-employee data extraction
 - June 24, 2025: Enhanced parseEmployeesData function with regex-based JSON object extraction
 - June 24, 2025: Hours tracker now correctly displays all employee hours across different data formats
