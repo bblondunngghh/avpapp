@@ -228,132 +228,158 @@ export default function Contracts() {
   const generateTemporaryValetPDF = async () => {
     setIsGenerating(true);
     try {
-      // Create a well-formatted PDF document with all the form data
-      const pdfDoc = await PDFDocument.create();
-      const page = pdfDoc.addPage([612, 792]);
-      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      // Load your actual PDF template
+      const response = await fetch('/api/pdf-template/valet-temporary');
       
-      let y = 750;
-      
-      // Header
-      page.drawText('Austin Transportation Department', {
-        x: 156, y, size: 12, font: helveticaBold,
-      });
-      y -= 15;
-      page.drawText('Right of Way Management Division', {
-        x: 156, y, size: 12, font: helveticaBold,
-      });
-      y -= 15;
-      page.drawText('P.O. Box 1088, Austin, Texas 78767', {
-        x: 156, y, size: 12, font: helveticaBold,
-      });
-      y -= 30;
-      
-      page.drawText('Application for Valet Zone - Temporary', {
-        x: 150, y, size: 16, font: helveticaBold,
-      });
-      y -= 40;
-      
-      // Applicant Information
-      page.drawText('APPLICANT INFORMATION:', {
-        x: 50, y, size: 12, font: helveticaBold,
-      });
-      y -= 25;
-      
-      const formData = [
-        ['Company Name:', temporaryValetData.companyName],
-        ['Primary Contact:', temporaryValetData.primaryContact],
-        ['Phone Number:', temporaryValetData.phoneNumber],
-        ['Alternative Phone:', temporaryValetData.altPhoneNumber],
-        ['Mailing Address:', temporaryValetData.mailingAddress],
-        ['City, State, Zip:', `${temporaryValetData.city}, ${temporaryValetData.state} ${temporaryValetData.zip}`],
-        ['Email Address:', temporaryValetData.email],
-        ['', ''],
-        ['PROPOSED ZONE INFORMATION:', ''],
-        ['Block Number:', temporaryValetData.blockNumber],
-        ['Street Name:', temporaryValetData.streetName],
-        ['Spaces Requested:', temporaryValetData.spacesRequested],
-        ['Curb Side:', temporaryValetData.curbSide],
-        ['Block End:', temporaryValetData.blockEnd],
-        ['Pay Station Numbers:', temporaryValetData.payStationNumbers.filter(n => n).join(', ')],
-        ['Unmetered Description:', temporaryValetData.unmmeteredDescription],
-        ['', ''],
-        ['EVENT TIME AND DATE:', ''],
-        ['Date(s):', temporaryValetData.eventDates],
-        ['From Time:', temporaryValetData.fromTime],
-        ['To Time:', temporaryValetData.toTime],
-        ['Days:', temporaryValetData.selectedDays.join(', ')],
-        ['', ''],
-        ['VALET OPERATOR INFORMATION:', ''],
-        ['Operator Name:', temporaryValetData.valetOperatorName],
-        ['Contact Person:', temporaryValetData.valetContact],
-        ['Emergency Number:', temporaryValetData.emergencyNumber],
-        ['Alternative Phone:', temporaryValetData.valetAltPhone],
-        ['Address:', temporaryValetData.valetAddress],
-        ['City, State, Zip:', `${temporaryValetData.valetCity}, ${temporaryValetData.valetState} ${temporaryValetData.valetZip}`],
-        ['Email:', temporaryValetData.valetEmail],
-        ['Permit Expiration:', temporaryValetData.permitExpiration],
-        ['Insurance Expiration:', temporaryValetData.insuranceExpiration],
-      ];
-      
-      formData.forEach(([label, value]) => {
-        if (label === '' && value === '') {
-          y -= 10; // Add spacing
-          return;
+      let pdfDoc;
+      if (response.ok) {
+        const existingPdfBytes = await response.arrayBuffer();
+        pdfDoc = await PDFDocument.load(existingPdfBytes);
+      } else {
+        // If server route doesn't exist, try direct file access
+        try {
+          const directResponse = await fetch('/attached_assets/Valet Temporary Zone Application (10)_1750782335056.pdf');
+          const existingPdfBytes = await directResponse.arrayBuffer();
+          pdfDoc = await PDFDocument.load(existingPdfBytes);
+        } catch (directError) {
+          console.log('Could not load PDF template, creating fallback');
+          throw new Error('PDF template not accessible');
         }
-        
-        if (label.endsWith(':') && label.includes('INFORMATION') || label.includes('TIME AND DATE')) {
-          page.drawText(label, {
-            x: 50, y, size: 12, font: helveticaBold,
-          });
-          y -= 20;
-        } else if (label && value) {
-          page.drawText(label, {
-            x: 50, y, size: 10, font: helveticaFont,
-          });
-          page.drawText(value, {
-            x: 200, y, size: 10, font: helveticaFont,
-          });
-          y -= 15;
-        }
-      });
-
-      
-      // Add vehicle storage information if not on premises
-      if (!temporaryValetData.onPremisesParking) {
-        y -= 20;
-        page.drawText('VEHICLE STORAGE:', {
-          x: 50, y, size: 12, font: helveticaBold,
-        });
-        y -= 20;
-        
-        const storageData = [
-          ['Parking Facility Address:', temporaryValetData.parkingFacilityAddress],
-          ['City, State, Zip:', `${temporaryValetData.parkingFacilityCity}, ${temporaryValetData.parkingFacilityState} ${temporaryValetData.parkingFacilityZip}`],
-          ['Facility Type:', temporaryValetData.facilityType],
-          ['Available Spaces:', temporaryValetData.availableSpaces],
-          ['Contract Date:', temporaryValetData.contractDate],
-          ['Contract Expiration:', temporaryValetData.contractExpiration],
-          ['Facility Contact:', temporaryValetData.facilityContactName],
-          ['Contact Phone:', temporaryValetData.facilityContactPhone],
-          ['Contact Email:', temporaryValetData.facilityContactEmail],
-        ];
-        
-        storageData.forEach(([label, value]) => {
-          if (label && value) {
-            page.drawText(label, {
-              x: 50, y, size: 10, font: helveticaFont,
-            });
-            page.drawText(value, {
-              x: 200, y, size: 10, font: helveticaFont,
-            });
-            y -= 15;
-          }
-        });
       }
 
-      // Generate and download the PDF
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const pages = pdfDoc.getPages();
+      const firstPage = pages[0];
+      const secondPage = pages[1] || pdfDoc.addPage();
+
+      // Add text overlays to the existing PDF form
+      // These coordinates need to be adjusted based on your actual PDF layout
+      const overlayData = [
+        // Page 1 - Applicant Information
+        { text: temporaryValetData.companyName, x: 150, y: 650, page: 0 },
+        { text: temporaryValetData.primaryContact, x: 150, y: 620, page: 0 },
+        { text: temporaryValetData.phoneNumber, x: 150, y: 590, page: 0 },
+        { text: temporaryValetData.altPhoneNumber, x: 350, y: 590, page: 0 },
+        { text: temporaryValetData.mailingAddress, x: 150, y: 560, page: 0 },
+        { text: temporaryValetData.city, x: 250, y: 530, page: 0 },
+        { text: temporaryValetData.state, x: 320, y: 530, page: 0 },
+        { text: temporaryValetData.zip, x: 370, y: 530, page: 0 },
+        { text: temporaryValetData.email, x: 150, y: 500, page: 0 },
+        
+        // Proposed Zone Information
+        { text: temporaryValetData.blockNumber, x: 150, y: 420, page: 0 },
+        { text: temporaryValetData.streetName, x: 250, y: 420, page: 0 },
+        { text: temporaryValetData.spacesRequested, x: 450, y: 420, page: 0 },
+        
+        // Pay Station Numbers
+        { text: temporaryValetData.payStationNumbers[0] || '', x: 150, y: 360, page: 0 },
+        { text: temporaryValetData.payStationNumbers[1] || '', x: 250, y: 360, page: 0 },
+        { text: temporaryValetData.payStationNumbers[2] || '', x: 350, y: 360, page: 0 },
+        { text: temporaryValetData.payStationNumbers[3] || '', x: 450, y: 360, page: 0 },
+        
+        { text: temporaryValetData.unmmeteredDescription, x: 150, y: 330, page: 0 },
+        
+        // Event Time and Date
+        { text: temporaryValetData.eventDates, x: 150, y: 280, page: 0 },
+        { text: temporaryValetData.fromTime, x: 150, y: 250, page: 0 },
+        { text: temporaryValetData.toTime, x: 250, y: 250, page: 0 },
+      ];
+
+      // Add text to the appropriate pages
+      overlayData.forEach(({ text, x, y, page: pageIndex }) => {
+        if (text && text.trim()) {
+          const targetPage = pageIndex === 0 ? firstPage : secondPage;
+          targetPage.drawText(text, {
+            x,
+            y,
+            size: 9,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
+      });
+
+      // Add valet operator information to page 2
+      if (pages.length > 1 || secondPage) {
+        const page2Data = [
+          { text: temporaryValetData.valetOperatorName, x: 150, y: 650 },
+          { text: temporaryValetData.valetContact, x: 150, y: 620 },
+          { text: temporaryValetData.emergencyNumber, x: 150, y: 590 },
+          { text: temporaryValetData.valetAltPhone, x: 350, y: 590 },
+          { text: temporaryValetData.valetAddress, x: 150, y: 560 },
+          { text: temporaryValetData.valetCity, x: 250, y: 530 },
+          { text: temporaryValetData.valetState, x: 320, y: 530 },
+          { text: temporaryValetData.valetZip, x: 370, y: 530 },
+          { text: temporaryValetData.valetEmail, x: 150, y: 500 },
+          { text: temporaryValetData.permitExpiration, x: 150, y: 470 },
+          { text: temporaryValetData.insuranceExpiration, x: 350, y: 470 },
+        ];
+
+        page2Data.forEach(({ text, x, y }) => {
+          if (text && text.trim()) {
+            secondPage.drawText(text, {
+              x,
+              y,
+              size: 9,
+              font: helveticaFont,
+              color: rgb(0, 0, 0),
+            });
+          }
+        });
+
+        // Vehicle storage info if not on premises
+        if (!temporaryValetData.onPremisesParking) {
+          const storageData = [
+            { text: temporaryValetData.parkingFacilityAddress, x: 150, y: 350 },
+            { text: temporaryValetData.parkingFacilityCity, x: 250, y: 320 },
+            { text: temporaryValetData.parkingFacilityState, x: 320, y: 320 },
+            { text: temporaryValetData.parkingFacilityZip, x: 370, y: 320 },
+            { text: temporaryValetData.availableSpaces, x: 150, y: 280 },
+            { text: temporaryValetData.contractDate, x: 250, y: 280 },
+            { text: temporaryValetData.contractExpiration, x: 400, y: 280 },
+            { text: temporaryValetData.facilityContactName, x: 150, y: 250 },
+            { text: temporaryValetData.facilityContactPhone, x: 300, y: 250 },
+            { text: temporaryValetData.facilityContactEmail, x: 150, y: 220 },
+          ];
+
+          storageData.forEach(({ text, x, y }) => {
+            if (text && text.trim()) {
+              secondPage.drawText(text, {
+                x,
+                y,
+                size: 9,
+                font: helveticaFont,
+                color: rgb(0, 0, 0),
+              });
+            }
+          });
+        }
+      }
+
+      // Mark checkboxes for selected days
+      const dayPositions = [
+        { day: 'Monday', x: 320, y: 240 },
+        { day: 'Tuesday', x: 355, y: 240 },
+        { day: 'Wednesday', x: 390, y: 240 },
+        { day: 'Thursday', x: 425, y: 240 },
+        { day: 'Friday', x: 460, y: 240 },
+        { day: 'Saturday', x: 495, y: 240 },
+        { day: 'Sunday', x: 530, y: 240 },
+      ];
+
+      dayPositions.forEach(({ day, x, y }) => {
+        if (temporaryValetData.selectedDays.includes(day)) {
+          firstPage.drawText('✓', {
+            x,
+            y,
+            size: 8,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
+      });
+
+      // Generate and download the filled PDF
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
@@ -368,12 +394,12 @@ export default function Contracts() {
 
       toast({
         title: "Success",
-        description: "Temporary Valet Zone application PDF generated successfully",
+        description: "PDF template filled out successfully",
       });
     } catch (error) {
       console.error('Error generating PDF:', error);
       toast({
-        title: "Error", 
+        title: "Error",
         description: "Failed to generate PDF. Please try again.",
         variant: "destructive",
       });

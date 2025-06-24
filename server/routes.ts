@@ -148,6 +148,19 @@ async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Serve PDF templates
+  // Serve PDF templates
+  app.get('/api/pdf-template/valet-temporary', (req, res) => {
+    const path = require('path');
+    const filePath = path.join(__dirname, '../attached_assets/Valet Temporary Zone Application (10)_1750782335056.pdf');
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving PDF template:', err);
+        res.status(404).send('PDF template not found');
+      }
+    });
+  });
   // Configure multer for image uploads
   const storage_config = multer.diskStorage({
     destination: (req, file, cb) => {
