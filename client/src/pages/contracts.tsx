@@ -21,7 +21,6 @@ interface ContractData {
   contactName: string;
   contactTitle: string;
   startDate: string;
-  trialPeriod: string;
   endDate: string;
   parkingRate: string;
   managementFee: string;
@@ -56,7 +55,6 @@ export default function Contracts() {
     contactName: '',
     contactTitle: '',
     startDate: new Date().toISOString().split('T')[0],
-    trialPeriod: '1 month',
     endDate: '',
     parkingRate: '15.00',
     managementFee: '800.00',
@@ -87,8 +85,7 @@ export default function Contracts() {
     if (contractData.startDate) {
       const startDate = new Date(contractData.startDate);
       const endDate = new Date(startDate);
-      endDate.setMonth(endDate.getMonth() + 1);
-      endDate.setDate(endDate.getDate() - 1); // End date is one day before the next month starts
+      endDate.setFullYear(endDate.getFullYear() + 1); // Set to 1 year from start date
       
       handleInputChange('endDate', endDate.toISOString().split('T')[0]);
     }
@@ -541,20 +538,7 @@ export default function Contracts() {
                   onChange={(e) => handleInputChange('startDate', e.target.value)}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="trialPeriod">Trial Period</Label>
-                <Select value={contractData.trialPeriod} onValueChange={(value) => handleInputChange('trialPeriod', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1 month">1 Month</SelectItem>
-                    <SelectItem value="2 months">2 Months</SelectItem>
-                    <SelectItem value="3 months">3 Months</SelectItem>
-                    <SelectItem value="6 months">6 Months</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="endDate">End Date</Label>
                 <div className="flex gap-2">
@@ -653,7 +637,7 @@ export default function Contracts() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Contract Termination</h3>
             <div className="space-y-2">
-              <Label htmlFor="terminationNotice">Notice Period for Termination (after trial period)</Label>
+              <Label htmlFor="terminationNotice">Notice Period for Termination</Label>
               <Select value={contractData.terminationNotice} onValueChange={(value) => handleInputChange('terminationNotice', value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -665,7 +649,7 @@ export default function Contracts() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-gray-500">
-                This applies to contract termination after the initial trial period ends. During the trial period, only 7 days notice is required.
+                Number of days notice required for either party to terminate the contract.
               </p>
             </div>
           </div>
