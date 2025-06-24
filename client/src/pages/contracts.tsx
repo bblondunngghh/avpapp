@@ -594,7 +594,7 @@ export default function Contracts() {
         { text: temporaryValetData.payStationNumbers[0], x: 154, y: 346, page: 0 },
         
         // Event Time and Date
-        { text: temporaryValetData.eventDates, x: 154, y: 200, page: 0 },
+        { text: temporaryValetData.eventDates, x: 154, y: 400, page: 0 },
         { text: temporaryValetData.fromTime, x: 154, y: 250, page: 0 },
         { text: temporaryValetData.toTime, x: 250, y: 250, page: 0 },
       ] : [
