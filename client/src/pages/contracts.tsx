@@ -333,8 +333,16 @@ export default function Contracts() {
         }
       }
 
-      // Load the Capital Grille renewal PDF template
-      const response = await fetch('/api/pdf-template/capital-grille-renewal');
+      // Load the appropriate template based on location
+      let templateEndpoint = '/api/pdf-template/capital-grille-renewal'; // default fallback
+      if (selectedLocation === 'trulucks') {
+        templateEndpoint = '/api/pdf-template/trulucks-renewal';
+      } else if (selectedLocation === 'capital-grille') {
+        templateEndpoint = '/api/pdf-template/capital-grille-renewal';
+      }
+      // BOA and Bob's will use Capital Grille template until their specific templates are added
+
+      const response = await fetch(templateEndpoint);
       
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);

@@ -260,6 +260,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(404).json({ error: 'PDF template not found' });
     }
   });
+
+  app.get('/api/pdf-template/trulucks-renewal', async (req, res) => {
+    try {
+      const filePath = '/home/runner/workspace/attached_assets/TL ZONE COPY APP_1750788244278.pdf';
+      const fileBuffer = await fs.promises.readFile(filePath);
+      
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Length': fileBuffer.length
+      });
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error('Error serving Trulucks PDF template:', error);
+      res.status(404).json({ error: 'PDF template not found' });
+    }
+  });
   // Configure multer for image uploads
   const storage_config = multer.diskStorage({
     destination: (req, file, cb) => {
