@@ -163,7 +163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/pdf-template/capital-grille-renewal', async (req, res) => {
     try {
-      const filePath = '/home/runner/workspace/attached_assets/CG ANNAUL COPY_1750785289478.pdf';
+      const filePath = '/home/runner/workspace/attached_assets/CG ANNAUL COPY_1750785436469.pdf';
       const fileBuffer = await fs.promises.readFile(filePath);
       
       res.set({
