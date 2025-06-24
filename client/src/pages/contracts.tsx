@@ -616,18 +616,35 @@ export default function Contracts() {
         >
           <img src={houseIcon} alt="Back to Admin" className="h-5 w-5" />
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">Contract Generator</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Document Generator</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Valet Parking Service Agreement</CardTitle>
+          <CardTitle>Document Generator</CardTitle>
           <p className="text-sm text-gray-600">
-            Fill in the details below to generate a customized valet parking service contract.
+            Generate customized documents for valet parking services.
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Business Information */}
+          {/* Document Type Selection */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Document Type</h3>
+            <Select value={documentType} onValueChange={(value: any) => setDocumentType(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select document type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="contract">Contract Generator</SelectItem>
+                <SelectItem value="temporary-valet">Temporary Valet Zone</SelectItem>
+                <SelectItem value="permanent-valet">Permanent Valet Zone</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {documentType === 'contract' && (
+            <>
+              {/* Business Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Business Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -891,6 +908,23 @@ export default function Contracts() {
               {isGenerating ? 'Generating Contract...' : 'Generate Contract'}
             </Button>
           </div>
+            </>
+          )}
+
+          {documentType === 'temporary-valet' && (
+            <TemporaryValetForm 
+              data={temporaryValetData} 
+              onChange={setTemporaryValetData}
+              onGenerate={generateTemporaryValetPDF}
+              isGenerating={isGenerating}
+            />
+          )}
+
+          {documentType === 'permanent-valet' && (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Permanent Valet Zone generator coming soon...</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
