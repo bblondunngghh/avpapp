@@ -1597,6 +1597,47 @@ function TemporaryValetForm({
         state: 'TX',
         zip: '78701'
       },
+      'capital-grille-annual': {
+        companyName: 'Colorado Third Street, LLC / The Capital Grille',
+        primaryContact: 'Justin Bayne',
+        phoneNumber: '512-477-4500',
+        altPhoneNumber: '',
+        mailingAddress: '117 W. 4th Street',
+        city: 'Austin',
+        state: 'TX',
+        zip: '78701',
+        email: 'jbayne@baynecommercial.com',
+        blockNumber: '100',
+        streetName: 'W 4th St.',
+        spacesRequested: '6',
+        curbSide: 'South',
+        blockEnd: 'Midblock',
+        payStationNumbers: ['0416', '', '', ''],
+        unmmeteredDescription: '',
+        valetOperatorName: 'Access Valet Parking #2017-054252',
+        valetContact: 'Brandon Blond',
+        emergencyNumber: '512-775-5739',
+        valetAltPhone: '',
+        valetAddress: '14910 Hartsmith Dr.',
+        valetCity: 'Austin',
+        valetState: 'TX',
+        valetZip: '78725',
+        valetEmail: 'brandon@accessvaletparking.com',
+        permitExpiration: '5/23/25',
+        insuranceExpiration: '4/1/26',
+        onPremisesParking: false,
+        parkingFacilityAddress: '405 Colorado',
+        parkingFacilityCity: 'Austin',
+        parkingFacilityState: 'TX',
+        parkingFacilityZip: '78725',
+        facilityType: 'Parking Garage',
+        availableSpaces: '90',
+        contractDate: '9/16/2021',
+        contractExpiration: 'MTM',
+        facilityContactName: 'Jim Riggio',
+        facilityContactPhone: '267-825-3398',
+        facilityContactEmail: 'jim.riggio@bdnreit.com'
+      },
       'bobs-steak': {
         companyName: 'Bob\'s Steak & Chop House',
         streetName: 'Lamar Boulevard',
@@ -1631,6 +1672,7 @@ function TemporaryValetForm({
           <SelectContent>
             <SelectItem value="trulucks">Truluck's</SelectItem>
             <SelectItem value="capital-grille">The Capital Grille</SelectItem>
+            <SelectItem value="capital-grille-annual">Capital Grille Annual Renewal</SelectItem>
             <SelectItem value="bobs-steak">Bob's Steak & Chop House</SelectItem>
             <SelectItem value="boa">BOA Steakhouse</SelectItem>
           </SelectContent>
