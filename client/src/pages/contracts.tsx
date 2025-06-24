@@ -268,7 +268,7 @@ export default function Contracts() {
   const getWeekdayRectangleCoordinates = (location: string) => {
     const dayCoordinates = {
       'trulucks': {
-        'Monday': { x: 290, y: 335 },
+        'Monday': { x: 280, y: 335 },
         'Tuesday': { x: 50, y: 335 },
         'Wednesday': { x: 90, y: 335 },
         'Thursday': { x: 130, y: 335 },
@@ -680,9 +680,9 @@ export default function Contracts() {
         const coords = dayCoordinates[day];
         if (coords) {
           firstPage.drawRectangle({
-            x: coords.x - 17.5,
+            x: coords.x - 20,
             y: coords.y - 6,
-            width: 35,
+            width: 40,
             height: 12,
             borderColor: rgb(0, 0, 0),
             borderWidth: 1.5,
