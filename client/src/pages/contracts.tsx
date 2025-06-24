@@ -41,6 +41,7 @@ interface TemporaryValetData {
   fromTime: string;
   toTime: string;
   selectedDays: string[];
+  selectedWeekdays: string[];
   valetOperatorName: string;
   valetContact: string;
   emergencyNumber: string;
@@ -173,6 +174,7 @@ export default function Contracts() {
     fromTime: '',
     toTime: '',
     selectedDays: [],
+    selectedWeekdays: [],
     valetOperatorName: 'Access Valet Parking LLC',
     valetContact: '',
     emergencyNumber: '',
@@ -260,6 +262,32 @@ export default function Contracts() {
     const standardHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
     
     return `${standardHour}:${minutes} ${ampm}`;
+  };
+
+  // Get weekday circle coordinates for PDF overlay
+  const getWeekdayCircleCoordinates = (location: string) => {
+    const dayCoordinates = {
+      'trulucks': {
+        'Sunday': { x: 45, y: 335 },
+        'Monday': { x: 85, y: 335 },
+        'Tuesday': { x: 125, y: 335 },
+        'Wednesday': { x: 165, y: 335 },
+        'Thursday': { x: 205, y: 335 },
+        'Friday': { x: 245, y: 335 },
+        'Saturday': { x: 285, y: 335 }
+      },
+      'default': {
+        'Sunday': { x: 50, y: 250 },
+        'Monday': { x: 100, y: 250 },
+        'Tuesday': { x: 150, y: 250 },
+        'Wednesday': { x: 200, y: 250 },
+        'Thursday': { x: 250, y: 250 },
+        'Friday': { x: 300, y: 250 },
+        'Saturday': { x: 350, y: 250 }
+      }
+    };
+    
+    return dayCoordinates[location] || dayCoordinates['default'];
   };
 
   const uploadDocument = async (category: string, file: File) => {
@@ -642,6 +670,21 @@ export default function Contracts() {
             size: 9,
             font: helveticaFont,
             color: rgb(0, 0, 0),
+          });
+        }
+      });
+
+      // Add circles around selected weekdays
+      const dayCoordinates = getWeekdayCircleCoordinates(selectedTempLocation);
+      temporaryValetData.selectedWeekdays.forEach(day => {
+        const coords = dayCoordinates[day];
+        if (coords) {
+          firstPage.drawCircle({
+            x: coords.x,
+            y: coords.y,
+            size: 8,
+            borderColor: rgb(0, 0, 0),
+            borderWidth: 1.5,
           });
         }
       });
@@ -1788,6 +1831,29 @@ function TemporaryValetForm({
               value={data.toTime}
               onChange={(e) => handleInputChange('toTime', e.target.value)}
             />
+          </div>
+        </div>
+        
+        {/* Day Selection */}
+        <div className="space-y-2">
+          <Label>Days of Week</Label>
+          <div className="flex flex-wrap gap-2">
+            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+              <label key={day} className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={data.selectedWeekdays.includes(day)}
+                  onChange={(e) => {
+                    const updatedDays = e.target.checked
+                      ? [...data.selectedWeekdays, day]
+                      : data.selectedWeekdays.filter(d => d !== day);
+                    handleInputChange('selectedWeekdays', updatedDays);
+                  }}
+                  className="rounded border-gray-300"
+                />
+                <span className="text-sm">{day}</span>
+              </label>
+            ))}
           </div>
         </div>
       </div>
