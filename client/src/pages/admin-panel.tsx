@@ -1942,7 +1942,7 @@ export default function AdminPanel() {
             className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
           >
             <img src={contractIcon} alt="Contract" className="h-4 w-4" />
-            Contracts
+            Document Generator
           </Button>
         </div>
       </div>
