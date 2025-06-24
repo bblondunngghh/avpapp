@@ -221,7 +221,6 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('2. HOURS OF OPERATION', true);
-        addText(`Valet services will be provided during the following hours: ${contractData.hoursOfOperation || 'As agreed upon by both parties'}`);
         // Days of operation with specific hours - first instance
         const enabledDaysFirst = DAYS_OF_WEEK.filter(day => contractData.daySchedules[day.id]?.enabled);
         
@@ -387,7 +386,6 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('2. HOURS OF OPERATION', true);
-        addText(`Valet services will be provided during the following hours: ${contractData.hoursOfOperation || 'As agreed upon by both parties'}`);
         // Days of operation with specific hours - second instance
         const enabledDaysSecond = DAYS_OF_WEEK.filter(day => contractData.daySchedules[day.id]?.enabled);
         
@@ -711,15 +709,7 @@ export default function Contracts() {
           {/* Operational Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Operational Details</h3>
-            <div className="space-y-2">
-              <Label htmlFor="hoursOfOperation">Hours of Operation</Label>
-              <Input
-                id="hoursOfOperation"
-                value={contractData.hoursOfOperation}
-                onChange={(e) => handleInputChange('hoursOfOperation', e.target.value)}
-                placeholder="e.g., 5:00 PM - 11:00 PM"
-              />
-            </div>
+
             
             <div className="space-y-4">
               <Label>Days and Hours of Operation</Label>
