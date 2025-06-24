@@ -339,8 +339,10 @@ export default function Contracts() {
         templateEndpoint = '/api/pdf-template/trulucks-renewal';
       } else if (selectedLocation === 'capital-grille') {
         templateEndpoint = '/api/pdf-template/capital-grille-renewal';
+      } else if (selectedLocation === 'boa') {
+        templateEndpoint = '/api/pdf-template/boa-renewal';
       }
-      // BOA and Bob's will use Capital Grille template until their specific templates are added
+      // Bob's will use Capital Grille template until its specific template is added
 
       const response = await fetch(templateEndpoint);
       

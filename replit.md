@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Added BOA PDF template for location-specific Annual Renewal generation  
 - June 24, 2025: Added Trulucks PDF template for location-specific Annual Renewal generation
 - June 24, 2025: Added 5-category document upload system to Annual Renewal generator
 - June 24, 2025: Document categories: Authorized Agent, Resolution of Authority, Valet Insurance, Business Insurance, Parking Agreement
