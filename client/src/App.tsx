@@ -231,6 +231,7 @@ function Router() {
           </Route>
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
           <Route path="/admin/tax-payments" component={AccountantPage} />
+          <Route path="/contracts" component={Contracts} />
           <Route path="/reports" component={ReportsWrapper} />
           <Route path="/permits" component={PermitsPage} />
           <Route path="/employee-login" component={EmployeeLogin} />
