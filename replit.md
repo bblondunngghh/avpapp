@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Removed unwanted page 2 text overlay from temporary valet PDF generator
 - June 24, 2025: Adjusted Friday position to x:470 and reduced width to 35px for precise PDF alignment
 - June 24, 2025: Fixed weekday coordinate mapping - rectangles now align correctly with PDF day positions
 - June 24, 2025: Added standard time format conversion - times now display as 12-hour format with AM/PM instead of military time

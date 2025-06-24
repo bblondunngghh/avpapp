@@ -703,62 +703,7 @@ export default function Contracts() {
         }
       });
 
-      // Add valet operator information to page 2
-      if (pages.length > 1 || secondPage) {
-        const page2Data = [
-          { text: temporaryValetData.valetOperatorName, x: 150, y: 650 },
-          { text: temporaryValetData.valetContact, x: 150, y: 620 },
-          { text: temporaryValetData.emergencyNumber, x: 150, y: 590 },
-          { text: temporaryValetData.valetAltPhone, x: 350, y: 590 },
-          { text: temporaryValetData.valetAddress, x: 150, y: 560 },
-          { text: temporaryValetData.valetCity, x: 250, y: 530 },
-          { text: temporaryValetData.valetState, x: 320, y: 530 },
-          { text: temporaryValetData.valetZip, x: 370, y: 530 },
-          { text: temporaryValetData.valetEmail, x: 150, y: 500 },
-          { text: temporaryValetData.permitExpiration, x: 150, y: 470 },
-          { text: temporaryValetData.insuranceExpiration, x: 350, y: 470 },
-        ];
-
-        page2Data.forEach(({ text, x, y }) => {
-          if (text && text.trim()) {
-            secondPage.drawText(text, {
-              x,
-              y,
-              size: 9,
-              font: helveticaFont,
-              color: rgb(0, 0, 0),
-            });
-          }
-        });
-
-        // Vehicle storage info if not on premises
-        if (!temporaryValetData.onPremisesParking) {
-          const storageData = [
-            { text: temporaryValetData.parkingFacilityAddress, x: 150, y: 350 },
-            { text: temporaryValetData.parkingFacilityCity, x: 250, y: 320 },
-            { text: temporaryValetData.parkingFacilityState, x: 320, y: 320 },
-            { text: temporaryValetData.parkingFacilityZip, x: 370, y: 320 },
-            { text: temporaryValetData.availableSpaces, x: 150, y: 280 },
-            { text: temporaryValetData.contractDate, x: 250, y: 280 },
-            { text: temporaryValetData.contractExpiration, x: 400, y: 280 },
-            { text: temporaryValetData.facilityContactName, x: 150, y: 250 },
-            { text: temporaryValetData.facilityContactPhone, x: 300, y: 250 },
-            { text: temporaryValetData.facilityContactEmail, x: 150, y: 220 },
-          ];
-
-          storageData.forEach(({ text, x, y }) => {
-            if (text && text.trim()) {
-              secondPage.drawText(text, {
-                x,
-                y,
-                size: 9,
-                font: helveticaFont,
-                color: rgb(0, 0, 0),
-              });
-            }
-          });
-        }
-      }
+      // Note: Removed page 2 text overlay - Trulucks template only uses page 1
 
       // Mark checkboxes for selected days
       const dayPositions = [
