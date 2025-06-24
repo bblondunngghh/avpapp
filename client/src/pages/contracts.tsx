@@ -28,6 +28,7 @@ interface ContractData {
   hoursOfOperation: string;
   daysOfWeek: string[];
   paymentTerms: string;
+  terminationNotice: string;
   specialTerms: string;
 }
 
@@ -62,6 +63,7 @@ export default function Contracts() {
     hoursOfOperation: '',
     daysOfWeek: [],
     paymentTerms: '7',
+    terminationNotice: '30',
     specialTerms: ''
   });
 
@@ -216,7 +218,7 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('8. TERMINATION', true);
-        addText('Either party may terminate this Contract during the Trial Period by providing written notice to the other party at least seven (7) days prior to the intended termination date. Upon termination, Client shall pay Service Provider for any outstanding management fees owed up to the termination date.');
+        addText(`Either party may terminate this Contract during the Trial Period by providing written notice to the other party at least seven (7) days prior to the intended termination date. After the Trial Period, either party may terminate this Contract by providing ${contractData.terminationNotice} (${contractData.terminationNotice}) days written notice to the other party. Upon termination, Client shall pay Service Provider for any outstanding management fees owed up to the termination date.`);
         yPosition += 5;
 
         addText('9. INDEMNIFICATION', true);
@@ -278,9 +280,128 @@ export default function Contracts() {
         pdf.setFontSize(16);
         pdf.setFont('helvetica', 'bold');
         pdf.text('ACCESS VALET PARKING – SERVICE AGREEMENT', pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 20;
+
+        pdf.setFontSize(14);
+        pdf.text('VALET SERVICES CONTRACT', pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 15;
+
+        // Contract content
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        
+        const addText = (text: string, isBold: boolean = false) => {
+          pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+          const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin);
+          
+          // Check if we need a new page
+          if (yPosition + (lines.length * 5) > pageHeight - margin) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+          
+          pdf.text(lines, margin, yPosition);
+          yPosition += lines.length * 5 + 3;
+        };
+
+        addText(`This Valet Services Contract ("Contract") is entered into on ${formatDate(contractData.startDate)}, by and between:`);
+        yPosition += 3;
+
+        addText(`${contractData.businessName}, a corporation with its principal place of business located at ${contractData.businessAddress}, ${contractData.businessCity}, ${contractData.businessState} ${contractData.businessZip} ("Client"), and`);
+        yPosition += 3;
+
+        addText(`Access Valet Parking LLC, a Texas Limited Liability Company with its principal place of business located at 14910 Hartsmith Dr., Austin, TX 78725 ("Service Provider").`);
+        yPosition += 8;
+
+        addText('RECITALS', true);
+        addText('WHEREAS, Client operates a business that requires valet parking services for its customers;');
+        addText('WHEREAS, Service Provider is engaged in the business of providing valet parking services;');
+        addText('WHEREAS, Client desires to engage Service Provider to provide valet parking services on a trial basis, and Service Provider agrees to provide such services under the terms and conditions set forth herein;');
+        yPosition += 5;
+
+        addText('NOW, THEREFORE, in consideration of the mutual promises and agreements contained herein, the parties agree as follows:');
+        yPosition += 8;
+
+        addText('1. SCOPE OF SERVICES', true);
+        addText(`Service Provider shall provide valet parking services ("Services") for the customers of Client at the premises of ${contractData.businessName}, located at ${contractData.businessAddress}, ${contractData.businessCity}, ${contractData.businessState} ${contractData.businessZip}. The Services shall include, but not be limited to, parking and retrieving customer vehicles in a safe, efficient, and professional manner.`);
+        yPosition += 5;
+
+        addText('2. HOURS OF OPERATION', true);
+        addText(`Valet services will be provided during the following hours: ${contractData.hoursOfOperation || 'As agreed upon by both parties'}`);
+        addText(`Days of operation: ${daysText}`);
+        yPosition += 5;
+
+        addText('3. TERM', true);
+        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and continue for a trial period of ${contractData.trialPeriod}, ending on ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} ("Trial Period"), unless terminated earlier in accordance with the provisions of this Contract. Upon mutual agreement of both parties, the Contract may be extended or converted into a long-term agreement following the Trial Period.`);
+        yPosition += 5;
+
+        addText('4. COMPENSATION', true);
+        addText(`a. Parking Rate: Service Provider shall charge customers a parking rate of $${contractData.parkingRate} per vehicle. All parking fees collected shall be retained by Service Provider as compensation for the Services, unless otherwise agreed in writing.`);
+        addText(`b. Management Fee: Client shall pay Service Provider a monthly management fee of $${contractData.managementFee} for overseeing and managing the valet parking operations. The management fee for the Trial Period shall be due and payable by Client to Service Provider within ${contractData.paymentTerms} days of contract execution.`);
+        yPosition += 5;
+
+        addText('5. PAYMENT TERMS', true);
+        addText(`The management fee shall be paid via check or electronic transfer to an account designated by Service Provider. Payment is due within ${contractData.paymentTerms} days of the invoice date. Late payments shall incur a penalty of 1.5% per month on the outstanding balance.`);
+        yPosition += 5;
+
+        addText('6. RESPONSIBILITIES OF SERVICE PROVIDER', true);
+        addText('Service Provider agrees to:');
+        addText('a. Provide trained, uniformed, and professional valet staff to perform the Services;');
+        addText('b. Maintain adequate insurance coverage, including general liability and garage keeper\'s liability insurance, and provide proof of such coverage upon request;');
+        addText('c. Ensure all vehicles are handled with care and parked in a secure manner;');
+        addText('d. Comply with all applicable federal, state, and local laws and regulations.');
+        yPosition += 5;
+
+        addText('7. RESPONSIBILITIES OF CLIENT', true);
+        addText('Client agrees to:');
+        addText('a. Pay the management fee in a timely manner as outlined in Section 4;');
+        addText('b. Notify Service Provider of any specific operational requirements or changes in advance.');
+        yPosition += 5;
+
+        addText('8. TERMINATION', true);
+        addText(`Either party may terminate this Contract during the Trial Period by providing written notice to the other party at least seven (7) days prior to the intended termination date. After the Trial Period, either party may terminate this Contract by providing ${contractData.terminationNotice} (${contractData.terminationNotice}) days written notice to the other party. Upon termination, Client shall pay Service Provider for any outstanding management fees owed up to the termination date.`);
+        yPosition += 5;
+
+        addText('9. INDEMNIFICATION', true);
+        addText('Service Provider shall indemnify and hold Client harmless from any claims, damages, or liabilities arising from Service Provider\'s negligence or willful misconduct in performing the Services. Client shall indemnify and hold Service Provider harmless from any claims, damages, or liabilities arising from Client\'s premises or actions unrelated to Service Provider\'s performance of the Services.');
+        yPosition += 5;
+
+        addText('10. GOVERNING LAW', true);
+        addText('This Contract shall be governed by and construed in accordance with the laws of the State of Texas. Any disputes arising under this Contract shall be resolved in a court of competent jurisdiction in Travis County, Texas.');
+        yPosition += 5;
+
+        addText('11. ENTIRE AGREEMENT', true);
+        addText('This Contract constitutes the entire agreement between the parties and supersedes all prior agreements or understandings, whether written or oral. Any amendments to this Contract must be made in writing and signed by both parties.');
+        yPosition += 5;
+
+        addText('12. NOTICES', true);
+        addText('Any notices required under this Contract shall be sent in writing to the respective addresses of the parties listed above via certified mail, email, or hand delivery.');
+        yPosition += 5;
+
+        if (contractData.specialTerms) {
+          addText('13. SPECIAL TERMS', true);
+          addText(contractData.specialTerms);
+          yPosition += 5;
+        }
+
+        addText('IN WITNESS WHEREOF, the parties have executed this Contract as of the date first written above.');
+        yPosition += 15;
+
+        // Signature blocks
+        addText(`${contractData.businessName}`, true);
+        addText('By: _______________________________');
+        addText(`Name: ${contractData.contactName}`);
+        addText(`Title: ${contractData.contactTitle || '_______________________________'}`);
+        addText(`Date: ${formatDate(contractData.startDate)}`);
+        yPosition += 10;
+
+        addText('Access Valet Parking', true);
+        addText('By: _______________________________');
+        addText('Name: Brandon Blond');
+        addText('Title: Owner');
+        addText(`Date: ${formatDate(contractData.startDate)}`);
         
         // Continue with the rest of the PDF generation...
-        // (same content as above but starting from title)
         
         const fileName = `${contractData.businessName.replace(/[^a-zA-Z0-9]/g, '_')}_Valet_Contract.pdf`;
         pdf.save(fileName);
@@ -525,6 +646,27 @@ export default function Contracts() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Contract Termination */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Contract Termination</h3>
+            <div className="space-y-2">
+              <Label htmlFor="terminationNotice">Notice Period for Termination (after trial period)</Label>
+              <Select value={contractData.terminationNotice} onValueChange={(value) => handleInputChange('terminationNotice', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="30">30 days notice</SelectItem>
+                  <SelectItem value="60">60 days notice</SelectItem>
+                  <SelectItem value="90">90 days notice</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500">
+                This applies to contract termination after the initial trial period ends. During the trial period, only 7 days notice is required.
+              </p>
             </div>
           </div>
 
