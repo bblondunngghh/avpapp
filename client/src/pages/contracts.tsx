@@ -681,7 +681,7 @@ export default function Contracts() {
         'Tuesday': 45,
         'Wednesday': 55,
         'Thursday': 50,
-        'Friday': 40,
+        'Friday': 35,
         'Saturday': 50,
         'Sunday': 45
       };
