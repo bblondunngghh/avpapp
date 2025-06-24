@@ -276,7 +276,7 @@ export default function Contracts() {
       if (renewalData.valetPermitExpiration && secondPage) {
         secondPage.drawText(renewalData.valetPermitExpiration, {
           x: 250, // Left position maintained
-          y: 73, // Moved up (~24 points)
+          y: 68, // Fine-tuned Y coordinate
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
@@ -287,7 +287,7 @@ export default function Contracts() {
       if (renewalData.valetInsuranceExpiration && secondPage) {
         secondPage.drawText(renewalData.valetInsuranceExpiration, {
           x: 499, // Right position maintained
-          y: 73, // Moved up (~24 points)
+          y: 68, // Fine-tuned Y coordinate
           size: 9,
           font: helveticaFont,
           color: rgb(0, 0, 0),
