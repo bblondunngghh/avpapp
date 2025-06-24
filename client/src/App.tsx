@@ -27,7 +27,7 @@ import PermitsPage from "@/pages/permits";
 import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
-import avpLogo from "@assets/AVPLOGO PROPER2_1750777658134.png";
+import avpLogo from "@assets/AVPLOGO PROPER3_1750779399227.png";
 
 function Router() {
   const [location, setLocation] = useLocation();
