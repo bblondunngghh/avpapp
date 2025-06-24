@@ -680,9 +680,9 @@ export default function Contracts() {
         const coords = dayCoordinates[day];
         if (coords) {
           firstPage.drawRectangle({
-            x: coords.x - 12,
+            x: coords.x - 15,
             y: coords.y - 6,
-            width: 24,
+            width: 30,
             height: 12,
             borderColor: rgb(0, 0, 0),
             borderWidth: 1.5,
