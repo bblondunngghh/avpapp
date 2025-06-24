@@ -1664,10 +1664,11 @@ function TemporaryValetForm({
     <>
       {/* Location Selection */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Location Selection</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Location Template</h3>
+        <p className="text-sm text-gray-600">Select a location to auto-fill company and contact details. You can edit event-specific information below.</p>
         <Select value={data.location} onValueChange={(value) => handleLocationPreset(value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Select location" />
+            <SelectValue placeholder="Select location template" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="trulucks">Truluck's</SelectItem>
@@ -1682,6 +1683,7 @@ function TemporaryValetForm({
       {/* Applicant Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Applicant Information</h3>
+        <p className="text-sm text-gray-500">Pre-filled from location template. Edit if needed.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="companyName">Company Name *</Label>
@@ -1773,6 +1775,7 @@ function TemporaryValetForm({
       {/* Proposed Zone Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Proposed Zone Information</h3>
+        <p className="text-sm text-gray-500">Location details pre-filled. Verify and adjust if needed.</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="blockNumber">Block Number</Label>
@@ -1865,8 +1868,9 @@ function TemporaryValetForm({
       </div>
 
       {/* Event Time and Date */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Event Time and Date</h3>
+      <div className="space-y-4 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+        <h3 className="text-lg font-semibold text-blue-700">📅 Event Time and Date</h3>
+        <p className="text-sm text-blue-600 font-medium">Update these fields for each new application:</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="eventDates">Date(s) *</Label>
