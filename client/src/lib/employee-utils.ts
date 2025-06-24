@@ -37,11 +37,66 @@ export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
   
   if (typeof employeesData === 'string') {
     try {
+      // First attempt - standard JSON parsing
       const parsed = JSON.parse(employeesData);
-      return Array.isArray(parsed) ? parsed : [];
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+      
+      // If parsed result is a single object, wrap in array
+      if (typeof parsed === 'object' && parsed !== null) {
+        return [parsed];
+      }
     } catch (error) {
-      console.error('Failed to parse employee JSON data:', error, 'Raw data:', employeesData);
-      return [];
+      // Handle complex nested JSON format: {"{"name":"kevin","hours":6,"cashPaid":19}"}
+      try {
+        let cleanData = employeesData;
+        
+        // Remove outer wrapper if present: {" ... "}
+        if (cleanData.startsWith('{"') && cleanData.endsWith('"}')) {
+          cleanData = cleanData.slice(2, -2);
+        }
+        
+        // Unescape inner quotes
+        cleanData = cleanData.replace(/\\"/g, '"');
+        
+        // Try parsing the cleaned data
+        const cleanParsed = JSON.parse(cleanData);
+        if (Array.isArray(cleanParsed)) {
+          return cleanParsed;
+        }
+        
+        // If it's a single object, wrap in array
+        if (typeof cleanParsed === 'object' && cleanParsed !== null) {
+          return [cleanParsed];
+        }
+      } catch (secondError) {
+        // Handle the database format with escaped quotes like: 
+        // "{""{\""name\"":\""kevin\"",\""hours\"":6,\""cashPaid\"":19}""}"
+        try {
+          let dbData = employeesData;
+          
+          // Remove outer braces and quotes: "{""...""}" -> "..."
+          if (dbData.startsWith('{"') && dbData.endsWith('"}')) {
+            dbData = dbData.slice(2, -2);
+          }
+          
+          // Replace double quotes with single quotes: \""name\"" -> "name"
+          dbData = dbData.replace(/\\"/g, '"');
+          
+          const dbParsed = JSON.parse(dbData);
+          if (Array.isArray(dbParsed)) {
+            return dbParsed;
+          }
+          
+          if (typeof dbParsed === 'object' && dbParsed !== null) {
+            return [dbParsed];
+          }
+        } catch (thirdError) {
+          console.error('Failed to parse employee JSON data after all attempts:', thirdError, 'Raw data:', employeesData);
+          return [];
+        }
+      }
     }
   }
   
