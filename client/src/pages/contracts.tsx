@@ -692,13 +692,13 @@ export default function Contracts() {
         if (coords) {
           firstPage.drawRectangle({
             x: coords.x - (width / 2),
-            y: coords.y - 7.5,
+            y: coords.y - 9,
             width: width,
-            height: 15,
+            height: 18,
             borderColor: rgb(0, 0, 0),
             borderWidth: 1.5,
             opacity: 0,
-            borderRadius: 3,
+            borderRadius: 9, // Half the height for oval shape
           });
         }
       });
