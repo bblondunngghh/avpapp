@@ -5375,7 +5375,7 @@ export default function AdminPanel() {
                       // If JSON parsing fails, try alternative parsing for malformed data
                       try {
                         if (typeof report.employees === 'string') {
-                          // Handle the specific format from the database: {"{"name":"ryan","hours":5,"cashPaid":0}","{"name":"jacob","hours":7.5,"cashPaid":0}"}
+                          // Handle the specific format: {"{"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}"}
                           let cleanedData = report.employees;
                           
                           // Remove outer braces and quotes
@@ -5386,33 +5386,45 @@ export default function AdminPanel() {
                           // Fix escaped quotes
                           cleanedData = cleanedData.replace(/\\"/g, '"');
                           
-                          // Handle multiple employee objects separated by commas with quotes
-                          // Pattern: {"name":"devin","hours":8,"cashPaid":0}","{"name":"jacob","hours":7.5,"cashPaid":0}
-                          if (cleanedData.includes('"},"{')) {
+                          // Handle the specific comma-separated pattern from database
+                          // Pattern: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}
+                          if (cleanedData.includes('","')) {
+                            // Split by "," and clean up each part
+                            const jsonStrings = cleanedData.split('","');
+                            const employees = [];
+                            
+                            for (let jsonStr of jsonStrings) {
+                              // Remove leading/trailing quotes and braces if present
+                              jsonStr = jsonStr.replace(/^["{]+|["}]+$/g, '');
+                              
+                              // Add proper braces if missing
+                              if (!jsonStr.startsWith('{')) jsonStr = '{' + jsonStr;
+                              if (!jsonStr.endsWith('}')) jsonStr = jsonStr + '}';
+                              
+                              try {
+                                const emp = JSON.parse(jsonStr);
+                                employees.push(emp);
+                              } catch (e) {
+                                console.log('Failed to parse individual employee:', jsonStr);
+                              }
+                            }
+                            
+                            reportEmployees = employees;
+                          } else if (cleanedData.includes('"},"{')) {
+                            // Alternative pattern handling
                             const parts = cleanedData.split('"},"{');
                             cleanedData = '[' + parts.map((part, index) => {
-                              // Add missing braces
                               if (index === 0 && !part.startsWith('{')) part = '{' + part;
                               if (index === parts.length - 1 && !part.endsWith('}')) part = part + '}';
                               if (index > 0 && !part.startsWith('{')) part = '{' + part;
                               if (index < parts.length - 1 && !part.endsWith('}')) part = part + '}';
                               return part;
                             }).join(',') + ']';
-                          } else if (cleanedData.includes('},{')) {
-                            // Handle the case where it's just },{ without quotes
-                            const parts = cleanedData.split('},{');
-                            cleanedData = '[' + parts.map((part, index) => {
-                              if (index === 0 && !part.startsWith('{')) part = '{' + part;
-                              if (index === parts.length - 1 && !part.endsWith('}')) part = part + '}';
-                              if (index > 0 && !part.startsWith('{')) part = '{' + part;
-                              if (index < parts.length - 1 && !part.endsWith('}')) part = part + '}';
-                              return part;
-                            }).join(',') + ']';
+                            reportEmployees = JSON.parse(cleanedData);
                           } else if (!cleanedData.startsWith('[')) {
                             cleanedData = '[' + cleanedData + ']';
+                            reportEmployees = JSON.parse(cleanedData);
                           }
-                          
-                          reportEmployees = JSON.parse(cleanedData);
                         }
                       } catch (e2) {
                         reportEmployees = [];
@@ -5424,6 +5436,11 @@ export default function AdminPanel() {
                       reportEmployees = [];
                     }
 
+                    // Debug for Friday/Saturday issue
+                    if (reportDate.toDateString().includes('Jun 20') || reportDate.toDateString().includes('Jun 21')) {
+                      console.log('DEBUG - Processing', report.date, 'with', reportEmployees.length, 'employees:', reportEmployees);
+                    }
+
                     if (Array.isArray(reportEmployees) && reportEmployees.length > 0) {
                       reportEmployees.forEach((emp: any) => {
                         // Employee data is stored with 'name' field containing the employee key
@@ -5432,6 +5449,10 @@ export default function AdminPanel() {
                           const dayName = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
                           weeklyHours[emp.name].weeklyBreakdown[dayName] = (weeklyHours[emp.name].weeklyBreakdown[dayName] || 0) + emp.hours;
                           weeklyHours[emp.name].totalHours += emp.hours;
+                          
+                          if (reportDate.toDateString().includes('Jun 20') || reportDate.toDateString().includes('Jun 21')) {
+                            console.log(`DEBUG - Added ${emp.hours} hours for ${emp.name} on ${dayName}`);
+                          }
                           
                           // Determine status
                           if (weeklyHours[emp.name].totalHours >= 38) {
