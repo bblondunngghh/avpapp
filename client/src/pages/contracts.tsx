@@ -378,7 +378,7 @@ export default function Contracts() {
 
       toast({
         title: "Success",
-        description: "Capital Grille renewal PDF generated successfully",
+        description: `Capital Grille renewal PDF generated with ${uploadedFiles.length} supporting documents!`,
       });
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -1284,6 +1284,9 @@ export default function Contracts() {
               onChange={setRenewalData}
               onGenerate={generateCapitalGrilleRenewal}
               isGenerating={isGenerating}
+              documentUploads={documentUploads}
+              onFileUpload={handleFileUpload}
+              getCategoryDisplayName={getCategoryDisplayName}
             />
           )}
         </CardContent>
@@ -1297,12 +1300,18 @@ function CapitalGrilleRenewalForm({
   data, 
   onChange, 
   onGenerate, 
-  isGenerating 
+  isGenerating,
+  documentUploads,
+  onFileUpload,
+  getCategoryDisplayName
 }: { 
   data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }; 
   onChange: (data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }) => void; 
   onGenerate: () => void;
   isGenerating: boolean;
+  documentUploads: Array<{ category: string; file: File | null; uploaded: boolean }>;
+  onFileUpload: (category: string, file: File | null) => void;
+  getCategoryDisplayName: (category: string) => string;
 }) {
   const handleInputChange = (field: string, value: string) => {
     onChange({ ...data, [field]: value });
@@ -1355,6 +1364,39 @@ function CapitalGrilleRenewalForm({
             <p className="text-xs text-gray-500">This will be added to Page 2 at the bottom</p>
           </div>
         </div>
+      </div>
+
+      {/* Document Upload Section */}
+      <div className="space-y-4 bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
+        <h4 className="text-md font-semibold text-gray-700">Supporting Documents</h4>
+        <p className="text-sm text-gray-600">Upload supporting documents to include with the renewal application.</p>
+        
+        {documentUploads?.map((doc) => (
+          <div key={doc.category} className="border rounded-lg p-4 bg-white">
+            <div className="flex items-center justify-between mb-2">
+              <Label className="font-medium">
+                {getCategoryDisplayName(doc.category)}
+              </Label>
+              {doc.uploaded && (
+                <span className="text-green-600 text-sm font-medium">✓ Uploaded</span>
+              )}
+            </div>
+            <Input
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                onFileUpload(doc.category, file);
+              }}
+              className="w-full"
+            />
+            {doc.file && (
+              <p className="text-sm text-gray-500 mt-1">
+                Selected: {doc.file.name} ({(doc.file.size / 1024 / 1024).toFixed(2)} MB)
+              </p>
+            )}
+          </div>
+        ))}
       </div>
 
       <div className="pt-6">

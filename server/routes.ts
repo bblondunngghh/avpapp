@@ -41,6 +41,38 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
+// Configure multer for document uploads
+const documentStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = './uploads/documents';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const timestamp = Date.now();
+    const category = req.body.category || 'document';
+    const ext = path.extname(file.originalname);
+    cb(null, `${category}_${timestamp}${ext}`);
+  }
+});
+
+const uploadDocument = multer({
+  storage: documentStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF, JPEG, and PNG files are allowed.'));
+    }
+  }
+});
+
 // Validation functions to prevent critical data integrity issues
 function validateEmployeeData(employees: any): any[] {
   if (Array.isArray(employees)) {
@@ -159,6 +191,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(404).send('PDF template not found');
       }
     });
+  });
+
+  // Document upload endpoint
+  app.post('/api/upload-document', uploadDocument.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const { category } = req.body;
+      
+      if (!category) {
+        return res.status(400).json({ error: 'Category is required' });
+      }
+
+      // Save document information to database
+      const documentData = {
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        category: category,
+        filePath: req.file.path,
+        fileSize: req.file.size,
+        mimeType: req.file.mimetype
+      };
+
+      // For now, we'll just return success - you can add database storage later
+      res.json({
+        success: true,
+        filename: req.file.filename,
+        message: 'Document uploaded successfully'
+      });
+
+    } catch (error) {
+      console.error('Document upload error:', error);
+      res.status(500).json({ error: 'Upload failed' });
+    }
   });
 
   app.get('/api/pdf-template/capital-grille-renewal', async (req, res) => {
