@@ -341,8 +341,9 @@ export default function Contracts() {
         templateEndpoint = '/api/pdf-template/capital-grille-renewal';
       } else if (selectedLocation === 'boa') {
         templateEndpoint = '/api/pdf-template/boa-renewal';
+      } else if (selectedLocation === 'bobs') {
+        templateEndpoint = '/api/pdf-template/bobs-renewal';
       }
-      // Bob's will use Capital Grille template until its specific template is added
 
       const response = await fetch(templateEndpoint);
       
