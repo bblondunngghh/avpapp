@@ -76,6 +76,7 @@ export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
         // Or multiple employees: "{""{\""name\"":\""arturo\"",\""hours\"":5.75,\""cashPaid\"":0}"",""{\""name\"":\""ethan\"",\""hours\"":4.5,\""cashPaid\"":0}""}"
         try {
           let dbData = employeesData;
+          console.log('Complex parsing attempt, original data:', dbData);
           
           // Remove outer braces and quotes: "{""...""}" -> "..."
           if (dbData.startsWith('{"') && dbData.endsWith('"}')) {
@@ -84,60 +85,33 @@ export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
           
           // Replace escaped quotes: \""name\"" -> "name"
           dbData = dbData.replace(/\\"/g, '"');
+          console.log('After quote replacement:', dbData);
           
           // Handle multiple JSON objects in the complex format
-          // Example: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}","{"name":"dave","hours":2,"cashPaid":0}
+          // After processing: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}","{"name":"dave","hours":2,"cashPaid":0}
           if (dbData.includes('","')) {
-            // Split and reconstruct JSON objects properly
-            const segments = dbData.split('","');
+            console.log('Found multiple JSON objects, extracting with regex');
+            
+            // Use regex to extract complete JSON objects
+            const jsonObjectRegex = /\{[^{}]*\}/g;
+            const matches = dbData.match(jsonObjectRegex);
             const employees = [];
             
-            for (let i = 0; i < segments.length; i++) {
-              let segment = segments[i];
-              
-              // Clean up wrapping quotes
-              if (i === 0 && segment.startsWith('"')) {
-                segment = segment.substring(1);
-              }
-              if (i === segments.length - 1 && segment.endsWith('"')) {
-                segment = segment.substring(0, segment.length - 1);
-              }
-              
-              // Ensure it's a complete JSON object
-              if (!segment.startsWith('{')) {
-                segment = '{' + segment;
-              }
-              if (!segment.endsWith('}')) {
-                segment = segment + '}';
-              }
-              
-              try {
-                const employee = JSON.parse(segment);
-                if (employee && employee.name && typeof employee.hours === 'number') {
-                  employees.push(employee);
-                }
-              } catch (parseErr) {
-                // Try alternative reconstruction
+            if (matches) {
+              console.log('Found JSON object matches:', matches);
+              for (const match of matches) {
                 try {
-                  // Maybe the segment is incomplete, try to find name/hours pattern
-                  const nameMatch = segment.match(/"name":"([^"]+)"/);
-                  const hoursMatch = segment.match(/"hours":([0-9.]+)/);
-                  const cashMatch = segment.match(/"cashPaid":([0-9.]+)/);
-                  
-                  if (nameMatch && hoursMatch) {
-                    const employee = {
-                      name: nameMatch[1],
-                      hours: parseFloat(hoursMatch[1]),
-                      cashPaid: cashMatch ? parseFloat(cashMatch[1]) : 0
-                    };
+                  const employee = JSON.parse(match);
+                  if (employee && employee.name && typeof employee.hours === 'number') {
                     employees.push(employee);
                   }
-                } catch (secondParseErr) {
-                  console.warn('Failed to parse segment completely:', segment);
+                } catch (parseErr) {
+                  console.warn('Failed to parse JSON object:', match);
                 }
               }
             }
             
+            console.log('Regex extraction result:', employees);
             return employees;
           } else {
             // Single employee case
