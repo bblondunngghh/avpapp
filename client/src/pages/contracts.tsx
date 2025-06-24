@@ -14,6 +14,7 @@ import jsPDF from 'jspdf';
 
 interface ContractData {
   businessName: string;
+  businessEntityType: string;
   businessAddress: string;
   businessCity: string;
   businessState: string;
@@ -48,6 +49,7 @@ export default function Contracts() {
 
   const [contractData, setContractData] = useState<ContractData>({
     businessName: '',
+    businessEntityType: 'corporation',
     businessAddress: '',
     businessCity: '',
     businessState: 'TX',
@@ -163,7 +165,7 @@ export default function Contracts() {
         addText(`This Valet Services Contract ("Contract") is entered into on ${formatDate(contractData.startDate)}, by and between:`);
         yPosition += 3;
 
-        addText(`${contractData.businessName}, a corporation with its principal place of business located at ${contractData.businessAddress}, ${contractData.businessCity}, ${contractData.businessState} ${contractData.businessZip} ("Client"), and`);
+        addText(`${contractData.businessName}, a ${contractData.businessEntityType} with its principal place of business located at ${contractData.businessAddress}, ${contractData.businessCity}, ${contractData.businessState} ${contractData.businessZip} ("Client"), and`);
         yPosition += 3;
 
         addText(`Access Valet Parking LLC, a Texas Limited Liability Company with its principal place of business located at 14910 Hartsmith Dr., Austin, TX 78725 ("Service Provider").`);
@@ -304,7 +306,7 @@ export default function Contracts() {
         addText(`This Valet Services Contract ("Contract") is entered into on ${formatDate(contractData.startDate)}, by and between:`);
         yPosition += 3;
 
-        addText(`${contractData.businessName}, a corporation with its principal place of business located at ${contractData.businessAddress}, ${contractData.businessCity}, ${contractData.businessState} ${contractData.businessZip} ("Client"), and`);
+        addText(`${contractData.businessName}, a ${contractData.businessEntityType} with its principal place of business located at ${contractData.businessAddress}, ${contractData.businessCity}, ${contractData.businessState} ${contractData.businessZip} ("Client"), and`);
         yPosition += 3;
 
         addText(`Access Valet Parking LLC, a Texas Limited Liability Company with its principal place of business located at 14910 Hartsmith Dr., Austin, TX 78725 ("Service Provider").`);
@@ -458,6 +460,23 @@ export default function Contracts() {
                   onChange={(e) => handleInputChange('businessName', e.target.value)}
                   placeholder="e.g., Parker Jazz INC"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="businessEntityType">Business Entity Type</Label>
+                <Select value={contractData.businessEntityType} onValueChange={(value) => handleInputChange('businessEntityType', value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="corporation">Corporation</SelectItem>
+                    <SelectItem value="limited liability company">Limited Liability Company (LLC)</SelectItem>
+                    <SelectItem value="partnership">Partnership</SelectItem>
+                    <SelectItem value="limited partnership">Limited Partnership</SelectItem>
+                    <SelectItem value="sole proprietorship">Sole Proprietorship</SelectItem>
+                    <SelectItem value="professional corporation">Professional Corporation</SelectItem>
+                    <SelectItem value="nonprofit corporation">Nonprofit Corporation</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contactName">Contact Name *</Label>
