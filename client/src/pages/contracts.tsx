@@ -690,15 +690,14 @@ export default function Contracts() {
         const coords = dayCoordinates[day];
         const width = dayWidths[day] || 40;
         if (coords) {
-          firstPage.drawRectangle({
-            x: coords.x - (width / 2),
-            y: coords.y - 9,
-            width: width,
-            height: 18,
+          firstPage.drawEllipse({
+            x: coords.x,
+            y: coords.y,
+            xScale: width / 2,
+            yScale: 9,
             borderColor: rgb(0, 0, 0),
             borderWidth: 1.5,
             opacity: 0,
-            borderRadius: 9, // Half the height for oval shape
           });
         }
       });
