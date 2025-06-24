@@ -99,6 +99,26 @@ export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
 export type UpdateEmployee = z.infer<typeof updateEmployeeSchema>;
 export type Employee = typeof employees.$inferSelect;
 
+// Document attachments schema for PDF generation
+export const documentAttachments = pgTable("document_attachments", {
+  id: serial("id").primaryKey(),
+  filename: text("filename").notNull(),
+  originalName: text("original_name").notNull(),
+  category: text("category").notNull(), // authorized_agent, resolution_authority, valet_insurance, business_insurance
+  filePath: text("file_path").notNull(),
+  fileSize: integer("file_size"),
+  mimeType: text("mime_type"),
+  uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
+});
+
+export const insertDocumentAttachmentSchema = createInsertSchema(documentAttachments).omit({
+  id: true,
+  uploadedAt: true,
+});
+
+export type InsertDocumentAttachment = z.infer<typeof insertDocumentAttachmentSchema>;
+export type DocumentAttachment = typeof documentAttachments.$inferSelect;
+
 // Locations schema for the different restaurant clients
 export const locations = pgTable("locations", {
   id: serial("id").primaryKey(),

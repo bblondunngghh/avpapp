@@ -139,6 +139,14 @@ export default function Contracts() {
     valetInsuranceExpiration: ''
   });
 
+  // Document upload state
+  const [documentUploads, setDocumentUploads] = useState([
+    { category: "authorized_agent", file: null as File | null, uploaded: false },
+    { category: "resolution_authority", file: null as File | null, uploaded: false },
+    { category: "valet_insurance", file: null as File | null, uploaded: false },
+    { category: "business_insurance", file: null as File | null, uploaded: false },
+  ]);
+
   const [temporaryValetData, setTemporaryValetData] = useState<TemporaryValetData>({
     location: '',
     companyName: '',
@@ -232,6 +240,55 @@ export default function Contracts() {
     }
   };
 
+  const handleFileUpload = (category: string, file: File | null) => {
+    setDocumentUploads(prev => prev.map(doc => 
+      doc.category === category ? { ...doc, file, uploaded: false } : doc
+    ));
+  };
+
+  const uploadDocument = async (category: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('category', category);
+
+    try {
+      const response = await fetch('/api/upload-document', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      
+      setDocumentUploads(prev => prev.map(doc => 
+        doc.category === category ? { ...doc, uploaded: true } : doc
+      ));
+
+      return result.filename;
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: `Failed to upload ${getCategoryDisplayName(category)} document.`,
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const getCategoryDisplayName = (category: string) => {
+    const names = {
+      authorized_agent: "Authorized Agent",
+      resolution_authority: "Resolution of Authority",
+      valet_insurance: "Valet Certificate of Insurance",
+      business_insurance: "Business Certificate of Insurance",
+    };
+    return names[category as keyof typeof names] || category;
+  };
+
   const generateCapitalGrilleRenewal = async () => {
     setIsGenerating(true);
     try {
@@ -242,7 +299,19 @@ export default function Contracts() {
           description: "Please enter at least one expiration date",
           variant: "destructive",
         });
+        setIsGenerating(false);
         return;
+      }
+
+      // Upload documents first
+      const uploadedFiles = [];
+      for (const doc of documentUploads) {
+        if (doc.file && !doc.uploaded) {
+          const filename = await uploadDocument(doc.category, doc.file);
+          if (filename) {
+            uploadedFiles.push({ category: doc.category, filename });
+          }
+        }
       }
 
       // Load the Capital Grille renewal PDF template
