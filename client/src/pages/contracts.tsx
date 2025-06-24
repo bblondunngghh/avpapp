@@ -270,11 +270,11 @@ export default function Contracts() {
       'trulucks': {
         'Monday': { x: 285, y: 335 },
         'Tuesday': { x: 325, y: 335 },
-        'Wednesday': { x: 400, y: 335 },
-        'Thursday': { x: 470, y: 335 },
-        'Friday': { x: 535, y: 335 },
-        'Saturday': { x: 590, y: 335 },
-        'Sunday': { x: 655, y: 335 }
+        'Wednesday': { x: 365, y: 335 },
+        'Thursday': { x: 420, y: 335 },
+        'Friday': { x: 470, y: 335 },
+        'Saturday': { x: 510, y: 335 },
+        'Sunday': { x: 560, y: 335 }
       },
       'default': {
         'Monday': { x: 50, y: 250 },
