@@ -596,7 +596,7 @@ export default function Contracts() {
         // Event Time and Date
         { text: temporaryValetData.eventDates, x: 135, y: 350, page: 0 },
         { text: temporaryValetData.fromTime, x: 75, y: 335, page: 0 },
-        { text: temporaryValetData.toTime, x: 200, y: 335, page: 0 },
+        { text: temporaryValetData.toTime, x: 175, y: 335, page: 0 },
       ] : [
         // Default coordinates for other templates
         { text: temporaryValetData.companyName, x: 150, y: 700, page: 0 },
