@@ -25,6 +25,7 @@ import EmployeeDashboard from "@/pages/employee-dashboard";
 import ReportSelection from "@/pages/report-selection";
 import PermitsPage from "@/pages/permits";
 import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
+import Contracts from "@/pages/contracts";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 import avpLogo from "@assets/AVPLOGO PROPER3_1750779399227.png";

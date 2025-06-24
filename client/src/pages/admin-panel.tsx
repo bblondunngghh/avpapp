@@ -366,6 +366,7 @@ import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Strea
 import folderUploadIcon from "@assets/Folder-Upload--Streamline-Ultimate.png";
 import paperWriteIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import logoutIcon from "@assets/Logout-2--Streamline-Ultimate.png";
+import contractIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
@@ -1934,6 +1935,14 @@ export default function AdminPanel() {
           >
             <img src={paperWriteIcon} alt="Paper Write" className="h-4 w-4" />
             Edit Reports
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/contracts")}
+            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+          >
+            <img src={contractIcon} alt="Contract" className="h-4 w-4" />
+            Contracts
           </Button>
         </div>
       </div>
