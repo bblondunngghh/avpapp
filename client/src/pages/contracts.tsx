@@ -172,7 +172,7 @@ export default function Contracts() {
         addText('RECITALS', true);
         addText('WHEREAS, Client operates a business that requires valet parking services for its customers;');
         addText('WHEREAS, Service Provider is engaged in the business of providing valet parking services;');
-        addText('WHEREAS, Client desires to engage Service Provider to provide valet parking services on a trial basis, and Service Provider agrees to provide such services under the terms and conditions set forth herein;');
+        addText('WHEREAS, Client desires to engage Service Provider to provide valet parking services and Service Provider agrees to provide such services under the terms and conditions set forth herein;');
         yPosition += 5;
 
         addText('NOW, THEREFORE, in consideration of the mutual promises and agreements contained herein, the parties agree as follows:');
@@ -188,12 +188,12 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('3. TERM', true);
-        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and continue for a trial period of ${contractData.trialPeriod}, ending on ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} ("Trial Period"), unless terminated earlier in accordance with the provisions of this Contract. Upon mutual agreement of both parties, the Contract may be extended or converted into a long-term agreement following the Trial Period.`);
+        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and continue for a until ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} ("unless terminated earlier in accordance with the provisions of this Contract. Upon mutual agreement of both parties, the Contract may be extended or converted into a long-term agreement following the Trial Period.`);
         yPosition += 5;
 
         addText('4. COMPENSATION', true);
         addText(`a. Parking Rate: Service Provider shall charge customers a parking rate of $${contractData.parkingRate} per vehicle. All parking fees collected shall be retained by Service Provider as compensation for the Services, unless otherwise agreed in writing.`);
-        addText(`b. Management Fee: Client shall pay Service Provider a monthly management fee of $${contractData.managementFee} for overseeing and managing the valet parking operations. The management fee for the Trial Period shall be due and payable by Client to Service Provider within ${contractData.paymentTerms} days of contract execution.`);
+        addText(`b. Management Fee: Client shall pay Service Provider a monthly management fee of $${contractData.managementFee} for overseeing and managing the valet parking operations. The management fee for the first month shall be due and payable by Client to Service Provider within ${contractData.paymentTerms} days of contract execution.`);
         yPosition += 5;
 
         addText('5. PAYMENT TERMS', true);
@@ -215,7 +215,7 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('8. TERMINATION', true);
-        addText(`Either party may terminate this Contract during the Trial Period by providing written notice to the other party at least seven (7) days prior to the intended termination date. After the Trial Period, either party may terminate this Contract by providing ${contractData.terminationNotice} (${contractData.terminationNotice}) days written notice to the other party. Upon termination, Client shall pay Service Provider for any outstanding management fees owed up to the termination date.`);
+        addText(`Either party may terminate this Contract during the unless terminated earlier in accordance with the provisions of this Contract. Upon termination, Client shall pay Service Provider for any outstanding management fees owed up to the termination date.`);
         yPosition += 5;
 
         addText('9. INDEMNIFICATION', true);
@@ -313,7 +313,7 @@ export default function Contracts() {
         addText('RECITALS', true);
         addText('WHEREAS, Client operates a business that requires valet parking services for its customers;');
         addText('WHEREAS, Service Provider is engaged in the business of providing valet parking services;');
-        addText('WHEREAS, Client desires to engage Service Provider to provide valet parking services on a trial basis, and Service Provider agrees to provide such services under the terms and conditions set forth herein;');
+        addText('WHEREAS, Client desires to engage Service Provider to provide valet parking services and Service Provider agrees to provide such services under the terms and conditions set forth herein;');
         yPosition += 5;
 
         addText('NOW, THEREFORE, in consideration of the mutual promises and agreements contained herein, the parties agree as follows:');
@@ -329,12 +329,12 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('3. TERM', true);
-        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and continue for a trial period of ${contractData.trialPeriod}, ending on ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} ("Trial Period"), unless terminated earlier in accordance with the provisions of this Contract. Upon mutual agreement of both parties, the Contract may be extended or converted into a long-term agreement following the Trial Period.`);
+        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and continue for a until ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} ("unless terminated earlier in accordance with the provisions of this Contract. Upon mutual agreement of both parties, the Contract may be extended or converted into a long-term agreement following the Trial Period.`);
         yPosition += 5;
 
         addText('4. COMPENSATION', true);
         addText(`a. Parking Rate: Service Provider shall charge customers a parking rate of $${contractData.parkingRate} per vehicle. All parking fees collected shall be retained by Service Provider as compensation for the Services, unless otherwise agreed in writing.`);
-        addText(`b. Management Fee: Client shall pay Service Provider a monthly management fee of $${contractData.managementFee} for overseeing and managing the valet parking operations. The management fee for the Trial Period shall be due and payable by Client to Service Provider within ${contractData.paymentTerms} days of contract execution.`);
+        addText(`b. Management Fee: Client shall pay Service Provider a monthly management fee of $${contractData.managementFee} for overseeing and managing the valet parking operations. The management fee for the first month shall be due and payable by Client to Service Provider within ${contractData.paymentTerms} days of contract execution.`);
         yPosition += 5;
 
         addText('5. PAYMENT TERMS', true);
@@ -356,7 +356,7 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('8. TERMINATION', true);
-        addText(`Either party may terminate this Contract during the Trial Period by providing written notice to the other party at least seven (7) days prior to the intended termination date. After the Trial Period, either party may terminate this Contract by providing ${contractData.terminationNotice} (${contractData.terminationNotice}) days written notice to the other party. Upon termination, Client shall pay Service Provider for any outstanding management fees owed up to the termination date.`);
+        addText(`Either party may terminate this Contract during the unless terminated earlier in accordance with the provisions of this Contract. Upon termination, Client shall pay Service Provider for any outstanding management fees owed up to the termination date.`);
         yPosition += 5;
 
         addText('9. INDEMNIFICATION', true);
