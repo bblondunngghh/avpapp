@@ -101,7 +101,8 @@ export default function Contracts() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [documentType, setDocumentType] = useState<'contract' | 'temporary-valet' | 'permanent-valet' | 'capital-grille-renewal'>('contract');
+  const [documentType, setDocumentType] = useState<'contract' | 'temporary-valet' | 'annual-renewal'>('contract');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
 
   const [contractData, setContractData] = useState<ContractData>({
     businessName: '',
@@ -299,6 +300,17 @@ export default function Contracts() {
   const generateCapitalGrilleRenewal = async () => {
     setIsGenerating(true);
     try {
+      // Validate location selection
+      if (!selectedLocation) {
+        toast({
+          title: "Error",
+          description: "Please select a location",
+          variant: "destructive",
+        });
+        setIsGenerating(false);
+        return;
+      }
+
       // Validate that at least one field is filled
       if (!renewalData.businessInsuranceExpiration && !renewalData.valetPermitExpiration && !renewalData.valetInsuranceExpiration) {
         toast({
@@ -466,7 +478,8 @@ export default function Contracts() {
       
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Capital_Grille_Renewal_${new Date().getTime()}.pdf`;
+      const locationName = selectedLocation.charAt(0).toUpperCase() + selectedLocation.slice(1).replace('-', '_');
+      a.download = `${locationName}_Annual_Renewal_${new Date().getTime()}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -474,7 +487,7 @@ export default function Contracts() {
 
       toast({
         title: "Success",
-        description: `Capital Grille renewal PDF generated with ${uploadedFiles.length} supporting documents!`,
+        description: `${locationName} annual renewal PDF generated with ${uploadedFiles.length} supporting documents!`,
       });
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -1082,10 +1095,9 @@ export default function Contracts() {
                 <SelectValue placeholder="Select document type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="contract">Contract Generator</SelectItem>
-                <SelectItem value="temporary-valet">Temporary Valet Zone</SelectItem>
-                <SelectItem value="permanent-valet">Permanent Valet Zone</SelectItem>
-                <SelectItem value="capital-grille-renewal">Capital Grille Renewal</SelectItem>
+                <SelectItem value="contract">Service Contract</SelectItem>
+                <SelectItem value="temporary-valet">Temporary Valet Zone Application</SelectItem>
+                <SelectItem value="annual-renewal">Annual Renewal</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1368,14 +1380,8 @@ export default function Contracts() {
             />
           )}
 
-          {documentType === 'permanent-valet' && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">Permanent Valet Zone generator coming soon...</p>
-            </div>
-          )}
-
-          {documentType === 'capital-grille-renewal' && (
-            <CapitalGrilleRenewalForm 
+          {documentType === 'annual-renewal' && (
+            <AnnualRenewalForm 
               data={renewalData}
               onChange={setRenewalData}
               onGenerate={generateCapitalGrilleRenewal}
@@ -1383,6 +1389,8 @@ export default function Contracts() {
               documentUploads={documentUploads}
               onFileUpload={handleFileUpload}
               getCategoryDisplayName={getCategoryDisplayName}
+              selectedLocation={selectedLocation}
+              onLocationChange={setSelectedLocation}
             />
           )}
         </CardContent>
@@ -1391,15 +1399,17 @@ export default function Contracts() {
   );
 }
 
-// Capital Grille Renewal Form Component
-function CapitalGrilleRenewalForm({ 
+// Annual Renewal Form Component
+function AnnualRenewalForm({ 
   data, 
   onChange, 
   onGenerate, 
   isGenerating,
   documentUploads,
   onFileUpload,
-  getCategoryDisplayName
+  getCategoryDisplayName,
+  selectedLocation,
+  onLocationChange
 }: { 
   data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }; 
   onChange: (data: { businessInsuranceExpiration: string; valetPermitExpiration: string; valetInsuranceExpiration: string }) => void; 
@@ -1408,6 +1418,8 @@ function CapitalGrilleRenewalForm({
   documentUploads: Array<{ category: string; file: File | null; uploaded: boolean }>;
   onFileUpload: (category: string, file: File | null) => void;
   getCategoryDisplayName: (category: string) => string;
+  selectedLocation: string;
+  onLocationChange: (location: string) => void;
 }) {
   const handleInputChange = (field: string, value: string) => {
     onChange({ ...data, [field]: value });
@@ -1416,8 +1428,24 @@ function CapitalGrilleRenewalForm({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-900">Capital Grille Annual Renewal</h3>
-        <p className="text-sm text-gray-600">Edit expiration dates on your existing renewal document</p>
+        <h3 className="text-lg font-semibold text-gray-900">Annual Renewal Application</h3>
+        <p className="text-sm text-gray-600">Edit expiration dates and upload supporting documents</p>
+      </div>
+
+      {/* Location Selection */}
+      <div className="space-y-4 bg-green-50 p-4 rounded-lg border-2 border-green-200">
+        <h4 className="text-md font-semibold text-green-700">Select Location</h4>
+        <Select value={selectedLocation} onValueChange={onLocationChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Choose restaurant location" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="trulucks">Truluck's</SelectItem>
+            <SelectItem value="capital-grille">The Capital Grille</SelectItem>
+            <SelectItem value="bobs">Bob's Steak & Chop House</SelectItem>
+            <SelectItem value="boa">BOA Steakhouse</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-4 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
@@ -1498,11 +1526,11 @@ function CapitalGrilleRenewalForm({
       <div className="pt-6">
         <Button 
           onClick={onGenerate} 
-          disabled={isGenerating}
+          disabled={isGenerating || !selectedLocation}
           className="w-full"
           size="lg"
         >
-          {isGenerating ? 'Generating...' : 'Generate Capital Grille Renewal PDF'}
+          {isGenerating ? 'Generating...' : `Generate ${selectedLocation ? selectedLocation.charAt(0).toUpperCase() + selectedLocation.slice(1).replace('-', ' ') : 'Annual Renewal'} PDF`}
         </Button>
       </div>
     </div>
