@@ -190,7 +190,7 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('3. TERM', true);
-        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and continue for a until ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} ("unless terminated earlier in accordance with the provisions of this Contract. Upon mutual agreement of both parties, the Contract may be extended or converted into a long-term agreement following the Trial Period.`);
+        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and shall continue until ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} unless terminated earlier in accordance with the provisions of this Contract. Upon expiration of the initial term, this Contract shall automatically renew for successive one-year periods unless either party provides written notice of non-renewal in accordance with the termination provisions set forth herein.`);
         yPosition += 5;
 
         addText('4. COMPENSATION', true);
@@ -331,7 +331,7 @@ export default function Contracts() {
         yPosition += 5;
 
         addText('3. TERM', true);
-        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and continue for a until ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} ("unless terminated earlier in accordance with the provisions of this Contract. Upon mutual agreement of both parties, the Contract may be extended or converted into a long-term agreement following the Trial Period.`);
+        addText(`This Contract shall commence on ${formatDate(contractData.startDate)}, and shall continue until ${contractData.endDate ? formatDate(contractData.endDate) : '[END DATE]'} unless terminated earlier in accordance with the provisions of this Contract. Upon expiration of the initial term, this Contract shall automatically renew for successive one-year periods unless either party provides written notice of non-renewal in accordance with the termination provisions set forth herein.`);
         yPosition += 5;
 
         addText('4. COMPENSATION', true);
