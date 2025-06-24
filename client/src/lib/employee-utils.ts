@@ -85,28 +85,56 @@ export function parseEmployeesData(employeesData: any): ShiftEmployee[] {
           // Replace escaped quotes: \""name\"" -> "name"
           dbData = dbData.replace(/\\"/g, '"');
           
-          // Handle multiple JSON objects separated by commas
+          // Handle multiple JSON objects in the complex format
+          // Example: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}","{"name":"dave","hours":2,"cashPaid":0}
           if (dbData.includes('","')) {
-            // Split on "," pattern - this indicates multiple JSON objects
-            const jsonStrings = dbData.split('","');
+            // Split and reconstruct JSON objects properly
+            const segments = dbData.split('","');
             const employees = [];
             
-            for (let i = 0; i < jsonStrings.length; i++) {
-              let jsonStr = jsonStrings[i];
+            for (let i = 0; i < segments.length; i++) {
+              let segment = segments[i];
               
-              // Clean up quotes at beginning and end
-              if (i === 0 && jsonStr.startsWith('"')) {
-                jsonStr = jsonStr.substring(1);
+              // Clean up wrapping quotes
+              if (i === 0 && segment.startsWith('"')) {
+                segment = segment.substring(1);
               }
-              if (i === jsonStrings.length - 1 && jsonStr.endsWith('"')) {
-                jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+              if (i === segments.length - 1 && segment.endsWith('"')) {
+                segment = segment.substring(0, segment.length - 1);
+              }
+              
+              // Ensure it's a complete JSON object
+              if (!segment.startsWith('{')) {
+                segment = '{' + segment;
+              }
+              if (!segment.endsWith('}')) {
+                segment = segment + '}';
               }
               
               try {
-                const employee = JSON.parse(jsonStr);
-                employees.push(employee);
+                const employee = JSON.parse(segment);
+                if (employee && employee.name && typeof employee.hours === 'number') {
+                  employees.push(employee);
+                }
               } catch (parseErr) {
-                console.warn('Failed to parse individual employee JSON:', jsonStr);
+                // Try alternative reconstruction
+                try {
+                  // Maybe the segment is incomplete, try to find name/hours pattern
+                  const nameMatch = segment.match(/"name":"([^"]+)"/);
+                  const hoursMatch = segment.match(/"hours":([0-9.]+)/);
+                  const cashMatch = segment.match(/"cashPaid":([0-9.]+)/);
+                  
+                  if (nameMatch && hoursMatch) {
+                    const employee = {
+                      name: nameMatch[1],
+                      hours: parseFloat(hoursMatch[1]),
+                      cashPaid: cashMatch ? parseFloat(cashMatch[1]) : 0
+                    };
+                    employees.push(employee);
+                  }
+                } catch (secondParseErr) {
+                  console.warn('Failed to parse segment completely:', segment);
+                }
               }
             }
             
