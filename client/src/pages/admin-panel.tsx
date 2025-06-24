@@ -366,7 +366,7 @@ import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Strea
 import folderUploadIcon from "@assets/Folder-Upload--Streamline-Ultimate.png";
 import paperWriteIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import logoutIcon from "@assets/Logout-2--Streamline-Ultimate.png";
-import contractIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
+import contractIcon from "@assets/Business-Contract-Approve--Streamline-Ultimate_1750781519931.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { 
   BarChart, 
