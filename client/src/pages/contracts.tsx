@@ -222,7 +222,32 @@ export default function Contracts() {
 
         addText('2. HOURS OF OPERATION', true);
         addText(`Valet services will be provided during the following hours: ${contractData.hoursOfOperation || 'As agreed upon by both parties'}`);
-        addText(`Days of operation: ${daysText}`);
+        // Days of operation with specific hours - first instance
+        const enabledDaysFirst = DAYS_OF_WEEK.filter(day => contractData.daySchedules[day.id]?.enabled);
+        
+        if (enabledDaysFirst.length > 0) {
+          addText('Days and Hours of Operation:');
+          yPosition += 2;
+          
+          enabledDaysFirst.forEach(day => {
+            const schedule = contractData.daySchedules[day.id];
+            if (schedule && schedule.enabled) {
+              const startTime = new Date(`1970-01-01T${schedule.startTime}`).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              });
+              const endTime = new Date(`1970-01-01T${schedule.endTime}`).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              });
+              addText(`${day.label}: ${startTime} - ${endTime}`, false);
+            }
+          });
+        } else {
+          addText('Days of operation: To be determined');
+        }
         yPosition += 5;
 
         addText('3. TERM', true);
@@ -745,8 +770,8 @@ export default function Contracts() {
                         tuesday: { enabled: true, startTime: '16:00', endTime: '22:00' },
                         wednesday: { enabled: true, startTime: '16:00', endTime: '22:00' },
                         thursday: { enabled: true, startTime: '16:00', endTime: '22:00' },
-                        friday: { enabled: true, startTime: '16:00', endTime: '24:00' },
-                        saturday: { enabled: true, startTime: '16:00', endTime: '24:00' },
+                        friday: { enabled: true, startTime: '16:00', endTime: '00:00' },
+                        saturday: { enabled: true, startTime: '16:00', endTime: '00:00' },
                         sunday: { enabled: true, startTime: '16:00', endTime: '21:00' }
                       };
                       setContractData(prev => ({
