@@ -1932,10 +1932,10 @@ export default function AdminPanel() {
     
     // Add title with month information
     const monthText = currentReportsMonth ? ` - ${getCurrentMonthName()}` : '';
-    doc.setFontSize(18);
-    doc.text(`Driftwood Member Parking${monthText}`, 14, 22);
-    doc.setFontSize(11);
-    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 30);
+    doc.setFontSize(16);
+    doc.text(`Driftwood Member Parking${monthText}`, 14, 20);
+    doc.setFontSize(9);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 28);
     
     // Prepare table data
     const tableColumn = ["Date", "Shift", "Receipt Sales"];
@@ -1961,14 +1961,30 @@ export default function AdminPanel() {
       `$${totalReceiptSales.toFixed(2)}`
     ]);
     
-    // Generate table
+    // Generate table with compact settings
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
-      startY: 40,
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [0, 101, 189] },
-      footerStyles: { fillColor: [240, 240, 240], fontStyle: 'bold' }
+      startY: 35,
+      styles: { 
+        fontSize: 9,
+        cellPadding: 2,
+        lineWidth: 0.1
+      },
+      headStyles: { 
+        fillColor: [0, 101, 189],
+        fontSize: 9,
+        fontStyle: 'bold'
+      },
+      bodyStyles: {
+        fontSize: 9
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
+      },
+      margin: { top: 35, left: 14, right: 14 },
+      pageBreak: 'avoid',
+      showHead: 'everyPage'
     });
     
     // Save PDF
