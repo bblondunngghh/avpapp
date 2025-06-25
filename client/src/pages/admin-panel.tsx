@@ -1882,7 +1882,14 @@ export default function AdminPanel() {
   // Function to export Capital Grille receipt sales to PDF
   const exportCapitalGrilleReceiptsToPDF = () => {
     // Filter reports for Capital Grille only (locationId = 1) and current month
-    const capitalGrilleReports = filteredShiftReports.filter(report => report.locationId === 1);
+    const capitalGrilleReports = reports.filter(report => {
+      if (report.locationId !== 1) return false;
+      
+      // Apply the same month filtering logic as the main reports view
+      const reportDate = parseLocalDate(report.date);
+      const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
+      return reportMonth === currentReportsMonth;
+    });
     
     if (!capitalGrilleReports.length) {
       toast({
