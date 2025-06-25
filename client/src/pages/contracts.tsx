@@ -625,91 +625,42 @@ export default function Contracts() {
       const firstPage = pages[0];
       const secondPage = pages[1] || pdfDoc.addPage();
 
-      // Define location-specific coordinates for text overlay
-      const overlayData = selectedTempLocation === 'trulucks' ? [
-        // Page 1 - Applicant Information (Trulucks template coordinates)
-        { text: temporaryValetData.companyName, x: 154, y: 548, page: 0 },
-        { text: temporaryValetData.primaryContact, x: 154, y: 532, page: 0 },
-        { text: temporaryValetData.phoneNumber, x: 154, y: 516, page: 0 },
-        { text: temporaryValetData.altPhoneNumber, x: 354, y: 516, page: 0 },
-        { text: temporaryValetData.mailingAddress, x: 154, y: 500, page: 0 },
-        { text: temporaryValetData.city, x: 254, y: 484, page: 0 },
-        { text: temporaryValetData.state, x: 324, y: 484, page: 0 },
-        { text: temporaryValetData.zip, x: 374, y: 484, page: 0 },
-        { text: temporaryValetData.email, x: 154, y: 468, page: 0 },
-        
-        // Proposed Zone Information
-        { text: temporaryValetData.blockNumber, x: 154, y: 398, page: 0 },
-        { text: temporaryValetData.streetName, x: 254, y: 398, page: 0 },
-        { text: temporaryValetData.spacesRequested, x: 454, y: 398, page: 0 },
-        
-        // Pay Station Numbers
-        { text: temporaryValetData.payStationNumbers[0], x: 154, y: 346, page: 0 },
-        
-        // Event Time and Date
-        { text: temporaryValetData.eventDates, x: 135, y: 350, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.fromTime), x: 75, y: 335, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.toTime), x: 175, y: 335, page: 0 },
-      ] : selectedTempLocation === 'capital-grille' ? [
-        // Page 1 - Applicant Information (Capital Grille template coordinates - same as Trulucks)
-        { text: temporaryValetData.companyName, x: 154, y: 548, page: 0 },
-        { text: temporaryValetData.primaryContact, x: 154, y: 532, page: 0 },
-        { text: temporaryValetData.phoneNumber, x: 154, y: 516, page: 0 },
-        { text: temporaryValetData.altPhoneNumber, x: 354, y: 516, page: 0 },
-        { text: temporaryValetData.mailingAddress, x: 154, y: 500, page: 0 },
-        { text: temporaryValetData.city, x: 254, y: 484, page: 0 },
-        { text: temporaryValetData.state, x: 324, y: 484, page: 0 },
-        { text: temporaryValetData.zip, x: 374, y: 484, page: 0 },
-        { text: temporaryValetData.email, x: 154, y: 468, page: 0 },
-        
-        // Proposed Zone Information
-        { text: temporaryValetData.blockNumber, x: 154, y: 398, page: 0 },
-        { text: temporaryValetData.streetName, x: 254, y: 398, page: 0 },
-        { text: temporaryValetData.spacesRequested, x: 454, y: 398, page: 0 },
-        
-        // Pay Station Numbers
-        { text: temporaryValetData.payStationNumbers[0], x: 154, y: 346, page: 0 },
-        
-        // Event Time and Date
-        { text: temporaryValetData.eventDates, x: 135, y: 350, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.fromTime), x: 75, y: 335, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.toTime), x: 175, y: 335, page: 0 },
-      ] : [
-        // Default coordinates for other templates
-        { text: temporaryValetData.companyName, x: 150, y: 700, page: 0 },
-        { text: temporaryValetData.primaryContact, x: 150, y: 670, page: 0 },
-        { text: temporaryValetData.phoneNumber, x: 150, y: 640, page: 0 },
-        { text: temporaryValetData.altPhoneNumber, x: 350, y: 640, page: 0 },
-        { text: temporaryValetData.mailingAddress, x: 150, y: 610, page: 0 },
-        { text: temporaryValetData.city, x: 250, y: 580, page: 0 },
-        { text: temporaryValetData.state, x: 320, y: 580, page: 0 },
-        { text: temporaryValetData.zip, x: 370, y: 580, page: 0 },
-        { text: temporaryValetData.email, x: 150, y: 550, page: 0 },
-        
-        // Proposed Zone Information
-        { text: temporaryValetData.blockNumber, x: 150, y: 480, page: 0 },
-        { text: temporaryValetData.streetName, x: 250, y: 480, page: 0 },
-        { text: temporaryValetData.spacesRequested, x: 450, y: 480, page: 0 },
-        
-        // Event Time and Date
-        { text: temporaryValetData.eventDates, x: 150, y: 280, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.fromTime), x: 150, y: 250, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.toTime), x: 250, y: 250, page: 0 },
-      ];
-
-      // Add text to the appropriate pages
-      overlayData.forEach(({ text, x, y, page: pageIndex }) => {
-        if (text && text.trim()) {
-          const targetPage = pageIndex === 0 ? firstPage : secondPage;
-          targetPage.drawText(text, {
-            x,
-            y,
-            size: 9,
+      // Only add essential overlay data for Trulucks and Capital Grille (dates, times, weekday circles only)
+      if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille') {
+        // Event Time and Date only
+        if (temporaryValetData.eventDates) {
+          firstPage.drawText(temporaryValetData.eventDates, {
+            x: 135,
+            y: firstPage.getHeight() - 350,
+            size: 10,
             font: helveticaFont,
             color: rgb(0, 0, 0),
           });
         }
-      });
+
+        // Add times with standard format conversion
+        if (temporaryValetData.fromTime) {
+          const fromTimeStandard = convertToStandardTime(temporaryValetData.fromTime);
+          firstPage.drawText(fromTimeStandard, {
+            x: 75,
+            y: firstPage.getHeight() - 335,
+            size: 10,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
+
+        if (temporaryValetData.toTime) {
+          const toTimeStandard = convertToStandardTime(temporaryValetData.toTime);
+          firstPage.drawText(toTimeStandard, {
+            x: 175,
+            y: firstPage.getHeight() - 335,
+            size: 10,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        }
+      }
 
       // Add rectangles around selected weekdays with dynamic sizing
       if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille') {
