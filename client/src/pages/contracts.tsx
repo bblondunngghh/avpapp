@@ -627,23 +627,23 @@ export default function Contracts() {
 
       // Only add essential overlay data for Trulucks and Capital Grille (dates, times, weekday circles only)
       if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille') {
-        // Event Time and Date only
+        // Event Time and Date only - using exact Trulucks coordinates
         if (temporaryValetData.eventDates) {
           firstPage.drawText(temporaryValetData.eventDates, {
             x: 135,
-            y: firstPage.getHeight() - 350,
+            y: 350,
             size: 10,
             font: helveticaFont,
             color: rgb(0, 0, 0),
           });
         }
 
-        // Add times with standard format conversion
+        // Add times with standard format conversion - using exact Trulucks coordinates
         if (temporaryValetData.fromTime) {
           const fromTimeStandard = convertToStandardTime(temporaryValetData.fromTime);
           firstPage.drawText(fromTimeStandard, {
             x: 75,
-            y: firstPage.getHeight() - 335,
+            y: 335,
             size: 10,
             font: helveticaFont,
             color: rgb(0, 0, 0),
@@ -654,7 +654,7 @@ export default function Contracts() {
           const toTimeStandard = convertToStandardTime(temporaryValetData.toTime);
           firstPage.drawText(toTimeStandard, {
             x: 175,
-            y: firstPage.getHeight() - 335,
+            y: 335,
             size: 10,
             font: helveticaFont,
             color: rgb(0, 0, 0),
