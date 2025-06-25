@@ -354,7 +354,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight, User, Plus } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, Upload, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight, User, Plus } from "lucide-react";
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
 import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
@@ -2438,11 +2438,7 @@ export default function AdminPanel() {
                     onClick={exportCapitalGrilleReceiptsToPDF}
                     className="flex items-center gap-1"
                   >
-                    <img 
-                      src="@assets/Monitor-Upload--Streamline-Ultimate_1750862615348.png" 
-                      className="h-4 w-4" 
-                      alt="Export DW PDF"
-                    />
+                    <Upload className="h-4 w-4" />
                     Export DW PDF
                   </Button>
                 </div>
