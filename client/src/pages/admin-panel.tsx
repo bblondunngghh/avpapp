@@ -2438,7 +2438,11 @@ export default function AdminPanel() {
                     onClick={exportCapitalGrilleReceiptsToPDF}
                     className="flex items-center gap-1"
                   >
-                    <FileDown className="h-4 w-4" />
+                    <img 
+                      src="@assets/Monitor-Upload--Streamline-Ultimate_1750862615348.png" 
+                      className="h-4 w-4" 
+                      alt="Export DW PDF"
+                    />
                     Export DW PDF
                   </Button>
                 </div>
