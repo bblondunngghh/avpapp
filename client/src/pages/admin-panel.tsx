@@ -363,6 +363,7 @@ import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import timeClockNineIcon from "@assets/Time-Clock-Nine--Streamline-Ultimate.png";
 import monitorUploadIcon from "@assets/Monitor-Upload--Streamline-Ultimate_1750862615348.png";
 import laptopDownloadIcon from "@assets/Laptop-Download--Streamline-Ultimate_1750862639227.png";
+import uploadSquareIcon from "@assets/Upload-Square-3--Streamline-Ultimate_1750862813318.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import folderUploadIcon from "@assets/Folder-Upload--Streamline-Ultimate.png";
@@ -2422,7 +2423,11 @@ export default function AdminPanel() {
                     onClick={exportReportsToCSV}
                     className="flex items-center gap-1"
                   >
-                    <FileDown className="h-4 w-4" />
+                    <img 
+                      src={uploadSquareIcon} 
+                      className="h-4 w-4" 
+                      alt="Export CSV"
+                    />
                     Export CSV
                   </Button>
                   <Button 
