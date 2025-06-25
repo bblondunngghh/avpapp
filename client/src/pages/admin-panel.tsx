@@ -1879,6 +1879,71 @@ export default function AdminPanel() {
     doc.save("employee-payroll.pdf");
   };
 
+  // Function to export Capital Grille receipt sales to PDF
+  const exportCapitalGrilleReceiptsToPDF = () => {
+    // Filter reports for Capital Grille only (locationId = 1)
+    const capitalGrilleReports = reports.filter(report => report.locationId === 1);
+    
+    if (!capitalGrilleReports.length) {
+      toast({
+        title: "No Data",
+        description: "No Capital Grille reports found to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.text("Capital Grille - Receipt Sales Report", 14, 22);
+    doc.setFontSize(11);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 30);
+    
+    // Prepare table data
+    const tableColumn = ["Date", "Shift", "Receipt Sales"];
+    const tableRows = [];
+    let totalReceiptSales = 0;
+    
+    capitalGrilleReports.forEach(report => {
+      const date = new Date(report.date).toLocaleDateString();
+      const receiptSales = (report.totalReceipts || 0) * 18; // $18 per receipt
+      totalReceiptSales += receiptSales;
+      
+      tableRows.push([
+        date,
+        report.shift || 'N/A',
+        `$${receiptSales.toFixed(2)}`
+      ]);
+    });
+    
+    // Add total row
+    tableRows.push([
+      'TOTAL',
+      '',
+      `$${totalReceiptSales.toFixed(2)}`
+    ]);
+    
+    // Generate table
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 40,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [0, 101, 189] },
+      footerStyles: { fillColor: [240, 240, 240], fontStyle: 'bold' }
+    });
+    
+    // Save PDF
+    doc.save("capital-grille-receipt-sales.pdf");
+    
+    toast({
+      title: "Export Complete",
+      description: `Capital Grille receipt sales report exported with ${capitalGrilleReports.length} records and total of $${totalReceiptSales.toFixed(2)}.`,
+    });
+  };
+
   // Fetch locations at component level
   const { data: locations } = useQuery({
     queryKey: ["/api/locations"],
@@ -2322,6 +2387,15 @@ export default function AdminPanel() {
                   >
                     <Download className="h-4 w-4" />
                     Export PDF
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={exportCapitalGrilleReceiptsToPDF}
+                    className="flex items-center gap-1"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Export DW PDF
                   </Button>
                 </div>
               </div>
