@@ -1932,60 +1932,49 @@ export default function AdminPanel() {
     
     // Add title with month information
     const monthText = currentReportsMonth ? ` - ${getCurrentMonthName()}` : '';
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     doc.text(`Driftwood Member Parking${monthText}`, 14, 20);
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 28);
     
-    // Prepare table data
-    const tableColumn = ["Date", "Shift", "Receipt Sales"];
-    const tableRows = [];
+    // Simple text-based table to guarantee single page
+    let yPosition = 40;
+    const lineHeight = 4;
     let totalReceiptSales = 0;
+    
+    // Headers
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Date", 20, yPosition);
+    doc.text("Shift", 70, yPosition);
+    doc.text("Receipt Sales", 120, yPosition);
+    
+    yPosition += lineHeight + 2;
+    
+    // Header line
+    doc.line(20, yPosition - 1, 170, yPosition - 1);
+    
+    // Data rows
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
     
     capitalGrilleReports.forEach(report => {
       const date = new Date(report.date).toLocaleDateString();
       const receiptSales = (report.totalReceipts || 0) * 18; // $18 per receipt
       totalReceiptSales += receiptSales;
       
-      tableRows.push([
-        date,
-        report.shift || 'N/A',
-        `$${receiptSales.toFixed(2)}`
-      ]);
+      doc.text(date, 20, yPosition);
+      doc.text(report.shift || 'N/A', 70, yPosition);
+      doc.text(`$${receiptSales.toFixed(2)}`, 120, yPosition);
+      yPosition += lineHeight;
     });
     
-    // Add total row
-    tableRows.push([
-      'TOTAL',
-      '',
-      `$${totalReceiptSales.toFixed(2)}`
-    ]);
-    
-    // Generate table with compact settings
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 35,
-      styles: { 
-        fontSize: 9,
-        cellPadding: 2,
-        lineWidth: 0.1
-      },
-      headStyles: { 
-        fillColor: [0, 101, 189],
-        fontSize: 9,
-        fontStyle: 'bold'
-      },
-      bodyStyles: {
-        fontSize: 9
-      },
-      alternateRowStyles: {
-        fillColor: [245, 245, 245]
-      },
-      margin: { top: 35, left: 14, right: 14 },
-      pageBreak: 'avoid',
-      showHead: 'everyPage'
-    });
+    // Total line
+    yPosition += 4;
+    doc.line(20, yPosition - 2, 170, yPosition - 2);
+    doc.setFont("helvetica", "bold");
+    doc.text("TOTAL:", 20, yPosition);
+    doc.text(`$${totalReceiptSales.toFixed(2)}`, 120, yPosition);
     
     // Save PDF
     doc.save("capital-grille-receipt-sales.pdf");
