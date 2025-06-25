@@ -741,30 +741,7 @@ export default function Contracts() {
         });
       }
 
-      // Note: Removed page 2 text overlay - Trulucks template only uses page 1
-
-      // Mark checkboxes for selected days
-      const dayPositions = [
-        { day: 'Monday', x: 320, y: 240 },
-        { day: 'Tuesday', x: 355, y: 240 },
-        { day: 'Wednesday', x: 390, y: 240 },
-        { day: 'Thursday', x: 425, y: 240 },
-        { day: 'Friday', x: 460, y: 240 },
-        { day: 'Saturday', x: 495, y: 240 },
-        { day: 'Sunday', x: 530, y: 240 },
-      ];
-
-      dayPositions.forEach(({ day, x, y }) => {
-        if (temporaryValetData.selectedDays.includes(day)) {
-          firstPage.drawText('✓', {
-            x,
-            y,
-            size: 8,
-            font: helveticaFont,
-            color: rgb(0, 0, 0),
-          });
-        }
-      });
+      // Note: Removed redundant text overlay and checkboxes that were causing extra text on page 1
 
       // Merge certificate of insurance if uploaded for any location
       if (temporaryValetData.certificateOfInsurance) {
