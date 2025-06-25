@@ -1949,10 +1949,11 @@ export default function AdminPanel() {
     doc.text("Shift", 70, yPosition);
     doc.text("Receipt Sales", 120, yPosition);
     
-    yPosition += lineHeight + 2;
+    yPosition += lineHeight + 1;
     
     // Header line
-    doc.line(20, yPosition - 1, 170, yPosition - 1);
+    doc.line(20, yPosition, 170, yPosition);
+    yPosition += 2;
     
     // Data rows
     doc.setFont("helvetica", "normal");
@@ -1970,8 +1971,9 @@ export default function AdminPanel() {
     });
     
     // Total line
-    yPosition += 4;
-    doc.line(20, yPosition - 2, 170, yPosition - 2);
+    yPosition += 3;
+    doc.line(20, yPosition, 170, yPosition);
+    yPosition += 5;
     doc.setFont("helvetica", "bold");
     doc.text("TOTAL:", 20, yPosition);
     doc.text(`$${totalReceiptSales.toFixed(2)}`, 120, yPosition);
