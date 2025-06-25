@@ -608,7 +608,7 @@ export default function Contracts() {
       } else if (selectedTempLocation === 'bobs') {
         templateEndpoint = '/api/pdf-template/bobs-temp';
       } else if (selectedTempLocation === 'boa') {
-        templateEndpoint = '/api/pdf-template/valet-temporary'; // fallback for now
+        templateEndpoint = '/api/pdf-template/boa-temp';
       }
 
       const response = await fetch(templateEndpoint);
@@ -625,8 +625,8 @@ export default function Contracts() {
       const firstPage = pages[0];
       const secondPage = pages[1] || pdfDoc.addPage();
 
-      // Only add essential overlay data for Trulucks, Capital Grille, and Bob's (dates, times, weekday circles only)
-      if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille' || selectedTempLocation === 'bobs') {
+      // Only add essential overlay data for Trulucks, Capital Grille, Bob's, and BOA (dates, times, weekday circles only)
+      if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille' || selectedTempLocation === 'bobs' || selectedTempLocation === 'boa') {
         // Event Time and Date only - using exact Trulucks coordinates
         if (temporaryValetData.eventDates) {
           firstPage.drawText(temporaryValetData.eventDates, {
