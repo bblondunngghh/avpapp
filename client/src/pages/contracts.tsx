@@ -38,6 +38,7 @@ interface TemporaryValetData {
   payStationNumbers: string[];
   unmmeteredDescription: string;
   eventDates: string;
+  eventDescription: string;
   fromTime: string;
   toTime: string;
   selectedDays: string[];
@@ -172,6 +173,7 @@ export default function Contracts() {
     payStationNumbers: ['', '', '', ''],
     unmmeteredDescription: '',
     eventDates: '',
+    eventDescription: '',
     fromTime: '',
     toTime: '',
     selectedDays: [],
@@ -1834,6 +1836,18 @@ function TemporaryValetForm({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Event Details</h3>
         <p className="text-sm text-gray-600">Specify when you need the temporary valet zone.</p>
+        
+        <div className="space-y-2">
+          <Label htmlFor="eventDescription">Event Description</Label>
+          <Input
+            id="eventDescription"
+            value={data.eventDescription}
+            onChange={(e) => handleInputChange('eventDescription', e.target.value)}
+            placeholder="e.g., Mothers Day 2025, New Year's Eve Party"
+          />
+          <p className="text-xs text-gray-500">Brief description of the event requiring valet services</p>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="eventDates">Event Date(s)</Label>
