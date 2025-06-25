@@ -1695,21 +1695,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // PDF template endpoints
-  app.get('/api/pdf-template/trulucks-temp', (req, res) => {
-    const filePath = path.join(__dirname, '../templates/trulucks-temp-zone.pdf');
-    if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
-    } else {
-      res.status(404).json({ error: 'Template not found' });
+  app.get('/api/pdf-template/trulucks-temp', async (req, res) => {
+    try {
+      const filePath = '/home/runner/workspace/templates/trulucks-temp-zone.pdf';
+      const fileBuffer = await fs.promises.readFile(filePath);
+      
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Length': fileBuffer.length
+      });
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error('Error serving Trulucks temp PDF template:', error);
+      res.status(404).json({ error: 'PDF template not found' });
     }
   });
 
-  app.get('/api/pdf-template/capital-grille-temp', (req, res) => {
-    const filePath = path.join(__dirname, '../templates/capital-grille-temp-zone.pdf');
-    if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
-    } else {
-      res.status(404).json({ error: 'Template not found' });
+  app.get('/api/pdf-template/capital-grille-temp', async (req, res) => {
+    try {
+      const filePath = '/home/runner/workspace/templates/capital-grille-temp-zone.pdf';
+      const fileBuffer = await fs.promises.readFile(filePath);
+      
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Length': fileBuffer.length
+      });
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error('Error serving Capital Grille temp PDF template:', error);
+      res.status(404).json({ error: 'PDF template not found' });
     }
   });
 
