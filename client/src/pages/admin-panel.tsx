@@ -1949,11 +1949,11 @@ export default function AdminPanel() {
     doc.text("Shift", 70, yPosition);
     doc.text("Receipt Sales", 120, yPosition);
     
-    yPosition += lineHeight + 1;
+    yPosition += lineHeight + 2;
     
     // Header line
     doc.line(20, yPosition, 170, yPosition);
-    yPosition += 2;
+    yPosition += 3;
     
     // Data rows
     doc.setFont("helvetica", "normal");
