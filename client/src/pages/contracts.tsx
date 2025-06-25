@@ -65,6 +65,7 @@ interface TemporaryValetData {
   facilityContactName: string;
   facilityContactPhone: string;
   facilityContactEmail: string;
+  certificateOfInsurance: File | null;
 }
 
 interface ContractData {
@@ -197,7 +198,8 @@ export default function Contracts() {
     contractExpiration: '',
     facilityContactName: '',
     facilityContactPhone: '',
-    facilityContactEmail: ''
+    facilityContactEmail: '',
+    certificateOfInsurance: null
   });
 
   const handleInputChange = (field: keyof ContractData, value: string) => {
@@ -1815,6 +1817,36 @@ function TemporaryValetForm({
           </div>
         </div>
       </div>
+
+      {/* Certificate of Insurance Upload - Only for Trulucks */}
+      {selectedLocation === 'trulucks' && (
+        <div className="space-y-4 bg-green-50 p-4 rounded-lg border-2 border-green-200">
+          <h3 className="text-lg font-semibold text-green-700">Certificate of Insurance</h3>
+          <p className="text-sm text-green-600">Upload certificate of insurance document for Trulucks temporary permit application.</p>
+          
+          <div className="space-y-2">
+            <Label htmlFor="certificateOfInsurance">Certificate of Insurance Document</Label>
+            <Input
+              id="certificateOfInsurance"
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                handleInputChange('certificateOfInsurance', file);
+              }}
+              className="w-full"
+            />
+            {data.certificateOfInsurance && (
+              <p className="text-sm text-green-600 mt-1">
+                Selected: {data.certificateOfInsurance.name} ({(data.certificateOfInsurance.size / 1024 / 1024).toFixed(2)} MB)
+              </p>
+            )}
+            <p className="text-xs text-green-500">
+              Accepted formats: PDF, JPG, JPEG, PNG (Max 10MB)
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Generate Button */}
       <div className="pt-6">

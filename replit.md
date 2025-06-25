@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: Added certificate of insurance upload field for Trulucks temporary permits
 - June 24, 2025: Renamed 'Contracts' button to 'Document Generator' in admin panel for clarity
 - June 24, 2025: Balanced pill-shaped ovals (xScale: width/1.8, yScale: 7) for better visibility and button-like appearance
 - June 24, 2025: Removed unwanted page 2 text overlay from temporary valet PDF generator
