@@ -1694,6 +1694,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // PDF template endpoints
+  app.get('/api/pdf-template/trulucks-temp', (req, res) => {
+    const filePath = path.join(__dirname, '../templates/trulucks-temp-zone.pdf');
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).json({ error: 'Template not found' });
+    }
+  });
+
+  app.get('/api/pdf-template/capital-grille-temp', (req, res) => {
+    const filePath = path.join(__dirname, '../templates/capital-grille-temp-zone.pdf');
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).json({ error: 'Template not found' });
+    }
+  });
+
   // Register API routes
   app.use('/api', apiRouter);
 

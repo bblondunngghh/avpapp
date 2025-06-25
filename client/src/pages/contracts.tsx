@@ -280,6 +280,15 @@ export default function Contracts() {
         'Saturday': { x: 510, y: 335 },
         'Sunday': { x: 560, y: 335 }
       },
+      'capital-grille': {
+        'Monday': { x: 285, y: 305 },
+        'Tuesday': { x: 325, y: 305 },
+        'Wednesday': { x: 380, y: 305 },
+        'Thursday': { x: 430, y: 305 },
+        'Friday': { x: 470, y: 305 },
+        'Saturday': { x: 510, y: 305 },
+        'Sunday': { x: 560, y: 305 }
+      },
       'default': {
         'Monday': { x: 50, y: 250 },
         'Tuesday': { x: 100, y: 250 },
