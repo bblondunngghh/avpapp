@@ -1885,10 +1885,38 @@ export default function AdminPanel() {
     const capitalGrilleReports = reports.filter(report => {
       if (report.locationId !== 1) return false;
       
-      // Apply the same month filtering logic as the main reports view
-      const reportDate = parseLocalDate(report.date);
-      const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
-      return reportMonth === currentReportsMonth;
+      // Apply strict month filtering to avoid edge cases
+      try {
+        let reportDate;
+        if (report.date.includes('-')) {
+          const parts = report.date.split('-');
+          if (parts[0].length === 4) {
+            // YYYY-MM-DD format
+            const [year, month, day] = parts;
+            reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          } else {
+            // MM-DD-YYYY format
+            const [month, day, year] = parts;
+            reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          }
+        } else if (report.date.includes('/')) {
+          const parts = report.date.split('/');
+          // MM/DD/YYYY format
+          reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+        } else {
+          reportDate = new Date(report.date);
+        }
+        
+        const reportYear = reportDate.getFullYear();
+        const reportMonth = reportDate.getMonth() + 1; // JavaScript months are 0-based
+        const filterYear = parseInt(currentReportsMonth.split('-')[0]);
+        const filterMonth = parseInt(currentReportsMonth.split('-')[1]);
+        
+        return reportYear === filterYear && reportMonth === filterMonth;
+      } catch (error) {
+        console.log('Date parsing error for report:', report.date, error);
+        return false;
+      }
     });
     
     if (!capitalGrilleReports.length) {
