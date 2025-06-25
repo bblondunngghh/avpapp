@@ -270,34 +270,23 @@ export default function Contracts() {
 
   // Get weekday rectangle coordinates for PDF overlay (Monday-Sunday order)
   const getWeekdayRectangleCoordinates = (location: string) => {
+    // All locations use identical coordinates for consistent positioning
+    const standardCoordinates = {
+      'Monday': { x: 285, y: 335 },
+      'Tuesday': { x: 325, y: 335 },
+      'Wednesday': { x: 380, y: 335 },
+      'Thursday': { x: 430, y: 335 },
+      'Friday': { x: 470, y: 335 },
+      'Saturday': { x: 510, y: 335 },
+      'Sunday': { x: 560, y: 335 }
+    };
+
     const dayCoordinates = {
-      'trulucks': {
-        'Monday': { x: 285, y: 335 },
-        'Tuesday': { x: 325, y: 335 },
-        'Wednesday': { x: 380, y: 335 },
-        'Thursday': { x: 430, y: 335 },
-        'Friday': { x: 470, y: 335 },
-        'Saturday': { x: 510, y: 335 },
-        'Sunday': { x: 560, y: 335 }
-      },
-      'capital-grille': {
-        'Monday': { x: 285, y: 335 },
-        'Tuesday': { x: 325, y: 335 },
-        'Wednesday': { x: 380, y: 335 },
-        'Thursday': { x: 430, y: 335 },
-        'Friday': { x: 470, y: 335 },
-        'Saturday': { x: 510, y: 335 },
-        'Sunday': { x: 560, y: 335 }
-      },
-      'default': {
-        'Monday': { x: 50, y: 250 },
-        'Tuesday': { x: 100, y: 250 },
-        'Wednesday': { x: 150, y: 250 },
-        'Thursday': { x: 200, y: 250 },
-        'Friday': { x: 250, y: 250 },
-        'Saturday': { x: 300, y: 250 },
-        'Sunday': { x: 350, y: 250 }
-      }
+      'trulucks': standardCoordinates,
+      'capital-grille': standardCoordinates,
+      'bobs': standardCoordinates,
+      'boa': standardCoordinates,
+      'default': standardCoordinates
     };
     
     return dayCoordinates[location] || dayCoordinates['default'];
@@ -663,7 +652,7 @@ export default function Contracts() {
       }
 
       // Add rectangles around selected weekdays with dynamic sizing
-      if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille') {
+      if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille' || selectedTempLocation === 'bobs' || selectedTempLocation === 'boa') {
         const dayCoordinates = getWeekdayRectangleCoordinates(selectedTempLocation);
         const dayWidths = {
           'Monday': 40,
