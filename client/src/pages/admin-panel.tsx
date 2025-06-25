@@ -1881,8 +1881,50 @@ export default function AdminPanel() {
 
   // Function to export Capital Grille receipt sales to PDF
   const exportCapitalGrilleReceiptsToPDF = () => {
-    // Filter reports for Capital Grille only (locationId = 1)
-    const capitalGrilleReports = reports.filter(report => report.locationId === 1);
+    // Filter reports for Capital Grille only (locationId = 1) and current month
+    const capitalGrilleReports = reports.filter(report => {
+      if (report.locationId !== 1) return false;
+      
+      // Apply month filter if set
+      if (selectedMonth) {
+        // Parse date correctly to avoid timezone issues
+        let reportDate;
+        try {
+          if (report.date.includes('-')) {
+            const parts = report.date.split('-');
+            // Check if it's MM-DD-YYYY or YYYY-MM-DD format
+            if (parts[0].length === 4) {
+              // YYYY-MM-DD format
+              const [year, month, day] = parts;
+              reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            } else {
+              // MM-DD-YYYY format
+              const [month, day, year] = parts;
+              reportDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            }
+          } else if (report.date.includes('/')) {
+            const parts = report.date.split('/');
+            // MM/DD/YYYY format
+            reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+          } else {
+            reportDate = new Date(report.date);
+          }
+        } catch {
+          reportDate = new Date(report.date);
+        }
+        
+        const reportYear = reportDate.getFullYear();
+        const reportMonth = reportDate.getMonth() + 1; // JavaScript months are 0-based
+        const filterYear = parseInt(selectedMonth.split('-')[0]);
+        const filterMonth = parseInt(selectedMonth.split('-')[1]);
+        
+        if (reportYear !== filterYear || reportMonth !== filterMonth) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
     
     if (!capitalGrilleReports.length) {
       toast({
@@ -1895,9 +1937,10 @@ export default function AdminPanel() {
 
     const doc = new jsPDF();
     
-    // Add title
+    // Add title with month information
+    const monthText = selectedMonth ? ` - ${getMonthName(selectedMonth)}` : '';
     doc.setFontSize(18);
-    doc.text("Capital Grille - Receipt Sales Report", 14, 22);
+    doc.text(`Capital Grille - Receipt Sales Report${monthText}`, 14, 22);
     doc.setFontSize(11);
     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 30);
     
@@ -1938,9 +1981,10 @@ export default function AdminPanel() {
     // Save PDF
     doc.save("capital-grille-receipt-sales.pdf");
     
+    const monthInfo = selectedMonth ? ` for ${getMonthName(selectedMonth)}` : '';
     toast({
       title: "Export Complete",
-      description: `Capital Grille receipt sales report exported with ${capitalGrilleReports.length} records and total of $${totalReceiptSales.toFixed(2)}.`,
+      description: `Capital Grille receipt sales report${monthInfo} exported with ${capitalGrilleReports.length} records and total of $${totalReceiptSales.toFixed(2)}.`,
     });
   };
 
