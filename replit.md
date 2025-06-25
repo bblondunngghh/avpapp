@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 24, 2025: PDF filename now uses event description (e.g., "Mothers_Day_2025_Temporary_Valet_Zone.pdf")
 - June 24, 2025: Added event description field to temporary valet zone applications for event naming (e.g., "Mothers Day 2025")
 - June 24, 2025: Extended certificate of insurance upload to all temporary permit locations (Trulucks, Capital Grille, BOA, Bob's)
 - June 24, 2025: Certificate of insurance uploads now merge as additional pages in all temporary permit PDFs

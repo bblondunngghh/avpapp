@@ -802,9 +802,15 @@ export default function Contracts() {
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       
+      // Generate filename based on event description or fallback to location
+      const sanitizeFilename = (str: string) => str.replace(/[^a-zA-Z0-9\s-_]/g, '').replace(/\s+/g, '_');
+      const eventName = temporaryValetData.eventDescription 
+        ? sanitizeFilename(temporaryValetData.eventDescription)
+        : `${temporaryValetData.location || 'Form'}_${new Date().getTime()}`;
+      
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Temporary_Valet_Zone_Application_${temporaryValetData.location || 'Form'}_${new Date().getTime()}.pdf`;
+      a.download = `${eventName}_Temporary_Valet_Zone.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
