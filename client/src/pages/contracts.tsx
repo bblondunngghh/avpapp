@@ -729,6 +729,72 @@ export default function Contracts() {
         }
       });
 
+      // Merge certificate of insurance if uploaded for Trulucks
+      if (selectedTempLocation === 'trulucks' && temporaryValetData.certificateOfInsurance) {
+        try {
+          const reader = new FileReader();
+          const fileBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as ArrayBuffer);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(temporaryValetData.certificateOfInsurance!);
+          });
+
+          // Check if it's a PDF file
+          if (temporaryValetData.certificateOfInsurance.type === 'application/pdf') {
+            const insurancePdf = await PDFDocument.load(fileBuffer);
+            const insurancePages = await pdfDoc.copyPages(insurancePdf, insurancePdf.getPageIndices());
+            insurancePages.forEach((page) => pdfDoc.addPage(page));
+          } else {
+            // Handle image files (JPG, PNG, etc.)
+            let imageBytes: Uint8Array;
+            if (temporaryValetData.certificateOfInsurance.type.includes('png')) {
+              const image = await pdfDoc.embedPng(fileBuffer);
+              const page = pdfDoc.addPage();
+              const { width, height } = page.getSize();
+              const aspectRatio = image.width / image.height;
+              
+              let imgWidth = width - 100;
+              let imgHeight = imgWidth / aspectRatio;
+              
+              if (imgHeight > height - 100) {
+                imgHeight = height - 100;
+                imgWidth = imgHeight * aspectRatio;
+              }
+              
+              page.drawImage(image, {
+                x: (width - imgWidth) / 2,
+                y: (height - imgHeight) / 2,
+                width: imgWidth,
+                height: imgHeight,
+              });
+            } else {
+              const image = await pdfDoc.embedJpg(fileBuffer);
+              const page = pdfDoc.addPage();
+              const { width, height } = page.getSize();
+              const aspectRatio = image.width / image.height;
+              
+              let imgWidth = width - 100;
+              let imgHeight = imgWidth / aspectRatio;
+              
+              if (imgHeight > height - 100) {
+                imgHeight = height - 100;
+                imgWidth = imgHeight * aspectRatio;
+              }
+              
+              page.drawImage(image, {
+                x: (width - imgWidth) / 2,
+                y: (height - imgHeight) / 2,
+                width: imgWidth,
+                height: imgHeight,
+              });
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to merge certificate of insurance:', error);
+          // Continue with PDF generation even if certificate merge fails
+        }
+      }
+
       // Generate and download the filled PDF
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -742,9 +808,13 @@ export default function Contracts() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
+      const successMessage = selectedTempLocation === 'trulucks' && temporaryValetData.certificateOfInsurance 
+        ? "PDF generated successfully with certificate of insurance attached"
+        : "PDF template filled out successfully";
+        
       toast({
         title: "Success",
-        description: "PDF template filled out successfully",
+        description: successMessage,
       });
     } catch (error) {
       console.error('Error generating PDF:', error);
