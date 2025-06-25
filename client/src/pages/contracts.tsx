@@ -281,13 +281,13 @@ export default function Contracts() {
         'Sunday': { x: 560, y: 335 }
       },
       'capital-grille': {
-        'Monday': { x: 285, y: 305 },
-        'Tuesday': { x: 325, y: 305 },
-        'Wednesday': { x: 380, y: 305 },
-        'Thursday': { x: 430, y: 305 },
-        'Friday': { x: 470, y: 305 },
-        'Saturday': { x: 510, y: 305 },
-        'Sunday': { x: 560, y: 305 }
+        'Monday': { x: 285, y: 335 },
+        'Tuesday': { x: 325, y: 335 },
+        'Wednesday': { x: 380, y: 335 },
+        'Thursday': { x: 430, y: 335 },
+        'Friday': { x: 470, y: 335 },
+        'Saturday': { x: 510, y: 335 },
+        'Sunday': { x: 560, y: 335 }
       },
       'default': {
         'Monday': { x: 50, y: 250 },
@@ -651,29 +651,29 @@ export default function Contracts() {
         { text: convertToStandardTime(temporaryValetData.fromTime), x: 75, y: 335, page: 0 },
         { text: convertToStandardTime(temporaryValetData.toTime), x: 175, y: 335, page: 0 },
       ] : selectedTempLocation === 'capital-grille' ? [
-        // Page 1 - Applicant Information (Capital Grille template coordinates)
-        { text: temporaryValetData.companyName, x: 150, y: 620, page: 0 },
-        { text: temporaryValetData.primaryContact, x: 150, y: 604, page: 0 },
-        { text: temporaryValetData.phoneNumber, x: 150, y: 588, page: 0 },
-        { text: temporaryValetData.altPhoneNumber, x: 350, y: 588, page: 0 },
-        { text: temporaryValetData.mailingAddress, x: 150, y: 572, page: 0 },
-        { text: temporaryValetData.city, x: 250, y: 556, page: 0 },
-        { text: temporaryValetData.state, x: 320, y: 556, page: 0 },
-        { text: temporaryValetData.zip, x: 370, y: 556, page: 0 },
-        { text: temporaryValetData.email, x: 150, y: 540, page: 0 },
+        // Page 1 - Applicant Information (Capital Grille template coordinates - same as Trulucks)
+        { text: temporaryValetData.companyName, x: 154, y: 548, page: 0 },
+        { text: temporaryValetData.primaryContact, x: 154, y: 532, page: 0 },
+        { text: temporaryValetData.phoneNumber, x: 154, y: 516, page: 0 },
+        { text: temporaryValetData.altPhoneNumber, x: 354, y: 516, page: 0 },
+        { text: temporaryValetData.mailingAddress, x: 154, y: 500, page: 0 },
+        { text: temporaryValetData.city, x: 254, y: 484, page: 0 },
+        { text: temporaryValetData.state, x: 324, y: 484, page: 0 },
+        { text: temporaryValetData.zip, x: 374, y: 484, page: 0 },
+        { text: temporaryValetData.email, x: 154, y: 468, page: 0 },
         
         // Proposed Zone Information
-        { text: temporaryValetData.blockNumber, x: 150, y: 470, page: 0 },
-        { text: temporaryValetData.streetName, x: 250, y: 470, page: 0 },
-        { text: temporaryValetData.spacesRequested, x: 450, y: 470, page: 0 },
+        { text: temporaryValetData.blockNumber, x: 154, y: 398, page: 0 },
+        { text: temporaryValetData.streetName, x: 254, y: 398, page: 0 },
+        { text: temporaryValetData.spacesRequested, x: 454, y: 398, page: 0 },
         
         // Pay Station Numbers
-        { text: temporaryValetData.payStationNumbers[0], x: 150, y: 418, page: 0 },
+        { text: temporaryValetData.payStationNumbers[0], x: 154, y: 346, page: 0 },
         
         // Event Time and Date
-        { text: temporaryValetData.eventDates, x: 145, y: 360, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.fromTime), x: 85, y: 345, page: 0 },
-        { text: convertToStandardTime(temporaryValetData.toTime), x: 185, y: 345, page: 0 },
+        { text: temporaryValetData.eventDates, x: 135, y: 350, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.fromTime), x: 75, y: 335, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.toTime), x: 175, y: 335, page: 0 },
       ] : [
         // Default coordinates for other templates
         { text: temporaryValetData.companyName, x: 150, y: 700, page: 0 },
