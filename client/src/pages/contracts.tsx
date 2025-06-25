@@ -729,8 +729,8 @@ export default function Contracts() {
         }
       });
 
-      // Merge certificate of insurance if uploaded for Trulucks
-      if (selectedTempLocation === 'trulucks' && temporaryValetData.certificateOfInsurance) {
+      // Merge certificate of insurance if uploaded for any location
+      if (temporaryValetData.certificateOfInsurance) {
         try {
           const reader = new FileReader();
           const fileBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
@@ -808,7 +808,7 @@ export default function Contracts() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      const successMessage = selectedTempLocation === 'trulucks' && temporaryValetData.certificateOfInsurance 
+      const successMessage = temporaryValetData.certificateOfInsurance 
         ? "PDF generated successfully with certificate of insurance attached"
         : "PDF template filled out successfully";
         
@@ -1888,11 +1888,11 @@ function TemporaryValetForm({
         </div>
       </div>
 
-      {/* Certificate of Insurance Upload - Only for Trulucks */}
-      {selectedLocation === 'trulucks' && (
+      {/* Certificate of Insurance Upload - For All Locations */}
+      {selectedLocation && (
         <div className="space-y-4 bg-green-50 p-4 rounded-lg border-2 border-green-200">
           <h3 className="text-lg font-semibold text-green-700">Certificate of Insurance - Valet Operator</h3>
-          <p className="text-sm text-green-600">Upload certificate of insurance document for Trulucks temporary permit application.</p>
+          <p className="text-sm text-green-600">Upload certificate of insurance document for temporary permit application.</p>
           
           <div className="space-y-2">
             <Label htmlFor="certificateOfInsurance">Certificate of Insurance - Valet Operator</Label>

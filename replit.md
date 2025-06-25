@@ -92,7 +92,8 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
-- June 24, 2025: Certificate of insurance uploads now merge as additional pages in Trulucks temporary permit PDFs
+- June 24, 2025: Extended certificate of insurance upload to all temporary permit locations (Trulucks, Capital Grille, BOA, Bob's)
+- June 24, 2025: Certificate of insurance uploads now merge as additional pages in all temporary permit PDFs
 - June 24, 2025: Added certificate of insurance upload field for Trulucks temporary permits
 - June 24, 2025: Renamed 'Contracts' button to 'Document Generator' in admin panel for clarity
 - June 24, 2025: Balanced pill-shaped ovals (xScale: width/1.8, yScale: 7) for better visibility and button-like appearance
