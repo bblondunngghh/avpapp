@@ -361,6 +361,8 @@ import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
 import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import cashUserIcon from "@assets/Cash-User--Streamline-Ultimate.png";
 import timeClockNineIcon from "@assets/Time-Clock-Nine--Streamline-Ultimate.png";
+import monitorUploadIcon from "@assets/Monitor-Upload--Streamline-Ultimate_1750862615348.png";
+import laptopDownloadIcon from "@assets/Laptop-Download--Streamline-Ultimate_1750862639227.png";
 import pinLocationIcon from "@assets/Pin-Location-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import folderUploadIcon from "@assets/Folder-Upload--Streamline-Ultimate.png";
@@ -2429,7 +2431,11 @@ export default function AdminPanel() {
                     onClick={exportReportsToPDF}
                     className="flex items-center gap-1"
                   >
-                    <Download className="h-4 w-4" />
+                    <img 
+                      src={laptopDownloadIcon} 
+                      className="h-4 w-4" 
+                      alt="Export PDF"
+                    />
                     Export PDF
                   </Button>
                   <Button 
@@ -2438,7 +2444,11 @@ export default function AdminPanel() {
                     onClick={exportCapitalGrilleReceiptsToPDF}
                     className="flex items-center gap-1"
                   >
-                    <Upload className="h-4 w-4" />
+                    <img 
+                      src={monitorUploadIcon} 
+                      className="h-4 w-4" 
+                      alt="Export DW PDF"
+                    />
                     Export DW PDF
                   </Button>
                 </div>
