@@ -1891,11 +1891,11 @@ function TemporaryValetForm({
       {/* Certificate of Insurance Upload - Only for Trulucks */}
       {selectedLocation === 'trulucks' && (
         <div className="space-y-4 bg-green-50 p-4 rounded-lg border-2 border-green-200">
-          <h3 className="text-lg font-semibold text-green-700">Certificate of Insurance</h3>
+          <h3 className="text-lg font-semibold text-green-700">Certificate of Insurance - Valet Operator</h3>
           <p className="text-sm text-green-600">Upload certificate of insurance document for Trulucks temporary permit application.</p>
           
           <div className="space-y-2">
-            <Label htmlFor="certificateOfInsurance">Certificate of Insurance Document</Label>
+            <Label htmlFor="certificateOfInsurance">Certificate of Insurance - Valet Operator</Label>
             <Input
               id="certificateOfInsurance"
               type="file"
