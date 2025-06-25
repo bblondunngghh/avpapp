@@ -1931,7 +1931,7 @@ export default function AdminPanel() {
     const doc = new jsPDF();
     
     // Add title with month information
-    const monthText = currentReportsMonth ? ` - ${getMonthName(currentReportsMonth)}` : '';
+    const monthText = currentReportsMonth ? ` - ${getCurrentMonthName()}` : '';
     doc.setFontSize(18);
     doc.text(`Driftwood Member Parking${monthText}`, 14, 22);
     doc.setFontSize(11);
@@ -1974,7 +1974,7 @@ export default function AdminPanel() {
     // Save PDF
     doc.save("capital-grille-receipt-sales.pdf");
     
-    const monthInfo = currentReportsMonth ? ` for ${getMonthName(currentReportsMonth)}` : '';
+    const monthInfo = currentReportsMonth ? ` for ${getCurrentMonthName()}` : '';
     toast({
       title: "Export Complete",
       description: `Capital Grille receipt sales report${monthInfo} exported with ${capitalGrilleReports.length} records and total of $${totalReceiptSales.toFixed(2)}.`,
