@@ -106,6 +106,7 @@ This is a comprehensive valet parking shift management system built for restaura
 - June 24, 2025: Fine-tuned Trulucks temporary zone coordinates - Event date: x:135, y:350; From time: x:75, To time: x:175, y:335
 - June 24, 2025: Simplified Temporary Valet Zone form - removed unnecessary fields, only shows location selection and event details
 - June 24, 2025: Reworked Temporary Valet Zone application to work like Annual Renewal system with location-specific templates
+- June 25, 2025: Added Bob's temporary zone PDF template with exact same minimal generator as Trulucks
 - June 24, 2025: Capital Grille temp zone now uses exact same minimal generator as Trulucks (dates, times, weekday circles only)
 - June 24, 2025: Updated Capital Grille temporary zone PDF template and removed extra text overlay from first page
 - June 24, 2025: Added Capital Grille temporary zone PDF template with location-based coordinate mapping

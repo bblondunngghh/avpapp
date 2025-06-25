@@ -1727,6 +1727,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/pdf-template/bobs-temp', async (req, res) => {
+    try {
+      const filePath = '/home/runner/workspace/templates/bobs-temp-zone-template.pdf';
+      const fileBuffer = await fs.promises.readFile(filePath);
+      
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Length': fileBuffer.length
+      });
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error('Error serving Bob\'s temp PDF template:', error);
+      res.status(404).json({ error: 'PDF template not found' });
+    }
+  });
+
   // Register API routes
   app.use('/api', apiRouter);
 
