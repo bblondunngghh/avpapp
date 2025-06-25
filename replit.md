@@ -106,6 +106,7 @@ This is a comprehensive valet parking shift management system built for restaura
 - June 24, 2025: Fine-tuned Trulucks temporary zone coordinates - Event date: x:135, y:350; From time: x:75, To time: x:175, y:335
 - June 24, 2025: Simplified Temporary Valet Zone form - removed unnecessary fields, only shows location selection and event details
 - June 24, 2025: Reworked Temporary Valet Zone application to work like Annual Renewal system with location-specific templates
+- June 24, 2025: Added Capital Grille temporary zone PDF template with location-based coordinate mapping
 - June 24, 2025: Added Trulucks temporary zone PDF template with location-based coordinate mapping
 - June 24, 2025: Temporary Zone app now includes location selection dropdown with preset data for all 4 restaurants
 - June 24, 2025: Bob's Resolution of Authority date coordinates fine-tuned to x:120 (month/day) and x:245 (year)

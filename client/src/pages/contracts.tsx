@@ -595,7 +595,7 @@ export default function Contracts() {
       if (selectedTempLocation === 'trulucks') {
         templateEndpoint = '/api/pdf-template/trulucks-temp';
       } else if (selectedTempLocation === 'capital-grille') {
-        templateEndpoint = '/api/pdf-template/valet-temporary'; // fallback for now
+        templateEndpoint = '/api/pdf-template/capital-grille-temp';
       } else if (selectedTempLocation === 'bobs') {
         templateEndpoint = '/api/pdf-template/valet-temporary'; // fallback for now
       } else if (selectedTempLocation === 'boa') {
@@ -641,6 +641,30 @@ export default function Contracts() {
         { text: temporaryValetData.eventDates, x: 135, y: 350, page: 0 },
         { text: convertToStandardTime(temporaryValetData.fromTime), x: 75, y: 335, page: 0 },
         { text: convertToStandardTime(temporaryValetData.toTime), x: 175, y: 335, page: 0 },
+      ] : selectedTempLocation === 'capital-grille' ? [
+        // Page 1 - Applicant Information (Capital Grille template coordinates)
+        { text: temporaryValetData.companyName, x: 150, y: 620, page: 0 },
+        { text: temporaryValetData.primaryContact, x: 150, y: 604, page: 0 },
+        { text: temporaryValetData.phoneNumber, x: 150, y: 588, page: 0 },
+        { text: temporaryValetData.altPhoneNumber, x: 350, y: 588, page: 0 },
+        { text: temporaryValetData.mailingAddress, x: 150, y: 572, page: 0 },
+        { text: temporaryValetData.city, x: 250, y: 556, page: 0 },
+        { text: temporaryValetData.state, x: 320, y: 556, page: 0 },
+        { text: temporaryValetData.zip, x: 370, y: 556, page: 0 },
+        { text: temporaryValetData.email, x: 150, y: 540, page: 0 },
+        
+        // Proposed Zone Information
+        { text: temporaryValetData.blockNumber, x: 150, y: 470, page: 0 },
+        { text: temporaryValetData.streetName, x: 250, y: 470, page: 0 },
+        { text: temporaryValetData.spacesRequested, x: 450, y: 470, page: 0 },
+        
+        // Pay Station Numbers
+        { text: temporaryValetData.payStationNumbers[0], x: 150, y: 418, page: 0 },
+        
+        // Event Time and Date
+        { text: temporaryValetData.eventDates, x: 145, y: 360, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.fromTime), x: 85, y: 345, page: 0 },
+        { text: convertToStandardTime(temporaryValetData.toTime), x: 185, y: 345, page: 0 },
       ] : [
         // Default coordinates for other templates
         { text: temporaryValetData.companyName, x: 150, y: 700, page: 0 },
@@ -679,32 +703,34 @@ export default function Contracts() {
       });
 
       // Add rectangles around selected weekdays with dynamic sizing
-      const dayCoordinates = getWeekdayRectangleCoordinates(selectedTempLocation);
-      const dayWidths = {
-        'Monday': 40,
-        'Tuesday': 45,
-        'Wednesday': 55,
-        'Thursday': 50,
-        'Friday': 35,
-        'Saturday': 50,
-        'Sunday': 45
-      };
-      
-      temporaryValetData.selectedWeekdays.forEach(day => {
-        const coords = dayCoordinates[day];
-        const width = dayWidths[day] || 40;
-        if (coords) {
-          firstPage.drawEllipse({
-            x: coords.x,
-            y: coords.y,
-            xScale: width / 1.8, // Moderate horizontal stretch
-            yScale: 7, // Better height for visibility
-            borderColor: rgb(0, 0, 0),
-            borderWidth: 1.2,
-            opacity: 0,
-          });
-        }
-      });
+      if (selectedTempLocation === 'trulucks' || selectedTempLocation === 'capital-grille') {
+        const dayCoordinates = getWeekdayRectangleCoordinates(selectedTempLocation);
+        const dayWidths = {
+          'Monday': 40,
+          'Tuesday': 45,
+          'Wednesday': 55,
+          'Thursday': 50,
+          'Friday': 35,
+          'Saturday': 50,
+          'Sunday': 45
+        };
+        
+        temporaryValetData.selectedWeekdays.forEach(day => {
+          const coords = dayCoordinates[day];
+          const width = dayWidths[day] || 40;
+          if (coords) {
+            firstPage.drawEllipse({
+              x: coords.x,
+              y: coords.y,
+              xScale: width / 1.8, // Moderate horizontal stretch
+              yScale: 7, // Better height for visibility
+              borderColor: rgb(0, 0, 0),
+              borderWidth: 1.2,
+              opacity: 0,
+            });
+          }
+        });
+      }
 
       // Note: Removed page 2 text overlay - Trulucks template only uses page 1
 
