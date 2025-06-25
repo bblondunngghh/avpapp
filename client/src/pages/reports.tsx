@@ -13,7 +13,7 @@ import ReportCard from "@/components/report-card";
 import { LOCATIONS } from "@/lib/constants";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { useLocation } from "wouter";
-import { formatDateForDisplay, formatDateInCentral } from "@/lib/timezone";
+import { formatDateForDisplay, formatDateInCentral, parseDateInCentral } from "@/lib/timezone";
 
 export default function Reports() {
   const [, navigate] = useLocation();
