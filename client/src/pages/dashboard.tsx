@@ -26,7 +26,7 @@ export default function Dashboard() {
     <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0 relative">
       <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 rounded-lg overflow-hidden border-t-8 border-t-gray-500 shadow-lg">
         {/* Grey accent bar with version display */}
-        <div className="absolute top-0 left-0 right-0 bg-gray-500 h-8 flex items-center justify-end px-4 z-20">
+        <div className="absolute top-0 left-0 right-0 bg-gray-500 h-6 flex items-center justify-end px-3 z-20">
           <span className="text-xs text-white font-medium" style={{ fontFamily: 'Roboto, sans-serif' }}>
             Version {getVersionDisplay().replace('v', '')}
           </span>
@@ -38,7 +38,7 @@ export default function Dashboard() {
             backgroundSize: "100px 100px" 
           }}>
         </div>
-        <div className="pt-12 pb-8 px-8">
+        <div className="pt-10 pb-8 px-8">
           <div className="flex flex-col items-center justify-center relative z-10">
             <p className="text-blue-50 max-w-2xl mx-auto text-lg mb-4">
               Welcome to the Access Valet Parking Management Portal.
