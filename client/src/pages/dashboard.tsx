@@ -28,7 +28,7 @@ export default function Dashboard() {
         {/* Grey accent bar with version display at very top */}
         <div className="bg-gray-400 h-6 flex items-center justify-end px-3 rounded-t-lg">
           <span className="text-xs text-black font-medium uppercase" style={{ fontFamily: 'Fjalla One, sans-serif' }}>
-            Version {getVersionDisplay().replace('v', '')}
+            {getVersionDisplay().replace('v', '')}
           </span>
         </div>
         {/* Blue dotted background pattern */}
