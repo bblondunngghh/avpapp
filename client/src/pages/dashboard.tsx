@@ -24,9 +24,9 @@ export default function Dashboard() {
   
   return (
     <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0 relative">
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 rounded-lg overflow-hidden border-t-8 border-t-gray-500 shadow-lg">
-        {/* Grey accent bar with version display */}
-        <div className="absolute top-0 left-0 right-0 bg-gray-500 h-6 flex items-center justify-end px-3 z-20">
+      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 rounded-lg overflow-hidden shadow-lg">
+        {/* Grey accent bar with version display at very top */}
+        <div className="bg-gray-500 h-6 flex items-center justify-end px-3 rounded-t-lg">
           <span className="text-xs text-white font-medium" style={{ fontFamily: 'Roboto, sans-serif' }}>
             Version {getVersionDisplay().replace('v', '')}
           </span>
