@@ -24,13 +24,7 @@ export default function Dashboard() {
   
   return (
     <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0 relative">
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 rounded-lg overflow-hidden shadow-lg">
-        {/* Grey accent bar with version display at very top */}
-        <div className="bg-gray-400 h-6 flex items-center justify-end px-3 rounded-t-lg">
-          <span className="text-xs text-black font-medium uppercase" style={{ fontFamily: 'Fjalla One, sans-serif' }}>
-            {getVersionDisplay().replace('v', '')}
-          </span>
-        </div>
+      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg overflow-hidden shadow-lg">
         {/* Blue dotted background pattern */}
         <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
           style={{ 
@@ -38,7 +32,7 @@ export default function Dashboard() {
             backgroundSize: "100px 100px" 
           }}>
         </div>
-        <div className="pt-10 pb-8 px-8">
+        <div className="relative z-10">
           <div className="flex flex-col items-center justify-center relative z-10">
             <p className="text-blue-50 max-w-2xl mx-auto text-lg mb-4">
               Welcome to the Access Valet Parking Management Portal.
@@ -57,6 +51,12 @@ export default function Dashboard() {
             <p className="text-blue-50 max-w-2xl mx-auto text-lg">
               Please select from the following options.
             </p>
+          </div>
+          {/* Version display at bottom */}
+          <div className="absolute bottom-3 right-3">
+            <span className="text-xs text-white/80 font-medium uppercase" style={{ fontFamily: 'Fjalla One, sans-serif' }}>
+              {getVersionDisplay().replace('v', '')}
+            </span>
           </div>
         </div>
       </div>
