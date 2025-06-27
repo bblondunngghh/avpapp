@@ -27,7 +27,7 @@ export default function Dashboard() {
       <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 rounded-lg overflow-hidden shadow-lg">
         {/* Grey accent bar with version display at very top */}
         <div className="bg-gray-400 h-6 flex items-center justify-end px-3 rounded-t-lg">
-          <span className="text-xs text-black font-medium" style={{ fontFamily: 'Roboto, sans-serif' }}>
+          <span className="text-xs text-black font-medium uppercase" style={{ fontFamily: 'Fjalla One, sans-serif' }}>
             Version {getVersionDisplay().replace('v', '')}
           </span>
         </div>
