@@ -26,6 +26,7 @@ import ReportSelection from "@/pages/report-selection";
 import PermitsPage from "@/pages/permits";
 import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
 import Contracts from "@/pages/contracts";
+import Demo from "@/pages/demo";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 import avpLogo from "@assets/AVPLOGO PROPER3_1750779399227.png";
@@ -236,6 +237,7 @@ function Router() {
           <Route path="/permits" component={PermitsPage} />
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
+          <Route path="/demo" component={Demo} />
           <Route component={NotFound} />
         </Switch>
       </main>
