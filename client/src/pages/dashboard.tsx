@@ -52,8 +52,8 @@ export default function Dashboard() {
               Please select from the following options.
             </p>
           </div>
-          {/* Version display at bottom */}
-          <div className="absolute bottom-3 right-3">
+          {/* Version display at very bottom right corner */}
+          <div className="absolute bottom-1 right-2">
             <span className="text-xs text-white/80 font-medium uppercase" style={{ fontFamily: 'Fjalla One, sans-serif' }}>
               {getVersionDisplay().replace('v', '')}
             </span>
