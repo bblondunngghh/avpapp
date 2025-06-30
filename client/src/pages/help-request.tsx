@@ -44,6 +44,14 @@ interface CoverCountReport {
   notes?: string;
 }
 
+interface Employee {
+  id: number;
+  key: string;
+  fullName: string;
+  isActive: boolean;
+  isShiftLeader: boolean;
+}
+
 // Countdown Timer Component
 function CountdownTimer({ autoRemoveAt }: { autoRemoveAt: string }) {
   const [timeLeft, setTimeLeft] = useState<string>("");
@@ -140,6 +148,11 @@ export default function HelpRequestPage() {
   const { data: helpRequests = [], isLoading } = useQuery<HelpRequest[]>({
     queryKey: ["/api/help-requests/active"],
     refetchInterval: 5000, // Poll every 5 seconds for real-time updates
+  });
+
+  // Fetch employees to get shift leaders for dropdown
+  const { data: employees = [] } = useQuery<Employee[]>({
+    queryKey: ["/api/employees"],
   });
 
   // Check for new responses to show popup notifications
@@ -745,12 +758,20 @@ export default function HelpRequestPage() {
 
               <div>
                 <Label htmlFor="submitted-by">Submitted By</Label>
-                <Input
-                  id="submitted-by"
-                  value={submittedBy}
-                  onChange={(e) => setSubmittedBy(e.target.value)}
-                  placeholder="Your name"
-                />
+                <Select value={submittedBy} onValueChange={setSubmittedBy}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select shift leader" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {employees
+                      .filter(emp => emp.isActive && emp.isShiftLeader)
+                      .map((employee) => (
+                        <SelectItem key={employee.id} value={employee.fullName}>
+                          {employee.fullName}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
