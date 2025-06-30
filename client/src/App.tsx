@@ -241,6 +241,7 @@ function Router() {
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
           <Route path="/help-request" component={HelpRequestPage} />
+          <Route path="/notifications" component={NotificationsPage} />
           <Route path="/demo" component={Demo} />
           <Route component={NotFound} />
         </Switch>
