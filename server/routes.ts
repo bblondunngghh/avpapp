@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { BackupService } from "./backup";
+import { smsService } from "./sms-service";
 import { 
   insertShiftReportSchema, 
   updateShiftReportSchema,
@@ -1852,6 +1853,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const requestData = insertHelpRequestSchema.parse(req.body);
       const request = await storage.createHelpRequest(requestData);
+      
+      // Send SMS notifications to all other locations
+      try {
+        const locations = await storage.getLocations();
+        const requestingLocation = locations.find(loc => loc.id === request.requestingLocationId);
+        const appUrl = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'http://localhost:5000';
+        
+        if (requestingLocation) {
+          // Send SMS to all other locations that have SMS phone numbers
+          const otherLocations = locations.filter(loc => 
+            loc.id !== request.requestingLocationId && 
+            loc.smsPhone && 
+            loc.active
+          );
+          
+          for (const location of otherLocations) {
+            await smsService.sendHelpRequestNotification(
+              location.smsPhone!,
+              requestingLocation.name,
+              1, // Default to 1 attendant needed
+              request.priority || 'normal',
+              appUrl
+            );
+          }
+          
+          console.log(`[HELP REQUEST] SMS notifications sent to ${otherLocations.length} locations for request from ${requestingLocation.name}`);
+        }
+      } catch (smsError) {
+        console.error('[HELP REQUEST] Failed to send SMS notifications:', smsError);
+        // Don't fail the request if SMS fails
+      }
+      
       res.status(201).json(request);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -1868,6 +1901,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const responseData = insertHelpResponseSchema.parse(req.body);
       const response = await storage.createHelpResponse(responseData);
+      
+      // Send SMS notification to the requesting location
+      try {
+        const locations = await storage.getLocations();
+        const helpRequest = await storage.getHelpRequest(response.helpRequestId);
+        const respondingLocation = locations.find(loc => loc.id === response.respondingLocationId);
+        const requestingLocation = locations.find(loc => loc.id === helpRequest?.requestingLocationId);
+        const appUrl = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'http://localhost:5000';
+        
+        if (requestingLocation?.smsPhone && respondingLocation && helpRequest) {
+          await smsService.sendHelpResponseNotification(
+            requestingLocation.smsPhone,
+            respondingLocation.name,
+            requestingLocation.name,
+            response.message,
+            appUrl
+          );
+          
+          console.log(`[HELP RESPONSE] SMS notification sent to ${requestingLocation.name} about response from ${respondingLocation.name}`);
+        }
+      } catch (smsError) {
+        console.error('[HELP RESPONSE] Failed to send SMS notification:', smsError);
+        // Don't fail the request if SMS fails
+      }
+      
       res.status(201).json(response);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -2059,6 +2117,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ message: 'Failed to send notifications' });
+    }
+  });
+
+  // Update location SMS phone number
+  apiRouter.put('/locations/:id/sms-phone', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid location ID' });
+      }
+
+      const { smsPhone } = req.body;
+      if (smsPhone && typeof smsPhone !== 'string') {
+        return res.status(400).json({ message: 'SMS phone must be a string' });
+      }
+
+      const updated = await storage.updateLocation(id, { smsPhone });
+      if (!updated) {
+        return res.status(404).json({ message: 'Location not found' });
+      }
+
+      res.json({ success: true, message: 'SMS phone number updated', location: updated });
+    } catch (error) {
+      console.error('Error updating location SMS phone:', error);
+      res.status(500).json({ message: 'Failed to update SMS phone number' });
+    }
+  });
+
+  // Test SMS notification endpoint
+  apiRouter.post('/sms/test', async (req, res) => {
+    try {
+      const { phoneNumber, message } = req.body;
+      
+      if (!phoneNumber || !message) {
+        return res.status(400).json({ message: 'Phone number and message are required' });
+      }
+
+      if (!smsService.isConfigured()) {
+        return res.status(503).json({ message: 'SMS service not configured. Please set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER environment variables.' });
+      }
+
+      const appUrl = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'http://localhost:5000';
+      const success = await smsService.sendHelpRequestNotification(
+        phoneNumber,
+        'Test Location',
+        1,
+        'normal',
+        appUrl
+      );
+
+      if (success) {
+        res.json({ success: true, message: 'Test SMS sent successfully' });
+      } else {
+        res.status(500).json({ success: false, message: 'Failed to send test SMS' });
+      }
+    } catch (error) {
+      console.error('Error sending test SMS:', error);
+      res.status(500).json({ message: 'Failed to send test SMS' });
     }
   });
 
