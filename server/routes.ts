@@ -1789,7 +1789,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.get('/help-requests/active', async (req, res) => {
     try {
       const requests = await storage.getActiveHelpRequests();
-      res.json(requests);
+      
+      // Map location IDs to names and extract request type
+      const locationNames = ['The Capital Grille', 'Truluck\'s', 'BOA Steakhouse', 'Bob\'s Steak and Chop House'];
+      
+      const transformedRequests = requests.map(request => {
+        // Extract request type from message (backed up, pulls, parks)
+        let requestType = 'unknown';
+        if (request.message.includes('backed up')) requestType = 'backed up';
+        else if (request.message.includes('pulls')) requestType = 'pulls';
+        else if (request.message.includes('parks')) requestType = 'parks';
+        
+        return {
+          id: request.id,
+          requestingLocation: locationNames[request.requestingLocationId - 1] || 'Unknown Location',
+          requestType,
+          description: request.message,
+          status: request.status,
+          requestedAt: request.requestedAt,
+          resolvedAt: request.resolvedAt
+        };
+      });
+      
+      res.json(transformedRequests);
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch active help requests' });
     }
@@ -1878,7 +1900,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all recent help responses for notifications
-  apiRouter.get('/help-requests/responses', async (req, res) => {
+  apiRouter.get('/help-requests/all-responses', async (req, res) => {
     try {
       const responses = await storage.getAllRecentHelpResponses();
       res.json(responses);

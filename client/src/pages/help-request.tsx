@@ -55,7 +55,7 @@ export default function HelpRequestPage() {
 
   // Check for new responses to show popup notifications
   const { data: allResponses = [] } = useQuery<HelpResponse[]>({
-    queryKey: ["/api/help-requests/responses"],
+    queryKey: ["/api/help-requests/all-responses"],
     refetchInterval: 3000, // Check for responses every 3 seconds
     onSuccess: (responses) => {
       // Show popup notification for new responses
