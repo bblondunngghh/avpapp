@@ -92,6 +92,10 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 30, 2025: Removed "View Sales Demo" button from dashboard home screen to prevent staff access to demo features
+- June 30, 2025: Removed debugging text "(state:true/false)" from shift leader checkbox in employee edit dialog for cleaner UI
+- June 30, 2025: Fixed Employee Accounting Overview to include inactive employees for complete financial audit compliance
+- June 30, 2025: Added /api/employees/all endpoint to preserve payroll data visibility for deactivated employees
 - June 27, 2025: Updated home screen blue container design to match tile styling with grey accent bar
 - June 27, 2025: Positioned version number at bottom-right corner of blue container using Fjalla One font
 - June 27, 2025: Removed grey accent bar and relocated version display to container bottom

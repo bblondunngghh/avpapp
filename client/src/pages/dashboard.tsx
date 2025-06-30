@@ -151,19 +151,7 @@ export default function Dashboard() {
             <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
             Employee Login
           </Button>
-          
-          {/* Sales Demo Link */}
-          <div className="pt-4 border-t border-gray-100 w-full max-w-md">
-            <p className="text-gray-400 text-sm mb-2">For prospective clients:</p>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/demo")}
-              className="border-green-200 text-green-700 hover:text-green-800 hover:bg-green-50 flex items-center justify-center gap-2"
-            >
-              <ArrowRight className="h-4 w-4" />
-              View Sales Demo
-            </Button>
-          </div>
+
         </div>
       </div>
       
