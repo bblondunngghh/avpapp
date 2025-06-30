@@ -131,12 +131,15 @@ export class DatabaseStorage implements IStorage {
   async getEmployees(): Promise<Employee[]> {
     try {
       // Only return active employees by default
-      return await withRetry(() => 
+      console.log('Fetching active employees from database...');
+      const result = await withRetry(() => 
         db.select()
           .from(employees)
           .where(eq(employees.isActive, true))
           .orderBy(employees.fullName)
       );
+      console.log(`Found ${result.length} active employees:`, result.map(e => e.fullName).join(', '));
+      return result;
     } catch (error) {
       console.error("Error fetching employees:", error);
       return [];
