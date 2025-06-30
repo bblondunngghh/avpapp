@@ -293,7 +293,8 @@ export class DatabaseStorage implements IStorage {
           employeeCommission: 0.60,
           logoUrl: null,
           address: "500 Crescent Ct, Dallas, TX 75201",
-          website: null
+          website: null,
+          smsPhone: null
         },
         {
           id: 2,
@@ -305,7 +306,8 @@ export class DatabaseStorage implements IStorage {
           employeeCommission: 0.60,
           logoUrl: null,
           address: "4300 Lemmon Ave, Dallas, TX 75219",
-          website: null
+          website: null,
+          smsPhone: null
         },
         {
           id: 3,
@@ -317,7 +319,8 @@ export class DatabaseStorage implements IStorage {
           employeeCommission: 0.75,
           logoUrl: null,
           address: "2401 McKinney Ave, Dallas, TX 75201",
-          website: null
+          website: null,
+          smsPhone: null
         },
         {
           id: 4,
@@ -329,7 +332,8 @@ export class DatabaseStorage implements IStorage {
           employeeCommission: 0.70,
           logoUrl: null,
           address: "4322 Lemmon Ave, Dallas, TX 75219",
-          website: null
+          website: null,
+          smsPhone: null
         }
       ];
     }

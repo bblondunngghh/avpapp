@@ -131,6 +131,7 @@ export const locations = pgTable("locations", {
   address: text("address"), // Full address of the location
   phone: text("phone"), // Location phone number
   website: text("website"), // Location website URL
+  smsPhone: text("sms_phone"), // SMS notification phone number for help requests
 });
 
 export const insertLocationSchema = createInsertSchema(locations).pick({
@@ -143,6 +144,7 @@ export const insertLocationSchema = createInsertSchema(locations).pick({
   address: true,
   phone: true,
   website: true,
+  smsPhone: true,
 });
 
 export const updateLocationSchema = createInsertSchema(locations).pick({
@@ -155,6 +157,7 @@ export const updateLocationSchema = createInsertSchema(locations).pick({
   address: true,
   phone: true,
   website: true,
+  smsPhone: true,
 }).partial();
 
 export type InsertLocation = z.infer<typeof insertLocationSchema>;
