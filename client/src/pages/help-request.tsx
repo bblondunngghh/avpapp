@@ -16,6 +16,7 @@ import bookIcon from "@/assets/book-icon.png";
 import safetyExitIcon from "@/assets/safety-exit-icon.png";
 import sendEmailIcon from "@/assets/send-email-icon.png";
 import rabbitRunningIcon from "@/assets/rabbit-running-icon.png";
+import athleticsTeamRunningIcon from "@/assets/athletics-team-running-icon.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -431,7 +432,7 @@ export default function HelpRequestPage() {
             {/* Request Help Form */}
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <img src={safetyExitIcon} alt="Safety Exit" className="h-4 w-4" />
+                <img src={athleticsTeamRunningIcon} alt="Athletics Team Running" className="h-4 w-4" />
                 Request Help
               </h3>
               <div>
