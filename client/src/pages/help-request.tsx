@@ -18,6 +18,7 @@ import sendEmailIcon from "@/assets/send-email-icon.png";
 import rabbitRunningIcon from "@/assets/rabbit-running-icon.png";
 import athleticsTeamRunningIcon from "@/assets/athletics-team-running-icon.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate_1751310836981.png";
+import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimate_1751311056997.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -378,7 +379,7 @@ export default function HelpRequestPage() {
             <img src={houseIcon} alt="Home" className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <HelpCircle className="h-6 w-6 text-orange-600" />
+            <img src={taskListQuestionIcon} alt="Help Requests" className="h-6 w-6" />
             <h1 className="text-2xl font-bold text-gray-900">Inter-Location Help Requests</h1>
           </div>
         </div>
