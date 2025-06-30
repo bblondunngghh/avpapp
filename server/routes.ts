@@ -1795,16 +1795,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const transformedRequests = requests.map(request => {
         // Extract request type from message (backed up, pulls, parks)
-        let requestType = 'unknown';
-        if (request.message.includes('backed up')) requestType = 'backed up';
-        else if (request.message.includes('pulls')) requestType = 'pulls';
-        else if (request.message.includes('parks')) requestType = 'parks';
+        let requestType = 'Unknown';
+        let description = 'Valet Attendants Needed: Unknown';
+        
+        if (request.message.includes('backed up')) {
+          requestType = 'Backed Up';
+          description = 'Valet Attendants Needed: Backed Up';
+        } else if (request.message.includes('pulls')) {
+          requestType = 'Pulls';
+          description = 'Valet Attendants Needed: Pulls';
+        } else if (request.message.includes('parks')) {
+          requestType = 'Parks';
+          description = 'Valet Attendants Needed: Parks';
+        }
         
         return {
           id: request.id,
           requestingLocation: locationNames[request.requestingLocationId - 1] || 'Unknown Location',
           requestType,
-          description: request.message,
+          description,
           status: request.status,
           requestedAt: request.requestedAt,
           resolvedAt: request.resolvedAt
