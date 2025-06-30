@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft, HelpCircle, Users, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -33,9 +34,8 @@ export default function HelpRequestPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const [requestType, setRequestType] = useState("");
   const [requestingLocation, setRequestingLocation] = useState("");
-  const [description, setDescription] = useState("");
+  const [helpType, setHelpType] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
 
@@ -52,11 +52,10 @@ export default function HelpRequestPage() {
     onSuccess: () => {
       toast({
         title: "Help Request Sent",
-        description: "Your request has been sent to all locations. Someone will respond soon.",
+        description: "Your valet assistance request has been sent to all locations.",
       });
-      setRequestType("");
       setRequestingLocation("");
-      setDescription("");
+      setHelpType("");
       queryClient.invalidateQueries({ queryKey: ["/api/help-requests/active"] });
     },
     onError: () => {
@@ -92,10 +91,10 @@ export default function HelpRequestPage() {
   });
 
   const handleSubmitRequest = () => {
-    if (!requestingLocation || !requestType || !description.trim()) {
+    if (!requestingLocation || !helpType) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all fields before submitting.",
+        description: "Please select your location and type of help needed.",
         variant: "destructive",
       });
       return;
@@ -103,8 +102,8 @@ export default function HelpRequestPage() {
 
     createRequestMutation.mutate({
       requestingLocation,
-      requestType,
-      description: description.trim(),
+      requestType: "Valet Assistance",
+      description: helpType,
     });
   };
 
@@ -182,30 +181,21 @@ export default function HelpRequestPage() {
             </div>
 
             <div>
-              <Label htmlFor="request-type">Type of Help Needed</Label>
-              <Select value={requestType} onValueChange={setRequestType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select help type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Staff Coverage">Need Staff Coverage</SelectItem>
-                  <SelectItem value="Equipment Issue">Equipment Issue</SelectItem>
-                  <SelectItem value="Training Support">Training Support</SelectItem>
-                  <SelectItem value="Emergency Assistance">Emergency Assistance</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe what help you need..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-              />
+              <Label>Type of Valet Assistance Needed</Label>
+              <RadioGroup value={helpType} onValueChange={setHelpType} className="mt-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="backed up" id="backed-up" />
+                  <Label htmlFor="backed-up">Backed Up - Need help with overflow</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="pulls" id="pulls" />
+                  <Label htmlFor="pulls">Pulls - Need help retrieving cars</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="parks" id="parks" />
+                  <Label htmlFor="parks">Parks - Need help parking cars</Label>
+                </div>
+              </RadioGroup>
             </div>
 
             <Button 
