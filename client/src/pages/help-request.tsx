@@ -395,6 +395,9 @@ export default function HelpRequestPage() {
                       <p className="text-xs text-gray-500">
                         Reported at {new Date(report.submittedAt).toLocaleTimeString()}
                       </p>
+                      <p className="text-xs text-gray-600">
+                        by {report.submittedBy}
+                      </p>
                       {report.notes && (
                         <p className="text-xs text-gray-600 mt-1 italic">"{report.notes}"</p>
                       )}
