@@ -98,6 +98,13 @@ function getCoverCountColor(count: number): string {
   return "text-red-600";
 }
 
+// Function to get status label based on cover count
+function getCoverCountStatus(count: number): string {
+  if (count < 100) return "Slow";
+  if (count <= 200) return "Average";
+  return "Busy";
+}
+
 export default function HelpRequestPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
@@ -405,7 +412,9 @@ export default function HelpRequestPage() {
                   <h4 className="font-medium text-sm text-gray-800 mb-1">{location.name}</h4>
                   {report ? (
                     <div>
-                      <p className={`text-lg font-bold ${getCoverCountColor(report.coverCount)}`}>{report.coverCount} covers</p>
+                      <p className={`text-lg font-bold ${getCoverCountColor(report.coverCount)}`}>
+                        {report.coverCount} covers - {getCoverCountStatus(report.coverCount)}
+                      </p>
                       <p className="text-xs text-gray-500">
                         Reported at {new Date(report.submittedAt).toLocaleTimeString()}
                       </p>

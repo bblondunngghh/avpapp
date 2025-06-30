@@ -93,6 +93,7 @@ This is a comprehensive valet parking shift management system built for restaura
 ## Recent Changes
 
 - June 30, 2025: Added color coding to cover count displays - green for under 100 covers, yellow for 100-200 covers, red for over 200 covers
+- June 30, 2025: Added status labels to cover counts: "Slow" (green), "Average" (yellow), and "Busy" (red) for quick business volume assessment
 - June 30, 2025: Replaced Help Request Center icons with custom graphics - rabbit running icon for "Active Help Requests", insurance hand icon for "Help Request Center", book icon for "Daily Cover Count Reports", athletics team running icon for "Request Help" section, and send email icon for "Submit Cover Count Report" functionality
 - June 30, 2025: Reduced auto-remove timer from 15 minutes to 5 minutes for completed help requests
 - June 30, 2025: Repositioned "Completed" button to right side of help request containers using justify-between layout for better visual balance
