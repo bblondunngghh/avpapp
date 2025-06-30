@@ -1816,7 +1816,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           description,
           status: request.status,
           requestedAt: request.requestedAt,
-          resolvedAt: request.resolvedAt
+          resolvedAt: request.resolvedAt,
+          completedAt: request.completedAt,
+          autoRemoveAt: request.autoRemoveAt
         };
       });
       
