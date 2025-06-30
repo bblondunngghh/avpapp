@@ -4993,7 +4993,7 @@ export default function AdminPanel() {
                 Employee Accounting Overview
               </CardTitle>
               <CardDescription>
-                Comprehensive financial breakdown for all employees including earnings, taxes, and money owed calculations
+                Comprehensive financial breakdown for all employees including earnings, taxes, and money owed calculations. Includes both active and inactive employees for audit compliance.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -5199,7 +5199,7 @@ export default function AdminPanel() {
 
               {(() => {
                 // Calculate employee accounting data with month filtering
-                const employeeAccountingData = employeeRecords.map(employee => {
+                const employeeAccountingData = allEmployeeRecords.map(employee => {
                   const employeeReports = reports.filter((report: any) => {
                     // Apply month filter first - use timezone-safe date parsing
                     const reportDate = parseLocalDate(report.date);
@@ -5380,26 +5380,38 @@ export default function AdminPanel() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {employeeAccountingData.map((employee) => (
-                            <TableRow key={employee.key}>
+                          {employeeAccountingData.map((employee) => {
+                            // Find employee record to check if they're active
+                            const employeeRecord = allEmployeeRecords.find(emp => emp.fullName === employee.name);
+                            const isInactive = employeeRecord && !employeeRecord.isActive;
+                            
+                            return (
+                            <TableRow key={employee.key} className={isInactive ? "bg-gray-50" : ""}>
                               <TableCell className="font-medium">
-                                <Button
-                                  variant="link"
-                                  className="p-0 h-auto font-medium text-blue-600 hover:text-blue-800 hover:underline"
-                                  onClick={() => {
-                                    const employeeRecord = employeeRecords.find(emp => emp.fullName === employee.name);
-                                    if (employeeRecord) {
-                                      const shiftBreakdowns = generateEmployeeShiftBreakdown(employeeRecord);
-                                      setSelectedEmployeeShifts({
-                                        employee: employeeRecord,
-                                        shifts: shiftBreakdowns
-                                      });
-                                      setShowEmployeeShiftsModal(true);
-                                    }
-                                  }}
-                                >
-                                  {employee.name}
-                                </Button>
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    variant="link"
+                                    className="p-0 h-auto font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                    onClick={() => {
+                                      const employeeRecord = allEmployeeRecords.find(emp => emp.fullName === employee.name);
+                                      if (employeeRecord) {
+                                        const shiftBreakdowns = generateEmployeeShiftBreakdown(employeeRecord);
+                                        setSelectedEmployeeShifts({
+                                          employee: employeeRecord,
+                                          shifts: shiftBreakdowns
+                                        });
+                                        setShowEmployeeShiftsModal(true);
+                                      }
+                                    }}
+                                  >
+                                    {employee.name}
+                                  </Button>
+                                  {isInactive && (
+                                    <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
+                                      INACTIVE
+                                    </span>
+                                  )}
+                                </div>
                               </TableCell>
                               <TableCell className="text-center">{employee.totalHours.toFixed(1)}</TableCell>
                               <TableCell className="text-center">{employee.shiftsWorked}</TableCell>
@@ -5421,7 +5433,8 @@ export default function AdminPanel() {
                                 ${employee.totalAdditionalTaxPayments.toFixed(2)}
                               </TableCell>
                             </TableRow>
-                          ))}
+                            );
+                          })}
                           <TableRow className="bg-muted/50 font-bold">
                             <TableCell>TOTALS</TableCell>
                             <TableCell className="text-center">
