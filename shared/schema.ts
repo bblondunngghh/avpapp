@@ -412,7 +412,7 @@ export const helpResponses = pgTable("help_responses", {
   id: serial("id").primaryKey(),
   helpRequestId: integer("help_request_id").notNull().references(() => helpRequests.id),
   respondingLocationId: integer("responding_location_id").notNull().references(() => locations.id),
-  attendantsOffered: integer("attendants_offered").notNull(),
+  attendantsOffered: integer("attendants_offered").notNull().default(0), // 0 means "too busy to help"
   estimatedArrival: text("estimated_arrival"), // "5 minutes", "10 minutes", etc.
   message: text("message"),
   respondedAt: timestamp("responded_at").defaultNow().notNull(),

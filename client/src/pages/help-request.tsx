@@ -38,6 +38,10 @@ export default function HelpRequestPage() {
   const [helpType, setHelpType] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
+  const [respondingLocation, setRespondingLocation] = useState("");
+  const [attendantsOffered, setAttendantsOffered] = useState("");
+  const [estimatedArrival, setEstimatedArrival] = useState("");
+  const [responseType, setResponseType] = useState<"help" | "busy">("help");
 
   // Fetch locations for ID mapping
   const { data: locations = [] } = useQuery<Array<{ id: number; name: string }>>({
@@ -74,16 +78,21 @@ export default function HelpRequestPage() {
 
   // Create response mutation
   const createResponseMutation = useMutation({
-    mutationFn: async (data: { helpRequestId: number; respondingLocation: string; message: string }) => {
+    mutationFn: async (data: { helpRequestId: number; respondingLocationId: number; attendantsOffered: number; estimatedArrival: string; message: string }) => {
       return apiRequest("POST", "/api/help-requests/respond", data);
     },
     onSuccess: () => {
       toast({
-        title: "Response Sent",
-        description: "Your response has been sent successfully.",
+        title: "Help Dispatched!",
+        description: "Your assistance team has been sent and the requesting location has been notified.",
+        className: "bg-green-600 text-white",
       });
       setResponseMessage("");
       setSelectedRequestId(null);
+      setRespondingLocation("");
+      setAttendantsOffered("");
+      setEstimatedArrival("");
+      setResponseType("help");
       queryClient.invalidateQueries({ queryKey: ["/api/help-requests/active"] });
     },
     onError: () => {
@@ -125,29 +134,48 @@ export default function HelpRequestPage() {
   };
 
   const handleSubmitResponse = (requestId: number) => {
-    if (!responseMessage.trim()) {
+    if (!respondingLocation) {
       toast({
-        title: "Missing Message",
-        description: "Please enter a response message.",
+        title: "Missing Information",
+        description: "Please select your responding location.",
         variant: "destructive",
       });
       return;
     }
 
-    const respondingLocation = prompt("Enter your location name:");
-    if (!respondingLocation) {
+    if (responseType === "help" && (!attendantsOffered || !estimatedArrival)) {
       toast({
-        title: "Missing Location",
-        description: "Please specify which location you're responding from.",
+        title: "Missing Information",
+        description: "Please specify number of attendants and estimated arrival time.",
         variant: "destructive",
       });
       return;
     }
+
+    // Find the responding location ID
+    const location = locations.find(loc => loc.name === respondingLocation);
+    if (!location) {
+      toast({
+        title: "Invalid Location",
+        description: "Please select a valid responding location.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const isBusy = responseType === "busy";
+    const attendants = isBusy ? 0 : parseInt(attendantsOffered);
+    const arrival = isBusy ? "Not available" : estimatedArrival;
+    const autoMessage = isBusy 
+      ? `${respondingLocation} is too busy to send help at this time.`
+      : `Sending ${attendantsOffered} attendant(s) from ${respondingLocation}. ETA: ${estimatedArrival}`;
 
     createResponseMutation.mutate({
       helpRequestId: requestId,
-      respondingLocation: respondingLocation.trim(),
-      message: responseMessage.trim(),
+      respondingLocationId: location.id,
+      attendantsOffered: attendants,
+      estimatedArrival: arrival,
+      message: responseMessage.trim() || autoMessage,
     });
   };
 
