@@ -15,6 +15,7 @@ import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
 import bookIcon from "@/assets/book-icon.png";
 import safetyExitIcon from "@/assets/safety-exit-icon.png";
 import sendEmailIcon from "@/assets/send-email-icon.png";
+import rabbitRunningIcon from "@/assets/rabbit-running-icon.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -478,7 +479,7 @@ export default function HelpRequestPage() {
             {/* Active Requests Section */}
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <img src={clerkIcon} alt="Clerk" className="h-4 w-4" />
+                <img src={rabbitRunningIcon} alt="Rabbit Running" className="h-4 w-4" />
                 Active Help Requests
               </h3>
               {isLoading ? (
