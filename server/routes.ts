@@ -1811,7 +1811,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         return {
           id: request.id,
-          requestingLocation: locationNames[request.requestingLocationId - 1] || 'Unknown Location',
+          requestingLocation: locationNames[request.requestingLocationId] || 'Unknown Location',
           requestType,
           description,
           status: request.status,
@@ -1924,7 +1924,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const transformedResponses = responses.map(response => ({
         ...response,
-        respondingLocationName: locationNames[response.respondingLocationId - 1] || 'Unknown Location'
+        respondingLocationName: locationNames[response.respondingLocationId] || 'Unknown Location'
       }));
       
       res.json(transformedResponses);
