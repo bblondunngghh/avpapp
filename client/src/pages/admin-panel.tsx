@@ -4550,10 +4550,14 @@ export default function AdminPanel() {
                             type="checkbox"
                             id="isActive"
                             checked={newEmployee.isActive}
-                            onChange={(e) => setNewEmployee({...newEmployee, isActive: e.target.checked})}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            onChange={(e) => {
+                              console.log('Active checkbox clicked:', e.target.checked);
+                              setNewEmployee({...newEmployee, isActive: e.target.checked});
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            style={{ accentColor: '#2563eb' }}
                           />
-                          <Label htmlFor="isActive" className="text-sm font-normal">Active</Label>
+                          <Label htmlFor="isActive" className="text-sm font-normal cursor-pointer">Active</Label>
                         </div>
                       </div>
                       
@@ -4564,10 +4568,14 @@ export default function AdminPanel() {
                             type="checkbox"
                             id="isShiftLeader"
                             checked={newEmployee.isShiftLeader}
-                            onChange={(e) => setNewEmployee({...newEmployee, isShiftLeader: e.target.checked})}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            onChange={(e) => {
+                              console.log('Shift Leader checkbox clicked:', e.target.checked);
+                              setNewEmployee({...newEmployee, isShiftLeader: e.target.checked});
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            style={{ accentColor: '#2563eb' }}
                           />
-                          <Label htmlFor="isShiftLeader" className="text-sm font-normal">Shift Leader</Label>
+                          <Label htmlFor="isShiftLeader" className="text-sm font-normal cursor-pointer">Shift Leader</Label>
                         </div>
                       </div>
                     </div>
@@ -4736,10 +4744,14 @@ export default function AdminPanel() {
                             type="checkbox"
                             id="edit-isActive"
                             checked={newEmployee.isActive}
-                            onChange={(e) => setNewEmployee({...newEmployee, isActive: e.target.checked})}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            onChange={(e) => {
+                              console.log('Edit Active checkbox clicked:', e.target.checked);
+                              setNewEmployee({...newEmployee, isActive: e.target.checked});
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            style={{ accentColor: '#2563eb' }}
                           />
-                          <Label htmlFor="edit-isActive" className="text-sm font-normal">Active</Label>
+                          <Label htmlFor="edit-isActive" className="text-sm font-normal cursor-pointer">Active</Label>
                         </div>
                       </div>
                       
@@ -4750,10 +4762,14 @@ export default function AdminPanel() {
                             type="checkbox"
                             id="edit-isShiftLeader"
                             checked={newEmployee.isShiftLeader}
-                            onChange={(e) => setNewEmployee({...newEmployee, isShiftLeader: e.target.checked})}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            onChange={(e) => {
+                              console.log('Edit Shift Leader checkbox clicked:', e.target.checked);
+                              setNewEmployee({...newEmployee, isShiftLeader: e.target.checked});
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            style={{ accentColor: '#2563eb' }}
                           />
-                          <Label htmlFor="edit-isShiftLeader" className="text-sm font-normal">Shift Leader</Label>
+                          <Label htmlFor="edit-isShiftLeader" className="text-sm font-normal cursor-pointer">Shift Leader</Label>
                         </div>
                       </div>
                     </div>
