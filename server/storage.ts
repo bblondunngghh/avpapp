@@ -918,7 +918,7 @@ export class DatabaseStorage implements IStorage {
   async markHelpRequestCompleted(id: number): Promise<boolean> {
     try {
       const now = new Date();
-      const autoRemoveTime = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
+      const autoRemoveTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
       
       // Mark the help request as completed
       await db

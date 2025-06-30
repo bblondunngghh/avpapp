@@ -1910,7 +1910,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Help request not found' });
       }
       
-      res.json({ success: true, message: 'Help request marked as completed and will be auto-removed in 15 minutes' });
+      res.json({ success: true, message: 'Help request marked as completed and will be auto-removed in 5 minutes' });
     } catch (error) {
       res.status(500).json({ message: 'Failed to complete help request' });
     }
