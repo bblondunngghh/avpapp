@@ -22,6 +22,7 @@ import IncidentSubmitted from "@/pages/incident-submitted";
 import Regulations from "@/pages/regulations";
 import EmployeeLogin from "@/pages/employee-login";
 import EmployeeDashboard from "@/pages/employee-dashboard";
+import HelpRequestPage from "@/pages/help-request";
 import ReportSelection from "@/pages/report-selection";
 import PermitsPage from "@/pages/permits";
 import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPage
@@ -238,6 +239,7 @@ function Router() {
           <Route path="/permits" component={PermitsPage} />
           <Route path="/employee-login" component={EmployeeLogin} />
           <Route path="/employee-dashboard" component={EmployeeDashboard} />
+          <Route path="/help-request" component={HelpRequestPage} />
           <Route path="/demo" component={Demo} />
           <Route component={NotFound} />
         </Switch>

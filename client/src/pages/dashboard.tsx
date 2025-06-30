@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Car, ShieldAlert, Construction, FileText, ArrowRight } from "lucide-react";
+import { Car, ShieldAlert, Construction, FileText, ArrowRight, HelpCircle } from "lucide-react";
 import shiftReportIcon from "@assets/Task-List-Add--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
@@ -150,6 +150,15 @@ export default function Dashboard() {
           >
             <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
             Employee Login
+          </Button>
+
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/help-request")}
+            className="border-orange-200 text-orange-700 hover:text-orange-800 hover:bg-orange-50 flex items-center justify-center gap-2"
+          >
+            <HelpCircle className="h-5 w-5" />
+            Request Help
           </Button>
 
         </div>
