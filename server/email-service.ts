@@ -20,7 +20,12 @@ export class EmailService {
     const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
     const port = parseInt(process.env.EMAIL_PORT || '587');
     const user = process.env.EMAIL_USER;
-    const pass = process.env.EMAIL_PASS;
+    let pass = process.env.EMAIL_PASS;
+
+    // Remove spaces from Gmail App Password if present
+    if (pass && pass.includes(' ')) {
+      pass = pass.replace(/\s/g, '');
+    }
 
     if (user && pass) {
       this.config = {
