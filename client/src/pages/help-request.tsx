@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowLeft, HelpCircle, Users, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, HelpCircle, Users, AlertTriangle, ClipboardList, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -29,6 +31,17 @@ interface HelpResponse {
   respondingLocation: string;
   message: string;
   respondedAt: string;
+}
+
+interface CoverCountReport {
+  id: number;
+  locationId: number;
+  locationName: string;
+  coverCount: number;
+  reportDate: string;
+  submittedAt: string;
+  submittedBy: string;
+  notes?: string;
 }
 
 // Countdown Timer Component
@@ -75,11 +88,53 @@ export default function HelpRequestPage() {
   const [respondingLocation, setRespondingLocation] = useState("");
   const [attendantsOffered, setAttendantsOffered] = useState("");
   const [responseType, setResponseType] = useState<"help" | "busy">("help");
+  
+  // Cover count state
+  const [showCoverCountDialog, setShowCoverCountDialog] = useState(false);
+  const [coverCount, setCoverCount] = useState("");
+  const [coverCountNotes, setCoverCountNotes] = useState("");
+  const [submittedBy, setSubmittedBy] = useState("");
+  const [selectedCoverLocation, setSelectedCoverLocation] = useState("");
 
   // Fetch locations for ID mapping
   const { data: locations = [] } = useQuery<Array<{ id: number; name: string }>>({
     queryKey: ["/api/locations"],
   });
+
+  // Fetch today's cover count reports
+  const { data: coverCountReports = [] } = useQuery<CoverCountReport[]>({
+    queryKey: ["/api/cover-count/today"],
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // 5:00 PM Cover Count Notification
+  useEffect(() => {
+    const checkFor5PMNotification = () => {
+      const now = new Date();
+      const is5PM = now.getHours() === 17 && now.getMinutes() >= 0 && now.getMinutes() < 5;
+      
+      if (is5PM) {
+        const today = now.toISOString().split('T')[0];
+        const hasSubmittedToday = coverCountReports.some(report => 
+          report.reportDate === today && report.locationId.toString() === selectedCoverLocation
+        );
+        
+        if (!hasSubmittedToday && !showCoverCountDialog) {
+          setShowCoverCountDialog(true);
+          toast({
+            title: "🔔 Daily Cover Count Report",
+            description: "It's 5:00 PM - Time to submit your evening cover count for all locations!",
+            duration: 10000,
+          });
+        }
+      }
+    };
+
+    const interval = setInterval(checkFor5PMNotification, 60000); // Check every minute
+    checkFor5PMNotification(); // Check immediately
+
+    return () => clearInterval(interval);
+  }, [coverCountReports, selectedCoverLocation, showCoverCountDialog, toast]);
 
   // Fetch active help requests
   const { data: helpRequests = [], isLoading } = useQuery<HelpRequest[]>({

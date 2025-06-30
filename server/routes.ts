@@ -17,6 +17,8 @@ import {
   insertTrainingAcknowledgmentSchema,
   insertHelpRequestSchema,
   insertHelpResponseSchema,
+  insertCoverCountReportSchema,
+  insertPushSubscriptionSchema,
   insertLocationSchema,
   updateLocationSchema,
   ShiftReport,
@@ -1944,6 +1946,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(responses);
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch help responses' });
+    }
+  });
+
+  // Cover count reporting endpoints
+  apiRouter.get('/cover-count/today', async (req, res) => {
+    try {
+      const reports = await storage.getTodaysCoverCountReports();
+      
+      // Transform to include location names
+      const locationNames = ['', 'The Capital Grille', "Bob's Steak and Chop House", 'Truluck\'s', 'BOA Steakhouse'];
+      const transformedReports = reports.map(report => ({
+        ...report,
+        locationName: locationNames[report.locationId] || 'Unknown Location'
+      }));
+      
+      res.json(transformedReports);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch cover count reports' });
+    }
+  });
+
+  apiRouter.post('/cover-count', async (req, res) => {
+    try {
+      const reportData = insertCoverCountReportSchema.parse(req.body);
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Check if report already exists for this location today
+      const existingReport = await storage.getCoverCountReport(reportData.locationId, today);
+      if (existingReport) {
+        // Update existing report
+        const updatedReport = await storage.updateCoverCountReport(existingReport.id, {
+          coverCount: reportData.coverCount,
+          notes: reportData.notes,
+          submittedBy: reportData.submittedBy
+        });
+        return res.json(updatedReport);
+      }
+      
+      // Create new report
+      const report = await storage.createCoverCountReport({
+        ...reportData,
+        reportDate: today
+      });
+      
+      res.status(201).json(report);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid cover count data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to create cover count report' });
+    }
+  });
+
+  // Push notification endpoints
+  apiRouter.post('/push/subscribe', async (req, res) => {
+    try {
+      const subscriptionData = insertPushSubscriptionSchema.parse(req.body);
+      const subscription = await storage.createPushSubscription(subscriptionData);
+      res.status(201).json(subscription);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid subscription data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to create push subscription' });
+    }
+  });
+
+  apiRouter.delete('/push/unsubscribe', async (req, res) => {
+    try {
+      const { endpoint } = req.body;
+      if (!endpoint) {
+        return res.status(400).json({ message: 'Endpoint is required' });
+      }
+      
+      const success = await storage.deletePushSubscription(endpoint);
+      if (!success) {
+        return res.status(404).json({ message: 'Subscription not found' });
+      }
+      
+      res.json({ message: 'Successfully unsubscribed' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to unsubscribe' });
+    }
+  });
+
+  // Cover count notification trigger (manual for testing)
+  apiRouter.post('/cover-count/notify', async (req, res) => {
+    try {
+      // This would typically be triggered by a scheduled job at 5:00 PM
+      // For now, it's a manual endpoint for testing
+      const subscriptions = await storage.getActivePushSubscriptions();
+      
+      // Here you would send push notifications to all subscriptions
+      // Implementation depends on your push notification service (e.g., web-push library)
+      
+      res.json({ 
+        message: 'Cover count notifications triggered',
+        subscriberCount: subscriptions.length 
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to send notifications' });
     }
   });
 
