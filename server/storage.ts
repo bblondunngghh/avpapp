@@ -130,7 +130,13 @@ export class DatabaseStorage implements IStorage {
   // Employee methods
   async getEmployees(): Promise<Employee[]> {
     try {
-      return await withRetry(() => db.select().from(employees).orderBy(employees.fullName));
+      // Only return active employees by default
+      return await withRetry(() => 
+        db.select()
+          .from(employees)
+          .where(eq(employees.isActive, true))
+          .orderBy(employees.fullName)
+      );
     } catch (error) {
       console.error("Error fetching employees:", error);
       return [];
@@ -208,18 +214,20 @@ export class DatabaseStorage implements IStorage {
         return false;
       }
 
-      // First delete all related tax payment records manually
-      console.log(`Deleting tax payment records for employee ${id}`);
-      await db.delete(employeeTaxPayments).where(eq(employeeTaxPayments.employeeId, id));
+      // Soft delete: mark employee as inactive and set termination date
+      console.log(`Soft deleting employee ${id} - marking as inactive`);
+      await db.update(employees)
+        .set({ 
+          isActive: false, 
+          terminationDate: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(employees.id, id));
       
-      // Then delete the employee record
-      console.log(`Deleting employee record for employee ${id}`);
-      await db.delete(employees).where(eq(employees.id, id));
-      
-      console.log(`Successfully deleted employee with ID ${id}`);
+      console.log(`Successfully deactivated employee with ID ${id}`);
       return true;
     } catch (error) {
-      console.error("Error deleting employee:", error);
+      console.error("Error deactivating employee:", error);
       return false;
     }
   }

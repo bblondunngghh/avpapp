@@ -4472,18 +4472,18 @@ export default function AdminPanel() {
                                       refetchEmployees();
                                       
                                       // Show success message
-                                      alert(`Employee "${employee.fullName}" has been deleted.`);
+                                      alert(`Employee "${employee.fullName}" has been deactivated.`);
                                     } else {
-                                      alert("Error deleting employee");
+                                      alert("Error deactivating employee");
                                     }
                                   } catch (error) {
                                     console.error("Error:", error);
-                                    alert("Failed to delete employee");
+                                    alert("Failed to deactivate employee");
                                   }
                                 }
                               }}
                             >
-                              Delete
+                              Deactivate
                             </Button>
                           </div>
                         </TableCell>
