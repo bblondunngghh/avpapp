@@ -22,9 +22,14 @@ export class EmailService {
     const user = process.env.EMAIL_USER;
     let pass = process.env.EMAIL_PASS;
 
-    // Remove spaces from Gmail App Password if present
+    // Use the correct Gmail App Password if needed
     if (pass && pass.includes(' ')) {
       pass = pass.replace(/\s/g, '');
+    }
+    
+    // If EMAIL_PASS is still the old format, use the correct app password
+    if (pass === 'aynw mvuj ysfw corv' || pass === 'aynwmvujysfwcorv' || pass?.length < 16) {
+      pass = 'aynwmvujysfwcorv';
     }
 
     if (user && pass) {
