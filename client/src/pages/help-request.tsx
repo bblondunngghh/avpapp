@@ -413,17 +413,21 @@ export default function HelpRequestPage() {
       </Card>
 
       {/* Help Request Section */}
-      <div className="grid gap-6 md:grid-cols-2 mb-6">
-        {/* Request Help Form Card */}
-        <Card className="border-orange-200 shadow-md">
-          <CardHeader className="bg-orange-50 border-b border-orange-200">
-            <CardTitle className="flex items-center gap-2 text-orange-800">
-              <AlertTriangle className="h-5 w-5" />
-              Request Help
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
+      <Card className="border-orange-200 shadow-md mb-6">
+        <CardHeader className="bg-orange-50 border-b border-orange-200">
+          <CardTitle className="flex items-center gap-2 text-orange-800">
+            <HelpCircle className="h-5 w-5" />
+            Help Request Center
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Request Help Form */}
             <div className="space-y-4">
+              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-orange-600" />
+                Request Help
+              </h3>
               <div>
                 <Label htmlFor="requesting-location">Your Location</Label>
                 <Select value={requestingLocation} onValueChange={setRequestingLocation}>
@@ -465,19 +469,13 @@ export default function HelpRequestPage() {
                 {createRequestMutation.isPending ? "Sending..." : "Send Help Request"}
               </Button>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Active Help Requests Card */}
-        <Card className="border-orange-200 shadow-md">
-          <CardHeader className="bg-orange-50 border-b border-orange-200">
-            <CardTitle className="flex items-center gap-2 text-orange-800">
-              <Users className="h-5 w-5" />
-              Active Help Requests
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
+            {/* Active Requests Section */}
             <div className="space-y-4">
+              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <Users className="h-4 w-4 text-blue-600" />
+                Active Help Requests
+              </h3>
               {isLoading ? (
               <div className="text-center py-4">Loading requests...</div>
             ) : helpRequests.length === 0 ? (
@@ -721,12 +719,12 @@ export default function HelpRequestPage() {
               </div>
               )}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Cover Count Dialog */}
-      <Dialog open={showCoverCountDialog} onOpenChange={setShowCoverCountDialog}>
+        <Dialog open={showCoverCountDialog} onOpenChange={setShowCoverCountDialog}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
