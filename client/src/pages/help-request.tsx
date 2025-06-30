@@ -670,7 +670,7 @@ export default function HelpRequestPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex gap-4">
+                      <div className="flex justify-between items-center">
                         <Button 
                           size="sm" 
                           variant="outline"
@@ -680,7 +680,7 @@ export default function HelpRequestPage() {
                           Respond to {request.requestingLocation}
                         </Button>
                         
-                        {/* Completed button on same line as Respond button */}
+                        {/* Completed button positioned to the right */}
                         {allResponses.some(response => response.helpRequestId === request.id) && (
                           <Button 
                             size="sm" 
