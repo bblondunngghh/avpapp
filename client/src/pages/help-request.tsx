@@ -14,6 +14,7 @@ import clerkIcon from "@/assets/clerk-icon.png";
 import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
 import bookIcon from "@/assets/book-icon.png";
 import safetyExitIcon from "@/assets/safety-exit-icon.png";
+import sendEmailIcon from "@/assets/send-email-icon.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -381,7 +382,7 @@ export default function HelpRequestPage() {
               onClick={() => setShowCoverCountDialog(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
-              <Bell className="h-4 w-4 mr-2" />
+              <img src={sendEmailIcon} alt="Send Email" className="h-4 w-4 mr-2" />
               Submit Cover Count Report
             </Button>
           </div>
@@ -732,7 +733,7 @@ export default function HelpRequestPage() {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <img src={bookIcon} alt="Book" className="h-5 w-5" />
+                <img src={sendEmailIcon} alt="Send Email" className="h-5 w-5" />
                 Submit Cover Count Report
               </DialogTitle>
             </DialogHeader>
