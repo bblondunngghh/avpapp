@@ -177,19 +177,52 @@ export class EmailService {
   public static getEmailToSMS(phoneNumber: string, carrier: string): string | null {
     const cleanPhone = phoneNumber.replace(/\D/g, '');
     
-    const gateways: { [key: string]: string } = {
-      'verizon': '@vtext.com',
-      'att': '@txt.att.net',
-      'tmobile': '@tmomail.net',
-      'sprint': '@messaging.sprintpcs.com',
-      'usccellular': '@email.uscc.net',
-      'boost': '@smsmyboostmobile.com',
-      'cricket': '@sms.cricketwireless.net',
-      'metropcs': '@mymetropcs.com'
+    const gateways: { [key: string]: string[] } = {
+      'verizon': ['@vtext.com', '@vzwpix.com'],
+      'att': ['@txt.att.net', '@mms.att.net'],
+      'tmobile': ['@tmomail.net', '@msg.fi.google.com', '@mymetropcs.com', '@textmsg.com'],
+      'sprint': ['@messaging.sprintpcs.com', '@pm.sprint.com'],
+      'usccellular': ['@email.uscc.net'],
+      'boost': ['@smsmyboostmobile.com', '@myboostmobile.com'],
+      'cricket': ['@sms.cricketwireless.net'],
+      'metropcs': ['@mymetropcs.com']
     };
 
-    const gateway = gateways[carrier.toLowerCase()];
-    return gateway ? `${cleanPhone}${gateway}` : null;
+    const carrierGateways = gateways[carrier.toLowerCase()];
+    return carrierGateways ? `${cleanPhone}${carrierGateways[0]}` : null;
+  }
+
+  // Test multiple T-Mobile gateways
+  public async testTMobileGateways(phoneNumber: string): Promise<string | null> {
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    const tmobileGateways = [
+      '@msg.fi.google.com',
+      '@mymetropcs.com', 
+      '@tmomail.net',
+      '@textmsg.com'
+    ];
+
+    for (const gateway of tmobileGateways) {
+      const testEmail = `${cleanPhone}${gateway}`;
+      console.log(`[EMAIL] Testing T-Mobile gateway: ${testEmail}`);
+      
+      try {
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: testEmail,
+          subject: 'SMS Gateway Test',
+          text: 'Testing T-Mobile SMS gateway - if you receive this, reply with the gateway name.'
+        });
+        
+        console.log(`[EMAIL] Test sent to ${testEmail}, ID: ${result.messageId}`);
+        // Return the first successful gateway
+        return gateway;
+      } catch (error) {
+        console.error(`[EMAIL] Failed to send to ${testEmail}:`, error);
+      }
+    }
+    
+    return null;
   }
 }
 
