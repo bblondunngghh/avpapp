@@ -201,6 +201,10 @@ export class DatabaseStorage implements IStorage {
 
   async deleteEmployee(id: number): Promise<boolean> {
     try {
+      // First delete all related tax payment records
+      await db.delete(employeeTaxPayments).where(eq(employeeTaxPayments.employeeId, id));
+      
+      // Then delete the employee record
       await db.delete(employees).where(eq(employees.id, id));
       return true;
     } catch (error) {
