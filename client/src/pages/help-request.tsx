@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ArrowLeft, HelpCircle, AlertTriangle, ClipboardList, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import clerkIcon from "@/assets/clerk-icon.png";
+import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -417,7 +418,7 @@ export default function HelpRequestPage() {
       <Card className="border-orange-200 shadow-md mb-6">
         <CardHeader className="bg-orange-50 border-b border-orange-200">
           <CardTitle className="flex items-center gap-2 text-orange-800">
-            <HelpCircle className="h-5 w-5" />
+            <img src={insuranceHandIcon} alt="Insurance Hand" className="h-5 w-5" />
             Help Request Center
           </CardTitle>
         </CardHeader>

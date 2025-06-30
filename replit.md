@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- June 30, 2025: Replaced Help Request Center icons with custom graphics - clerk icon for "Active Help Requests" and insurance hand icon for "Help Request Center"
 - June 30, 2025: Reduced auto-remove timer from 15 minutes to 5 minutes for completed help requests
 - June 30, 2025: Repositioned "Completed" button to right side of help request containers using justify-between layout for better visual balance
 - June 30, 2025: Version 2.1.3 - Updated version number for deployment with UI improvements and security enhancements
