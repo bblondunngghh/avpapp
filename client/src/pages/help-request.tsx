@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import clerkIcon from "@/assets/clerk-icon.png";
 import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
 import bookIcon from "@/assets/book-icon.png";
+import safetyExitIcon from "@/assets/safety-exit-icon.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -428,7 +429,7 @@ export default function HelpRequestPage() {
             {/* Request Help Form */}
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-orange-600" />
+                <img src={safetyExitIcon} alt="Safety Exit" className="h-4 w-4" />
                 Request Help
               </h3>
               <div>
