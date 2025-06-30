@@ -1894,6 +1894,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all recent help responses for notifications
+  apiRouter.get('/help-responses/recent', async (req, res) => {
+    try {
+      const responses = await storage.getAllRecentHelpResponses();
+      
+      // Transform responses to include location names
+      const locationNames = ['The Capital Grille', 'Trulucks', 'BOA Steakhouse', "Bob's Steak and Chop House"];
+      
+      const transformedResponses = responses.map(response => ({
+        ...response,
+        respondingLocationName: locationNames[response.respondingLocationId - 1] || 'Unknown Location'
+      }));
+      
+      res.json(transformedResponses);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch help responses' });
+    }
+  });
+
   apiRouter.get('/help-requests/:id/responses', async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -1902,16 +1921,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const responses = await storage.getHelpResponses(id);
-      res.json(responses);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch help responses' });
-    }
-  });
-
-  // Get all recent help responses for notifications
-  apiRouter.get('/help-requests/all-responses', async (req, res) => {
-    try {
-      const responses = await storage.getAllRecentHelpResponses();
       res.json(responses);
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch help responses' });
