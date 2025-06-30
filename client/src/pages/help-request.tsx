@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,9 +16,11 @@ interface HelpRequest {
   requestingLocation: string;
   requestType: string;
   description: string;
-  status: "active" | "fulfilled";
+  status: "active" | "fulfilled" | "completed";
   requestedAt: string;
   resolvedAt?: string | null;
+  completedAt?: string | null;
+  autoRemoveAt?: string | null;
 }
 
 interface HelpResponse {
@@ -27,6 +29,38 @@ interface HelpResponse {
   respondingLocation: string;
   message: string;
   respondedAt: string;
+}
+
+// Countdown Timer Component
+function CountdownTimer({ autoRemoveAt }: { autoRemoveAt: string }) {
+  const [timeLeft, setTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const removeTime = new Date(autoRemoveAt).getTime();
+      const difference = removeTime - now;
+
+      if (difference > 0) {
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+      } else {
+        setTimeLeft("0:00");
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, [autoRemoveAt]);
+
+  return (
+    <span className="text-xs text-orange-600 font-medium">
+      Auto-remove in: {timeLeft}
+    </span>
+  );
 }
 
 export default function HelpRequestPage() {
@@ -307,9 +341,14 @@ export default function HelpRequestPage() {
                         <h3 className="font-semibold text-gray-900">{request.requestingLocation}</h3>
                         <p className="text-lg text-red-600 font-bold">{request.requestType}</p>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {new Date(request.requestedAt).toLocaleTimeString()}
-                      </span>
+                      <div className="text-right">
+                        <span className="text-xs text-gray-500 block">
+                          {new Date(request.requestedAt).toLocaleTimeString()}
+                        </span>
+                        {request.status === "completed" && request.autoRemoveAt && (
+                          <CountdownTimer autoRemoveAt={request.autoRemoveAt} />
+                        )}
+                      </div>
                     </div>
                     
                     <p className="text-xs text-gray-600 mb-3">{request.description}</p>

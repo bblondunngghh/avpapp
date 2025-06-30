@@ -13,7 +13,7 @@ import {
   LOCATIONS
 } from "@shared/schema";
 import { db, withRetry } from "./db";
-import { eq, desc, gte } from "drizzle-orm";
+import { eq, desc, gte, and, or, gt } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
@@ -781,10 +781,19 @@ export class DatabaseStorage implements IStorage {
   // Help request methods
   async getActiveHelpRequests(): Promise<HelpRequest[]> {
     try {
+      const now = new Date();
       return await db
         .select()
         .from(helpRequests)
-        .where(eq(helpRequests.status, "active"))
+        .where(
+          or(
+            eq(helpRequests.status, "active"),
+            and(
+              eq(helpRequests.status, "completed"),
+              gt(helpRequests.autoRemoveAt, now)
+            )
+          )
+        )
         .orderBy(desc(helpRequests.requestedAt));
     } catch (error) {
       console.error("Error getting active help requests:", error);
