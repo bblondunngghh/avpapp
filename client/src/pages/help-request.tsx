@@ -17,6 +17,7 @@ import safetyExitIcon from "@/assets/safety-exit-icon.png";
 import sendEmailIcon from "@/assets/send-email-icon.png";
 import rabbitRunningIcon from "@/assets/rabbit-running-icon.png";
 import athleticsTeamRunningIcon from "@/assets/athletics-team-running-icon.png";
+import houseIcon from "@assets/House-3--Streamline-Ultimate_1751310836981.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -372,10 +373,9 @@ export default function HelpRequestPage() {
             variant="outline" 
             size="sm" 
             onClick={() => navigate("/")}
-            className="flex items-center gap-2"
+            className="p-2 h-10 w-10"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
+            <img src={houseIcon} alt="Home" className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
             <HelpCircle className="h-6 w-6 text-orange-600" />
