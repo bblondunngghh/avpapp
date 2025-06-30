@@ -724,7 +724,7 @@ export default function HelpRequestPage() {
       </Card>
 
       {/* Cover Count Dialog */}
-        <Dialog open={showCoverCountDialog} onOpenChange={setShowCoverCountDialog}>
+      <Dialog open={showCoverCountDialog} onOpenChange={setShowCoverCountDialog}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -818,8 +818,6 @@ export default function HelpRequestPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
-      </div>
-    </>
+    </div>
   );
 }
