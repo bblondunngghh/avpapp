@@ -819,7 +819,6 @@ export default function HelpRequestPage() {
           </DialogContent>
         </Dialog>
       </div>
-      </div>
-    </>
+    </div>
   );
 }
