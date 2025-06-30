@@ -91,6 +91,13 @@ function CountdownTimer({ autoRemoveAt }: { autoRemoveAt: string }) {
   );
 }
 
+// Function to get color class based on cover count
+function getCoverCountColor(count: number): string {
+  if (count < 100) return "text-green-600";
+  if (count <= 200) return "text-yellow-600";
+  return "text-red-600";
+}
+
 export default function HelpRequestPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
@@ -398,7 +405,7 @@ export default function HelpRequestPage() {
                   <h4 className="font-medium text-sm text-gray-800 mb-1">{location.name}</h4>
                   {report ? (
                     <div>
-                      <p className="text-lg font-bold text-green-600">{report.coverCount} covers</p>
+                      <p className={`text-lg font-bold ${getCoverCountColor(report.coverCount)}`}>{report.coverCount} covers</p>
                       <p className="text-xs text-gray-500">
                         Reported at {new Date(report.submittedAt).toLocaleTimeString()}
                       </p>
