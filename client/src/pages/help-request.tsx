@@ -412,69 +412,71 @@ export default function HelpRequestPage() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Request Help Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-orange-600" />
-              Request Help
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="requesting-location">Your Location</Label>
-              <Select value={requestingLocation} onValueChange={setRequestingLocation}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your location" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="The Capital Grille">The Capital Grille</SelectItem>
-                  <SelectItem value="Bob's Steak and Chop House">Bob's Steak and Chop House</SelectItem>
-                  <SelectItem value="Truluck's">Truluck's</SelectItem>
-                  <SelectItem value="BOA Steakhouse">BOA Steakhouse</SelectItem>
-                </SelectContent>
-              </Select>
+      {/* Help Request Section */}
+      <Card className="border-orange-200 shadow-md mb-6">
+        <CardHeader className="bg-orange-50 border-b border-orange-200">
+          <CardTitle className="flex items-center gap-2 text-orange-800">
+            <HelpCircle className="h-5 w-5" />
+            Inter-Location Help Requests
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Request Help Form */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-orange-600" />
+                Request Help
+              </h3>
+              <div>
+                <Label htmlFor="requesting-location">Your Location</Label>
+                <Select value={requestingLocation} onValueChange={setRequestingLocation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="The Capital Grille">The Capital Grille</SelectItem>
+                    <SelectItem value="Bob's Steak and Chop House">Bob's Steak and Chop House</SelectItem>
+                    <SelectItem value="Truluck's">Truluck's</SelectItem>
+                    <SelectItem value="BOA Steakhouse">BOA Steakhouse</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label>Type of Valet Assistance Needed</Label>
+                <RadioGroup value={helpType} onValueChange={setHelpType} className="mt-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="backed up" id="backed-up" />
+                    <Label htmlFor="backed-up">Backed Up - Need help with overflow</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="pulls" id="pulls" />
+                    <Label htmlFor="pulls">Pulls - Need help retrieving cars</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="parks" id="parks" />
+                    <Label htmlFor="parks">Parks - Need help parking cars</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <Button 
+                onClick={handleSubmitRequest}
+                disabled={createRequestMutation.isPending}
+                className="w-full bg-orange-600 hover:bg-orange-700"
+              >
+                {createRequestMutation.isPending ? "Sending..." : "Send Help Request"}
+              </Button>
             </div>
 
-            <div>
-              <Label>Type of Valet Assistance Needed</Label>
-              <RadioGroup value={helpType} onValueChange={setHelpType} className="mt-2">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="backed up" id="backed-up" />
-                  <Label htmlFor="backed-up">Backed Up - Need help with overflow</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pulls" id="pulls" />
-                  <Label htmlFor="pulls">Pulls - Need help retrieving cars</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="parks" id="parks" />
-                  <Label htmlFor="parks">Parks - Need help parking cars</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <Button 
-              onClick={handleSubmitRequest}
-              disabled={createRequestMutation.isPending}
-              className="w-full bg-orange-600 hover:bg-orange-700"
-            >
-              {createRequestMutation.isPending ? "Sending..." : "Send Help Request"}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Active Requests Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-600" />
-              Active Help Requests
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
+            {/* Active Requests Section */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <Users className="h-4 w-4 text-blue-600" />
+                Active Help Requests
+              </h3>
+              {isLoading ? (
               <div className="text-center py-4">Loading requests...</div>
             ) : helpRequests.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
@@ -715,13 +717,13 @@ export default function HelpRequestPage() {
                   </div>
                 ))}
               </div>
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-
-
-        {/* Cover Count Dialog */}
+      {/* Cover Count Dialog */}
         <Dialog open={showCoverCountDialog} onOpenChange={setShowCoverCountDialog}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
