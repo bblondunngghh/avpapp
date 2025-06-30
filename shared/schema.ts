@@ -395,3 +395,45 @@ export const insertTrainingAcknowledgmentSchema = createInsertSchema(trainingAck
 
 export type InsertTrainingAcknowledgment = z.infer<typeof insertTrainingAcknowledgmentSchema>;
 export type TrainingAcknowledgment = typeof trainingAcknowledgments.$inferSelect;
+
+// Help Request system for staff assistance
+export const helpRequests = pgTable("help_requests", {
+  id: serial("id").primaryKey(),
+  requestingLocationId: integer("requesting_location_id").notNull().references(() => locations.id),
+  priority: text("priority").notNull().default("normal"), // "urgent", "normal", "low"
+  message: text("message").notNull(),
+  staffCount: integer("staff_count").notNull().default(1), // How many staff currently working
+  status: text("status").notNull().default("active"), // "active", "fulfilled", "cancelled"
+  requestedAt: timestamp("requested_at").defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at"),
+});
+
+export const helpResponses = pgTable("help_responses", {
+  id: serial("id").primaryKey(),
+  helpRequestId: integer("help_request_id").notNull().references(() => helpRequests.id),
+  respondingLocationId: integer("responding_location_id").notNull().references(() => locations.id),
+  attendantsOffered: integer("attendants_offered").notNull(),
+  estimatedArrival: text("estimated_arrival"), // "5 minutes", "10 minutes", etc.
+  message: text("message"),
+  respondedAt: timestamp("responded_at").defaultNow().notNull(),
+});
+
+export const insertHelpRequestSchema = createInsertSchema(helpRequests).pick({
+  requestingLocationId: true,
+  priority: true,
+  message: true,
+  staffCount: true,
+});
+
+export const insertHelpResponseSchema = createInsertSchema(helpResponses).pick({
+  helpRequestId: true,
+  respondingLocationId: true,
+  attendantsOffered: true,
+  estimatedArrival: true,
+  message: true,
+});
+
+export type InsertHelpRequest = z.infer<typeof insertHelpRequestSchema>;
+export type HelpRequest = typeof helpRequests.$inferSelect;
+export type InsertHelpResponse = z.infer<typeof insertHelpResponseSchema>;
+export type HelpResponse = typeof helpResponses.$inferSelect;

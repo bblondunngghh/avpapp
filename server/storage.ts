@@ -8,6 +8,8 @@ import {
   incidentReports, type IncidentReport, type InsertIncidentReport,
   permits, type Permit, type InsertPermit, type UpdatePermit,
   trainingAcknowledgments, type TrainingAcknowledgment, type InsertTrainingAcknowledgment,
+  helpRequests, type HelpRequest, type InsertHelpRequest,
+  helpResponses, type HelpResponse, type InsertHelpResponse,
   LOCATIONS
 } from "@shared/schema";
 import { db, withRetry } from "./db";
@@ -89,6 +91,14 @@ export interface IStorage {
   getTrainingAcknowledgments(): Promise<TrainingAcknowledgment[]>;
   getTrainingAcknowledgment(id: number): Promise<TrainingAcknowledgment | undefined>;
   createTrainingAcknowledgment(acknowledgmentData: InsertTrainingAcknowledgment): Promise<TrainingAcknowledgment>;
+  
+  // Help request methods
+  getActiveHelpRequests(): Promise<HelpRequest[]>;
+  getHelpRequest(id: number): Promise<HelpRequest | undefined>;
+  createHelpRequest(requestData: InsertHelpRequest): Promise<HelpRequest>;
+  markHelpRequestFulfilled(id: number): Promise<boolean>;
+  getHelpResponses(helpRequestId: number): Promise<HelpResponse[]>;
+  createHelpResponse(responseData: InsertHelpResponse): Promise<HelpResponse>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -764,6 +774,85 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error creating training acknowledgment:", error);
       throw new Error("Failed to create training acknowledgment");
+    }
+  }
+
+  // Help request methods
+  async getActiveHelpRequests(): Promise<HelpRequest[]> {
+    try {
+      return await db
+        .select()
+        .from(helpRequests)
+        .where(eq(helpRequests.status, "active"))
+        .orderBy(desc(helpRequests.requestedAt));
+    } catch (error) {
+      console.error("Error getting active help requests:", error);
+      return [];
+    }
+  }
+
+  async getHelpRequest(id: number): Promise<HelpRequest | undefined> {
+    try {
+      const [request] = await db.select().from(helpRequests).where(eq(helpRequests.id, id));
+      return request || undefined;
+    } catch (error) {
+      console.error("Error getting help request:", error);
+      return undefined;
+    }
+  }
+
+  async createHelpRequest(requestData: InsertHelpRequest): Promise<HelpRequest> {
+    try {
+      const [request] = await db
+        .insert(helpRequests)
+        .values(requestData)
+        .returning();
+      return request;
+    } catch (error) {
+      console.error("Error creating help request:", error);
+      throw new Error("Failed to create help request");
+    }
+  }
+
+  async markHelpRequestFulfilled(id: number): Promise<boolean> {
+    try {
+      await db
+        .update(helpRequests)
+        .set({ 
+          status: "fulfilled",
+          resolvedAt: new Date()
+        })
+        .where(eq(helpRequests.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error marking help request as fulfilled:", error);
+      return false;
+    }
+  }
+
+  async getHelpResponses(helpRequestId: number): Promise<HelpResponse[]> {
+    try {
+      return await db
+        .select()
+        .from(helpResponses)
+        .where(eq(helpResponses.helpRequestId, helpRequestId))
+        .orderBy(desc(helpResponses.respondedAt));
+    } catch (error) {
+      console.error("Error getting help responses:", error);
+      return [];
+    }
+  }
+
+  async createHelpResponse(responseData: InsertHelpResponse): Promise<HelpResponse> {
+    try {
+      const [response] = await db
+        .insert(helpResponses)
+        .values(responseData)
+        .returning();
+      return response;
+    } catch (error) {
+      console.error("Error creating help response:", error);
+      throw new Error("Failed to create help response");
     }
   }
 }
