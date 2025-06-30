@@ -835,7 +835,14 @@ export default function AdminPanel() {
   // Fetch employees data
   const { data: employeeRecords = [], isLoading: isLoadingEmployees, refetch: refetchEmployees } = useQuery<EmployeeRecord[]>({
     queryKey: ["/api/employees"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: async () => {
+      const result = await getQueryFn({ on401: "returnNull" })();
+      console.log('Frontend received employee data:', result?.length, 'employees');
+      console.log('Isaac in frontend data:', result?.find((emp: any) => emp.key === 'isaac'));
+      return result;
+    },
+    staleTime: 0, // Force fresh data
+    refetchOnMount: true, // Always refetch when component mounts
   });
 
   // Fetch training acknowledgments
