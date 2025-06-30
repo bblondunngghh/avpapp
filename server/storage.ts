@@ -208,14 +208,13 @@ export class DatabaseStorage implements IStorage {
         return false;
       }
 
-      // Use transaction to ensure both operations complete or both fail
-      await db.transaction(async (tx) => {
-        // First delete all related tax payment records
-        await tx.delete(employeeTaxPayments).where(eq(employeeTaxPayments.employeeId, id));
-        
-        // Then delete the employee record
-        await tx.delete(employees).where(eq(employees.id, id));
-      });
+      // First delete all related tax payment records manually
+      console.log(`Deleting tax payment records for employee ${id}`);
+      await db.delete(employeeTaxPayments).where(eq(employeeTaxPayments.employeeId, id));
+      
+      // Then delete the employee record
+      console.log(`Deleting employee record for employee ${id}`);
+      await db.delete(employees).where(eq(employees.id, id));
       
       console.log(`Successfully deleted employee with ID ${id}`);
       return true;
