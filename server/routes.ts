@@ -792,13 +792,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = insertEmployeeSchema.parse(req.body);
       
+      // Convert hireDate string to Date object for database storage
+      const employeeData = {
+        ...validatedData,
+        hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined
+      };
+      
       // Check if employee with this key already exists
-      const existingEmployee = await storage.getEmployeeByKey(validatedData.key);
+      const existingEmployee = await storage.getEmployeeByKey(employeeData.key);
       if (existingEmployee) {
         return res.status(400).json({ message: 'Employee with this key already exists' });
       }
       
-      const employee = await storage.createEmployee(validatedData);
+      const employee = await storage.createEmployee(employeeData as any);
       console.log("Employee created:", employee);
       res.status(200).json(employee);
     } catch (error: any) {
@@ -827,6 +833,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = updateEmployeeSchema.parse(req.body);
       
+      // Convert hireDate string to Date object for database storage
+      const updateData = {
+        ...validatedData,
+        hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined
+      } as any;
+      
       // Check if employee exists
       const existingEmployee = await storage.getEmployee(id);
       if (!existingEmployee) {
@@ -841,7 +853,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      const updatedEmployee = await storage.updateEmployee(id, validatedData);
+      const updatedEmployee = await storage.updateEmployee(id, updateData);
       res.json(updatedEmployee);
     } catch (error) {
       if (error instanceof z.ZodError) {
