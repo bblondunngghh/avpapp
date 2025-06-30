@@ -304,8 +304,8 @@ export default function HelpRequestPage() {
                   <div key={request.id} className="border rounded-lg p-4 bg-gray-50">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h3 className="font-semibold text-gray-900">{request.requestingLocation} requesting help</h3>
-                        <p className="text-sm text-orange-600 font-medium">Need: {request.requestType}</p>
+                        <h3 className="font-semibold text-gray-900">{request.requestingLocation}</h3>
+                        <p className="text-sm text-orange-600 font-medium">Type: {request.requestType}</p>
                       </div>
                       <span className="text-xs text-gray-500">
                         {new Date(request.requestedAt).toLocaleTimeString()}
