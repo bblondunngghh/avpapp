@@ -745,6 +745,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to fetch employees' });
     }
   });
+
+  // Get all employees (including inactive) for accounting purposes
+  apiRouter.get('/employees/all', async (req, res) => {
+    try {
+      const employees = await storage.getAllEmployees();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch all employees' });
+    }
+  });
   
   // Get active employees
   apiRouter.get('/employees/active', async (req, res) => {

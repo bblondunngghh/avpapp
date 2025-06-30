@@ -28,6 +28,7 @@ export interface IStorage {
   
   // Employee methods
   getEmployees(): Promise<Employee[]>;
+  getAllEmployees(): Promise<Employee[]>;
   getEmployee(id: number): Promise<Employee | undefined>;
   getEmployeeByKey(key: string): Promise<Employee | undefined>;
   getActiveEmployees(): Promise<Employee[]>;
@@ -139,6 +140,20 @@ export class DatabaseStorage implements IStorage {
       );
     } catch (error) {
       console.error("Error fetching employees:", error);
+      return [];
+    }
+  }
+
+  async getAllEmployees(): Promise<Employee[]> {
+    try {
+      // Return all employees (both active and inactive) for accounting purposes
+      return await withRetry(() => 
+        db.select()
+          .from(employees)
+          .orderBy(employees.fullName)
+      );
+    } catch (error) {
+      console.error("Error fetching all employees:", error);
       return [];
     }
   }

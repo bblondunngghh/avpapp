@@ -832,9 +832,17 @@ export default function AdminPanel() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
   
-  // Fetch employees data
+  // Fetch employees data (active only for main management)
   const { data: employeeRecords = [], isLoading: isLoadingEmployees, refetch: refetchEmployees } = useQuery<EmployeeRecord[]>({
     queryKey: ["/api/employees"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+    staleTime: 0, // Force fresh data
+    refetchOnMount: true, // Always refetch when component mounts
+  });
+
+  // Fetch all employees (including inactive) for accounting overview
+  const { data: allEmployeeRecords = [] } = useQuery<EmployeeRecord[]>({
+    queryKey: ["/api/employees/all"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     staleTime: 0, // Force fresh data
     refetchOnMount: true, // Always refetch when component mounts
@@ -863,12 +871,12 @@ export default function AdminPanel() {
 
   // Calculate employee accounting data when dependencies change
   useEffect(() => {
-    if (!employeeRecords.length || !reports.length) {
+    if (!allEmployeeRecords.length || !reports.length) {
       setEmployeeAccountingData([]);
       return;
     }
 
-    const calculatedData = employeeRecords.map(employee => {
+    const calculatedData = allEmployeeRecords.map(employee => {
       const employeeReports = reports.filter((report: any) => {
         const reportDate = parseLocalDate(report.date);
         const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
@@ -5030,7 +5038,7 @@ export default function AdminPanel() {
                   size="sm"
                   onClick={() => {
                     // Calculate employee accounting data with month filtering
-                    const employeeAccountingData = employeeRecords.map(employee => {
+                    const employeeAccountingData = allEmployeeRecords.map(employee => {
                       const employeeReports = reports.filter((report: any) => {
                         const reportDate = parseLocalDate(report.date);
                         const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
