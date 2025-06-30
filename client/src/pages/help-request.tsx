@@ -503,90 +503,51 @@ export default function HelpRequestPage() {
                     
                     <p className="text-xs text-gray-600 mb-3">{request.description}</p>
                     
-                    {/* Show dispatched help responses with completed button aligned */}
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 pr-4">
-                        {allResponses
-                          .filter(response => response.helpRequestId === request.id)
-                          .map(response => (
-                            <div key={response.id} className={`border rounded-lg p-3 mb-2 ${
+                    {/* Show dispatched help responses */}
+                    {allResponses
+                      .filter(response => response.helpRequestId === request.id)
+                      .map(response => (
+                        <div key={response.id} className={`border rounded-lg p-3 mb-2 ${
+                          response.status === 'completed' 
+                            ? 'bg-blue-100 border-blue-300' 
+                            : 'bg-green-100 border-green-300'
+                        }`}>
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${
                               response.status === 'completed' 
-                                ? 'bg-blue-100 border-blue-300' 
-                                : 'bg-green-100 border-green-300'
+                                ? 'bg-blue-500' 
+                                : 'bg-green-500 animate-pulse'
+                            }`}></div>
+                            <span className={`text-sm font-medium ${
+                              response.status === 'completed' 
+                                ? 'text-blue-800' 
+                                : 'text-green-800'
                             }`}>
-                              <div className="flex items-center gap-2">
-                                <div className={`w-2 h-2 rounded-full ${
-                                  response.status === 'completed' 
-                                    ? 'bg-blue-500' 
-                                    : 'bg-green-500 animate-pulse'
-                                }`}></div>
-                                <span className={`text-sm font-medium ${
-                                  response.status === 'completed' 
-                                    ? 'text-blue-800' 
-                                    : 'text-green-800'
-                                }`}>
-                                  {response.status === 'completed' 
-                                    ? `${response.respondingLocationName} attendant(s) returning to ${response.respondingLocationName}`
-                                    : `${response.respondingLocationName} dispatched ${response.attendantsOffered} attendant(s)`
-                                  }
-                                </span>
-                              </div>
-                              <p className={`text-xs mt-1 ${
-                                response.status === 'completed' 
-                                  ? 'text-blue-700' 
-                                  : 'text-green-700'
-                              }`}>
-                                {response.message}
-                              </p>
-                              <p className={`text-xs mt-1 ${
-                                response.status === 'completed' 
-                                  ? 'text-blue-600' 
-                                  : 'text-green-600'
-                              }`}>
-                                {response.status === 'completed' 
-                                  ? `Completed at ${new Date(response.completedAt || response.respondedAt).toLocaleTimeString()}`
-                                  : `Dispatched at ${new Date(response.respondedAt).toLocaleTimeString()}`
-                                }
-                              </p>
-                            </div>
-                          ))}
-                      </div>
-                      
-                      {/* Completed button aligned to the right */}
-                      {allResponses.some(response => response.helpRequestId === request.id) && (
-                        <div className="flex-shrink-0">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={async () => {
-                              try {
-                                const response = await fetch(`/api/help-requests/${request.id}/complete`, {
-                                  method: 'PUT'
-                                });
-                                if (response.ok) {
-                                  queryClient.invalidateQueries({ queryKey: ['/api/help-requests/active'] });
-                                  queryClient.invalidateQueries({ queryKey: ['/api/help-responses/recent'] });
-                                  toast({
-                                    title: "Help Request Completed",
-                                    description: "Attendants are returning to their original locations",
-                                    className: "bg-green-600 text-white",
-                                  });
-                                }
-                              } catch (error) {
-                                toast({
-                                  title: "Error",
-                                  description: "Failed to mark as completed",
-                                  className: "bg-red-600 text-white",
-                                });
+                              {response.status === 'completed' 
+                                ? `${response.respondingLocationName} attendant(s) returning to ${response.respondingLocationName}`
+                                : `${response.respondingLocationName} dispatched ${response.attendantsOffered} attendant(s)`
                               }
-                            }}
-                            className="text-green-600 border-green-200 hover:bg-green-50"
-                          >
-                            Completed
-                          </Button>
+                            </span>
+                          </div>
+                          <p className={`text-xs mt-1 ${
+                            response.status === 'completed' 
+                              ? 'text-blue-700' 
+                              : 'text-green-700'
+                          }`}>
+                            {response.message}
+                          </p>
+                          <p className={`text-xs mt-1 ${
+                            response.status === 'completed' 
+                              ? 'text-blue-600' 
+                              : 'text-green-600'
+                          }`}>
+                            {response.status === 'completed' 
+                              ? `Completed at ${new Date(response.completedAt || response.respondedAt).toLocaleTimeString()}`
+                              : `Dispatched at ${new Date(response.respondedAt).toLocaleTimeString()}`
+                            }
+                          </p>
                         </div>
-                      )}
-                    </div>
+                      ))}
                     
                     {selectedRequestId === request.id ? (
                       <div className="space-y-4 bg-white p-4 rounded-lg border">
@@ -718,6 +679,39 @@ export default function HelpRequestPage() {
                         >
                           Respond to {request.requestingLocation}
                         </Button>
+                        
+                        {/* Completed button on same line as Respond button */}
+                        {allResponses.some(response => response.helpRequestId === request.id) && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={async () => {
+                              try {
+                                const response = await fetch(`/api/help-requests/${request.id}/complete`, {
+                                  method: 'PUT'
+                                });
+                                if (response.ok) {
+                                  queryClient.invalidateQueries({ queryKey: ['/api/help-requests/active'] });
+                                  queryClient.invalidateQueries({ queryKey: ['/api/help-responses/recent'] });
+                                  toast({
+                                    title: "Help Request Completed",
+                                    description: "Attendants are returning to their original locations",
+                                    className: "bg-green-600 text-white",
+                                  });
+                                }
+                              } catch (error) {
+                                toast({
+                                  title: "Error",
+                                  description: "Failed to mark as completed",
+                                  className: "bg-red-600 text-white",
+                                });
+                              }
+                            }}
+                            className="text-green-600 border-green-200 hover:bg-green-50"
+                          >
+                            Completed
+                          </Button>
+                        )}
                       </div>
                     )}
                   </div>
