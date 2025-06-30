@@ -190,7 +190,7 @@ export default function HelpRequestPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="The Capital Grille">The Capital Grille</SelectItem>
-                  <SelectItem value="Bob's Steak & Chop House">Bob's Steak & Chop House</SelectItem>
+                  <SelectItem value="Bob's Steak and Chop House">Bob's Steak and Chop House</SelectItem>
                   <SelectItem value="Truluck's">Truluck's</SelectItem>
                   <SelectItem value="BOA Steakhouse">BOA Steakhouse</SelectItem>
                 </SelectContent>
