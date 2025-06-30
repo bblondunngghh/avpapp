@@ -15,6 +15,8 @@ import {
   updatePermitSchema,
   insertIncidentReportSchema,
   insertTrainingAcknowledgmentSchema,
+  insertHelpRequestSchema,
+  insertHelpResponseSchema,
   insertLocationSchema,
   updateLocationSchema,
   ShiftReport,
@@ -23,6 +25,8 @@ import {
   EmployeeTaxPayment,
   Permit,
   TrainingAcknowledgment,
+  HelpRequest,
+  HelpResponse,
   Location
 } from "@shared/schema";
 import { z } from "zod";
@@ -1778,6 +1782,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error serving BOA temp PDF template:', error);
       res.status(404).json({ error: 'PDF template not found' });
+    }
+  });
+
+  // Help request endpoints
+  apiRouter.get('/help-requests/active', async (req, res) => {
+    try {
+      const requests = await storage.getActiveHelpRequests();
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch active help requests' });
+    }
+  });
+
+  apiRouter.get('/help-requests/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid request ID' });
+      }
+      
+      const request = await storage.getHelpRequest(id);
+      if (!request) {
+        return res.status(404).json({ message: 'Help request not found' });
+      }
+      
+      res.json(request);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch help request' });
+    }
+  });
+
+  apiRouter.post('/help-requests', async (req, res) => {
+    try {
+      const requestData = insertHelpRequestSchema.parse(req.body);
+      const request = await storage.createHelpRequest(requestData);
+      res.status(201).json(request);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid help request data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to create help request' });
+    }
+  });
+
+  apiRouter.post('/help-requests/respond', async (req, res) => {
+    try {
+      const responseData = insertHelpResponseSchema.parse(req.body);
+      const response = await storage.createHelpResponse(responseData);
+      res.status(201).json(response);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid help response data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to create help response' });
+    }
+  });
+
+  apiRouter.put('/help-requests/:id/fulfill', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid request ID' });
+      }
+      
+      const success = await storage.markHelpRequestFulfilled(id);
+      if (!success) {
+        return res.status(404).json({ message: 'Help request not found' });
+      }
+      
+      res.json({ success: true, message: 'Help request marked as fulfilled' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fulfill help request' });
+    }
+  });
+
+  apiRouter.get('/help-requests/:id/responses', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid request ID' });
+      }
+      
+      const responses = await storage.getHelpResponses(id);
+      res.json(responses);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch help responses' });
     }
   });
 

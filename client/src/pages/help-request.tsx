@@ -47,10 +47,7 @@ export default function HelpRequestPage() {
   // Create help request mutation
   const createRequestMutation = useMutation({
     mutationFn: async (data: { requestingLocation: string; requestType: string; description: string }) => {
-      return apiRequest("/api/help-requests", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return apiRequest("/api/help-requests", "POST", data);
     },
     onSuccess: () => {
       toast({
@@ -74,10 +71,7 @@ export default function HelpRequestPage() {
   // Create response mutation
   const createResponseMutation = useMutation({
     mutationFn: async (data: { helpRequestId: number; respondingLocation: string; message: string }) => {
-      return apiRequest("/api/help-requests/respond", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return apiRequest("/api/help-requests/respond", "POST", data);
     },
     onSuccess: () => {
       toast({
