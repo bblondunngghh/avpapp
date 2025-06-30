@@ -132,6 +132,7 @@ export const locations = pgTable("locations", {
   phone: text("phone"), // Location phone number
   website: text("website"), // Location website URL
   smsPhone: text("sms_phone"), // SMS notification phone number for help requests
+  notificationEmail: text("notification_email"), // Email for help request notifications
 });
 
 export const insertLocationSchema = createInsertSchema(locations).pick({
@@ -145,6 +146,7 @@ export const insertLocationSchema = createInsertSchema(locations).pick({
   phone: true,
   website: true,
   smsPhone: true,
+  notificationEmail: true,
 });
 
 export const updateLocationSchema = createInsertSchema(locations).pick({
