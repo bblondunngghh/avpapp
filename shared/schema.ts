@@ -441,3 +441,44 @@ export type InsertHelpRequest = z.infer<typeof insertHelpRequestSchema>;
 export type HelpRequest = typeof helpRequests.$inferSelect;
 export type InsertHelpResponse = z.infer<typeof insertHelpResponseSchema>;
 export type HelpResponse = typeof helpResponses.$inferSelect;
+
+// Cover Count Reports schema for daily 5PM reporting
+export const coverCountReports = pgTable("cover_count_reports", {
+  id: serial("id").primaryKey(),
+  locationId: integer("location_id").notNull().references(() => locations.id),
+  coverCount: integer("cover_count").notNull(), // Number of covers expected for evening service
+  reportDate: text("report_date").notNull(), // YYYY-MM-DD format
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  submittedBy: text("submitted_by"), // Who submitted the report
+  notes: text("notes"), // Optional notes about the evening's expectations
+});
+
+// Push Notification Subscriptions schema
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: serial("id").primaryKey(),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dhKey: text("p256dh_key").notNull(),
+  authKey: text("auth_key").notNull(),
+  locationId: integer("location_id").references(() => locations.id), // Optional: associate with a location
+  deviceType: text("device_type"), // "desktop", "mobile", "tablet"
+  userAgent: text("user_agent"),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastNotificationAt: timestamp("last_notification_at"),
+});
+
+export const insertCoverCountReportSchema = createInsertSchema(coverCountReports).omit({
+  id: true,
+  submittedAt: true,
+});
+
+export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions).omit({
+  id: true,
+  createdAt: true,
+  lastNotificationAt: true,
+});
+
+export type InsertCoverCountReport = z.infer<typeof insertCoverCountReportSchema>;
+export type CoverCountReport = typeof coverCountReports.$inferSelect;
+export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;

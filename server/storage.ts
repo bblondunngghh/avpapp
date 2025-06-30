@@ -10,6 +10,8 @@ import {
   trainingAcknowledgments, type TrainingAcknowledgment, type InsertTrainingAcknowledgment,
   helpRequests, type HelpRequest, type InsertHelpRequest,
   helpResponses, type HelpResponse, type InsertHelpResponse,
+  coverCountReports, type CoverCountReport, type InsertCoverCountReport,
+  pushSubscriptions, type PushSubscription, type InsertPushSubscription,
   LOCATIONS
 } from "@shared/schema";
 import { db, withRetry } from "./db";
@@ -100,6 +102,20 @@ export interface IStorage {
   markHelpRequestCompleted(id: number): Promise<boolean>;
   getHelpResponses(helpRequestId: number): Promise<HelpResponse[]>;
   createHelpResponse(responseData: InsertHelpResponse): Promise<HelpResponse>;
+  getAllRecentHelpResponses(): Promise<HelpResponse[]>;
+  
+  // Cover count report methods
+  getTodaysCoverCountReports(): Promise<CoverCountReport[]>;
+  getCoverCountReport(locationId: number, reportDate: string): Promise<CoverCountReport | undefined>;
+  createCoverCountReport(reportData: InsertCoverCountReport): Promise<CoverCountReport>;
+  updateCoverCountReport(id: number, reportData: Partial<CoverCountReport>): Promise<CoverCountReport | undefined>;
+  
+  // Push notification methods
+  getPushSubscriptions(): Promise<PushSubscription[]>;
+  getActivePushSubscriptions(): Promise<PushSubscription[]>;
+  createPushSubscription(subscriptionData: InsertPushSubscription): Promise<PushSubscription>;
+  updatePushSubscription(id: number, data: Partial<PushSubscription>): Promise<PushSubscription | undefined>;
+  deletePushSubscription(endpoint: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -920,6 +936,132 @@ export class DatabaseStorage implements IStorage {
       return true;
     } catch (error) {
       console.error("Error marking help request as completed:", error);
+      return false;
+    }
+  }
+
+  // Cover count report methods
+  async getTodaysCoverCountReports(): Promise<CoverCountReport[]> {
+    try {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      const reports = await db
+        .select()
+        .from(coverCountReports)
+        .where(eq(coverCountReports.reportDate, today))
+        .orderBy(coverCountReports.submittedAt);
+      return reports;
+    } catch (error) {
+      console.error("Error fetching today's cover count reports:", error);
+      return [];
+    }
+  }
+
+  async getCoverCountReport(locationId: number, reportDate: string): Promise<CoverCountReport | undefined> {
+    try {
+      const [report] = await db
+        .select()
+        .from(coverCountReports)
+        .where(and(
+          eq(coverCountReports.locationId, locationId),
+          eq(coverCountReports.reportDate, reportDate)
+        ));
+      return report || undefined;
+    } catch (error) {
+      console.error("Error fetching cover count report:", error);
+      return undefined;
+    }
+  }
+
+  async createCoverCountReport(reportData: InsertCoverCountReport): Promise<CoverCountReport> {
+    try {
+      const [report] = await db
+        .insert(coverCountReports)
+        .values(reportData)
+        .returning();
+      return report;
+    } catch (error) {
+      console.error("Error creating cover count report:", error);
+      throw new Error("Failed to create cover count report");
+    }
+  }
+
+  async updateCoverCountReport(id: number, reportData: Partial<CoverCountReport>): Promise<CoverCountReport | undefined> {
+    try {
+      const [updatedReport] = await db
+        .update(coverCountReports)
+        .set(reportData)
+        .where(eq(coverCountReports.id, id))
+        .returning();
+      return updatedReport || undefined;
+    } catch (error) {
+      console.error("Error updating cover count report:", error);
+      return undefined;
+    }
+  }
+
+  // Push notification methods
+  async getPushSubscriptions(): Promise<PushSubscription[]> {
+    try {
+      const subscriptions = await db
+        .select()
+        .from(pushSubscriptions)
+        .orderBy(pushSubscriptions.createdAt);
+      return subscriptions;
+    } catch (error) {
+      console.error("Error fetching push subscriptions:", error);
+      return [];
+    }
+  }
+
+  async getActivePushSubscriptions(): Promise<PushSubscription[]> {
+    try {
+      const subscriptions = await db
+        .select()
+        .from(pushSubscriptions)
+        .where(eq(pushSubscriptions.isActive, true))
+        .orderBy(pushSubscriptions.createdAt);
+      return subscriptions;
+    } catch (error) {
+      console.error("Error fetching active push subscriptions:", error);
+      return [];
+    }
+  }
+
+  async createPushSubscription(subscriptionData: InsertPushSubscription): Promise<PushSubscription> {
+    try {
+      const [subscription] = await db
+        .insert(pushSubscriptions)
+        .values(subscriptionData)
+        .returning();
+      return subscription;
+    } catch (error) {
+      console.error("Error creating push subscription:", error);
+      throw new Error("Failed to create push subscription");
+    }
+  }
+
+  async updatePushSubscription(id: number, data: Partial<PushSubscription>): Promise<PushSubscription | undefined> {
+    try {
+      const [updatedSubscription] = await db
+        .update(pushSubscriptions)
+        .set(data)
+        .where(eq(pushSubscriptions.id, id))
+        .returning();
+      return updatedSubscription || undefined;
+    } catch (error) {
+      console.error("Error updating push subscription:", error);
+      return undefined;
+    }
+  }
+
+  async deletePushSubscription(endpoint: string): Promise<boolean> {
+    try {
+      await db
+        .delete(pushSubscriptions)
+        .where(eq(pushSubscriptions.endpoint, endpoint));
+      return true;
+    } catch (error) {
+      console.error("Error deleting push subscription:", error);
       return false;
     }
   }
