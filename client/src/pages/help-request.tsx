@@ -39,6 +39,11 @@ export default function HelpRequestPage() {
   const [responseMessage, setResponseMessage] = useState("");
   const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
 
+  // Fetch locations for ID mapping
+  const { data: locations = [] } = useQuery<Array<{ id: number; name: string }>>({
+    queryKey: ["/api/locations"],
+  });
+
   // Fetch active help requests
   const { data: helpRequests = [], isLoading } = useQuery<HelpRequest[]>({
     queryKey: ["/api/help-requests/active"],
@@ -46,7 +51,7 @@ export default function HelpRequestPage() {
 
   // Create help request mutation
   const createRequestMutation = useMutation({
-    mutationFn: async (data: { requestingLocation: string; requestType: string; description: string }) => {
+    mutationFn: async (data: { requestingLocationId: number; message: string; priority: string; staffCount: number }) => {
       return apiRequest("POST", "/api/help-requests", data);
     },
     onSuccess: () => {
@@ -100,10 +105,22 @@ export default function HelpRequestPage() {
       return;
     }
 
+    // Find the location ID from the location name
+    const location = locations.find(loc => loc.name === requestingLocation);
+    if (!location) {
+      toast({
+        title: "Invalid Location",
+        description: "Please select a valid location.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     createRequestMutation.mutate({
-      requestingLocation,
-      requestType: "Valet Assistance",
-      description: helpType,
+      requestingLocationId: location.id,
+      message: `Valet assistance needed: ${helpType}`,
+      priority: "normal",
+      staffCount: 1,
     });
   };
 
