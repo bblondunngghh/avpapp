@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
+import { emailService } from "./email-service";
 import { 
   insertShiftReportSchema, 
   updateShiftReportSchema,
@@ -1854,35 +1855,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const requestData = insertHelpRequestSchema.parse(req.body);
       const request = await storage.createHelpRequest(requestData);
       
-      // Send SMS notifications to all other locations
+      // Send email/SMS notifications to all other locations
       try {
         const locations = await storage.getLocations();
         const requestingLocation = locations.find(loc => loc.id === request.requestingLocationId);
         const appUrl = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'http://localhost:5000';
         
         if (requestingLocation) {
-          // Send SMS to all other locations that have SMS phone numbers
+          // Send notifications to all other active locations
           const otherLocations = locations.filter(loc => 
             loc.id !== request.requestingLocationId && 
-            loc.smsPhone && 
             loc.active
           );
           
+          let notificationsSent = 0;
+          
           for (const location of otherLocations) {
-            await smsService.sendHelpRequestNotification(
-              location.smsPhone!,
-              requestingLocation.name,
-              1, // Default to 1 attendant needed
-              request.priority || 'normal',
-              appUrl
-            );
+            // Prefer email, fallback to SMS
+            if (location.notificationEmail) {
+              await emailService.sendHelpRequestNotification(
+                location.notificationEmail,
+                requestingLocation.name,
+                1, // Default to 1 attendant needed
+                request.priority || 'normal',
+                appUrl
+              );
+              notificationsSent++;
+              console.log(`[HELP REQUEST] Email notification sent to ${location.name}`);
+            } else if (location.smsPhone) {
+              await smsService.sendHelpRequestNotification(
+                location.smsPhone,
+                requestingLocation.name,
+                1, // Default to 1 attendant needed
+                request.priority || 'normal',
+                appUrl
+              );
+              notificationsSent++;
+              console.log(`[HELP REQUEST] SMS notification sent to ${location.name}`);
+            }
           }
           
-          console.log(`[HELP REQUEST] SMS notifications sent to ${otherLocations.length} locations for request from ${requestingLocation.name}`);
+          console.log(`[HELP REQUEST] ${notificationsSent} notifications sent for request from ${requestingLocation.name}`);
         }
-      } catch (smsError) {
-        console.error('[HELP REQUEST] Failed to send SMS notifications:', smsError);
-        // Don't fail the request if SMS fails
+      } catch (notificationError) {
+        console.error('[HELP REQUEST] Failed to send notifications:', notificationError);
+        // Don't fail the request if notifications fail
       }
       
       res.status(201).json(request);
@@ -1910,16 +1927,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const requestingLocation = locations.find(loc => loc.id === helpRequest?.requestingLocationId);
         const appUrl = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'http://localhost:5000';
         
-        if (requestingLocation?.smsPhone && respondingLocation && helpRequest) {
-          await smsService.sendHelpResponseNotification(
-            requestingLocation.smsPhone,
-            respondingLocation.name,
-            requestingLocation.name,
-            response.message,
-            appUrl
-          );
-          
-          console.log(`[HELP RESPONSE] SMS notification sent to ${requestingLocation.name} about response from ${respondingLocation.name}`);
+        if (respondingLocation && helpRequest && requestingLocation) {
+          // Prefer email, fallback to SMS
+          if (requestingLocation.notificationEmail) {
+            await emailService.sendHelpResponseNotification(
+              requestingLocation.notificationEmail,
+              respondingLocation.name,
+              requestingLocation.name,
+              response.message,
+              appUrl
+            );
+            console.log(`[HELP RESPONSE] Email notification sent to ${requestingLocation.name} about response from ${respondingLocation.name}`);
+          } else if (requestingLocation.smsPhone) {
+            await smsService.sendHelpResponseNotification(
+              requestingLocation.smsPhone,
+              respondingLocation.name,
+              requestingLocation.name,
+              response.message,
+              appUrl
+            );
+            console.log(`[HELP RESPONSE] SMS notification sent to ${requestingLocation.name} about response from ${respondingLocation.name}`);
+          }
         }
       } catch (smsError) {
         console.error('[HELP RESPONSE] Failed to send SMS notification:', smsError);
@@ -2120,28 +2148,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update location SMS phone number
-  apiRouter.put('/locations/:id/sms-phone', async (req, res) => {
+  // Update location notification settings
+  apiRouter.put('/locations/:id/notifications', async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ message: 'Invalid location ID' });
       }
 
-      const { smsPhone } = req.body;
+      const { smsPhone, notificationEmail } = req.body;
       if (smsPhone && typeof smsPhone !== 'string') {
         return res.status(400).json({ message: 'SMS phone must be a string' });
       }
+      if (notificationEmail && typeof notificationEmail !== 'string') {
+        return res.status(400).json({ message: 'Notification email must be a string' });
+      }
 
-      const updated = await storage.updateLocation(id, { smsPhone });
+      const updateData: any = {};
+      if (smsPhone !== undefined) updateData.smsPhone = smsPhone;
+      if (notificationEmail !== undefined) updateData.notificationEmail = notificationEmail;
+
+      const updated = await storage.updateLocation(id, updateData);
       if (!updated) {
         return res.status(404).json({ message: 'Location not found' });
       }
 
-      res.json({ success: true, message: 'SMS phone number updated', location: updated });
+      res.json({ success: true, message: 'Notification settings updated', location: updated });
     } catch (error) {
-      console.error('Error updating location SMS phone:', error);
-      res.status(500).json({ message: 'Failed to update SMS phone number' });
+      console.error('Error updating location notifications:', error);
+      res.status(500).json({ message: 'Failed to update notification settings' });
+    }
+  });
+
+  // Test email notification endpoint
+  apiRouter.post('/email/test', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: 'Email address is required' });
+      }
+
+      if (!emailService.isConfigured()) {
+        return res.status(503).json({ message: 'Email service not configured. Please set EMAIL_USER and EMAIL_PASS environment variables.' });
+      }
+
+      const appUrl = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'http://localhost:5000';
+      const success = await emailService.sendHelpRequestNotification(
+        email,
+        'Test Location',
+        1,
+        'normal',
+        appUrl
+      );
+
+      if (success) {
+        res.json({ success: true, message: 'Test email sent successfully' });
+      } else {
+        res.status(500).json({ success: false, message: 'Failed to send test email' });
+      }
+    } catch (error) {
+      console.error('Error sending test email:', error);
+      res.status(500).json({ message: 'Failed to send test email' });
     }
   });
 
