@@ -305,14 +305,14 @@ export default function HelpRequestPage() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-semibold text-gray-900">{request.requestingLocation}</h3>
-                        <p className="text-sm text-red-600 font-medium">{request.requestType}</p>
+                        <p className="text-lg text-red-600 font-bold">{request.requestType}</p>
                       </div>
                       <span className="text-xs text-gray-500">
                         {new Date(request.requestedAt).toLocaleTimeString()}
                       </span>
                     </div>
                     
-                    <p className="text-gray-700 mb-3">{request.description}</p>
+                    <p className="text-xs text-gray-600 mb-3">{request.description}</p>
                     
                     {selectedRequestId === request.id ? (
                       <div className="space-y-4 bg-white p-4 rounded-lg border">
