@@ -175,10 +175,10 @@ export default function HelpRequestPage() {
       return;
     }
 
-    if (responseType === "help" && (!attendantsOffered || !estimatedArrival)) {
+    if (responseType === "help" && !attendantsOffered) {
       toast({
         title: "Missing Information",
-        description: "Please specify number of attendants and estimated arrival time.",
+        description: "Please specify number of attendants to send.",
         variant: "destructive",
       });
       return;
@@ -197,16 +197,14 @@ export default function HelpRequestPage() {
 
     const isBusy = responseType === "busy";
     const attendants = isBusy ? 0 : parseInt(attendantsOffered);
-    const arrival = isBusy ? "Not available" : estimatedArrival;
     const autoMessage = isBusy 
       ? `${respondingLocation} is too busy to send help at this time.`
-      : `Sending ${attendantsOffered} attendant(s) from ${respondingLocation}. ETA: ${estimatedArrival}`;
+      : `Sending ${attendantsOffered} attendant(s) from ${respondingLocation}.`;
 
     createResponseMutation.mutate({
       helpRequestId: requestId,
       respondingLocationId: location.id,
       attendantsOffered: attendants,
-      estimatedArrival: arrival,
       message: responseMessage.trim() || autoMessage,
     });
   };
@@ -395,22 +393,7 @@ export default function HelpRequestPage() {
                               </Select>
                             </div>
 
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Estimated Arrival Time
-                              </label>
-                              <Select value={estimatedArrival} onValueChange={setEstimatedArrival}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select arrival time" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="2-3 minutes">2-3 minutes</SelectItem>
-                                  <SelectItem value="5 minutes">5 minutes</SelectItem>
-                                  <SelectItem value="10 minutes">10 minutes</SelectItem>
-                                  <SelectItem value="15 minutes">15 minutes</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
+
                           </>
                         )}
 
@@ -444,7 +427,6 @@ export default function HelpRequestPage() {
                               setResponseMessage("");
                               setRespondingLocation("");
                               setAttendantsOffered("");
-                              setEstimatedArrival("");
                               setResponseType("help");
                             }}
                           >
