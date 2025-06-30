@@ -670,7 +670,7 @@ export default function HelpRequestPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex gap-2">
+                      <div className="flex gap-4">
                         <Button 
                           size="sm" 
                           variant="outline"
