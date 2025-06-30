@@ -855,6 +855,21 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Failed to create help response");
     }
   }
+
+  async getAllRecentHelpResponses(): Promise<HelpResponse[]> {
+    try {
+      // Get responses from the last 30 minutes for notifications
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+      return await db
+        .select()
+        .from(helpResponses)
+        .where(gte(helpResponses.respondedAt, thirtyMinutesAgo))
+        .orderBy(desc(helpResponses.respondedAt));
+    } catch (error) {
+      console.error("Error getting recent help responses:", error);
+      return [];
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();

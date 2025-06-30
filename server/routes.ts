@@ -1877,6 +1877,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all recent help responses for notifications
+  apiRouter.get('/help-requests/responses', async (req, res) => {
+    try {
+      const responses = await storage.getAllRecentHelpResponses();
+      res.json(responses);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch help responses' });
+    }
+  });
+
   // Register API routes
   app.use('/api', apiRouter);
 

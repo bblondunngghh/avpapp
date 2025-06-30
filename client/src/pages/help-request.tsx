@@ -40,7 +40,6 @@ export default function HelpRequestPage() {
   const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
   const [respondingLocation, setRespondingLocation] = useState("");
   const [attendantsOffered, setAttendantsOffered] = useState("");
-  const [estimatedArrival, setEstimatedArrival] = useState("");
   const [responseType, setResponseType] = useState<"help" | "busy">("help");
 
   // Fetch locations for ID mapping
@@ -51,6 +50,40 @@ export default function HelpRequestPage() {
   // Fetch active help requests
   const { data: helpRequests = [], isLoading } = useQuery<HelpRequest[]>({
     queryKey: ["/api/help-requests/active"],
+    refetchInterval: 5000, // Poll every 5 seconds for real-time updates
+  });
+
+  // Check for new responses to show popup notifications
+  const { data: allResponses = [] } = useQuery<HelpResponse[]>({
+    queryKey: ["/api/help-requests/responses"],
+    refetchInterval: 3000, // Check for responses every 3 seconds
+    onSuccess: (responses) => {
+      // Show popup notification for new responses
+      const now = Date.now();
+      const recentResponses = responses.filter(response => {
+        const responseTime = new Date(response.respondedAt).getTime();
+        return now - responseTime < 10000; // Show notification for responses in last 10 seconds
+      });
+
+      recentResponses.forEach(response => {
+        const helpingLocation = locations.find(loc => loc.id === response.respondingLocationId)?.name;
+        if (response.attendantsOffered > 0) {
+          toast({
+            title: "🚨 Help is on the way!",
+            description: `${helpingLocation} is sending ${response.attendantsOffered} attendant(s). ETA: ${response.estimatedArrival}`,
+            className: "bg-green-600 text-white",
+            duration: 8000,
+          });
+        } else {
+          toast({
+            title: "📢 Response Received",
+            description: `${helpingLocation} is too busy to send help at this time.`,
+            className: "bg-orange-500 text-white",
+            duration: 6000,
+          });
+        }
+      });
+    },
   });
 
   // Create help request mutation
@@ -78,7 +111,7 @@ export default function HelpRequestPage() {
 
   // Create response mutation
   const createResponseMutation = useMutation({
-    mutationFn: async (data: { helpRequestId: number; respondingLocationId: number; attendantsOffered: number; estimatedArrival: string; message: string }) => {
+    mutationFn: async (data: { helpRequestId: number; respondingLocationId: number; attendantsOffered: number; message: string }) => {
       return apiRequest("POST", "/api/help-requests/respond", data);
     },
     onSuccess: () => {
@@ -91,7 +124,6 @@ export default function HelpRequestPage() {
       setSelectedRequestId(null);
       setRespondingLocation("");
       setAttendantsOffered("");
-      setEstimatedArrival("");
       setResponseType("help");
       queryClient.invalidateQueries({ queryKey: ["/api/help-requests/active"] });
     },
@@ -285,18 +317,122 @@ export default function HelpRequestPage() {
                     <p className="text-gray-700 mb-3">{request.description}</p>
                     
                     {selectedRequestId === request.id ? (
-                      <div className="space-y-2">
-                        <Textarea
-                          placeholder="Type your response..."
-                          value={responseMessage}
-                          onChange={(e) => setResponseMessage(e.target.value)}
-                          rows={2}
-                        />
+                      <div className="space-y-4 bg-white p-4 rounded-lg border">
+                        <h4 className="font-medium text-gray-900">Respond to Help Request</h4>
+                        
+                        {/* Location Dropdown */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Your Location
+                          </label>
+                          <Select value={respondingLocation} onValueChange={setRespondingLocation}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select your location" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="The Capital Grille">The Capital Grille</SelectItem>
+                              <SelectItem value="Bob's Steak and Chop House">Bob's Steak and Chop House</SelectItem>
+                              <SelectItem value="Truluck's">Truluck's</SelectItem>
+                              <SelectItem value="BOA Steakhouse">BOA Steakhouse</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Response Type Radio Buttons */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Response Type
+                          </label>
+                          <div className="space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="help"
+                                name="responseType"
+                                value="help"
+                                checked={responseType === "help"}
+                                onChange={(e) => setResponseType(e.target.value as "help" | "busy")}
+                                className="text-blue-600"
+                              />
+                              <label htmlFor="help" className="text-sm text-gray-700">
+                                Help is on the way
+                              </label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="busy"
+                                name="responseType"
+                                value="busy"
+                                checked={responseType === "busy"}
+                                onChange={(e) => setResponseType(e.target.value as "help" | "busy")}
+                                className="text-blue-600"
+                              />
+                              <label htmlFor="busy" className="text-sm text-gray-700">
+                                Too busy to send help
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Conditional Fields for Help Response */}
+                        {responseType === "help" && (
+                          <>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Number of Attendants Sending
+                              </label>
+                              <Select value={attendantsOffered} onValueChange={setAttendantsOffered}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select number" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="1">1 attendant</SelectItem>
+                                  <SelectItem value="2">2 attendants</SelectItem>
+                                  <SelectItem value="3">3 attendants</SelectItem>
+                                  <SelectItem value="4">4 attendants</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Estimated Arrival Time
+                              </label>
+                              <Select value={estimatedArrival} onValueChange={setEstimatedArrival}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select arrival time" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="2-3 minutes">2-3 minutes</SelectItem>
+                                  <SelectItem value="5 minutes">5 minutes</SelectItem>
+                                  <SelectItem value="10 minutes">10 minutes</SelectItem>
+                                  <SelectItem value="15 minutes">15 minutes</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Optional Message */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Additional Message (Optional)
+                          </label>
+                          <Textarea
+                            placeholder="Type any additional details..."
+                            value={responseMessage}
+                            onChange={(e) => setResponseMessage(e.target.value)}
+                            rows={2}
+                          />
+                        </div>
+
                         <div className="flex gap-2">
                           <Button 
                             size="sm"
                             onClick={() => handleSubmitResponse(request.id)}
                             disabled={createResponseMutation.isPending}
+                            className="bg-blue-600 hover:bg-blue-700"
                           >
                             {createResponseMutation.isPending ? "Sending..." : "Send Response"}
                           </Button>
@@ -306,6 +442,10 @@ export default function HelpRequestPage() {
                             onClick={() => {
                               setSelectedRequestId(null);
                               setResponseMessage("");
+                              setRespondingLocation("");
+                              setAttendantsOffered("");
+                              setEstimatedArrival("");
+                              setResponseType("help");
                             }}
                           >
                             Cancel
