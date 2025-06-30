@@ -345,7 +345,7 @@ export default function HelpRequestPage() {
                         <span className="text-xs text-gray-500 block">
                           {new Date(request.requestedAt).toLocaleTimeString()}
                         </span>
-                        {request.status === "completed" && request.autoRemoveAt && (
+                        {request.status === "completed" && request.completedAt && request.autoRemoveAt && (
                           <CountdownTimer autoRemoveAt={request.autoRemoveAt} />
                         )}
                       </div>

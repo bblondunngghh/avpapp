@@ -1791,7 +1791,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const requests = await storage.getActiveHelpRequests();
       
       // Map location IDs to names and extract request type
-      const locationNames = ['The Capital Grille', 'Truluck\'s', 'BOA Steakhouse', 'Bob\'s Steak and Chop House'];
+      const locationNames = ['', 'The Capital Grille', 'Bob\'s Steak and Chop House', 'Truluck\'s', 'BOA Steakhouse'];
       
       const transformedRequests = requests.map(request => {
         // Extract request type from message (backed up, pulls, parks)
@@ -1920,7 +1920,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const responses = await storage.getAllRecentHelpResponses();
       
       // Transform responses to include location names
-      const locationNames = ['The Capital Grille', 'Trulucks', 'BOA Steakhouse', "Bob's Steak and Chop House"];
+      const locationNames = ['', 'The Capital Grille', "Bob's Steak and Chop House", 'Truluck\'s', 'BOA Steakhouse'];
       
       const transformedResponses = responses.map(response => ({
         ...response,
