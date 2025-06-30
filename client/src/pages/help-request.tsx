@@ -8,10 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, HelpCircle, AlertTriangle, ClipboardList, Bell } from "lucide-react";
+import { ArrowLeft, HelpCircle, AlertTriangle, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import clerkIcon from "@/assets/clerk-icon.png";
 import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
+import bookIcon from "@/assets/book-icon.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -369,7 +370,7 @@ export default function HelpRequestPage() {
       <Card className="border-blue-200 shadow-md mb-6">
         <CardHeader className="bg-blue-50 border-b border-blue-200">
           <CardTitle className="flex items-center gap-2 text-blue-800">
-            <ClipboardList className="h-5 w-5" />
+            <img src={bookIcon} alt="Book" className="h-5 w-5" />
             Daily Cover Count Reports
           </CardTitle>
         </CardHeader>
@@ -730,7 +731,7 @@ export default function HelpRequestPage() {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <ClipboardList className="h-5 w-5" />
+                <img src={bookIcon} alt="Book" className="h-5 w-5" />
                 Submit Cover Count Report
               </DialogTitle>
             </DialogHeader>
