@@ -416,6 +416,8 @@ export const helpResponses = pgTable("help_responses", {
   estimatedArrival: text("estimated_arrival"), // "5 minutes", "10 minutes", etc.
   message: text("message"),
   respondedAt: timestamp("responded_at").defaultNow().notNull(),
+  status: text("status").notNull().default("dispatched"), // "dispatched", "completed", "cancelled"
+  completedAt: timestamp("completed_at"),
 });
 
 export const insertHelpRequestSchema = createInsertSchema(helpRequests).pick({

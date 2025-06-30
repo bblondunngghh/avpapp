@@ -1894,6 +1894,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  apiRouter.put('/help-requests/:id/complete', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid request ID' });
+      }
+      
+      const success = await storage.markHelpResponsesCompleted(id);
+      if (!success) {
+        return res.status(404).json({ message: 'Help request not found or no responses to complete' });
+      }
+      
+      res.json({ success: true, message: 'Help responses marked as completed' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to complete help responses' });
+    }
+  });
+
   // Get all recent help responses for notifications
   apiRouter.get('/help-responses/recent', async (req, res) => {
     try {

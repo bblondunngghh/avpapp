@@ -318,16 +318,44 @@ export default function HelpRequestPage() {
                     {allResponses
                       .filter(response => response.helpRequestId === request.id)
                       .map(response => (
-                        <div key={response.id} className="bg-green-100 border border-green-300 rounded-lg p-3 mb-2">
+                        <div key={response.id} className={`border rounded-lg p-3 mb-2 ${
+                          response.status === 'completed' 
+                            ? 'bg-blue-100 border-blue-300' 
+                            : 'bg-green-100 border-green-300'
+                        }`}>
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium text-green-800">
-                              {response.respondingLocationName} dispatched {response.attendantsOffered} attendant(s)
+                            <div className={`w-2 h-2 rounded-full ${
+                              response.status === 'completed' 
+                                ? 'bg-blue-500' 
+                                : 'bg-green-500 animate-pulse'
+                            }`}></div>
+                            <span className={`text-sm font-medium ${
+                              response.status === 'completed' 
+                                ? 'text-blue-800' 
+                                : 'text-green-800'
+                            }`}>
+                              {response.status === 'completed' 
+                                ? `${response.respondingLocationName} attendant(s) returning to ${response.respondingLocationName}`
+                                : `${response.respondingLocationName} dispatched ${response.attendantsOffered} attendant(s)`
+                              }
                             </span>
                           </div>
-                          <p className="text-xs text-green-700 mt-1">{response.message}</p>
-                          <p className="text-xs text-green-600 mt-1">
-                            Dispatched at {new Date(response.respondedAt).toLocaleTimeString()}
+                          <p className={`text-xs mt-1 ${
+                            response.status === 'completed' 
+                              ? 'text-blue-700' 
+                              : 'text-green-700'
+                          }`}>
+                            {response.message}
+                          </p>
+                          <p className={`text-xs mt-1 ${
+                            response.status === 'completed' 
+                              ? 'text-blue-600' 
+                              : 'text-green-600'
+                          }`}>
+                            {response.status === 'completed' 
+                              ? `Completed at ${new Date(response.completedAt || response.respondedAt).toLocaleTimeString()}`
+                              : `Dispatched at ${new Date(response.respondedAt).toLocaleTimeString()}`
+                            }
                           </p>
                         </div>
                       ))}
@@ -453,14 +481,49 @@ export default function HelpRequestPage() {
                         </div>
                       </div>
                     ) : (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => setSelectedRequestId(request.id)}
-                        className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                      >
-                        Respond to {request.requestingLocation}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => setSelectedRequestId(request.id)}
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                        >
+                          Respond to {request.requestingLocation}
+                        </Button>
+                        
+                        {/* Show Completed button if there are responses for this request */}
+                        {allResponses.some(response => response.helpRequestId === request.id) && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={async () => {
+                              try {
+                                const response = await fetch(`/api/help-requests/${request.id}/complete`, {
+                                  method: 'PUT'
+                                });
+                                if (response.ok) {
+                                  queryClient.invalidateQueries({ queryKey: ['/api/help-requests/active'] });
+                                  queryClient.invalidateQueries({ queryKey: ['/api/help-responses/recent'] });
+                                  toast({
+                                    title: "Help Request Completed",
+                                    description: "Attendants are returning to their original locations",
+                                    className: "bg-green-600 text-white",
+                                  });
+                                }
+                              } catch (error) {
+                                toast({
+                                  title: "Error",
+                                  description: "Failed to mark as completed",
+                                  className: "bg-red-600 text-white",
+                                });
+                              }
+                            }}
+                            className="text-green-600 border-green-200 hover:bg-green-50"
+                          >
+                            Completed
+                          </Button>
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}

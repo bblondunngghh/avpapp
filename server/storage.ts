@@ -870,6 +870,24 @@ export class DatabaseStorage implements IStorage {
       return [];
     }
   }
+
+  async markHelpResponsesCompleted(helpRequestId: number): Promise<boolean> {
+    try {
+      const result = await db
+        .update(helpResponses)
+        .set({ 
+          status: 'completed',
+          completedAt: new Date()
+        })
+        .where(eq(helpResponses.helpRequestId, helpRequestId))
+        .returning();
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error marking help responses as completed:", error);
+      return false;
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();
