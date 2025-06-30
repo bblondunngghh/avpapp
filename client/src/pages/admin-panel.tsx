@@ -4779,21 +4779,44 @@ export default function AdminPanel() {
                       <div className="grid gap-2">
                         <Label>Role</Label>
                         <div className="flex items-center space-x-2">
-                          <input 
-                            type="checkbox"
-                            id="edit-isShiftLeader"
-                            checked={newEmployee.isShiftLeader}
-                            onChange={(e) => {
-                              console.log('Edit Shift Leader checkbox clicked:', e.target.checked);
-                              console.log('Current newEmployee state:', newEmployee);
-                              const updatedEmployee = {...newEmployee, isShiftLeader: e.target.checked};
-                              console.log('Updated employee state:', updatedEmployee);
-                              setNewEmployee(updatedEmployee);
+                          <div 
+                            className="relative inline-flex items-center cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log('Custom checkbox clicked - current state:', newEmployee.isShiftLeader);
+                              const newValue = !newEmployee.isShiftLeader;
+                              console.log('Setting isShiftLeader to:', newValue);
+                              setNewEmployee(prev => ({
+                                ...prev,
+                                isShiftLeader: newValue
+                              }));
                             }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                            style={{ accentColor: '#2563eb' }}
-                          />
-                          <Label htmlFor="edit-isShiftLeader" className="text-sm font-normal cursor-pointer">
+                          >
+                            <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                              newEmployee.isShiftLeader 
+                                ? 'bg-blue-600 border-blue-600' 
+                                : 'bg-white border-gray-300 hover:border-gray-400'
+                            }`}>
+                              {newEmployee.isShiftLeader && (
+                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <Label 
+                            className="text-sm font-normal cursor-pointer select-none"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log('Label clicked - current state:', newEmployee.isShiftLeader);
+                              const newValue = !newEmployee.isShiftLeader;
+                              console.log('Setting isShiftLeader to:', newValue);
+                              setNewEmployee(prev => ({
+                                ...prev,
+                                isShiftLeader: newValue
+                              }));
+                            }}
+                          >
                             Shift Leader 
                             <span className="text-xs text-gray-500 ml-1">
                               (state: {newEmployee.isShiftLeader ? 'true' : 'false'})
