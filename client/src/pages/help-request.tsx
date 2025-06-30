@@ -55,7 +55,7 @@ export default function HelpRequestPage() {
 
   // Check for new responses to show popup notifications
   const { data: allResponses = [] } = useQuery<HelpResponse[]>({
-    queryKey: ["/api/help-requests/all-responses"],
+    queryKey: ["/api/help-responses/recent"],
     refetchInterval: 3000, // Check for responses every 3 seconds
     onSuccess: (responses) => {
       // Show popup notification for new responses
@@ -313,6 +313,24 @@ export default function HelpRequestPage() {
                     </div>
                     
                     <p className="text-xs text-gray-600 mb-3">{request.description}</p>
+                    
+                    {/* Show dispatched help responses */}
+                    {allResponses
+                      .filter(response => response.helpRequestId === request.id)
+                      .map(response => (
+                        <div key={response.id} className="bg-green-100 border border-green-300 rounded-lg p-3 mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm font-medium text-green-800">
+                              {response.respondingLocationName} dispatched {response.attendantsOffered} attendant(s)
+                            </span>
+                          </div>
+                          <p className="text-xs text-green-700 mt-1">{response.message}</p>
+                          <p className="text-xs text-green-600 mt-1">
+                            Dispatched at {new Date(response.respondedAt).toLocaleTimeString()}
+                          </p>
+                        </div>
+                      ))}
                     
                     {selectedRequestId === request.id ? (
                       <div className="space-y-4 bg-white p-4 rounded-lg border">
