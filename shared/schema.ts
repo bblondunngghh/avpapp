@@ -403,9 +403,11 @@ export const helpRequests = pgTable("help_requests", {
   priority: text("priority").notNull().default("normal"), // "urgent", "normal", "low"
   message: text("message").notNull(),
   staffCount: integer("staff_count").notNull().default(1), // How many staff currently working
-  status: text("status").notNull().default("active"), // "active", "fulfilled", "cancelled"
+  status: text("status").notNull().default("active"), // "active", "fulfilled", "cancelled", "completed"
   requestedAt: timestamp("requested_at").defaultNow().notNull(),
   resolvedAt: timestamp("resolved_at"),
+  completedAt: timestamp("completed_at"), // When help was marked as completed
+  autoRemoveAt: timestamp("auto_remove_at"), // When request should be auto-removed (15 minutes after completion)
 });
 
 export const helpResponses = pgTable("help_responses", {

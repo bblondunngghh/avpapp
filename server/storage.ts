@@ -97,6 +97,7 @@ export interface IStorage {
   getHelpRequest(id: number): Promise<HelpRequest | undefined>;
   createHelpRequest(requestData: InsertHelpRequest): Promise<HelpRequest>;
   markHelpRequestFulfilled(id: number): Promise<boolean>;
+  markHelpRequestCompleted(id: number): Promise<boolean>;
   getHelpResponses(helpRequestId: number): Promise<HelpResponse[]>;
   createHelpResponse(responseData: InsertHelpResponse): Promise<HelpResponse>;
 }
@@ -885,6 +886,31 @@ export class DatabaseStorage implements IStorage {
       return result.length > 0;
     } catch (error) {
       console.error("Error marking help responses as completed:", error);
+      return false;
+    }
+  }
+
+  async markHelpRequestCompleted(id: number): Promise<boolean> {
+    try {
+      const now = new Date();
+      const autoRemoveTime = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
+      
+      // Mark the help request as completed
+      await db
+        .update(helpRequests)
+        .set({ 
+          status: "completed",
+          completedAt: now,
+          autoRemoveAt: autoRemoveTime
+        })
+        .where(eq(helpRequests.id, id));
+      
+      // Also mark all help responses as completed
+      await this.markHelpResponsesCompleted(id);
+      
+      return true;
+    } catch (error) {
+      console.error("Error marking help request as completed:", error);
       return false;
     }
   }

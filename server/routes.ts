@@ -1901,14 +1901,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Invalid request ID' });
       }
       
-      const success = await storage.markHelpResponsesCompleted(id);
+      const success = await storage.markHelpRequestCompleted(id);
       if (!success) {
-        return res.status(404).json({ message: 'Help request not found or no responses to complete' });
+        return res.status(404).json({ message: 'Help request not found' });
       }
       
-      res.json({ success: true, message: 'Help responses marked as completed' });
+      res.json({ success: true, message: 'Help request marked as completed and will be auto-removed in 15 minutes' });
     } catch (error) {
-      res.status(500).json({ message: 'Failed to complete help responses' });
+      res.status(500).json({ message: 'Failed to complete help request' });
     }
   });
 
