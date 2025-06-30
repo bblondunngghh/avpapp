@@ -4432,18 +4432,21 @@ export default function AdminPanel() {
                               size="sm"
                               className="px-2 h-7 text-xs"
                               onClick={() => {
+                                console.log('Opening edit dialog for employee:', employee);
                                 // Set current employee data to form
-                                setNewEmployee({
+                                const employeeData = {
                                   key: employee.key,
                                   fullName: employee.fullName,
-                                  isActive: employee.isActive,
-                                  isShiftLeader: employee.isShiftLeader,
+                                  isActive: Boolean(employee.isActive),
+                                  isShiftLeader: Boolean(employee.isShiftLeader),
                                   phone: employee.phone || '',
                                   email: employee.email || '',
                                   hireDate: employee.hireDate.split('T')[0],
                                   notes: employee.notes || '',
                                   ssn: employee.ssn || ''
-                                });
+                                };
+                                console.log('Setting form data:', employeeData);
+                                setNewEmployee(employeeData);
                                 // Set editing ID
                                 setEditingEmployeeId(employee.id);
                                 // Open edit dialog
@@ -4700,7 +4703,25 @@ export default function AdminPanel() {
               </Dialog>
               
               {/* Edit Employee Dialog */}
-              <Dialog open={isEditEmployeeOpen} onOpenChange={setIsEditEmployeeOpen}>
+              <Dialog open={isEditEmployeeOpen} onOpenChange={(open) => {
+                setIsEditEmployeeOpen(open);
+                if (!open) {
+                  // Reset form when dialog closes
+                  console.log('Resetting edit form');
+                  setNewEmployee({
+                    key: '',
+                    fullName: '',
+                    isActive: true,
+                    isShiftLeader: false,
+                    phone: '',
+                    email: '',
+                    hireDate: new Date().toISOString().split('T')[0],
+                    notes: '',
+                    ssn: ''
+                  });
+                  setEditingEmployeeId(null);
+                }
+              }}>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Edit Employee</DialogTitle>
@@ -4764,12 +4785,20 @@ export default function AdminPanel() {
                             checked={newEmployee.isShiftLeader}
                             onChange={(e) => {
                               console.log('Edit Shift Leader checkbox clicked:', e.target.checked);
-                              setNewEmployee({...newEmployee, isShiftLeader: e.target.checked});
+                              console.log('Current newEmployee state:', newEmployee);
+                              const updatedEmployee = {...newEmployee, isShiftLeader: e.target.checked};
+                              console.log('Updated employee state:', updatedEmployee);
+                              setNewEmployee(updatedEmployee);
                             }}
                             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                             style={{ accentColor: '#2563eb' }}
                           />
-                          <Label htmlFor="edit-isShiftLeader" className="text-sm font-normal cursor-pointer">Shift Leader</Label>
+                          <Label htmlFor="edit-isShiftLeader" className="text-sm font-normal cursor-pointer">
+                            Shift Leader 
+                            <span className="text-xs text-gray-500 ml-1">
+                              (state: {newEmployee.isShiftLeader ? 'true' : 'false'})
+                            </span>
+                          </Label>
                         </div>
                       </div>
                     </div>
