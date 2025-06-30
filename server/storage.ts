@@ -201,11 +201,23 @@ export class DatabaseStorage implements IStorage {
 
   async deleteEmployee(id: number): Promise<boolean> {
     try {
-      // First delete all related tax payment records
-      await db.delete(employeeTaxPayments).where(eq(employeeTaxPayments.employeeId, id));
+      // First check if employee exists
+      const employee = await db.select().from(employees).where(eq(employees.id, id)).limit(1);
+      if (employee.length === 0) {
+        console.log(`Employee with ID ${id} not found`);
+        return false;
+      }
+
+      // Use transaction to ensure both operations complete or both fail
+      await db.transaction(async (tx) => {
+        // First delete all related tax payment records
+        await tx.delete(employeeTaxPayments).where(eq(employeeTaxPayments.employeeId, id));
+        
+        // Then delete the employee record
+        await tx.delete(employees).where(eq(employees.id, id));
+      });
       
-      // Then delete the employee record
-      await db.delete(employees).where(eq(employees.id, id));
+      console.log(`Successfully deleted employee with ID ${id}`);
       return true;
     } catch (error) {
       console.error("Error deleting employee:", error);
