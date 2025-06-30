@@ -4829,10 +4829,7 @@ export default function AdminPanel() {
                               }));
                             }}
                           >
-                            Shift Leader 
-                            <span className="text-xs text-gray-500 ml-1">
-                              (state: {newEmployee.isShiftLeader ? 'true' : 'false'})
-                            </span>
+                            Shift Leader
                           </Label>
                         </div>
                       </div>
