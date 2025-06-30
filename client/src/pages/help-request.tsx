@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, HelpCircle, Users, AlertTriangle, ClipboardList, Bell } from "lucide-react";
+import { ArrowLeft, HelpCircle, AlertTriangle, ClipboardList, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import clerkIcon from "@/assets/clerk-icon.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -473,7 +474,7 @@ export default function HelpRequestPage() {
             {/* Active Requests Section */}
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <Users className="h-4 w-4 text-blue-600" />
+                <img src={clerkIcon} alt="Clerk" className="h-4 w-4" />
                 Active Help Requests
               </h3>
               {isLoading ? (
