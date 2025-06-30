@@ -840,12 +840,7 @@ export default function AdminPanel() {
     refetchOnMount: true, // Always refetch when component mounts
   });
 
-  // Add debugging for employee data
-  React.useEffect(() => {
-    console.log('Employee records updated:', employeeRecords?.length, 'employees');
-    const isaac = employeeRecords?.find(emp => emp.key === 'isaac');
-    console.log('Isaac found in employeeRecords:', isaac);
-  }, [employeeRecords]);
+
 
   // Fetch training acknowledgments
   const { data: trainingAcknowledgments = [] } = useQuery({
