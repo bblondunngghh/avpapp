@@ -5421,8 +5421,7 @@ export default function AdminPanel() {
                                 ${employee.totalAdditionalTaxPayments.toFixed(2)}
                               </TableCell>
                             </TableRow>
-                            );
-                          })}
+                          ))}
                           <TableRow className="bg-muted/50 font-bold">
                             <TableCell>TOTALS</TableCell>
                             <TableCell className="text-center">
