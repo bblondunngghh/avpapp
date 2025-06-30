@@ -350,6 +350,52 @@ export default function HelpRequestPage() {
         </div>
       </div>
 
+      {/* Cover Count Reporting Section */}
+      <Card className="border-blue-200 shadow-md mb-6">
+        <CardHeader className="bg-blue-50 border-b border-blue-200">
+          <CardTitle className="flex items-center gap-2 text-blue-800">
+            <ClipboardList className="h-5 w-5" />
+            Daily Cover Count Reports
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="mb-4">
+            <Button 
+              onClick={() => setShowCoverCountDialog(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Bell className="h-4 w-4 mr-2" />
+              Submit Cover Count Report
+            </Button>
+          </div>
+
+          {/* Today's Reports Display */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {locations.map(location => {
+              const report = coverCountReports.find(r => r.locationId === location.id);
+              return (
+                <div key={location.id} className="p-3 bg-gray-50 rounded-lg border">
+                  <h4 className="font-medium text-sm text-gray-800 mb-1">{location.name}</h4>
+                  {report ? (
+                    <div>
+                      <p className="text-lg font-bold text-green-600">{report.coverCount} covers</p>
+                      <p className="text-xs text-gray-500">
+                        Reported at {new Date(report.submittedAt).toLocaleTimeString()}
+                      </p>
+                      {report.notes && (
+                        <p className="text-xs text-gray-600 mt-1 italic">"{report.notes}"</p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-orange-600">Not yet reported</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-2">
         {/* Request Help Section */}
         <Card>
@@ -657,51 +703,7 @@ export default function HelpRequestPage() {
           </CardContent>
         </Card>
 
-        {/* Cover Count Reporting Section */}
-        <Card className="border-blue-200 shadow-md">
-          <CardHeader className="bg-blue-50 border-b border-blue-200">
-            <CardTitle className="flex items-center gap-2 text-blue-800">
-              <ClipboardList className="h-5 w-5" />
-              Daily Cover Count Reports
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            <div className="mb-4">
-              <Button 
-                onClick={() => setShowCoverCountDialog(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Bell className="h-4 w-4 mr-2" />
-                Submit Cover Count Report
-              </Button>
-            </div>
 
-            {/* Today's Reports Display */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              {locations.map(location => {
-                const report = coverCountReports.find(r => r.locationId === location.id);
-                return (
-                  <div key={location.id} className="p-3 bg-gray-50 rounded-lg border">
-                    <h4 className="font-medium text-sm text-gray-800 mb-1">{location.name}</h4>
-                    {report ? (
-                      <div>
-                        <p className="text-lg font-bold text-green-600">{report.coverCount} covers</p>
-                        <p className="text-xs text-gray-500">
-                          Reported at {new Date(report.submittedAt).toLocaleTimeString()}
-                        </p>
-                        {report.notes && (
-                          <p className="text-xs text-gray-600 mt-1 italic">"{report.notes}"</p>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-orange-600">Not yet reported</p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Cover Count Dialog */}
         <Dialog open={showCoverCountDialog} onOpenChange={setShowCoverCountDialog}>

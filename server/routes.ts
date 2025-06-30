@@ -1969,8 +1969,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   apiRouter.post('/cover-count', async (req, res) => {
     try {
-      const reportData = insertCoverCountReportSchema.parse(req.body);
       const today = new Date().toISOString().split('T')[0];
+      
+      // Add reportDate to request body before validation
+      const dataWithDate = {
+        ...req.body,
+        reportDate: today
+      };
+      
+      const reportData = insertCoverCountReportSchema.parse(dataWithDate);
       
       // Check if report already exists for this location today
       const existingReport = await storage.getCoverCountReport(reportData.locationId, today);
@@ -1985,19 +1992,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create new report
-      const report = await storage.createCoverCountReport({
-        ...reportData,
-        reportDate: today
-      });
+      const report = await storage.createCoverCountReport(reportData);
       
       res.status(201).json(report);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('Cover count validation error:', error.errors);
         return res.status(400).json({ 
           message: 'Invalid cover count data', 
           errors: error.errors 
         });
       }
+      console.error('Cover count creation error:', error);
       res.status(500).json({ message: 'Failed to create cover count report' });
     }
   });
