@@ -5380,38 +5380,26 @@ export default function AdminPanel() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {employeeAccountingData.map((employee) => {
-                            // Find employee record to check if they're active
-                            const employeeRecord = allEmployeeRecords.find(emp => emp.fullName === employee.name);
-                            const isInactive = employeeRecord && !employeeRecord.isActive;
-                            
-                            return (
-                            <TableRow key={employee.key} className={isInactive ? "bg-gray-50" : ""}>
+                          {employeeAccountingData.map((employee) => (
+                            <TableRow key={employee.key}>
                               <TableCell className="font-medium">
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    variant="link"
-                                    className="p-0 h-auto font-medium text-blue-600 hover:text-blue-800 hover:underline"
-                                    onClick={() => {
-                                      const employeeRecord = allEmployeeRecords.find(emp => emp.fullName === employee.name);
-                                      if (employeeRecord) {
-                                        const shiftBreakdowns = generateEmployeeShiftBreakdown(employeeRecord);
-                                        setSelectedEmployeeShifts({
-                                          employee: employeeRecord,
-                                          shifts: shiftBreakdowns
-                                        });
-                                        setShowEmployeeShiftsModal(true);
-                                      }
-                                    }}
-                                  >
-                                    {employee.name}
-                                  </Button>
-                                  {isInactive && (
-                                    <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
-                                      INACTIVE
-                                    </span>
-                                  )}
-                                </div>
+                                <Button
+                                  variant="link"
+                                  className="p-0 h-auto font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                  onClick={() => {
+                                    const employeeRecord = allEmployeeRecords.find(emp => emp.fullName === employee.name);
+                                    if (employeeRecord) {
+                                      const shiftBreakdowns = generateEmployeeShiftBreakdown(employeeRecord);
+                                      setSelectedEmployeeShifts({
+                                        employee: employeeRecord,
+                                        shifts: shiftBreakdowns
+                                      });
+                                      setShowEmployeeShiftsModal(true);
+                                    }
+                                  }}
+                                >
+                                  {employee.name}
+                                </Button>
                               </TableCell>
                               <TableCell className="text-center">{employee.totalHours.toFixed(1)}</TableCell>
                               <TableCell className="text-center">{employee.shiftsWorked}</TableCell>
