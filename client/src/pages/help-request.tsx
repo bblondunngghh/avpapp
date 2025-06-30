@@ -412,6 +412,9 @@ export default function HelpRequestPage() {
         </CardContent>
       </Card>
 
+      {/* Divider */}
+      <div className="border-t border-gray-200 my-8"></div>
+
       {/* Help Request Section */}
       <Card className="border-orange-200 shadow-md mb-6">
         <CardHeader className="bg-orange-50 border-b border-orange-200">
