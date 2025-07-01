@@ -77,17 +77,12 @@ export default function AccountantPage() {
   
 
   
-  // Fetch tax payments and ensure all employees have records
+  // Fetch tax payments directly from database - use actual records
   const { data: taxPayments, isLoading } = useQuery<EmployeeTaxPayment[]>({
-    queryKey: ['/api/tax-payments', selectedEmployee, selectedMonth, employees],
+    queryKey: ['/api/tax-payments', selectedEmployee, selectedMonth],
     queryFn: async () => {
       try {
-        // First fetch all employees to ensure we have records for each
-        if (!employees || employees.length === 0) {
-          return [];
-        }
-        
-        // Fetch existing tax payments
+        // Fetch actual tax payments from database
         let url = '/api/tax-payments';
         if (selectedEmployee && selectedEmployee !== 'all') {
           url = `/api/tax-payments/employee/${selectedEmployee}`;
@@ -95,92 +90,15 @@ export default function AccountantPage() {
         
         const res = await fetch(url);
         if (!res.ok) throw new Error('Failed to fetch tax payments');
-        let payments = await res.json();
+        const payments = await res.json();
         
-        // Create a map of employee IDs to their tax payments
-        const paymentsByEmployeeId = new Map();
-        payments.forEach(payment => {
-          if (!paymentsByEmployeeId.has(payment.employeeId)) {
-            paymentsByEmployeeId.set(payment.employeeId, []);
-          }
-          paymentsByEmployeeId.get(payment.employeeId).push(payment);
-        });
-        
-        // Get reports to associate with employees without payments
-        const reportsRes = await fetch('/api/shift-reports');
-        const reports = reportsRes.ok ? await reportsRes.json() : [];
-        
-        // Create a complete set of records with all employees
-        let allPayments = [];
-        let recordId = 1000; // Starting ID for new records
-        
-        employees.forEach((employee, employeeIndex) => {
-          // If employee already has payments, use those
-          if (paymentsByEmployeeId.has(employee.id)) {
-            allPayments = [...allPayments, ...paymentsByEmployeeId.get(employee.id)];
-          } else {
-            // Create a record with zeros for this employee
-            // Try to find a report this employee was in
-            let employeeReport = null;
-            if (reports && reports.length > 0) {
-              // Find reports this employee participated in
-              for (const report of reports) {
-                try {
-                  let reportEmployees = [];
-                  if (typeof report.employees === 'string') {
-                    reportEmployees = JSON.parse(report.employees);
-                  } else if (Array.isArray(report.employees)) {
-                    reportEmployees = report.employees;
-                  }
-                  
-                  if (reportEmployees.some(emp => emp.name === employee.fullName)) {
-                    employeeReport = report;
-                    break;
-                  }
-                } catch (e) {
-                  console.error("Error parsing employees:", e);
-                }
-              }
-              
-              // If no specific report found, use the most recent
-              if (!employeeReport) {
-                employeeReport = reports[reports.length - 1];
-              }
-            }
-            
-            // Create payment record for employee with zeros or calculated amounts
-            const reportId = employeeReport ? employeeReport.id : 0;
-            const locationId = employeeReport ? employeeReport.locationId : 1;
-            
-            // Always use zero values for employees with no financial data
-            let totalEarnings = "0";
-            let taxAmount = "0";
-            let paidAmount = "0";
-            let remainingAmount = "0";
-            let recordDate = new Date();
-            
-            allPayments.push({
-              id: recordId++,
-              reportId: reportId,
-              employeeId: employee.id,
-              locationId: locationId,
-              totalEarnings: totalEarnings,
-              taxAmount: taxAmount,
-              paidAmount: paidAmount,
-              remainingAmount: remainingAmount,
-              createdAt: recordDate,
-              paymentDate: recordDate
-            });
-          }
-        });
-        
-        return allPayments;
+        return payments;
       } catch (error) {
         console.error("Error fetching tax payments:", error);
         return [];
       }
     },
-    enabled: isAdminAuthenticated() && !!employees
+    enabled: isAdminAuthenticated()
   });
   
   const handleEmployeeChange = (value: string) => {
@@ -515,7 +433,7 @@ export default function AccountantPage() {
                     <TableHead className="text-center w-[100px]">Tips</TableHead>
                     <TableHead className="text-center w-[120px]">Money Owed</TableHead>
                     <TableHead className="text-center w-[100px]">Advance</TableHead>
-                    <TableHead className="text-center w-[100px]">Tax Contribution</TableHead>
+                    <TableHead className="text-center w-[100px]">Additional Tax Payments</TableHead>
                     <TableHead className="text-center w-[120px]">Date</TableHead>
                     <TableHead className="text-center w-[80px]">Actions</TableHead>
                   </TableRow>
@@ -541,7 +459,7 @@ export default function AccountantPage() {
                       const totalCashPaid = employeePayments.reduce((sum, payment) => 
                         sum + (Number(payment.paidAmount) || 0), 0);
                       const totalTaxContribution = employeePayments.reduce((sum, payment) => 
-                        sum + (Number(payment.paidAmount || 0) - calculateMoneyOwed(payment)), 0);
+                        sum + (Number(payment.taxAmount || 0)), 0);
                       
                       // Get most recent payment date
                       const mostRecentDate = employeePayments.length > 0 
