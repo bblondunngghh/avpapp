@@ -1425,7 +1425,7 @@ export default function AdminPanel() {
     
     // Add each row of data with detailed employee breakdown
     reports.forEach(report => {
-      const date = parseLocalDate(report.date).toLocaleDateString();
+      const date = report.date;
       const submittedDate = new Date(report.createdAt).toLocaleDateString();
       const locationName = getLocationName(report.locationId);
       
@@ -1657,7 +1657,7 @@ export default function AdminPanel() {
     // Prepare table data
     const tableColumn = ["ID", "Date", "Location", "Shift", "Leader", "Cars", "Turn-In", "Employees"];
     const tableRows = reports.map(report => {
-      const date = parseLocalDate(report.date).toLocaleDateString();
+      const date = report.date;
       const locationName = getLocationName(report.locationId);
       // Set correct turn-in rates for each location
       let turnInRate = 11; // Default for Capital Grille
@@ -1975,7 +1975,7 @@ export default function AdminPanel() {
     doc.setFontSize(8);
     
     capitalGrilleReports.forEach(report => {
-      const date = parseLocalDate(report.date).toLocaleDateString();
+      const date = report.date;
       const receiptSales = (report.totalReceipts || 0) * 18; // $18 per receipt
       totalReceiptSales += receiptSales;
       
@@ -6612,7 +6612,7 @@ export default function AdminPanel() {
                   <TableBody>
                     {selectedEmployeeShifts.shifts.map((shift: any, index: number) => (
                       <TableRow key={shift.reportId || index}>
-                        <TableCell>{parseLocalDate(shift.date).toLocaleDateString()}</TableCell>
+                        <TableCell>{shift.date}</TableCell>
                         <TableCell>{shift.location}</TableCell>
                         <TableCell>{shift.shift}</TableCell>
                         <TableCell className="text-center">{shift.hours}</TableCell>
