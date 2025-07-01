@@ -17,8 +17,14 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   
   const handleNavigation = (path: string) => {
+    console.log('Navigation clicked:', path);
     navigate(path);
     setOpen(false);
+  };
+
+  const handleTitleClick = () => {
+    console.log('Title clicked - navigating to home');
+    handleNavigation('/');
   };
   
   return (
@@ -26,7 +32,7 @@ export default function Header() {
       <div className="relative w-full">
         {/* Centered title container */}
         <div className="absolute inset-0 flex items-center justify-center py-2 pointer-events-none">
-          <h1 className="app-title flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pointer-events-auto" onClick={() => handleNavigation('/')}>
+          <h1 className="app-title flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pointer-events-auto" onClick={handleTitleClick}>
             <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
             <span>ACCESS VALET PARKING</span>
             <img src={carToolKeysIcon} alt="Car Keys" className="h-6 w-6 animate-bounce-slow" />

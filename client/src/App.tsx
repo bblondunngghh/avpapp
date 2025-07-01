@@ -152,15 +152,13 @@ function Router() {
     };
   }, [location, lastActivity]);
   
-  // Determine if we're on an admin or employee page to show/hide normal navigation
-  const isAdminPage = location.startsWith('/admin');
-  const isEmployeePage = location.startsWith('/employee-dashboard');
+  // Show header on all pages now
   const isDemoPage = location === '/demo';
   
   return (
     <div className="flex flex-col min-h-screen pb-16">
-      {!isAdminPage && !isEmployeePage && !isDemoPage && <Header />}
-      <main className={`${isAdminPage || isEmployeePage || isDemoPage ? '' : 'container mx-auto px-4 py-4 mt-16'} flex-grow`}>
+      {!isDemoPage && <Header />}
+      <main className={`${isDemoPage ? '' : 'container mx-auto px-4 py-4 mt-16'} flex-grow`}>
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/report-selection" component={ReportSelection} />
@@ -246,7 +244,7 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      {!isAdminPage && !isEmployeePage && !isDemoPage && <BottomNavigation />}
+      {!isDemoPage && <BottomNavigation />}
     </div>
   );
 }
