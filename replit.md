@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- July 1, 2025: Renamed section header within page from "Assistance Center" to "Help Request Center" to clarify functionality
 - July 1, 2025: Renamed page title from "Inter-Location Help Requests" to "Access Valet Assistance Center" for clearer branding
 - July 1, 2025: Renamed "Help Request Center" to "Assistance Center" and moved to top navigation bar with icon for better accessibility
 - July 1, 2025: Added Lock Shield icon to Admin Login button in navigation to maintain visual consistency with new Assistance Center button

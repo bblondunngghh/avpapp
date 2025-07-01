@@ -441,7 +441,7 @@ export default function HelpRequestPage() {
         <CardHeader className="bg-orange-50 border-b border-orange-200">
           <CardTitle className="flex items-center gap-2 text-orange-800">
             <img src={insuranceHandIcon} alt="Insurance Hand" className="h-5 w-5" />
-            Assistance Center
+            Help Request Center
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
