@@ -378,10 +378,7 @@ export default function HelpRequestPage() {
           >
             <img src={houseIcon} alt="Home" className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <img src={taskListQuestionIcon} alt="Help Requests" className="h-6 w-6" />
-            <h1 className="text-2xl font-bold text-gray-900">Access Valet Assistance Center</h1>
-          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Access Valet Assistance Center</h1>
         </div>
       </div>
 
