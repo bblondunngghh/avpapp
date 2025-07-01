@@ -10,6 +10,35 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, HelpCircle, AlertTriangle, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+// Material-UI Components for Help Requests Section
+import { 
+  Box, 
+  Paper, 
+  Typography, 
+  Chip, 
+  Avatar, 
+  IconButton, 
+  Fab, 
+  Badge,
+  LinearProgress,
+  Divider,
+  Stack,
+  Alert,
+  AlertTitle
+} from '@mui/material';
+import { 
+  CheckCircle as CheckCircleIcon,
+  Schedule as ScheduleIcon,
+  Notifications as NotificationsIcon,
+  Help as HelpIcon,
+  Warning as WarningIcon,
+  PersonPin as PersonPinIcon,
+  AccessTime as AccessTimeIcon,
+  Done as DoneIcon
+} from '@mui/icons-material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 import clerkIcon from "@/assets/clerk-icon.png";
 import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
 import bookIcon from "@/assets/book-icon.png";
@@ -21,6 +50,65 @@ import houseIcon from "@assets/House-3--Streamline-Ultimate_1751310836981.png";
 import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimate_1751311056997.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+// Material-UI Theme for Help Requests
+const muiTheme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+      light: '#42a5f5',
+      dark: '#1565c0',
+    },
+    secondary: {
+      main: '#f50057',
+      light: '#ff5983',
+      dark: '#c51162',
+    },
+    success: {
+      main: '#4caf50',
+      light: '#81c784',
+      dark: '#388e3c',
+    },
+    warning: {
+      main: '#ff9800',
+      light: '#ffb74d',
+      dark: '#f57c00',
+    },
+    error: {
+      main: '#f44336',
+      light: '#e57373',
+      dark: '#d32f2f',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h6: {
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '0.875rem',
+    },
+    body2: {
+      fontSize: '0.75rem',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
+    },
+  },
+});
 
 interface HelpRequest {
   id: number;
@@ -494,40 +582,105 @@ export default function HelpRequestPage() {
               </Button>
             </div>
 
-            {/* Active Requests Section */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <img src={rabbitRunningIcon} alt="Rabbit Running" className="h-4 w-4" />
-                Active Help Requests
-              </h3>
-              {isLoading ? (
-              <div className="text-center py-4">Loading requests...</div>
-            ) : helpRequests.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                No active help requests at this time
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {helpRequests.map((request) => (
-                  <div key={request.id} className="border rounded-lg p-4 bg-gray-50">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{request.requestingLocation}</h3>
-                        <p className="text-lg text-red-600 font-bold">{request.requestType}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-xs text-gray-500 block">
-                          {new Date(request.requestedAt).toLocaleTimeString()}
-                        </span>
-                        {request.status === "completed" && request.completedAt && request.autoRemoveAt && (
-                          <CountdownTimer autoRemoveAt={request.autoRemoveAt} />
-                        )}
-                      </div>
-                    </div>
+            {/* Active Requests Section - Material-UI Design */}
+            <ThemeProvider theme={muiTheme}>
+              <Box>
+                <Typography variant="h6" sx={{ 
+                  mb: 2, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 1,
+                  color: '#374151',
+                  fontWeight: 600
+                }}>
+                  <img src={rabbitRunningIcon} alt="Rabbit Running" style={{ height: '16px', width: '16px' }} />
+                  Active Help Requests
+                </Typography>
+                
+                {isLoading ? (
+                  <Box sx={{ textAlign: 'center', py: 3 }}>
+                    <LinearProgress sx={{ mb: 2 }} />
+                    <Typography variant="body2" color="text.secondary">
+                      Loading requests...
+                    </Typography>
+                  </Box>
+                ) : helpRequests.length === 0 ? (
+                  <Paper 
+                    elevation={0} 
+                    sx={{ 
+                      p: 4, 
+                      textAlign: 'center', 
+                      bgcolor: '#f9fafb',
+                      border: '1px dashed #d1d5db'
+                    }}
+                  >
+                    <HelpIcon sx={{ fontSize: 48, color: '#9ca3af', mb: 2 }} />
+                    <Typography variant="body1" color="text.secondary">
+                      No active help requests at this time
+                    </Typography>
+                  </Paper>
+                ) : (
+                  <Stack spacing={2}>
+                    {helpRequests.map((request) => (
+                      <Paper 
+                        key={request.id} 
+                        elevation={2}
+                        sx={{ 
+                          p: 2,
+                          borderRadius: 2,
+                          border: '1px solid #e5e7eb',
+                          '&:hover': {
+                            boxShadow: 3,
+                            borderColor: '#d1d5db'
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                          <Box>
+                            <Typography variant="h6" sx={{ color: '#111827', fontWeight: 600, mb: 0.5 }}>
+                              <Avatar sx={{ 
+                                width: 24, 
+                                height: 24, 
+                                bgcolor: 'primary.main',
+                                mr: 1,
+                                display: 'inline-flex'
+                              }}>
+                                <PersonPinIcon sx={{ fontSize: 16 }} />
+                              </Avatar>
+                              {request.requestingLocation}
+                            </Typography>
+                            <Chip 
+                              label={request.requestType}
+                              color="error"
+                              size="small"
+                              icon={<WarningIcon />}
+                              sx={{ 
+                                fontWeight: 600,
+                                fontSize: '0.75rem'
+                              }}
+                            />
+                          </Box>
+                          <Box sx={{ textAlign: 'right' }}>
+                            <Chip 
+                              label={new Date(request.requestedAt).toLocaleTimeString()}
+                              size="small"
+                              variant="outlined"
+                              icon={<AccessTimeIcon />}
+                              sx={{ fontSize: '0.7rem' }}
+                            />
+                            {request.status === "completed" && request.completedAt && request.autoRemoveAt && (
+                              <Box sx={{ mt: 1 }}>
+                                <CountdownTimer autoRemoveAt={request.autoRemoveAt} />
+                              </Box>
+                            )}
+                          </Box>
+                        </Box>
                     
-                    <p className="text-xs text-gray-600 mb-3">{request.description}</p>
-                    
-                    {/* Show dispatched help responses */}
+                        <Typography variant="body2" sx={{ color: '#6b7280', mb: 2, fontStyle: 'italic' }}>
+                          {request.description}
+                        </Typography>
+                        
+                        {/* Show dispatched help responses with Material-UI */}
                     {allResponses
                       .filter(response => response.helpRequestId === request.id)
                       .map(response => (
@@ -742,7 +895,7 @@ export default function HelpRequestPage() {
                 ))}
               </div>
               )}
-            </div>
+            </ThemeProvider>
           </div>
         </CardContent>
       </Card>
