@@ -1141,10 +1141,10 @@ export default function AdminPanel() {
           const parts = report.date.split('/');
           reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
         } else {
-          reportDate = new Date(report.date);
+          reportDate = parseLocalDate(report.date);
         }
       } catch {
-        reportDate = new Date(report.date);
+        reportDate = parseLocalDate(report.date);
       }
       
       const dayOfWeek = reportDate.getDay();
@@ -1250,10 +1250,10 @@ export default function AdminPanel() {
               // MM/DD/YYYY format
               reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
             } else {
-              reportDate = new Date(report.date);
+              reportDate = parseLocalDate(report.date);
             }
           } catch {
-            reportDate = new Date(report.date);
+            reportDate = parseLocalDate(report.date);
           }
           
           const reportYear = reportDate.getFullYear();
@@ -1425,7 +1425,7 @@ export default function AdminPanel() {
     
     // Add each row of data with detailed employee breakdown
     reports.forEach(report => {
-      const date = new Date(report.date).toLocaleDateString();
+      const date = parseLocalDate(report.date).toLocaleDateString();
       const submittedDate = new Date(report.createdAt).toLocaleDateString();
       const locationName = getLocationName(report.locationId);
       
@@ -1522,7 +1522,7 @@ export default function AdminPanel() {
     
     // Process all filtered reports to get detailed breakdown
     const filteredReports = reports.filter(report => {
-      const reportDate = new Date(report.date);
+      const reportDate = parseLocalDate(report.date);
       
       // Apply start date filter if set
       if (startDate && reportDate < startDate) {
@@ -1657,7 +1657,7 @@ export default function AdminPanel() {
     // Prepare table data
     const tableColumn = ["ID", "Date", "Location", "Shift", "Leader", "Cars", "Turn-In", "Employees"];
     const tableRows = reports.map(report => {
-      const date = new Date(report.date).toLocaleDateString();
+      const date = parseLocalDate(report.date).toLocaleDateString();
       const locationName = getLocationName(report.locationId);
       // Set correct turn-in rates for each location
       let turnInRate = 11; // Default for Capital Grille
@@ -1727,7 +1727,7 @@ export default function AdminPanel() {
     
     // Process all filtered reports to get detailed breakdown
     const filteredReports = reports.filter(report => {
-      const reportDate = new Date(report.date);
+      const reportDate = parseLocalDate(report.date);
       
       // Apply start date filter if set
       if (startDate && reportDate < startDate) {
@@ -1919,7 +1919,7 @@ export default function AdminPanel() {
           // MM/DD/YYYY format
           reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
         } else {
-          reportDate = new Date(report.date);
+          reportDate = parseLocalDate(report.date);
         }
         
         const reportYear = reportDate.getFullYear();
@@ -1975,7 +1975,7 @@ export default function AdminPanel() {
     doc.setFontSize(8);
     
     capitalGrilleReports.forEach(report => {
-      const date = new Date(report.date).toLocaleDateString();
+      const date = parseLocalDate(report.date).toLocaleDateString();
       const receiptSales = (report.totalReceipts || 0) * 18; // $18 per receipt
       totalReceiptSales += receiptSales;
       
@@ -2598,7 +2598,7 @@ export default function AdminPanel() {
                             // MM/DD/YYYY format
                             date = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
                           } else {
-                            date = new Date(report.date);
+                            date = parseLocalDate(report.date);
                           }
                           
                           // Validate the parsed date
@@ -2749,10 +2749,10 @@ export default function AdminPanel() {
                       const parts = report.date.split('/');
                       reportDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
                     } else {
-                      reportDate = new Date(report.date);
+                      reportDate = parseLocalDate(report.date);
                     }
                   } catch {
-                    reportDate = new Date(report.date);
+                    reportDate = parseLocalDate(report.date);
                   }
 
                   if (startDate && reportDate < startDate) return false;
@@ -3201,7 +3201,7 @@ export default function AdminPanel() {
                                 
                                 // Filter reports by selected month
                                 const monthlyReports = reports.filter(report => {
-                                  const reportDate = new Date(report.date);
+                                  const reportDate = parseLocalDate(report.date);
                                   return reportDate.getFullYear().toString() === year && 
                                          (reportDate.getMonth() + 1).toString().padStart(2, '0') === month;
                                 });

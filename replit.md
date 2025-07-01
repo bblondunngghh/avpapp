@@ -92,6 +92,11 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- July 1, 2025: CRITICAL FIX - Resolved timezone bug causing June 1st data to appear as May 31st in Employee Accounting
+- July 1, 2025: Fixed all unsafe date parsing in admin panel (14 instances) - replaced new Date() with parseLocalDate()
+- July 1, 2025: Repaired 46+ malformed employee shift records from June 20-30 with corrupted JSON format
+- July 1, 2025: Notification system fully operational with T-Mobile gateway (5127755739@tmomail.net)
+- July 1, 2025: Added backup web notifications route at /notifications for help request access
 - June 30, 2025: Added color coding to cover count displays - green for under 100 covers, yellow for 100-200 covers, red for over 200 covers
 - June 30, 2025: Added status labels to cover counts: "Slow" (green), "Average" (yellow), and "Busy" (red) for quick business volume assessment
 - June 30, 2025: Replaced Help Request Center icons with custom graphics - rabbit running icon for "Active Help Requests", insurance hand icon for "Help Request Center", book icon for "Daily Cover Count Reports", athletics team running icon for "Request Help" section, and send email icon for "Submit Cover Count Report" functionality
