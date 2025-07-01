@@ -89,10 +89,27 @@ function validateEmployeeData(employees: any): any[] {
   
   if (typeof employees === 'string') {
     try {
-      const parsed = JSON.parse(employees);
+      let parsed;
+      
+      // Handle double-escaped JSON format
+      if (employees.includes('\\"')) {
+        // First parse to handle outer escaping
+        const firstParse = JSON.parse(employees);
+        // Then parse the inner JSON if it's still a string
+        if (typeof firstParse === 'string') {
+          parsed = JSON.parse(firstParse);
+        } else {
+          parsed = firstParse;
+        }
+      } else {
+        // Normal JSON parsing
+        parsed = JSON.parse(employees);
+      }
+      
       if (!Array.isArray(parsed)) {
         throw new Error('Parsed employee data is not an array');
       }
+      
       // Validate each employee object has required fields
       parsed.forEach((emp: any, index: number) => {
         if (!emp.name || typeof emp.name !== 'string') {
@@ -570,6 +587,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).end();
     } catch (error) {
       res.status(500).json({ message: 'Failed to delete shift report' });
+    }
+  });
+
+  // Manual sync endpoint for tax payments
+  apiRouter.post('/sync-tax-payments/:reportId', async (req, res) => {
+    try {
+      const reportId = parseInt(req.params.reportId);
+      if (isNaN(reportId)) {
+        return res.status(400).json({ message: 'Invalid report ID' });
+      }
+      
+      const report = await storage.getShiftReport(reportId);
+      if (!report) {
+        return res.status(404).json({ message: 'Shift report not found' });
+      }
+      
+      // Sync cash payments from shift report to tax payment records
+      await syncCashPaymentsToTaxRecords(report);
+      
+      res.json({ success: true, message: 'Tax payments synced successfully' });
+    } catch (error) {
+      console.error('Failed to sync tax payments:', error);
+      res.status(500).json({ message: 'Failed to sync tax payments' });
     }
   });
   
