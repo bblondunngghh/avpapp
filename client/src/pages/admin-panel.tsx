@@ -5159,9 +5159,22 @@ export default function AdminPanel() {
                       'Additional Tax Payments'
                     ];
 
+                    // Sort employees by last name for CSV export too
+                    const sortedDataForCSV = employeeAccountingData.sort((a, b) => {
+                      const getLastName = (fullName) => {
+                        const nameParts = fullName.trim().split(' ');
+                        return nameParts[nameParts.length - 1].toLowerCase();
+                      };
+                      
+                      const lastNameA = getLastName(a.name);
+                      const lastNameB = getLastName(b.name);
+                      
+                      return lastNameA.localeCompare(lastNameB);
+                    });
+
                     const csvContent = [
                       headers.join(','),
-                      ...employeeAccountingData.map(emp => [
+                      ...sortedDataForCSV.map(emp => [
                         `"${emp.name}"`,
                         emp.totalHours,
                         emp.shiftsWorked,
@@ -5357,11 +5370,24 @@ export default function AdminPanel() {
                   };
                 });
 
+                // Sort employees by last name (extract last name from full name)
+                const sortedEmployeeAccountingData = employeeAccountingData.sort((a, b) => {
+                  const getLastName = (fullName) => {
+                    const nameParts = fullName.trim().split(' ');
+                    return nameParts[nameParts.length - 1].toLowerCase();
+                  };
+                  
+                  const lastNameA = getLastName(a.name);
+                  const lastNameB = getLastName(b.name);
+                  
+                  return lastNameA.localeCompare(lastNameB);
+                });
+
                 return (
                   <div className="space-y-6">
                     <div className="overflow-x-auto">
                       <Table>
-                        <TableCaption>Employee Financial Summary - All Periods</TableCaption>
+                        <TableCaption>Employee Financial Summary - All Periods (Sorted by Last Name)</TableCaption>
                         <TableHeader>
                           <TableRow>
                             <TableHead>Employee</TableHead>
@@ -5377,7 +5403,7 @@ export default function AdminPanel() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {employeeAccountingData.map((employee) => (
+                          {sortedEmployeeAccountingData.map((employee) => (
                             <TableRow key={employee.key}>
                               <TableCell className="font-medium">
                                 <Button
