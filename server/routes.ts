@@ -91,20 +91,28 @@ function validateEmployeeData(employees: any): any[] {
     try {
       let parsed;
       
-      // Handle double-escaped JSON format
-      if (employees.includes('\\"')) {
-        // First parse to handle outer escaping
-        const firstParse = JSON.parse(employees);
-        // Then parse the inner JSON if it's still a string
-        if (typeof firstParse === 'string') {
-          parsed = JSON.parse(firstParse);
-        } else {
-          parsed = firstParse;
+      // Handle multiple levels of JSON escaping
+      let currentData = employees;
+      let attempts = 0;
+      
+      while (typeof currentData === 'string' && attempts < 3) {
+        // Try to parse as JSON
+        try {
+          currentData = JSON.parse(currentData);
+          attempts++;
+        } catch (e) {
+          // If parsing fails, try to clean up common malformed patterns
+          if (currentData.startsWith('"{') && currentData.endsWith('}"')) {
+            // Remove outer quotes and try again
+            currentData = currentData.slice(1, -1);
+          } else {
+            // If we can't parse it, break out
+            break;
+          }
         }
-      } else {
-        // Normal JSON parsing
-        parsed = JSON.parse(employees);
       }
+      
+      parsed = currentData;
       
       if (!Array.isArray(parsed)) {
         throw new Error('Parsed employee data is not an array');
