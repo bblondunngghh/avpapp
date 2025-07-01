@@ -25,8 +25,8 @@ export default function Header() {
     <header className="app-header">
       <div className="relative w-full">
         {/* Centered title container */}
-        <div className="absolute inset-0 flex items-center justify-center py-2">
-          <h1 className="app-title flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => handleNavigation('/')}>
+        <div className="absolute inset-0 flex items-center justify-center py-2 pointer-events-none">
+          <h1 className="app-title flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pointer-events-auto" onClick={() => handleNavigation('/')}>
             <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
             <span>ACCESS VALET PARKING</span>
             <img src={carToolKeysIcon} alt="Car Keys" className="h-6 w-6 animate-bounce-slow" />
