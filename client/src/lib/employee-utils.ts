@@ -211,17 +211,8 @@ export function findEmployeeInShift(
  * @returns boolean indicating if employee worked this shift
  */
 export function employeeWorkedInShift(shiftReport: any, employeeRecord: EmployeeRecord): boolean {
-  let employees = [];
-  
-  try {
-    if (typeof shiftReport.employees === 'string') {
-      employees = JSON.parse(shiftReport.employees);
-    } else if (Array.isArray(shiftReport.employees)) {
-      employees = shiftReport.employees;
-    }
-  } catch (e) {
-    return false;
-  }
+  // CRITICAL: Use the robust parseEmployeesData function to prevent JSON corruption
+  const employees = parseEmployeesData(shiftReport.employees);
   
   return Array.isArray(employees) && employees.some(emp => matchEmployee(emp, employeeRecord));
 }
