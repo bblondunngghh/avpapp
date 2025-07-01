@@ -6612,7 +6612,7 @@ export default function AdminPanel() {
                   <TableBody>
                     {selectedEmployeeShifts.shifts.map((shift: any, index: number) => (
                       <TableRow key={shift.reportId || index}>
-                        <TableCell>{new Date(shift.date).toLocaleDateString()}</TableCell>
+                        <TableCell>{parseLocalDate(shift.date).toLocaleDateString()}</TableCell>
                         <TableCell>{shift.location}</TableCell>
                         <TableCell>{shift.shift}</TableCell>
                         <TableCell className="text-center">{shift.hours}</TableCell>
