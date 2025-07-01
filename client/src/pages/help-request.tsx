@@ -10,9 +10,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, HelpCircle, AlertTriangle, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-// Material-UI Components imported via MaterialHelpRequests component
-
 import clerkIcon from "@/assets/clerk-icon.png";
 import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
 import bookIcon from "@/assets/book-icon.png";
@@ -24,9 +21,6 @@ import houseIcon from "@assets/House-3--Streamline-Ultimate_1751310836981.png";
 import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimate_1751311056997.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MaterialHelpRequests } from "@/components/MaterialHelpRequests";
-
-// Removed Material-UI Theme - moved to component
 
 interface HelpRequest {
   id: number;
@@ -500,120 +494,40 @@ export default function HelpRequestPage() {
               </Button>
             </div>
 
-            {/* Active Requests Section - Material-UI Design */}
-            <MaterialHelpRequests
-              helpRequests={helpRequests}
-              allResponses={allResponses}
-              isLoading={isLoading}
-              selectedRequestId={selectedRequestId}
-              setSelectedRequestId={setSelectedRequestId}
-              respondingLocation={respondingLocation}
-              setRespondingLocation={setRespondingLocation}
-              responseType={responseType}
-              setResponseType={setResponseType}
-              attendantsOffered={attendantsOffered}
-              setAttendantsOffered={setAttendantsOffered}
-              responseMessage={responseMessage}
-              setResponseMessage={setResponseMessage}
-              handleSubmitResponse={handleSubmitResponse}
-              createResponseMutation={createResponseMutation}
-            />
-                <Typography variant="h6" sx={{ 
-                  mb: 2, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 1,
-                  color: '#374151',
-                  fontWeight: 600
-                }}>
-                  <img src={rabbitRunningIcon} alt="Rabbit Running" style={{ height: '16px', width: '16px' }} />
-                  Active Help Requests
-                </Typography>
-                
-                {isLoading ? (
-                  <Box sx={{ textAlign: 'center', py: 3 }}>
-                    <LinearProgress sx={{ mb: 2 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      Loading requests...
-                    </Typography>
-                  </Box>
-                ) : helpRequests.length === 0 ? (
-                  <Paper 
-                    elevation={0} 
-                    sx={{ 
-                      p: 4, 
-                      textAlign: 'center', 
-                      bgcolor: '#f9fafb',
-                      border: '1px dashed #d1d5db'
-                    }}
-                  >
-                    <HelpIcon sx={{ fontSize: 48, color: '#9ca3af', mb: 2 }} />
-                    <Typography variant="body1" color="text.secondary">
-                      No active help requests at this time
-                    </Typography>
-                  </Paper>
-                ) : (
-                  <Stack spacing={2}>
-                    {helpRequests.map((request) => (
-                      <Paper 
-                        key={request.id} 
-                        elevation={2}
-                        sx={{ 
-                          p: 2,
-                          borderRadius: 2,
-                          border: '1px solid #e5e7eb',
-                          '&:hover': {
-                            boxShadow: 3,
-                            borderColor: '#d1d5db'
-                          }
-                        }}
-                      >
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                          <Box>
-                            <Typography variant="h6" sx={{ color: '#111827', fontWeight: 600, mb: 0.5 }}>
-                              <Avatar sx={{ 
-                                width: 24, 
-                                height: 24, 
-                                bgcolor: 'primary.main',
-                                mr: 1,
-                                display: 'inline-flex'
-                              }}>
-                                <PersonPinIcon sx={{ fontSize: 16 }} />
-                              </Avatar>
-                              {request.requestingLocation}
-                            </Typography>
-                            <Chip 
-                              label={request.requestType}
-                              color="error"
-                              size="small"
-                              icon={<WarningIcon />}
-                              sx={{ 
-                                fontWeight: 600,
-                                fontSize: '0.75rem'
-                              }}
-                            />
-                          </Box>
-                          <Box sx={{ textAlign: 'right' }}>
-                            <Chip 
-                              label={new Date(request.requestedAt).toLocaleTimeString()}
-                              size="small"
-                              variant="outlined"
-                              icon={<AccessTimeIcon />}
-                              sx={{ fontSize: '0.7rem' }}
-                            />
-                            {request.status === "completed" && request.completedAt && request.autoRemoveAt && (
-                              <Box sx={{ mt: 1 }}>
-                                <CountdownTimer autoRemoveAt={request.autoRemoveAt} />
-                              </Box>
-                            )}
-                          </Box>
-                        </Box>
+            {/* Active Requests Section */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <img src={rabbitRunningIcon} alt="Rabbit Running" className="h-4 w-4" />
+                Active Help Requests
+              </h3>
+              {isLoading ? (
+              <div className="text-center py-4">Loading requests...</div>
+            ) : helpRequests.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No active help requests at this time
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {helpRequests.map((request) => (
+                  <div key={request.id} className="border rounded-lg p-4 bg-gray-50">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{request.requestingLocation}</h3>
+                        <p className="text-lg text-red-600 font-bold">{request.requestType}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs text-gray-500 block">
+                          {new Date(request.requestedAt).toLocaleTimeString()}
+                        </span>
+                        {request.status === "completed" && request.completedAt && request.autoRemoveAt && (
+                          <CountdownTimer autoRemoveAt={request.autoRemoveAt} />
+                        )}
+                      </div>
+                    </div>
                     
-                        <Typography variant="body2" sx={{ color: '#6b7280', mb: 2, fontStyle: 'italic' }}>
-                          {request.description}
-                        </Typography>
-                        
-                        {/* Show dispatched help responses with Material-UI */}
+                    <p className="text-xs text-gray-600 mb-3">{request.description}</p>
+                    
+                    {/* Show dispatched help responses */}
                     {allResponses
                       .filter(response => response.helpRequestId === request.id)
                       .map(response => (
@@ -828,7 +742,7 @@ export default function HelpRequestPage() {
                 ))}
               </div>
               )}
-            </ThemeProvider>
+            </div>
           </div>
         </CardContent>
       </Card>
