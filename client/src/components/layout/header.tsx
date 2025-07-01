@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Car, Home, ClipboardList, PlusCircle, User, HelpCircle } from "lucide-react";
@@ -15,6 +15,18 @@ import insuranceHandIcon from "@assets/Insurance-Hand--Streamline-Ultimate_17513
 export default function Header() {
   const [, navigate] = useLocation();
   const [open, setOpen] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
+
+  // Detect iPad device
+  useEffect(() => {
+    const checkIsIPad = () => {
+      const iPadDevice = /iPad/i.test(navigator.userAgent) || 
+                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      setIsIPad(iPadDevice);
+    };
+    
+    checkIsIPad();
+  }, []);
   
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -35,17 +47,19 @@ export default function Header() {
         
         {/* Navigation buttons container aligned with page content */}
         <div className="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center relative z-10" style={{height: '56px'}}>
-          {/* Left-aligned Assistance Center button */}
+          {/* Left-aligned Assistance Center button - hidden on iPad */}
           <div className="flex items-center">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="bg-white border-orange-200 text-orange-700 hover:text-orange-800 hover:bg-orange-50 hidden md:flex font-medium"
-              onClick={() => handleNavigation('/help-request')}
-            >
-              <img src={insuranceHandIcon} alt="Assistance" className="mr-2 h-4 w-4" />
-              Assistance Center
-            </Button>
+            {!isIPad && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="bg-white border-orange-200 text-orange-700 hover:text-orange-800 hover:bg-orange-50 hidden md:flex font-medium"
+                onClick={() => handleNavigation('/help-request')}
+              >
+                <img src={insuranceHandIcon} alt="Assistance" className="mr-2 h-4 w-4" />
+                Assistance Center
+              </Button>
+            )}
           </div>
           
           {/* Right-aligned admin button */}
