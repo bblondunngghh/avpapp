@@ -17,18 +17,15 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   
   const handleNavigation = (path: string) => {
-    console.log('Navigation clicked:', path);
     navigate(path);
     setOpen(false);
   };
-
-
   
   return (
     <header className="app-header">
       <div className="relative w-full">
         {/* Centered title container */}
-        <div className="absolute inset-0 flex items-center justify-center py-2 pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center py-2">
           <h1 className="app-title flex items-center gap-2">
             <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
             <span>ACCESS VALET PARKING</span>
@@ -37,7 +34,7 @@ export default function Header() {
         </div>
         
         {/* Navigation buttons container aligned with page content */}
-        <div className="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center relative z-20" style={{height: '56px'}}>
+        <div className="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center relative z-10" style={{height: '56px'}}>
           {/* Left-aligned Assistance Center button */}
           <div className="flex items-center">
             <Button 
