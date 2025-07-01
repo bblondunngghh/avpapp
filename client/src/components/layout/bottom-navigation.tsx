@@ -5,6 +5,7 @@ import dashboardIcon from "@assets/Layout-Dashboard-1--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import newReportIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
+import insuranceHandIcon from "@assets/Insurance-Hand--Streamline-Ultimate_1751309954246.png";
 
 export default function BottomNavigation() {
   const [, navigate] = useLocation();
@@ -12,6 +13,7 @@ export default function BottomNavigation() {
 
   const [isReportSelection] = useRoute("/report-selection");
   const [isEmployeeDashboard] = useRoute("/employee-dashboard");
+  const [isHelpRequest] = useRoute("/help-request");
   const [isAdmin, setIsAdmin] = useState(false);
   
   // Check if user is logged in as admin
@@ -57,6 +59,14 @@ export default function BottomNavigation() {
       >
         <img src={newReportIcon} alt="New Report" className="bottom-nav-icon" />
         <span className="bottom-nav-label">New Report</span>
+      </button>
+
+      <button 
+        className={`bottom-nav-item ${isHelpRequest ? 'active' : ''}`}
+        onClick={() => navigate('/help-request')}
+      >
+        <img src={insuranceHandIcon} alt="Assistance" className="bottom-nav-icon" />
+        <span className="bottom-nav-label">Assistance</span>
       </button>
 
       <button 
