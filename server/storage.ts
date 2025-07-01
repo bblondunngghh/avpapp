@@ -806,12 +806,33 @@ export class DatabaseStorage implements IStorage {
   async getActiveHelpRequests(): Promise<HelpRequest[]> {
     try {
       const now = new Date();
+      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // 1 hour ago
+      
+      // First, auto-expire any active requests older than 1 hour
+      await db
+        .update(helpRequests)
+        .set({ 
+          status: 'expired',
+          resolvedAt: now,
+          autoRemoveAt: now
+        })
+        .where(
+          and(
+            eq(helpRequests.status, "active"),
+            lt(helpRequests.requestedAt, oneHourAgo)
+          )
+        );
+      
+      // Then return only truly active requests
       return await db
         .select()
         .from(helpRequests)
         .where(
           or(
-            eq(helpRequests.status, "active"),
+            and(
+              eq(helpRequests.status, "active"),
+              gte(helpRequests.requestedAt, oneHourAgo) // Only requests from last hour
+            ),
             and(
               eq(helpRequests.status, "completed"),
               gt(helpRequests.autoRemoveAt, now)
