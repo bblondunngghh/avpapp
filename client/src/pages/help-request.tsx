@@ -11,33 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ArrowLeft, HelpCircle, AlertTriangle, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// Material-UI Components for Help Requests Section
-import { 
-  Box, 
-  Paper, 
-  Typography, 
-  Chip, 
-  Avatar, 
-  IconButton, 
-  Fab, 
-  Badge,
-  LinearProgress,
-  Divider,
-  Stack,
-  Alert,
-  AlertTitle
-} from '@mui/material';
-import { 
-  CheckCircle as CheckCircleIcon,
-  Schedule as ScheduleIcon,
-  Notifications as NotificationsIcon,
-  Help as HelpIcon,
-  Warning as WarningIcon,
-  PersonPin as PersonPinIcon,
-  AccessTime as AccessTimeIcon,
-  Done as DoneIcon
-} from '@mui/icons-material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+// Material-UI Components imported via MaterialHelpRequests component
 
 import clerkIcon from "@/assets/clerk-icon.png";
 import insuranceHandIcon from "@/assets/insurance-hand-icon.png";
