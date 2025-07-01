@@ -47,62 +47,9 @@ export default function Header() {
         
         {/* Navigation buttons container aligned with page content */}
         <div className="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center relative z-10" style={{height: '56px'}}>
-          {/* Left-aligned content - Assistance Center button OR iPad hamburger menu */}
+          {/* Left-aligned Assistance Center button - hidden on iPad */}
           <div className="flex items-center">
-            {isIPad ? (
-              <Sheet open={open} onOpenChange={setOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-white">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <div className="flex flex-col gap-4 mt-8">
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start" 
-                      onClick={() => handleNavigation('/')}
-                    >
-                      <img src={dashboardIcon} alt="Dashboard" className="mr-2 h-5 w-5" />
-                      Dashboard
-                    </Button>
-
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start" 
-                      onClick={() => handleNavigation('/report-selection')}
-                    >
-                      <img src={newReportIcon} alt="New Report" className="mr-2 h-5 w-5" />
-                      New Report
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start" 
-                      onClick={() => handleNavigation('/employee-login')}
-                    >
-                      <img src={employeeIcon} alt="Employee" className="mr-2 h-5 w-5" />
-                      Employee Login
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start" 
-                      onClick={() => handleNavigation('/help-request')}
-                    >
-                      <img src={insuranceHandIcon} alt="Assistance" className="mr-2 h-5 w-5" />
-                      Assistance Center
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start" 
-                      onClick={() => handleNavigation('/admin-login')}
-                    >
-                      <img src={lockShieldIcon} alt="Admin" className="mr-2 h-5 w-5" />
-                      Admin Login
-                    </Button>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            ) : (
+            {!isIPad && (
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -115,27 +62,29 @@ export default function Header() {
             )}
           </div>
           
-          {/* Right-aligned admin button and mobile hamburger menu */}
+          {/* Right-aligned navigation */}
           <div className="flex items-center gap-2">
+            {/* Admin Login button - hidden on iPad */}
             {!isIPad && (
-              <>
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
-                  onClick={() => handleNavigation('/admin-login')}
-                >
-                  <img src={lockShieldIcon} alt="Admin" className="mr-2 h-4 w-4" />
-                  Admin Login
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
+                onClick={() => handleNavigation('/admin-login')}
+              >
+                <img src={lockShieldIcon} alt="Admin" className="mr-2 h-4 w-4" />
+                Admin Login
+              </Button>
+            )}
+            
+            {/* Hamburger menu - always on right, visible on mobile and iPad */}
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className={`text-white ${isIPad ? 'flex' : 'md:hidden'}`}>
+                  <Menu className="h-5 w-5" />
                 </Button>
-                
-                <Sheet open={open} onOpenChange={setOpen}>
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-white md:hidden">
-                      <Menu className="h-5 w-5" />
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent>
+              </SheetTrigger>
+              <SheetContent>
                 <div className="flex flex-col gap-4 mt-8">
                   <Button 
                     variant="ghost" 
@@ -154,6 +103,7 @@ export default function Header() {
                     <img src={newReportIcon} alt="New Report" className="mr-2 h-5 w-5" />
                     New Report
                   </Button>
+                  
                   <Button 
                     variant="ghost" 
                     className="justify-start" 
@@ -162,6 +112,7 @@ export default function Header() {
                     <img src={employeeIcon} alt="Employee" className="mr-2 h-5 w-5" />
                     Employee Login
                   </Button>
+                  
                   <Button 
                     variant="ghost" 
                     className="justify-start" 
@@ -170,6 +121,7 @@ export default function Header() {
                     <img src={insuranceHandIcon} alt="Assistance" className="mr-2 h-5 w-5" />
                     Assistance Center
                   </Button>
+                  
                   <Button 
                     variant="ghost" 
                     className="justify-start" 
