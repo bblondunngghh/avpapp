@@ -56,6 +56,7 @@ export default function Header() {
               className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
               onClick={() => handleNavigation('/admin-login')}
             >
+              <img src={lockShieldIcon} alt="Admin" className="mr-2 h-4 w-4" />
               Admin Login
             </Button>
             

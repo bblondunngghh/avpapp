@@ -92,6 +92,9 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- July 1, 2025: Renamed "Help Request Center" to "Assistance Center" and moved to top navigation bar with icon for better accessibility
+- July 1, 2025: Added Lock Shield icon to Admin Login button in navigation to maintain visual consistency with new Assistance Center button
+- July 1, 2025: Removed Help Request button from dashboard home page and integrated into persistent header navigation
 - July 1, 2025: CRITICAL FIX - Resolved timezone bug causing June 1st data to appear as May 31st in Employee Accounting
 - July 1, 2025: Fixed all unsafe date parsing in admin panel (14 instances) - replaced new Date() with parseLocalDate()
 - July 1, 2025: Repaired 46+ malformed employee shift records from June 20-30 with corrupted JSON format
