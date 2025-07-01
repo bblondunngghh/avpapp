@@ -11,6 +11,7 @@ import newReportIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_1749313201026.png";
 import insuranceHandIcon from "@assets/Insurance-Hand--Streamline-Ultimate_1751309954246.png";
+import hamburgerMenuIcon from "@assets/Layout-Headline--Streamline-Ultimate_1751405186453.png";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -85,7 +86,7 @@ export default function Header() {
                   size="icon" 
                   className={`text-white ${isIPad ? 'flex -mr-4' : 'md:hidden'}`}
                 >
-                  <Menu className="h-5 w-5" />
+                  <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent>

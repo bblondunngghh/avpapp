@@ -95,6 +95,7 @@ This is a comprehensive valet parking shift management system built for restaura
 - July 1, 2025: Updated Employee Accounting tab to sort employees alphabetically by last name instead of first name for better organization
 - July 1, 2025: Optimized iPad navigation to use hamburger menu exclusively, hiding top navigation buttons for cleaner interface
 - July 1, 2025: iPad hamburger menu positioned on right edge aligned with page content for better UX
+- July 1, 2025: Updated hamburger menu icon to use custom layout headline icon for both mobile and iPad navigation
 - July 1, 2025: Added "Assistance Center" icon and link to mobile bottom navigation bar for easy access on mobile devices
 - July 1, 2025: Added "Home" text to home button alongside house icon for better user clarity
 - July 1, 2025: Removed icon from "Access Valet Assistance Center" page title for cleaner appearance
