@@ -18,12 +18,12 @@ async function fixEmployeeData() {
       ORDER BY date
     `);
     
-    // Also check for the other malformed pattern
+    // Also check for the other malformed pattern with escaped quotes
     const result2 = await pool.query(`
       SELECT id, date, employees, location_id 
       FROM shift_reports 
       WHERE date >= '2025-06-20' 
-      AND employees LIKE '%name%' 
+      AND (employees LIKE '%\\"name\\"%' OR employees LIKE '%name%')
       AND employees NOT LIKE '[%'
       ORDER BY date
     `);
