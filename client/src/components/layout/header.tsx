@@ -84,7 +84,7 @@ export default function Header() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className={`text-white ${isIPad ? 'flex -mr-4' : 'md:hidden'}`}
+                  className={`text-white ${isIPad ? 'flex -mr-1' : 'md:hidden'}`}
                 >
                   <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
                 </Button>
