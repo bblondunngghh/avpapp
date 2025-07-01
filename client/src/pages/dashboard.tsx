@@ -152,15 +152,6 @@ export default function Dashboard() {
             Employee Login
           </Button>
 
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/help-request")}
-            className="border-orange-200 text-orange-700 hover:text-orange-800 hover:bg-orange-50 flex items-center justify-center gap-2"
-          >
-            <HelpCircle className="h-5 w-5" />
-            Request Help
-          </Button>
-
         </div>
       </div>
       

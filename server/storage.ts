@@ -15,7 +15,7 @@ import {
   LOCATIONS
 } from "@shared/schema";
 import { db, withRetry } from "./db";
-import { eq, desc, gte, and, or, gt } from "drizzle-orm";
+import { eq, desc, gte, and, or, gt, lt } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";

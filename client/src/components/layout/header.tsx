@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, Car, Home, ClipboardList, PlusCircle, User } from "lucide-react";
+import { Menu, Car, Home, ClipboardList, PlusCircle, User, HelpCircle } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import navCarIcon from "@assets/Car-Dashboard-Steering--Streamline-Ultimate.png";
 import carToolKeysIcon from "@assets/Car-Tool-Keys--Streamline-Ultimate.png";
@@ -10,6 +10,7 @@ import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import newReportIcon from "@assets/Paper-Write--Streamline-Ultimate.png";
 import reportsIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_1749313201026.png";
+import insuranceHandIcon from "@assets/Insurance-Hand--Streamline-Ultimate_1751309954246.png";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -32,8 +33,22 @@ export default function Header() {
           </h1>
         </div>
         
-        {/* Right-aligned admin button container aligned with page content */}
-        <div className="max-w-4xl mx-auto px-4 py-2 flex justify-end items-center relative z-10" style={{height: '56px'}}>
+        {/* Navigation buttons container aligned with page content */}
+        <div className="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center relative z-10" style={{height: '56px'}}>
+          {/* Left-aligned Assistance Center button */}
+          <div className="flex items-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="bg-white border-orange-200 text-orange-700 hover:text-orange-800 hover:bg-orange-50 hidden md:flex font-medium"
+              onClick={() => handleNavigation('/help-request')}
+            >
+              <img src={insuranceHandIcon} alt="Assistance" className="mr-2 h-4 w-4" />
+              Assistance Center
+            </Button>
+          </div>
+          
+          {/* Right-aligned admin button */}
           <div className="flex items-center gap-2">
             <Button 
               variant="secondary" 
@@ -76,6 +91,14 @@ export default function Header() {
                   >
                     <img src={employeeIcon} alt="Employee" className="mr-2 h-5 w-5" />
                     Employee Login
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="justify-start" 
+                    onClick={() => handleNavigation('/help-request')}
+                  >
+                    <img src={insuranceHandIcon} alt="Assistance" className="mr-2 h-5 w-5" />
+                    Assistance Center
                   </Button>
                   <Button 
                     variant="ghost" 
