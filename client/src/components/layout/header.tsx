@@ -77,10 +77,14 @@ export default function Header() {
               </Button>
             )}
             
-            {/* Hamburger menu - always on right, visible on mobile and iPad */}
+            {/* Hamburger menu - positioned precisely at content edge for iPad */}
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className={`text-white ${isIPad ? 'flex' : 'md:hidden'}`}>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={`text-white ${isIPad ? 'flex -mr-4' : 'md:hidden'}`}
+                >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
