@@ -374,9 +374,10 @@ export default function HelpRequestPage() {
             variant="outline" 
             size="sm" 
             onClick={() => navigate("/")}
-            className="p-2 h-10 w-10"
+            className="px-3 h-10 flex items-center gap-2"
           >
             <img src={houseIcon} alt="Home" className="h-5 w-5" />
+            Home
           </Button>
           <h1 className="text-2xl font-bold text-gray-900">Access Valet Assistance Center</h1>
         </div>

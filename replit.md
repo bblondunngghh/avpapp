@@ -92,6 +92,7 @@ This is a comprehensive valet parking shift management system built for restaura
 
 ## Recent Changes
 
+- July 1, 2025: Added "Home" text to home button alongside house icon for better user clarity
 - July 1, 2025: Removed icon from "Access Valet Assistance Center" page title for cleaner appearance
 - July 1, 2025: Renamed section header within page from "Assistance Center" to "Help Request Center" to clarify functionality
 - July 1, 2025: Renamed page title from "Inter-Location Help Requests" to "Access Valet Assistance Center" for clearer branding
