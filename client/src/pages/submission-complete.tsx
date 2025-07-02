@@ -139,6 +139,17 @@ export default function SubmissionComplete() {
       const totalTips = creditTips + cashTips + receiptTips;
       const totalEarnings = totalCommission + totalTips;
       
+      console.log("Final calculations for Capital Grille:", {
+        creditTransactions, // should be 5
+        calculatedCashCars, // should be 5 
+        commissionRate, // should be 4
+        creditCommission, // should be 5 * 4 = 20
+        cashCommission, // should be 5 * 4 = 20
+        creditTips,
+        cashTips,
+        totalEarnings
+      });
+      
       setEarnings({
         creditCommission,
         creditTips,
