@@ -214,9 +214,15 @@ export function matchEmployee(
     // Add any other employees added via admin panel that show as generic names
   };
   
+  // Debug logging for generic employee matching
+  if (shiftName.match(/^employee\s+\d+$/)) {
+    console.log(`[DEBUG] Trying to match generic name "${shiftName}" with employee "${employeeFullName}"`);
+  }
+  
   if (employeeFullName && specialMatches[employeeFullName]) {
     const variants = specialMatches[employeeFullName];
     if (variants.includes(shiftName)) {
+      console.log(`[DEBUG] Successfully matched "${shiftName}" to "${employeeFullName}" via special matches`);
       return true;
     }
   }
