@@ -958,6 +958,11 @@ export default function AdminPanel() {
           
           const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
           const additionalTaxPayments = cashPaid;
+          
+          // DEBUG: Log cash payment details for troubleshooting
+          if (shiftReportCashPaid > 0 || taxRecordCashPaid > 0) {
+            console.log(`${employee.fullName} - Shift Cash: ${shiftReportCashPaid}, Tax Record Cash: ${taxRecordCashPaid}, Final: ${additionalTaxPayments}`);
+          }
 
           totalEarnings += empEarnings;
           totalTax += tax;
