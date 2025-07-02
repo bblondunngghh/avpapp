@@ -84,6 +84,16 @@ export default function SubmissionComplete() {
       setCashCars(calculatedCashCars);
       
       // Calculate earnings based on location-specific commission and turn-in rates
+      console.log("Report data for calculations:", {
+        locationId: report.locationId,
+        creditTransactions,
+        totalReceipts,
+        calculatedCashCars,
+        totalCreditSales: report.totalCreditSales,
+        totalCashCollected: report.totalCashCollected,
+        totalTurnIn: report.totalTurnIn
+      });
+      
       // Get commission rate based on location
       let commissionRate = 11; // Default (Capital Grille)
       if (report.locationId === 2) commissionRate = 9; // Bob's Steak
@@ -124,6 +134,19 @@ export default function SubmissionComplete() {
       const totalCommission = creditCommission + cashCommission + receiptCommission;
       const totalTips = creditTips + cashTips + receiptTips;
       const totalEarnings = totalCommission + totalTips;
+      
+      console.log("Calculated earnings:", {
+        creditCommission,
+        cashCommission,
+        receiptCommission,
+        creditTips,
+        cashTips,
+        receiptTips,
+        totalCommission,
+        totalTips,
+        totalEarnings,
+        moneyOwed
+      });
       
       setEarnings({
         creditCommission,
