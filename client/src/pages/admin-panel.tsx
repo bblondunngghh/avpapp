@@ -902,6 +902,8 @@ export default function AdminPanel() {
       let totalHours = 0;
       let totalCommissionOnly = 0;
       let totalTipsOnly = 0;
+      let totalCreditTips = 0;
+      let totalCashTips = 0;
 
       employeeReports.forEach((report: any) => {
         const employees = parseEmployeesData(report.employees);
@@ -970,6 +972,8 @@ export default function AdminPanel() {
           totalHours += employeeData.hours;
           totalCommissionOnly += empCommission;
           totalTipsOnly += empTips;
+          totalCreditTips += hoursPercent * creditCardTips;
+          totalCashTips += hoursPercent * (cashTips + receiptTips);
         }
       });
 
@@ -984,6 +988,8 @@ export default function AdminPanel() {
         totalHours: totalHours.toFixed(1),
         totalCommission: totalCommissionOnly.toFixed(2),
         totalTips: totalTipsOnly.toFixed(2),
+        totalCreditTips: totalCreditTips.toFixed(2),
+        totalCashTips: totalCashTips.toFixed(2),
         totalEarnings: totalEarnings.toFixed(2),
         totalTax: totalTax.toFixed(2),
         totalMoneyOwed: totalMoneyOwed.toFixed(2),
@@ -5552,7 +5558,8 @@ export default function AdminPanel() {
                             <TableHead className="text-center">Hours</TableHead>
                             <TableHead className="text-center">Shifts</TableHead>
                             <TableHead className="text-center">Commission</TableHead>
-                            <TableHead className="text-center">Tips</TableHead>
+                            <TableHead className="text-center">Credit Tips</TableHead>
+                            <TableHead className="text-center">Cash Tips</TableHead>
                             <TableHead className="text-center">Total Earnings</TableHead>
                             <TableHead className="text-center">Money Owed</TableHead>
                             <TableHead className="text-center">Advance</TableHead>
@@ -5586,7 +5593,10 @@ export default function AdminPanel() {
                                 ${employee.totalCommission.toFixed(2)}
                               </TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
-                                ${employee.totalTips.toFixed(2)}
+                                ${(employee.totalCreditTips || 0).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-center text-green-600 font-medium">
+                                ${(employee.totalCashTips || 0).toFixed(2)}
                               </TableCell>
                               <TableCell className="text-center">${employee.totalEarnings.toFixed(2)}</TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
@@ -5609,7 +5619,10 @@ export default function AdminPanel() {
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalCommission, 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center text-green-600">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTips, 0).toFixed(2)}
+                              ${employeeAccountingData.reduce((sum, emp) => sum + (emp.totalCreditTips || 0), 0).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-center text-green-600">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + (emp.totalCashTips || 0), 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalEarnings, 0).toFixed(2)}
