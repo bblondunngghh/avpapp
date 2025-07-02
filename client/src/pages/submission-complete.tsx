@@ -146,7 +146,7 @@ export default function SubmissionComplete() {
         moneyOwed
       });
       
-      setEarnings({
+      const newEarnings = {
         creditCommission,
         creditTips,
         cashCommission,
@@ -155,7 +155,10 @@ export default function SubmissionComplete() {
         receiptTips,
         moneyOwed,
         totalEarnings
-      });
+      };
+      
+      console.log("Setting earnings state:", newEarnings);
+      setEarnings(newEarnings);
       
     } catch (err) {
       console.error("Failed to parse employees", err);
