@@ -1458,22 +1458,34 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           })}
                         </div>
                         
-                        {/* Tax Policy Update Notice */}
-                        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                          <div className="flex items-start gap-3">
-                            <div className="bg-red-100 p-2 rounded-full flex-shrink-0">
-                              <div className="w-4 h-4 bg-red-600 rounded-full"></div>
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-semibold text-blue-800">Tax Policy Update Notice</h4>
-                              <div className="text-xs text-blue-700">
-                                <p>
-                                  After reviewing payroll data for the past few months, we have determined that the 22% tax payment is not expected to be required moving forward. However, please note that this could change if employees move into a higher tax bracket, potentially requiring us to reimplement the paid-in tax obligation. Any money owed will be contributed to your taxes and should cover your tax obligations, with any remaining balances redistributed back to you via direct deposit or check.
-                                </p>
+                        {/* Tax Policy Update Notice - Auto-remove after 30 days from July 2, 2025 */}
+                        {(() => {
+                          const noticeStartDate = new Date('2025-07-02'); // July 2, 2025
+                          const currentDate = new Date();
+                          const daysDifference = Math.floor((currentDate.getTime() - noticeStartDate.getTime()) / (1000 * 60 * 60 * 24));
+                          
+                          // Show notice only if less than 30 days have passed
+                          if (daysDifference < 30) {
+                            return (
+                              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div className="flex items-start gap-3">
+                                  <div className="bg-red-100 p-2 rounded-full flex-shrink-0">
+                                    <div className="w-4 h-4 bg-red-600 rounded-full"></div>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <h4 className="font-semibold text-blue-800">Tax Policy Update Notice</h4>
+                                    <div className="text-xs text-blue-700">
+                                      <p>
+                                        After reviewing payroll data for the past few months, we have determined that the 22% tax payment is not expected to be required moving forward. However, please note that this could change if employees move into a higher tax bracket, potentially requiring us to reimplement the paid-in tax obligation. Any money owed will be contributed to your taxes and should cover your tax obligations, with any remaining balances redistributed back to you via direct deposit or check.
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </div>
+                            );
+                          }
+                          return null; // Don't show notice after 30 days
+                        })()}
                       </div>
                     )}
                   </div>
