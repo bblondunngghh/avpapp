@@ -1004,6 +1004,21 @@ export default function AdminPanel() {
     setEmployeeAccountingData(calculatedData as any);
   }, [allEmployeeRecords, reports, selectedAccountingMonth, taxPayments]);
 
+  // Sort employees by last name (extract last name from full name)
+  const sortedEmployeeAccountingData = useMemo(() => {
+    return employeeAccountingData.sort((a, b) => {
+      const getLastName = (fullName: string) => {
+        const nameParts = fullName.trim().split(' ');
+        return nameParts[nameParts.length - 1].toLowerCase();
+      };
+      
+      const lastNameA = getLastName(a.name);
+      const lastNameB = getLastName(b.name);
+      
+      return lastNameA.localeCompare(lastNameB);
+    });
+  }, [employeeAccountingData]);
+
   // Helper function to get training completion date
   const getTrainingCompletionDate = (employeeName: string) => {
     const acknowledgment = trainingAcknowledgments.find((ack: any) => 
@@ -5535,19 +5550,6 @@ export default function AdminPanel() {
                   };
                 });
 
-                // Sort employees by last name (extract last name from full name)
-                const sortedEmployeeAccountingData = employeeAccountingData.sort((a, b) => {
-                  const getLastName = (fullName) => {
-                    const nameParts = fullName.trim().split(' ');
-                    return nameParts[nameParts.length - 1].toLowerCase();
-                  };
-                  
-                  const lastNameA = getLastName(a.name);
-                  const lastNameB = getLastName(b.name);
-                  
-                  return lastNameA.localeCompare(lastNameB);
-                });
-
                 return (
                   <div className="space-y-6">
                     <div className="overflow-x-auto">
@@ -5595,7 +5597,6 @@ export default function AdminPanel() {
                               </TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
                                 ${((employee as any).totalCreditTips || 0).toFixed(2)}
-                                {console.log("Display employee:", employee.name, "creditTips:", (employee as any).totalCreditTips)}
                               </TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
                                 ${((employee as any).totalCashTips || 0).toFixed(2)}
