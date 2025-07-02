@@ -934,11 +934,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = updateEmployeeSchema.parse(req.body);
       
-      // Convert hireDate string to Date object for database storage
+      // Convert date strings to Date objects for database storage
       const updateData = {
         ...validatedData,
-        hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined
+        hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined,
+        dateOfBirth: validatedData.dateOfBirth ? parseDateOfBirth(validatedData.dateOfBirth) : undefined
       } as any;
+
+      // Helper function to parse MM/DD/YYYY format to Date object
+      function parseDateOfBirth(dateStr: string): Date | undefined {
+        if (!dateStr) return undefined;
+        
+        // Handle MM/DD/YYYY format
+        const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (match) {
+          const [, month, day, year] = match;
+          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        }
+        
+        // Try to parse as ISO date if not in MM/DD/YYYY format
+        const isoDate = new Date(dateStr);
+        return isNaN(isoDate.getTime()) ? undefined : isoDate;
+      }
       
       // Check if employee exists
       const existingEmployee = await storage.getEmployee(id);
