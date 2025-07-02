@@ -977,6 +977,9 @@ export default function AdminPanel() {
       const advance = totalCommissionOnly + totalTipsOnly - totalMoneyOwed;
       const moneyOwedAfterTax = Math.max(0, totalTax - totalMoneyOwed - totalAdditionalTaxPayments);
 
+      // DEBUG: Log the total additional tax payments for this employee
+      console.log(`EMPLOYEE ${employee.fullName}: Total Additional Tax Payments = ${totalAdditionalTaxPayments}`);
+
       return {
         name: employee.fullName,
         key: employee.key,
