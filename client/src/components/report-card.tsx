@@ -482,15 +482,9 @@ export default function ReportCard({
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-semibold text-blue-800">Tax Policy Update Notice</h4>
-                    <div className="text-xs text-blue-700 space-y-1">
+                    <div className="text-xs text-blue-700">
                       <p>
-                        <strong>Effective immediately:</strong> The 22% tax requirement has been eliminated from all shift report calculations. This change applies to all current and future shifts.
-                      </p>
-                      <p>
-                        <strong>Money Redistribution:</strong> Any tax-related money previously owed to the company will be redistributed to employees through direct deposit or check payments as applicable.
-                      </p>
-                      <p>
-                        <strong>Important:</strong> This policy may be subject to future changes based on business needs. All employees will be notified of any updates through official company communications.
+                        After reviewing payroll data for the past few months, we have determined that the 22% tax payment is not expected to be required moving forward. However, please note that this could change if employees move into a higher tax bracket, potentially requiring us to reimplement the paid-in tax obligation. Any money owed will be contributed to your taxes and should cover your tax obligations, with any remaining balances redistributed back to you via direct deposit or check.
                       </p>
                     </div>
                   </div>
