@@ -107,8 +107,9 @@ app.use((req, res, next) => {
     // Delayed startup of backup services to allow database connection to stabilize
     setTimeout(() => {
       try {
-        BackupService.startBackupSchedule();
-        console.log('[STARTUP] Backup service initialized');
+        // Temporarily disabled backup service to resolve server crashes
+        // BackupService.startBackupSchedule();
+        console.log('[STARTUP] Backup service temporarily disabled');
       } catch (error) {
         console.error('[STARTUP] Backup service failed to start:', error);
       }
