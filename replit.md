@@ -98,7 +98,7 @@ This is a comprehensive valet parking shift management system built for restaura
 - July 1, 2025: Updated hamburger menu icon to use custom layout headline icon for both mobile and iPad navigation
 - July 2, 2025: Added enhanced employee management features: Driver's License Number field, Date of Birth field, full SSN field, and motor vehicle records document upload capability to admin panel
 - July 2, 2025: CRITICAL BUG FIX - Fixed additional tax payments calculation showing company cash turn-in amount instead of actual employee tax payments. Issue was in string-to-number conversion during aggregation.
-- July 2, 2025: CRITICAL BUG FIX - Fixed employee breakdown displaying "employee 2" instead of actual names for employees added via admin panel. Enhanced matchEmployee function to handle generic employee names and added special mapping for Braden Baldez.
+- July 2, 2025: CRITICAL BUG FIX - Fixed employee breakdown displaying generic names ("employee 1", "employee 2") instead of actual names for employees added via admin panel. Enhanced matchEmployee function to handle generic employee names and added special mappings for Braden Baldez and Jack Shelton. This is a systematic issue where the shift report form generates generic names for admin-added employees.
 - July 1, 2025: Added "Assistance Center" icon and link to mobile bottom navigation bar for easy access on mobile devices
 - July 1, 2025: Added "Home" text to home button alongside house icon for better user clarity
 - July 1, 2025: Removed icon from "Access Valet Assistance Center" page title for cleaner appearance

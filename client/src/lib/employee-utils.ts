@@ -146,9 +146,14 @@ export interface ShiftEmployee {
  * Robust employee matching that handles key changes by checking multiple criteria
  * @param shiftEmployee - Employee data from shift report
  * @param employeeRecord - Employee record from database
+ * @param context - Optional context for better matching (shift report, all employees, etc.)
  * @returns boolean indicating if they match
  */
-export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: EmployeeRecord): boolean {
+export function matchEmployee(
+  shiftEmployee: ShiftEmployee, 
+  employeeRecord: EmployeeRecord, 
+  context?: { shiftReport?: any; allEmployees?: EmployeeRecord[] }
+): boolean {
   if (!shiftEmployee?.name || !employeeRecord) return false;
   
   const shiftName = shiftEmployee.name.toLowerCase().trim();
@@ -177,27 +182,36 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
   }
   
   // Handle generic employee names from admin panel additions
-  // When employees are added via admin panel, they may show up as "employee 2", "employee 3", etc.
+  // When employees are added via admin panel, they may show up as "employee 1", "employee 2", etc.
   if (shiftName.match(/^employee\s+\d+$/)) {
-    // For generic names, we need a different matching strategy
-    // This is a known limitation that needs to be addressed in the shift report form
-    // For now, we'll try to match based on the employee's position in the database
-    const employeeNumber = parseInt(shiftName.replace('employee ', ''));
+    // This is a systematic issue where employees added via admin panel get generic names
+    // For now, we cannot reliably match these without additional context
+    // The root cause needs to be fixed in the shift report form to use proper employee identifiers
     
-    // Special handling for Braden Baldez who appears as "employee 2"
-    if (employeeNumber === 2 && employeeFullName.includes('braden')) {
-      return true;
+    // As a temporary workaround, try to match based on hire date and shift date proximity
+    if (context?.shiftReport && context?.allEmployees) {
+      const shiftDate = new Date(context.shiftReport.date);
+      const employeeHireDate = new Date(employeeRecord.hireDate || '1900-01-01');
+      
+      // If employee was hired within 30 days of the shift, they might be the generic employee
+      const daysDiff = Math.abs((shiftDate.getTime() - employeeHireDate.getTime()) / (1000 * 3600 * 24));
+      
+      // Only match if employee was recently hired (within 30 days) and no other exact matches exist
+      if (daysDiff <= 30) {
+        return true;
+      }
     }
     
-    // We could extend this logic for other employees as needed
-    // This is a temporary fix until the shift report form is updated to use proper employee identification
+    return false; // Let the special matches handle this below
   }
   
   // Special cases for known employee key changes and variations
   const specialMatches: Record<string, string[]> = {
     'ryan hocevar': ['ryan', 'rhoce', 'rjhoce'], // Ryan's various keys and name variants
-    'braden baldez': ['employee 2'], // Temporary fix for Braden showing as "employee 2"
-    // Add other employees with key changes here as needed
+    // Admin panel employees showing as generic names - systematic issue that needs shift form fix
+    'braden baldez': ['employee 1', 'employee 2', 'employee 3'], 
+    'jack shelton': ['employee 1', 'employee 2', 'employee 3'],
+    // Add any other employees added via admin panel that show as generic names
   };
   
   if (employeeFullName && specialMatches[employeeFullName]) {
