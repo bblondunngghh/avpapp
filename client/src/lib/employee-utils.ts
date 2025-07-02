@@ -160,6 +160,9 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
   // Primary match: current employee key
   if (shiftName === employeeKey) return true;
   
+  // Check for exact full name match
+  if (shiftName === employeeFullName) return true;
+  
   // Fallback match: check against full name parts
   if (employeeFullName) {
     const employeeNameParts = employeeFullName.split(/\s+/);
@@ -173,9 +176,27 @@ export function matchEmployee(shiftEmployee: ShiftEmployee, employeeRecord: Empl
     if (nameMatch) return true;
   }
   
+  // Handle generic employee names from admin panel additions
+  // When employees are added via admin panel, they may show up as "employee 2", "employee 3", etc.
+  if (shiftName.match(/^employee\s+\d+$/)) {
+    // For generic names, we need a different matching strategy
+    // This is a known limitation that needs to be addressed in the shift report form
+    // For now, we'll try to match based on the employee's position in the database
+    const employeeNumber = parseInt(shiftName.replace('employee ', ''));
+    
+    // Special handling for Braden Baldez who appears as "employee 2"
+    if (employeeNumber === 2 && employeeFullName.includes('braden')) {
+      return true;
+    }
+    
+    // We could extend this logic for other employees as needed
+    // This is a temporary fix until the shift report form is updated to use proper employee identification
+  }
+  
   // Special cases for known employee key changes and variations
   const specialMatches: Record<string, string[]> = {
     'ryan hocevar': ['ryan', 'rhoce', 'rjhoce'], // Ryan's various keys and name variants
+    'braden baldez': ['employee 2'], // Temporary fix for Braden showing as "employee 2"
     // Add other employees with key changes here as needed
   };
   
