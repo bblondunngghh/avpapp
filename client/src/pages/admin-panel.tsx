@@ -4779,7 +4779,7 @@ export default function AdminPanel() {
                   setEditingEmployeeId(null);
                 }
               }}>
-                <DialogContent>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Edit Employee</DialogTitle>
                     <DialogDescription>
