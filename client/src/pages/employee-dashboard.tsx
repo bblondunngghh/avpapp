@@ -349,7 +349,7 @@ export default function EmployeeDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-6 px-4 max-w-5xl">
+    <div className="container mx-auto py-6 px-4 max-w-5xl relative">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Avatar className="h-16 w-16 border-2 border-blue-200">
@@ -372,28 +372,61 @@ export default function EmployeeDashboard() {
         </Button>
       </div>
 
-      {/* Training Requirement Warning */}
+      {/* Training Completion Gate - Full Overlay */}
       {!hasCompletedTraining && (
-        <Card className="mb-6 border-orange-200 bg-orange-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <img src={alertTriangleIcon} alt="Alert Triangle" className="h-6 w-6" />
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-orange-800 mb-2">Safety Training Required</h3>
-                <p className="text-orange-700 mb-3">
-                  You must complete the safety training acknowledgment before accessing all employee features.
+        <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex items-center justify-center">
+          <Card className="max-w-md mx-4 border-red-200 bg-red-50 shadow-lg">
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <div className="mx-auto mb-4 w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                  <XCircle className="h-8 w-8 text-red-600" />
+                </div>
+                <h3 className="text-xl font-bold text-red-800 mb-3">Training Required</h3>
+                <p className="text-red-700 mb-6 leading-relaxed">
+                  You must complete the mandatory safety training acknowledgment before accessing your employee dashboard and viewing any information.
                 </p>
-                <Button 
-                  onClick={() => navigate("/regulations")}
-                  className="bg-orange-600 hover:bg-orange-700 text-white"
-                >
-                  Complete Safety Training
-                </Button>
+                <div className="space-y-3">
+                  <Button 
+                    onClick={() => navigate("/regulations")}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white py-3"
+                    size="lg"
+                  >
+                    <CheckCircle className="h-5 w-5 mr-2" />
+                    Complete Safety Training Now
+                  </Button>
+                  <Button 
+                    onClick={handleLogout}
+                    variant="outline"
+                    className="w-full border-gray-300 text-gray-700"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
+
+      {/* Content that gets blurred when training not completed */}
+      <div className={!hasCompletedTraining ? "blur-sm pointer-events-none select-none" : ""}>
+        {/* Training Completion Status */}
+        {hasCompletedTraining && (
+          <Card className="mb-6 border-green-200 bg-green-50">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="h-6 w-6 text-green-600" />
+                <div>
+                  <h3 className="text-lg font-semibold text-green-800">Safety Training Complete</h3>
+                  <p className="text-green-700">
+                    You have successfully completed the mandatory safety training.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
@@ -887,6 +920,7 @@ export default function EmployeeDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
