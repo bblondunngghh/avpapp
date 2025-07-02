@@ -1000,8 +1000,8 @@ export default function AdminPanel() {
       };
     });
 
-    console.log("Setting employeeAccountingData with credit/cash tips:", calculatedData.slice(0, 3));
-    setEmployeeAccountingData(calculatedData);
+
+    setEmployeeAccountingData(calculatedData as any);
   }, [allEmployeeRecords, reports, selectedAccountingMonth, taxPayments]);
 
   // Helper function to get training completion date
@@ -5594,10 +5594,10 @@ export default function AdminPanel() {
                                 ${employee.totalCommission.toFixed(2)}
                               </TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
-                                ${(employee.totalCreditTips || 0).toFixed(2)}
+                                ${((employee as any).totalCreditTips || 0).toFixed(2)}
                               </TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
-                                ${(employee.totalCashTips || 0).toFixed(2)}
+                                ${((employee as any).totalCashTips || 0).toFixed(2)}
                               </TableCell>
                               <TableCell className="text-center">${employee.totalEarnings.toFixed(2)}</TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
@@ -5620,10 +5620,10 @@ export default function AdminPanel() {
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalCommission, 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center text-green-600">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + (emp.totalCreditTips || 0), 0).toFixed(2)}
+                              ${employeeAccountingData.reduce((sum, emp) => sum + ((emp as any).totalCreditTips || 0), 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center text-green-600">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + (emp.totalCashTips || 0), 0).toFixed(2)}
+                              ${employeeAccountingData.reduce((sum, emp) => sum + ((emp as any).totalCashTips || 0), 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalEarnings, 0).toFixed(2)}
