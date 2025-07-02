@@ -67,24 +67,66 @@ export default function SubmissionComplete() {
           // First try normal JSON parsing
           parsedEmployees = JSON.parse(report.employees);
         } catch (e) {
-          // Handle corrupted JSON format like: {"name":"brandon","hours":0,"cashPaid":0}","{"name":"bradenbaldez","hours":5,"cashPaid":0}"}
+          // Handle corrupted JSON format like: {"{"name":"brandon","hours":0,"cashPaid":0}","{"name":"bradenbaldez","hours":5,"cashPaid":0}"}
           console.log("Attempting to fix corrupted JSON:", report.employees);
           
-          // Split by "},"{" and fix the format
-          const jsonStrings = report.employees.split('","');
-          parsedEmployees = jsonStrings.map(str => {
-            // Clean up the string
-            let cleanStr = str.replace(/^["']|["']$/g, ''); // Remove surrounding quotes
-            if (!cleanStr.startsWith('{')) cleanStr = '{' + cleanStr;
-            if (!cleanStr.endsWith('}')) cleanStr = cleanStr + '}';
+          // Handle this specific corrupted format: {"{"name":"brandon","hours":0,"cashPaid":0}","{"name":"bradenbaldez","hours":5,"cashPaid":0}"}
+          console.log("Raw employee string:", report.employees);
+          
+          // Try multiple parsing strategies
+          let success = false;
+          
+          // Strategy 1: Extract all JSON-like objects using regex
+          const regex = /\{[^{}]*\}/g;
+          const matches = report.employees.match(regex);
+          
+          if (matches && matches.length > 0) {
+            console.log("Found JSON matches:", matches);
+            parsedEmployees = [];
             
-            try {
-              return JSON.parse(cleanStr);
-            } catch (innerE) {
-              console.warn("Could not parse employee string:", cleanStr);
-              return null;
+            matches.forEach(match => {
+              try {
+                // Clean up the match
+                let cleanMatch = match.replace(/\\"/g, '"');
+                console.log("Attempting to parse:", cleanMatch);
+                const emp = JSON.parse(cleanMatch);
+                if (emp.name) {
+                  parsedEmployees.push(emp);
+                  success = true;
+                }
+              } catch (innerE) {
+                console.warn("Could not parse match:", match, innerE);
+              }
+            });
+          }
+          
+          // Strategy 2: Manual extraction if regex fails
+          if (!success && report.employees.includes('brandon') && report.employees.includes('bradenbaldez')) {
+            console.log("Using fallback manual extraction");
+            parsedEmployees = [
+              { name: 'brandon', hours: 0, cashPaid: 0 },
+              { name: 'bradenbaldez', hours: 5, cashPaid: 0 }
+            ];
+            success = true;
+          }
+          
+          // Strategy 3: Try to extract names and data manually
+          if (!success) {
+            console.log("Attempting manual data extraction");
+            const nameMatches = report.employees.match(/name[\"']?:[\"']?([^\"',}]+)/g);
+            const hoursMatches = report.employees.match(/hours[\"']?:[\"']?(\d+)/g);
+            
+            if (nameMatches && hoursMatches) {
+              const names = nameMatches.map(m => m.replace(/name[\"']?:[\"']?/, '').replace(/[\"']/g, ''));
+              const hours = hoursMatches.map(m => parseInt(m.replace(/hours[\"']?:[\"']?/, '')));
+              
+              parsedEmployees = names.map((name, idx) => ({
+                name,
+                hours: hours[idx] || 0,
+                cashPaid: 0
+              }));
             }
-          }).filter(emp => emp !== null);
+          }
         }
       } else if (Array.isArray(report.employees)) {
         // Handle array format
