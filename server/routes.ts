@@ -4,6 +4,22 @@ import { storage } from "./storage";
 import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
+
+// Helper function to parse MM/DD/YYYY format to Date object
+function parseDateOfBirth(dateStr: string): Date | undefined {
+  if (!dateStr) return undefined;
+  
+  // Handle MM/DD/YYYY format
+  const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (match) {
+    const [, month, day, year] = match;
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  }
+  
+  // Try to parse as ISO date if not in MM/DD/YYYY format
+  const isoDate = new Date(dateStr);
+  return isNaN(isoDate.getTime()) ? undefined : isoDate;
+}
 import { 
   insertShiftReportSchema, 
   updateShiftReportSchema,
@@ -891,10 +907,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = insertEmployeeSchema.parse(req.body);
       
-      // Convert hireDate string to Date object for database storage
+      // Convert date strings to Date objects for database storage
       const employeeData = {
         ...validatedData,
-        hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined
+        hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined,
+        dateOfBirth: validatedData.dateOfBirth ? parseDateOfBirth(validatedData.dateOfBirth) : undefined
       };
       
       // Check if employee with this key already exists
@@ -940,22 +957,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined,
         dateOfBirth: validatedData.dateOfBirth ? parseDateOfBirth(validatedData.dateOfBirth) : undefined
       } as any;
-
-      // Helper function to parse MM/DD/YYYY format to Date object
-      function parseDateOfBirth(dateStr: string): Date | undefined {
-        if (!dateStr) return undefined;
-        
-        // Handle MM/DD/YYYY format
-        const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (match) {
-          const [, month, day, year] = match;
-          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        }
-        
-        // Try to parse as ISO date if not in MM/DD/YYYY format
-        const isoDate = new Date(dateStr);
-        return isNaN(isoDate.getTime()) ? undefined : isoDate;
-      }
       
       // Check if employee exists
       const existingEmployee = await storage.getEmployee(id);
