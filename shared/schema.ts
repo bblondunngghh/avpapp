@@ -67,6 +67,10 @@ export const insertEmployeeSchema = createInsertSchema(employees)
     phone: z.string().optional(),
     email: z.string().optional(),
     notes: z.string().optional(),
+    ssn: z.string().optional(),
+    driversLicenseNumber: z.string().optional(),
+    dateOfBirth: z.string().optional(),
+    motorVehicleRecordsPath: z.string().optional(),
     // Payroll data fields
     hoursWorked: z.number().optional(),
     creditCardCommission: z.number().optional(),
@@ -95,6 +99,10 @@ export const updateEmployeeSchema = createInsertSchema(employees)
     phone: z.string().optional(),
     email: z.string().optional(),
     notes: z.string().optional(),
+    ssn: z.string().optional(),
+    driversLicenseNumber: z.string().optional(),
+    dateOfBirth: z.string().optional(),
+    motorVehicleRecordsPath: z.string().optional(),
   })
   .partial();
 

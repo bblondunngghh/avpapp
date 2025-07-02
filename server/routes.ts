@@ -925,6 +925,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update an employee
   apiRouter.put('/employees/:id', async (req, res) => {
     try {
+      console.log('PUT /employees/:id - ID:', req.params.id, 'Body:', req.body);
+      
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ message: 'Invalid employee ID' });
