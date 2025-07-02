@@ -29,7 +29,8 @@ export const employees = pgTable("employees", {
   id: serial("id").primaryKey(),
   key: text("key").notNull().unique(), // Auto-generated from last 4 SSN digits
   fullName: text("full_name").notNull(),
-  ssn: text("ssn"), // Full SSN - you'll add manually
+  ssn: text("ssn"), // Last 4 digits of SSN for key generation
+  fullSsn: text("full_ssn"), // Full SSN with dashes (e.g., 123-45-6789)
   isActive: boolean("is_active").default(true).notNull(),
   isShiftLeader: boolean("is_shift_leader").default(false).notNull(),
   phone: text("phone"),
@@ -68,6 +69,7 @@ export const insertEmployeeSchema = createInsertSchema(employees)
     email: z.string().optional(),
     notes: z.string().optional(),
     ssn: z.string().optional(),
+    fullSsn: z.string().optional(),
     driversLicenseNumber: z.string().optional(),
     dateOfBirth: z.string().optional(),
     motorVehicleRecordsPath: z.string().optional(),
@@ -100,6 +102,7 @@ export const updateEmployeeSchema = createInsertSchema(employees)
     email: z.string().optional(),
     notes: z.string().optional(),
     ssn: z.string().optional(),
+    fullSsn: z.string().optional(),
     driversLicenseNumber: z.string().optional(),
     dateOfBirth: z.string().optional(),
     motorVehicleRecordsPath: z.string().optional(),
