@@ -283,6 +283,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Motor vehicle records upload endpoint
+  app.post('/api/upload-motor-vehicle-records', uploadDocument.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const { employeeId } = req.body;
+      
+      if (!employeeId) {
+        return res.status(400).json({ error: 'Employee ID is required' });
+      }
+
+      // Update employee record with motor vehicle records path
+      await storage.updateEmployee(parseInt(employeeId), {
+        motorVehicleRecordsPath: req.file.filename
+      });
+
+      res.json({
+        success: true,
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        size: req.file.size,
+        mimeType: req.file.mimetype,
+        message: 'Motor vehicle records uploaded successfully'
+      });
+
+    } catch (error) {
+      console.error('Motor vehicle records upload error:', error);
+      res.status(500).json({ error: 'Upload failed' });
+    }
+  });
+
   // Serve uploaded documents
   app.get('/api/document/:filename', (req, res) => {
     const filename = req.params.filename;

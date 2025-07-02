@@ -37,6 +37,9 @@ export const employees = pgTable("employees", {
   hireDate: timestamp("hire_date").defaultNow().notNull(),
   terminationDate: timestamp("termination_date"),
   notes: text("notes"),
+  driversLicenseNumber: text("drivers_license_number"),
+  dateOfBirth: timestamp("date_of_birth"),
+  motorVehicleRecordsPath: text("motor_vehicle_records_path"),
   // Payroll data fields
   hoursWorked: doublePrecision("hours_worked"),
   creditCardCommission: doublePrecision("credit_card_commission"),
