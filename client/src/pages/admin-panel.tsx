@@ -655,8 +655,7 @@ export default function AdminPanel() {
       const totalMoneyOwedOnShift = Math.max(0, totalCollections - calculatedTotalTurnIn);
       const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
 
-      // Tax calculations
-      const tax = empEarnings * 0.22;
+      // No tax calculations needed
       const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
       
       const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
@@ -680,7 +679,7 @@ export default function AdminPanel() {
         tips: empTips.toFixed(2),
         earnings: empEarnings.toFixed(2),
         moneyOwed: moneyOwed.toFixed(2),
-        tax: tax.toFixed(2),
+        tax: "0.00", // Tax calculations removed
         cashPaid: cashPaid.toFixed(2)
       };
     }).filter(shift => shift !== null);
@@ -958,14 +957,14 @@ export default function AdminPanel() {
           );
           
           const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
-          const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
+          const additionalTaxPayments = 0; // Tax calculations removed
           
 
           
 
 
           totalEarnings += empEarnings;
-          totalTax += tax;
+          totalTax += 0; // Tax calculations removed
           totalMoneyOwed += moneyOwed;
           totalAdditionalTaxPayments += additionalTaxPayments;
           totalHours += employeeData.hours;
@@ -5448,12 +5447,12 @@ export default function AdminPanel() {
                       );
                       
                       const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
-                      const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
+                      const additionalTaxPayments = 0; // Tax calculations removed
                       
 
 
                       totalEarnings += empEarnings;
-                      totalTax += tax;
+                      totalTax += 0; // Tax calculations removed
                       totalMoneyOwed += moneyOwed;
                       totalAdditionalTaxPayments += additionalTaxPayments;
                       totalHours += employeeData.hours;
