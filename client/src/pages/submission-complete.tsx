@@ -76,34 +76,41 @@ export default function SubmissionComplete() {
       console.log("Parsed employees:", parsedEmployees);
       setEmployees(parsedEmployees || []);
       
-      // Calculate cash cars and get report values
-      const totalCars = report.totalCars || 0;
-      const creditTransactions = report.creditTransactions || 0;
-      const totalReceipts = report.totalReceipts || 0;
+      // Calculate total cash paid
+      let totalCashPaid = 0;
+      parsedEmployees.forEach(emp => {
+        if (emp.cashPaid) {
+          totalCashPaid += Number(emp.cashPaid) || 0;
+        }
+      });
+      
+      // Ensure all values are valid numbers
+      const totalCars = Number(report.totalCars) || 0;
+      const creditTransactions = Number(report.creditTransactions) || 0;
+      const totalReceipts = Number(report.totalReceipts) || 0;
+      
+      // Calculate cash cars
       const calculatedCashCars = Math.max(0, totalCars - creditTransactions - totalReceipts);
       setCashCars(calculatedCashCars);
       
-      // Calculate earnings based on location-specific commission and turn-in rates
-      console.log("Report data for calculations:", {
-        locationId: report.locationId,
-        creditTransactions,
-        totalReceipts,
-        calculatedCashCars,
-        totalCreditSales: report.totalCreditSales,
-        totalCashCollected: report.totalCashCollected,
-        totalTurnIn: report.totalTurnIn
-      });
-      
-      // Get commission rate based on location
-      let commissionRate = 4; // Default commission rate
-      // All locations use $4 commission rate
+      // Calculate commission based on location
+      let commissionRate = 4; // Default (Capital Grille)
+      if (report.locationId === 2) commissionRate = 9; // Bob's Steak
+      else if (report.locationId === 3) commissionRate = 7; // Truluck's
+      else if (report.locationId === 4) commissionRate = 6; // BOA
       
       // Commission breakdowns - fixed rates based on location
       const creditCommission = creditTransactions * commissionRate;
       const cashCommission = calculatedCashCars * commissionRate;
       const receiptCommission = totalReceipts * commissionRate;
       
-      // Tips calculations based on collection vs expected difference
+      // Tips calculations based on collection vs turn-in difference
+      // Get turn-in rate for this location
+      let turnInRate = 11; // Default (Capital Grille)
+      if (report.locationId === 2) turnInRate = 6; // Bob's Steak
+      else if (report.locationId === 3) turnInRate = 8; // Truluck's
+      else if (report.locationId === 4) turnInRate = 7; // BOA
+      
       // Get the correct price per car based on location
       let pricePerCar = 15; // Default for most locations
       if (report.locationId === 4) pricePerCar = 13; // BOA uses $13
@@ -113,40 +120,26 @@ export default function SubmissionComplete() {
       const creditActual = Number(report.totalCreditSales || 0);
       const creditTips = Math.abs(creditExpected - creditActual);
       
-      // Cash tips = difference between cash collected and expected turn-in
+      // Cash tips = absolute difference between what should be collected and what was collected  
       const cashExpected = calculatedCashCars * pricePerCar;
       const cashActual = Number(report.totalCashCollected || 0);
       const cashTips = Math.abs(cashExpected - cashActual);
       
-      // Receipt tips = absolute difference for receipts (typically $18 each)
-      const receiptExpected = totalReceipts * 18;
-      const receiptSales = totalReceipts * 18; // $18 per receipt
-      const receiptTips = Math.abs(receiptExpected - receiptSales);
+      // Receipt tips = receipts × $3 (standard)
+      const receiptTips = totalReceipts * 3;
       
-      // Money owed calculation
+      // Calculate money owed
+      const receiptSales = totalReceipts * 18; // $18 per receipt
       const totalRevenue = receiptSales + Number(report.totalCreditSales || 0);
       const totalTurnIn = Number(report.totalTurnIn || 0);
       const moneyOwed = Math.max(0, totalRevenue - totalTurnIn);
       
-      // Total earnings
+      // Total commissions and earnings
       const totalCommission = creditCommission + cashCommission + receiptCommission;
       const totalTips = creditTips + cashTips + receiptTips;
       const totalEarnings = totalCommission + totalTips;
       
-      console.log("Calculated earnings:", {
-        creditCommission,
-        cashCommission,
-        receiptCommission,
-        creditTips,
-        cashTips,
-        receiptTips,
-        totalCommission,
-        totalTips,
-        totalEarnings,
-        moneyOwed
-      });
-      
-      const newEarnings = {
+      setEarnings({
         creditCommission,
         creditTips,
         cashCommission,
@@ -155,10 +148,7 @@ export default function SubmissionComplete() {
         receiptTips,
         moneyOwed,
         totalEarnings
-      };
-      
-      console.log("Setting earnings state:", newEarnings);
-      setEarnings(newEarnings);
+      });
       
     } catch (err) {
       console.error("Failed to parse employees", err);
