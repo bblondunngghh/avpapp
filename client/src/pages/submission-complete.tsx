@@ -95,10 +95,8 @@ export default function SubmissionComplete() {
       });
       
       // Get commission rate based on location
-      let commissionRate = 11; // Default (Capital Grille)
-      if (report.locationId === 2) commissionRate = 9; // Bob's Steak
-      else if (report.locationId === 3) commissionRate = 7; // Truluck's
-      else if (report.locationId === 4) commissionRate = 6; // BOA
+      let commissionRate = 4; // Default commission rate
+      // All locations use $4 commission rate
       
       // Commission breakdowns - fixed rates based on location
       const creditCommission = creditTransactions * commissionRate;
