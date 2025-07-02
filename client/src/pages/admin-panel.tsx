@@ -957,7 +957,7 @@ export default function AdminPanel() {
           );
           
           const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
-          const additionalTaxPayments = cashPaid;
+          const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
           
 
 
@@ -5619,7 +5619,7 @@ export default function AdminPanel() {
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
                             </TableCell>
                             <TableCell className="text-center text-blue-600">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + parseFloat(emp.totalAdditionalTaxPayments), 0).toFixed(2)}
+                              ${employeeAccountingData.reduce((sum, emp) => sum + (parseFloat(emp.totalAdditionalTaxPayments) || 0), 0).toFixed(2)}
                             </TableCell>
                           </TableRow>
                         </TableBody>
@@ -5652,7 +5652,7 @@ export default function AdminPanel() {
                             <div>
                               <p className="text-sm text-gray-500">Additional Tax Payments Needed</p>
                               <h3 className="text-2xl font-bold text-blue-700">
-                                ${employeeAccountingData.reduce((sum, emp) => sum + parseFloat(emp.totalAdditionalTaxPayments), 0).toFixed(2)}
+                                ${employeeAccountingData.reduce((sum, emp) => sum + (parseFloat(emp.totalAdditionalTaxPayments) || 0), 0).toFixed(2)}
                               </h3>
                             </div>
                           </div>
