@@ -410,6 +410,10 @@ interface EmployeeRecord {
   hireDate: string;
   terminationDate: string | null;
   notes: string | null;
+  ssn?: string | null;
+  driversLicenseNumber?: string | null;
+  dateOfBirth?: string | null;
+  motorVehicleRecordsPath?: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -4631,6 +4635,31 @@ export default function AdminPanel() {
                       </div>
                     </div>
                     
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="driversLicense">Driver's License Number</Label>
+                        <input 
+                          id="driversLicense"
+                          type="text"
+                          placeholder="e.g., D1234567890"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.driversLicenseNumber}
+                          onChange={(e) => setNewEmployee({...newEmployee, driversLicenseNumber: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                        <input 
+                          id="dateOfBirth"
+                          type="date"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.dateOfBirth}
+                          onChange={(e) => setNewEmployee({...newEmployee, dateOfBirth: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    
                     <div className="grid gap-2">
                       <Label htmlFor="hireDate">Hire Date</Label>
                       <input 
@@ -4956,6 +4985,63 @@ export default function AdminPanel() {
                         value={newEmployee.notes}
                         onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
                       />
+                    </div>
+                    
+                    {/* Motor Vehicle Records Upload */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="edit-motorVehicleRecords">Motor Vehicle Records (optional)</Label>
+                      <div className="space-y-2">
+                        {newEmployee.motorVehicleRecordsPath ? (
+                          <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
+                            <span className="text-sm text-green-700">✓ Document uploaded</span>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                if (newEmployee.motorVehicleRecordsPath) {
+                                  window.open(`/api/document/${newEmployee.motorVehicleRecordsPath}`, '_blank');
+                                }
+                              }}
+                            >
+                              View
+                            </Button>
+                          </div>
+                        ) : null}
+                        <input
+                          id="edit-motorVehicleRecords"
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file && editingEmployeeId) {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              formData.append('employeeId', editingEmployeeId.toString());
+                              
+                              try {
+                                const response = await fetch('/api/upload-motor-vehicle-records', {
+                                  method: 'POST',
+                                  body: formData,
+                                });
+                                
+                                if (response.ok) {
+                                  const result = await response.json();
+                                  setNewEmployee({...newEmployee, motorVehicleRecordsPath: result.filename});
+                                } else {
+                                  console.error('Upload failed');
+                                }
+                              } catch (error) {
+                                console.error('Upload error:', error);
+                              }
+                            }
+                          }}
+                        />
+                        <p className="text-xs text-gray-500">
+                          Upload PDF, JPEG, or PNG files up to 10MB
+                        </p>
+                      </div>
                     </div>
                     
                     {/* Training Status Display */}
