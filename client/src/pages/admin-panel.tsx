@@ -4549,7 +4549,7 @@ export default function AdminPanel() {
                                   hireDate: employee.hireDate.split('T')[0],
                                   notes: employee.notes || '',
                                   ssn: employee.ssn || '',
-                                  fullSsn: '',
+                                  fullSsn: employee.fullSsn || '',
                           driversLicenseNumber: employee.driversLicenseNumber || '',
                           dateOfBirth: employee.dateOfBirth ? new Date(employee.dateOfBirth).toISOString().split('T')[0] : '',
                           motorVehicleRecordsPath: employee.motorVehicleRecordsPath || ''
@@ -4699,9 +4699,17 @@ export default function AdminPanel() {
                           id="phone"
                           type="text"
                           placeholder="e.g., 555-123-4567"
+                          maxLength={12}
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.phone}
-                          onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
+                          onChange={(e) => {
+                            let value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                            if (value.length >= 3) value = value.slice(0, 3) + '-' + value.slice(3);
+                            if (value.length >= 7) value = value.slice(0, 7) + '-' + value.slice(7);
+                            if (value.length <= 12) {
+                              setNewEmployee({...newEmployee, phone: value});
+                            }
+                          }}
                         />
                       </div>
                       
@@ -4981,9 +4989,17 @@ export default function AdminPanel() {
                           id="edit-phone"
                           type="text"
                           placeholder="e.g., 555-123-4567"
+                          maxLength={12}
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.phone}
-                          onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
+                          onChange={(e) => {
+                            let value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                            if (value.length >= 3) value = value.slice(0, 3) + '-' + value.slice(3);
+                            if (value.length >= 7) value = value.slice(0, 7) + '-' + value.slice(7);
+                            if (value.length <= 12) {
+                              setNewEmployee({...newEmployee, phone: value});
+                            }
+                          }}
                         />
                       </div>
                       
