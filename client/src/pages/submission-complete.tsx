@@ -63,8 +63,29 @@ export default function SubmissionComplete() {
       let parsedEmployees: EmployeeWithCashPaid[] = [];
       
       if (typeof report.employees === 'string') {
-        // Handle string format
-        parsedEmployees = JSON.parse(report.employees);
+        try {
+          // First try normal JSON parsing
+          parsedEmployees = JSON.parse(report.employees);
+        } catch (e) {
+          // Handle corrupted JSON format like: {"name":"brandon","hours":0,"cashPaid":0}","{"name":"bradenbaldez","hours":5,"cashPaid":0}"}
+          console.log("Attempting to fix corrupted JSON:", report.employees);
+          
+          // Split by "},"{" and fix the format
+          const jsonStrings = report.employees.split('","');
+          parsedEmployees = jsonStrings.map(str => {
+            // Clean up the string
+            let cleanStr = str.replace(/^["']|["']$/g, ''); // Remove surrounding quotes
+            if (!cleanStr.startsWith('{')) cleanStr = '{' + cleanStr;
+            if (!cleanStr.endsWith('}')) cleanStr = cleanStr + '}';
+            
+            try {
+              return JSON.parse(cleanStr);
+            } catch (innerE) {
+              console.warn("Could not parse employee string:", cleanStr);
+              return null;
+            }
+          }).filter(emp => emp !== null);
+        }
       } else if (Array.isArray(report.employees)) {
         // Handle array format
         parsedEmployees = report.employees;
