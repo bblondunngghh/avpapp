@@ -595,7 +595,7 @@ export default function SubmissionComplete() {
         <div className="bg-green-50 rounded-md border border-green-200 p-4 mb-6">
           <h3 className="font-bold text-green-800 mb-3">Important Tax Policy Update</h3>
           <p className="text-gray-700 leading-relaxed">
-            After reviewing payroll data for the past few months, we have determined that the 22% tax payment is not expected to be required moving forward. However, please note that this could change if employees move into a higher tax bracket, potentially requiring us to reimplement the paid-in tax obligation.
+            After reviewing payroll data for the past few months, we have determined that the 22% tax payment is not expected to be required moving forward. However, please note that this could change if employees move into a higher tax bracket, potentially requiring us to reimplement the paid-in tax obligation. Any money owed will be contributed to your taxes and should cover your tax obligations, with any remaining balances redistributed back to you via direct deposit or check.
           </p>
           <p className="text-gray-700 mt-3 font-medium">
             Thank you for your continued hard work and dedication.
