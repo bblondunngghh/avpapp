@@ -35,7 +35,7 @@ import { NetworkStatusBanner } from "@/components/network-status";
 import { Wifi, WifiOff, Clock } from "lucide-react";
 
 // Import hardcoded images for original locations
-import capGrilleImage from "@assets/CAP GRILLE image.jpg";
+import capGrilleImage from "@assets/Stove-Gas--Streamline-Ultimate_1751494739426.png";
 import bobsImage from "@assets/bobs.jpg";
 import boaImage from "@assets/BOA.jpg";
 import trulucksImage from "@assets/TL LOGO-1190x440_1749130680525.jpg";
