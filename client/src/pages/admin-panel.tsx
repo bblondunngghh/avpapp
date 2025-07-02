@@ -4418,10 +4418,13 @@ export default function AdminPanel() {
                   <TableBody>
                     {employeeRecords.map(employee => {
                       // Check if employee has completed training
-                      const hasCompletedTraining = trainingAcknowledgments?.some((ack: any) => 
-                        ack.employeeName.toLowerCase().includes(employee.fullName.toLowerCase()) ||
-                        employee.fullName.toLowerCase().includes(ack.employeeName.toLowerCase())
-                      );
+                      console.log("Training check for:", employee.fullName, "Acknowledgments:", trainingAcknowledgments);
+                      const hasCompletedTraining = trainingAcknowledgments?.some((ack: any) => {
+                        const match = ack.employeeName.toLowerCase().includes(employee.fullName.toLowerCase()) ||
+                                     employee.fullName.toLowerCase().includes(ack.employeeName.toLowerCase());
+                        console.log("Checking:", employee.fullName, "against:", ack.employeeName, "Match:", match);
+                        return match;
+                      });
 
                       return (
                         <TableRow key={employee.id}>
