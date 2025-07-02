@@ -207,16 +207,15 @@ async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
               const empCommission = totalCommission * hoursPercent;
               const empTips = totalTips * hoursPercent;
               const empEarnings = empCommission + empTips;
-              const tax = empEarnings * 0.22;
               
               await storage.createEmployeeTaxPayment({
                 employeeId: employee.id,
                 reportId: shiftReport.id,
                 locationId: shiftReport.locationId,
                 totalEarnings: empEarnings.toFixed(2),
-                taxAmount: tax.toFixed(2),
+                taxAmount: "0.00",
                 paidAmount: emp.cashPaid.toString(),
-                remainingAmount: Math.max(0, tax - emp.cashPaid).toFixed(2)
+                remainingAmount: "0.00"
               });
             }
           }

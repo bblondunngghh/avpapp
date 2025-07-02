@@ -5225,9 +5225,7 @@ export default function AdminPanel() {
                       });
 
                       let totalEarnings = 0;
-                      let totalTax = 0;
                       let totalMoneyOwed = 0;
-                      let totalAdditionalTaxPayments = 0;
                       let totalHours = 0;
                       let totalCommissionOnly = 0;
                       let totalTipsOnly = 0;
@@ -5278,25 +5276,8 @@ export default function AdminPanel() {
                           const totalMoneyOwedOnShift = Math.max(0, totalCollections - report.totalTurnIn);
                           const moneyOwed = totalMoneyOwedOnShift * hoursPercent;
 
-                          // Tax calculations
-                          const tax = empEarnings * 0.22;
-                          const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
-                          
-                          const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
-                          const employeeTaxPayments = taxPayments.filter((payment: any) => 
-                            payment.employeeId === employeeRecord?.id && payment.reportId === report.id
-                          );
-                          const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
-                            sum + Number(payment.paidAmount || 0), 0
-                          );
-                          
-                          const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
-                          const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
-
                           totalEarnings += empEarnings;
-                          totalTax += tax;
                           totalMoneyOwed += moneyOwed;
-                          totalAdditionalTaxPayments += additionalTaxPayments;
                           totalHours += employeeData.hours;
                           totalCommissionOnly += empCommission;
                           totalTipsOnly += empTips;
@@ -5304,7 +5285,6 @@ export default function AdminPanel() {
                       });
 
                       const advance = totalCommissionOnly + totalTipsOnly - totalMoneyOwed;
-                      const moneyOwedAfterTax = Math.max(0, totalTax - totalMoneyOwed - totalAdditionalTaxPayments);
 
                       return {
                         name: employee.fullName,
@@ -5313,10 +5293,7 @@ export default function AdminPanel() {
                         totalCommission: totalCommissionOnly.toFixed(2),
                         totalTips: totalTipsOnly.toFixed(2),
                         totalEarnings: totalEarnings.toFixed(2),
-                        totalTax: totalTax.toFixed(2),
                         totalMoneyOwed: totalMoneyOwed.toFixed(2),
-                        totalAdditionalTaxPayments: totalAdditionalTaxPayments.toFixed(2),
-                        moneyOwedAfterTax: moneyOwedAfterTax.toFixed(2),
                         advance: advance.toFixed(2),
                         shiftsWorked: employeeReports.length
                       };
@@ -5331,9 +5308,7 @@ export default function AdminPanel() {
                       'Tips', 
                       'Total Earnings',
                       'Money Owed',
-                      'Advance',
-                      'Tax Obligation (22%)',
-                      'Additional Tax Payments'
+                      'Advance'
                     ];
 
                     // Sort employees by last name for CSV export too
@@ -5359,9 +5334,7 @@ export default function AdminPanel() {
                         emp.totalTips,
                         emp.totalEarnings,
                         emp.totalMoneyOwed,
-                        emp.advance,
-                        emp.totalTax,
-                        emp.totalAdditionalTaxPayments
+                        emp.advance
                       ].join(','))
                     ].join('\n');
 
@@ -5584,8 +5557,6 @@ export default function AdminPanel() {
                             <TableHead className="text-center">Total Earnings</TableHead>
                             <TableHead className="text-center">Money Owed</TableHead>
                             <TableHead className="text-center">Advance</TableHead>
-                            <TableHead className="text-center">Tax Obligation (22%)</TableHead>
-                            <TableHead className="text-center">Additional Tax Payments</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -5625,10 +5596,6 @@ export default function AdminPanel() {
                               <TableCell className="text-center text-orange-600 font-bold">
                                 ${employee.advance.toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-center">${employee.totalTax.toFixed(2)}</TableCell>
-                              <TableCell className="text-center text-blue-600">
-                                ${employee.totalAdditionalTaxPayments.toFixed(2)}
-                              </TableCell>
                             </TableRow>
                           ))}
                           <TableRow className="bg-muted/50 font-bold">
@@ -5654,12 +5621,6 @@ export default function AdminPanel() {
                             <TableCell className="text-center text-orange-600">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.advance, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
-                            </TableCell>
-                            <TableCell className="text-center text-blue-600">
-                              ${employeeAccountingData.reduce((sum, emp) => sum + (parseFloat(emp.totalAdditionalTaxPayments) || 0), 0).toFixed(2)}
-                            </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
@@ -5682,37 +5643,7 @@ export default function AdminPanel() {
                         </CardContent>
                       </Card>
 
-                      <Card>
-                        <CardContent className="pt-6">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-blue-100 p-3 rounded-full">
-                              <FileSpreadsheet className="h-6 w-6 text-blue-700" />
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-500">Additional Tax Payments Needed</p>
-                              <h3 className="text-2xl font-bold text-blue-700">
-                                ${employeeAccountingData.reduce((sum, emp) => sum + (parseFloat(emp.totalAdditionalTaxPayments) || 0), 0).toFixed(2)}
-                              </h3>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
 
-                      <Card>
-                        <CardContent className="pt-6">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-purple-100 p-3 rounded-full">
-                              <Users className="h-6 w-6 text-purple-700" />
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-500">Total Tax Obligations</p>
-                              <h3 className="text-2xl font-bold text-purple-700">
-                                ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalTax, 0).toFixed(2)}
-                              </h3>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
                     </div>
                   </div>
                 );
