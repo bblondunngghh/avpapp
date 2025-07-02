@@ -974,21 +974,6 @@ export default function AdminPanel() {
           totalTipsOnly += empTips;
           totalCreditTips += hoursPercent * creditCardTips;
           totalCashTips += hoursPercent * (cashTips + receiptTips);
-          
-          // Debug logging for first employee
-          if (employee.fullName === allEmployeeRecords[0]?.fullName) {
-            console.log(`Debug for ${employee.fullName}:`, {
-              reportId: report.id,
-              creditCardTips,
-              cashTips,
-              receiptTips,
-              hoursPercent,
-              empCreditTips: hoursPercent * creditCardTips,
-              empCashTips: hoursPercent * (cashTips + receiptTips),
-              runningTotalCreditTips: totalCreditTips,
-              runningTotalCashTips: totalCashTips
-            });
-          }
         }
       });
 
@@ -1000,17 +985,17 @@ export default function AdminPanel() {
       return {
         name: employee.fullName,
         key: employee.key,
-        totalHours: totalHours.toFixed(1),
-        totalCommission: totalCommissionOnly.toFixed(2),
-        totalTips: totalTipsOnly.toFixed(2),
-        totalCreditTips: totalCreditTips.toFixed(2),
-        totalCashTips: totalCashTips.toFixed(2),
-        totalEarnings: totalEarnings.toFixed(2),
-        totalTax: totalTax.toFixed(2),
-        totalMoneyOwed: totalMoneyOwed.toFixed(2),
-        totalAdditionalTaxPayments: totalAdditionalTaxPayments.toFixed(2),
-        moneyOwedAfterTax: moneyOwedAfterTax.toFixed(2),
-        advance: advance.toFixed(2),
+        totalHours: parseFloat(totalHours.toFixed(1)),
+        totalCommission: parseFloat(totalCommissionOnly.toFixed(2)),
+        totalTips: parseFloat(totalTipsOnly.toFixed(2)),
+        totalCreditTips: parseFloat(totalCreditTips.toFixed(2)),
+        totalCashTips: parseFloat(totalCashTips.toFixed(2)),
+        totalEarnings: parseFloat(totalEarnings.toFixed(2)),
+        totalTax: parseFloat(totalTax.toFixed(2)),
+        totalMoneyOwed: parseFloat(totalMoneyOwed.toFixed(2)),
+        totalAdditionalTaxPayments: parseFloat(totalAdditionalTaxPayments.toFixed(2)),
+        moneyOwedAfterTax: parseFloat(moneyOwedAfterTax.toFixed(2)),
+        advance: parseFloat(advance.toFixed(2)),
         shiftsWorked: employeeReports.length
       };
     });
