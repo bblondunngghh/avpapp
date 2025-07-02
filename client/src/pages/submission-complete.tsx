@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Car, DollarSign, Users } from "lucide-react";
+import { CheckCircle, Car, DollarSign, Users, AlertTriangle, Shield } from "lucide-react";
 import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
 import financialIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import earningsIcon from "@assets/Cash-User--Streamline-Ultimate.png";
+
 import checkIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
+import alertIcon from "@assets/Alert-Triangle--Streamline-Ultimate.png";
 import certifiedIcon from "@assets/Certified-Ribbon--Streamline-Ultimate.png";
 import { LOCATIONS } from "@/lib/constants";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { ShiftReport, Employee } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import RestaurantIcon from "@/components/restaurant-icon";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface EmployeeWithCashPaid {
   name: string;
@@ -23,6 +27,7 @@ interface EmployeeWithCashPaid {
 export default function SubmissionComplete() {
   const [, navigate] = useLocation();
   const [, params] = useRoute<{ reportId?: string }>("/submission-complete/:reportId?");
+  const { toast } = useToast();
 
   const [employees, setEmployees] = useState<EmployeeWithCashPaid[]>([]);
   const [cashCars, setCashCars] = useState<number>(0);
@@ -40,228 +45,237 @@ export default function SubmissionComplete() {
   // Fetch the submitted report
   const { data: report, isLoading, error } = useQuery<ShiftReport>({
     queryKey: ['/api/shift-reports', params?.reportId],
+    enabled: !!params?.reportId,
     queryFn: async () => {
-      if (!params?.reportId) return null;
-      const res = await fetch(`/api/shift-reports/${params.reportId}`);
-      if (!res.ok) throw new Error('Failed to fetch report');
-      return res.json();
-    },
-    enabled: !!params?.reportId
+      const response = await fetch(`/api/shift-reports/${params?.reportId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch report');
+      }
+      return response.json();
+    }
   });
 
-  // Helper function to safely convert to number
-  const safeNumber = (value: any): number => {
+  // Parse employees from the report data
+  useEffect(() => {
+    if (!report) return;
+
+    try {
+      let parsedEmployees: EmployeeWithCashPaid[] = [];
+      
+      if (typeof report.employees === 'string') {
+        // Handle string format
+        parsedEmployees = JSON.parse(report.employees);
+      } else if (Array.isArray(report.employees)) {
+        // Handle array format
+        parsedEmployees = report.employees;
+      } else if (report.employees && typeof report.employees === 'object') {
+        // Handle object format - convert to array
+        parsedEmployees = Object.values(report.employees);
+      }
+      
+      console.log("Parsed employees:", parsedEmployees);
+      setEmployees(parsedEmployees || []);
+      
+      // Calculate cash cars
+      const totalCars = report.totalCars || 0;
+      const creditCards = report.creditTransactions || 0;
+      const receipts = report.totalReceipts || 0;
+      const calculatedCashCars = Math.max(0, totalCars - creditCards - receipts);
+      setCashCars(calculatedCashCars);
+      
+      // Calculate earnings based on commissions and tips
+      const creditCommission = (report.totalCreditSales || 0) * 0.20;
+      const creditTipPercent = report.creditTipPercent || 15;
+      const creditTips = (report.totalCreditSales || 0) * (creditTipPercent / 100);
+      
+      const cashRate = report.cashRate || 15;
+      const cashCommission = calculatedCashCars * cashRate;
+      const cashTips = report.totalCashCollected ? Math.max(0, report.totalCashCollected - cashCommission) : 0;
+      
+      const receiptCommission = (report.totalReceipts || 0) * 5;
+      const receiptTips = report.receiptTips || 0;
+      
+      const moneyOwed = report.additionalTaxPayments || 0;
+      const totalEarnings = creditCommission + creditTips + cashCommission + cashTips + receiptCommission + receiptTips;
+      
+      setEarnings({
+        creditCommission,
+        creditTips,
+        cashCommission,
+        cashTips,
+        receiptCommission,
+        receiptTips,
+        moneyOwed,
+        totalEarnings
+      });
+      
+    } catch (err) {
+      console.error("Failed to parse employees", err);
+      setEmployees([]);
+    }
+  }, [report]);
+  
+  // Fetch all employees to get their IDs
+  const { data: employeeList = [] } = useQuery<Employee[]>({
+    queryKey: ['/api/employees'],
+    queryFn: async () => {
+      const res = await fetch('/api/employees');
+      if (!res.ok) return [];
+      return res.json();
+    }
+  });
+
+  // Helper function to get employee ID by name
+  const getEmployeeIdByName = (name: string): number => {
+    // Find the employee by name - try to match with fullName
+    const employee = employeeList.find(emp => 
+      emp.fullName?.toLowerCase() === name.toLowerCase() ||
+      emp.key?.toLowerCase() === name.toLowerCase()
+    );
+    
+    // If employee is found, return their ID, otherwise use a valid employee ID as fallback
+    if (employee) {
+      return employee.id;
+    } else if (employeeList.length > 0) {
+      // Use the first employee's ID as a fallback
+      return employeeList[0].id;
+    }
+    
+    // If no employees are loaded, don't create payment records
+    return 0;
+  };
+
+  const handleViewReports = () => {
+    navigate("/reports");
+  };
+
+  const handleNewReport = () => {
+    navigate("/report-selection");
+  };
+  
+  // Format currency
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (amount === null || amount === undefined) return '$0.00';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
+  // Safe number display
+  const safeNumber = (value: any) => {
     const num = Number(value);
     return isNaN(num) ? 0 : num;
   };
 
-  // Location helper
-  const getLocationName = (locationId: number): string => {
-    const location = LOCATIONS.find(loc => loc.id === locationId);
-    return location ? location.name : 'Unknown Location';
+  // Get location name helper
+  const getLocationName = (locationId: number) => {
+    return LOCATIONS.find(l => l.id === locationId)?.name || 'Unknown Location';
   };
-
-  // Format currency
-  const formatCurrency = (amount: number): string => {
-    return `$${amount.toFixed(2)}`;
-  };
-
-  // Redirect to home if accessed directly without submission
-  useEffect(() => {
-    if (!params?.reportId) {
-      const timer = setTimeout(() => {
-        navigate("/");
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [params, navigate]);
-
-  // Process report data when it's available
-  useEffect(() => {
-    if (!report) return;
-
-    // Parse employee data
-    let parsedEmployees: EmployeeWithCashPaid[] = [];
-    
-    try {
-      if (typeof report.employees === 'string' && report.employees) {
-        parsedEmployees = JSON.parse(report.employees);
-      } else if (Array.isArray(report.employees)) {
-        parsedEmployees = report.employees;
-      }
-    } catch (err) {
-      console.error("Failed to parse employees", err);
-      parsedEmployees = [];
-    }
-    
-    // Set employees state
-    setEmployees(parsedEmployees);
-    
-    // Ensure all values are valid numbers
-    const totalCars = Number(report.totalCars) || 0;
-    const creditTransactions = Number(report.creditTransactions) || 0;
-    const totalReceipts = Number(report.totalReceipts) || 0;
-    
-    // Calculate cash cars
-    const calculatedCashCars = Math.max(0, totalCars - creditTransactions - totalReceipts);
-    setCashCars(calculatedCashCars);
-    
-    // Calculate commission based on location
-    let commissionRate = 4; // Default (Capital Grille)
-    if (report.locationId === 2) commissionRate = 9; // Bob's Steak
-    else if (report.locationId === 3) commissionRate = 7; // Truluck's
-    else if (report.locationId === 4) commissionRate = 6; // BOA
-    
-    // Commission breakdowns - fixed rates based on location
-    const creditCommission = creditTransactions * commissionRate;
-    const cashCommission = calculatedCashCars * commissionRate;
-    const receiptCommission = totalReceipts * commissionRate;
-    
-    // Tips calculations based on collection vs turn-in difference
-    // Get turn-in rate for this location
-    let turnInRate = 11; // Default (Capital Grille)
-    if (report.locationId === 2) turnInRate = 6; // Bob's Steak
-    else if (report.locationId === 3) turnInRate = 8; // Truluck's
-    else if (report.locationId === 4) turnInRate = 7; // BOA
-    
-    // Get the correct price per car based on location
-    let pricePerCar = 15; // Default for most locations
-    if (report.locationId === 4) pricePerCar = 13; // BOA uses $13
-    
-    // Credit tips = absolute difference between what should be collected and what was collected
-    const creditExpected = creditTransactions * pricePerCar;
-    const creditActual = Number(report.totalCreditSales || 0);
-    const creditTips = Math.abs(creditExpected - creditActual);
-    
-    // Cash tips = absolute difference between what should be collected and what was collected  
-    const cashExpected = calculatedCashCars * pricePerCar;
-    const cashActual = Number(report.totalCashCollected || 0);
-    const cashTips = Math.abs(cashExpected - cashActual);
-    // Receipt tips = receipts × $3 (standard)
-    const receiptTips = totalReceipts * 3;
-    
-    // Calculate money owed
-    const receiptSales = totalReceipts * 18; // $18 per receipt
-    const totalRevenue = receiptSales + Number(report.totalCreditSales || 0);
-    const totalTurnIn = Number(report.totalTurnIn || 0);
-    const moneyOwed = Math.max(0, totalRevenue - totalTurnIn);
-    
-    // Total commissions and earnings
-    const totalCommission = creditCommission + cashCommission + receiptCommission;
-    const totalTips = creditTips + cashTips + receiptTips;
-    const totalEarnings = totalCommission + totalTips;
-    
-    // Store all earnings details
-    setEarnings({
-      creditCommission,
-      creditTips,
-      cashCommission,
-      cashTips,
-      receiptCommission,
-      receiptTips,
-      moneyOwed,
-      totalEarnings
-    });
-    
-  }, [report]);
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center space-y-3">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <p className="text-gray-600">Loading shift report...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error || !report) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Unable to Load Report</h2>
-          <p className="text-gray-600 mb-4">The requested shift report could not be found.</p>
-          <Button onClick={() => navigate("/")}>Return Home</Button>
-        </div>
-      </div>
-    );
-  }
-
-  const handleViewReports = () => navigate("/admin-panel");
-  const handleNewReport = () => navigate("/");
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Success Header */}
-        <div className="bg-green-50 rounded-md border border-green-200 p-6 mb-6">
-          <div className="flex items-center">
-            <CheckCircle className="h-8 w-8 text-green-600 mr-3" />
-            <div>
-              <h1 className="text-xl font-bold text-green-800">Report Submitted Successfully!</h1>
-              <p className="text-green-700 mt-1">Your report #{report.id} has been saved to the database.</p>
-            </div>
-          </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="max-w-3xl w-full bg-white rounded-lg shadow-lg p-8">
+        <div className="flex justify-center mb-4">
+          <img src={certifiedIcon} alt="Certified" className="h-16 w-16" />
         </div>
-
-        {/* Report Summary */}
-        {report && (
-          <div className="bg-white rounded-md border border-gray-200 p-6 mb-6">
-            <div className="flex items-center mb-4">
-              <img src={checkIcon} alt="Success" className="h-5 w-5 mr-2" />
-              <h2 className="text-lg font-semibold text-gray-800">Shift Report Summary</h2>
+        
+        <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">Report Submitted Successfully!</h1>
+        <p className="text-gray-600 mb-6 text-center">
+          {params?.reportId 
+            ? `Your report #${params.reportId} has been saved to the database.`
+            : "Your report has been saved to the database."}
+        </p>
+        
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 rounded-md border border-red-200 p-4 mb-6">
+            <h3 className="font-bold text-red-800 mb-2">Error Loading Report</h3>
+            <p className="text-red-600">
+              Unable to load report details. Please check your connection.
+            </p>
+          </div>
+        ) : report ? (
+          <div className="bg-blue-50 rounded-md border border-blue-200 p-4 mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-bold text-blue-800">Report Details</h3>
+              {report.locationId && (
+                <div className="flex items-center">
+                  <RestaurantIcon locationId={report.locationId} size={20} />
+                  <span className="ml-2 text-blue-700">
+                    {LOCATIONS.find(l => l.id === report.locationId)?.name || 'Unknown Location'}
+                  </span>
+                </div>
+              )}
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="bg-blue-50 p-3 rounded border border-blue-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="bg-white p-3 rounded-md border border-blue-100">
                 <div className="flex items-center mb-2">
-                  <RestaurantIcon locationId={report.locationId} className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium text-blue-700">Location</span>
+                  <img src={carIcon} alt="Car" className="h-4 w-4 mr-2" />
+                  <h4 className="font-medium text-blue-800">Cars Summary</h4>
                 </div>
-                <p className="text-lg font-semibold text-blue-800">{getLocationName(report.locationId)}</p>
-                <p className="text-sm text-blue-600">{report.shift} Shift</p>
+                <div className="space-y-1 pl-6">
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Total Cars:</span> <strong>{safeNumber(report.totalCars)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Credit Transactions:</span> <strong>{safeNumber(report.creditTransactions)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Receipts:</span> <strong>{safeNumber(report.totalReceipts)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Cash Cars:</span> <strong>{cashCars}</strong>
+                  </p>
+                </div>
               </div>
               
-              <div className="bg-green-50 p-3 rounded border border-green-100">
-                <div className="flex items-center mb-2">
-                  <img src={carIcon} alt="Cars" className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium text-green-700">Cars</span>
-                </div>
-                <p className="text-lg font-semibold text-green-800">{report.totalCars}</p>
-                <div className="text-xs text-green-600">
-                  C: {report.creditTransactions} | $: {cashCars} | R: {report.totalReceipts}
-                </div>
-              </div>
-              
-              <div className="bg-purple-50 p-3 rounded border border-purple-100">
+              <div className="bg-white p-3 rounded-md border border-blue-100">
                 <div className="flex items-center mb-2">
                   <img src={financialIcon} alt="Financial" className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium text-purple-700">Total Earnings</span>
+                  <h4 className="font-medium text-green-800">Financial Summary</h4>
                 </div>
-                <p className="text-lg font-semibold text-purple-800">{formatCurrency(earnings.totalEarnings)}</p>
+                <div className="space-y-1 pl-6">
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Credit Sales:</span> <strong>{formatCurrency(report.totalCreditSales)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Cash Collected:</span> <strong>{formatCurrency(report.totalCashCollected)}</strong>
+                  </p>
+                  <p className="text-sm text-gray-700 flex justify-between">
+                    <span>Total Turn-in:</span> <strong className="text-green-700">{formatCurrency(report.totalTurnIn)}</strong>
+                  </p>
+                  
+                  {earnings.moneyOwed > 0 && (
+                    <div className="mt-2 pt-2 border-t border-gray-100">
+                      <p className="text-sm text-red-700 flex justify-between font-medium">
+                        <span>Money Owed to Employees:</span> <strong>{formatCurrency(earnings.moneyOwed)}</strong>
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-
-            {/* Employee Breakdown Table */}
+            
+            {/* Employee Section */}
             {employees.length > 0 && (
               <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
-                <div className="flex items-center mb-3">
-                  <img src={employeeIcon} alt="Employees" className="h-4 w-4 mr-2" />
-                  <h4 className="font-medium text-blue-800">Employee Breakdown</h4>
+                <div className="flex items-center mb-2">
+                  <img src={employeeIcon} alt="Employee" className="h-4 w-4 mr-2" />
+                  <h4 className="font-medium text-purple-800">Employee Details</h4>
                 </div>
-                
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-gray-50">
                         <th className="text-left p-2">Name</th>
                         <th className="text-right p-2">Hours</th>
-                        <th className="text-right p-2">Commission</th>
-                        <th className="text-right p-2">Tips</th>
                         <th className="text-right p-2">Total Earnings</th>
+                        <th className="text-right p-2">Advance</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -269,6 +283,7 @@ export default function SubmissionComplete() {
                         const totalHours = employees.reduce((sum, e) => sum + safeNumber(e.hours), 0);
                         const hoursProportion = totalHours > 0 ? safeNumber(emp.hours) / totalHours : 0;
                         
+                        // Calculate this employee's actual earnings based on their hours
                         const totalCommission = earnings.creditCommission + earnings.cashCommission + earnings.receiptCommission;
                         const totalTips = earnings.creditTips + earnings.cashTips + earnings.receiptTips;
                         const empCommission = totalCommission * hoursProportion;
@@ -277,11 +292,55 @@ export default function SubmissionComplete() {
                         
                         return (
                           <tr key={`employee-${index}`} className="border-t border-gray-100">
-                            <td className="p-2">{emp.name}</td>
+                            <td className="p-2">
+                              {/* Use the employee's full name from the database if available */}
+                              {(() => {
+                                // Map common first names to full names
+                                const nameMap: Record<string, string> = {
+                                  "antonio": "Antonio Martinez",
+                                  "arturo": "Arturo Sanchez",
+                                  "brandon": "Brandon Blond",
+                                  "brett": "Brett Willson",
+                                  "dave": "Dave Roehm",
+                                  "devin": "Devin Bean",
+                                  "dylan": "Dylan McMullen",
+                                  "elijah": "Elijah Aguilar",
+                                  "ethan": "Ethan Walker",
+                                  "gabe": "Gabe Ott",
+                                  "jacob": "Jacob Weldon",
+                                  "joe": "Joe Albright",
+                                  "jonathan": "Jonathan Zaccheo",
+                                  "kevin": "Kevin Hanrahan",
+                                  "melvin": "Melvin Lobos",
+                                  "noe": "Noe Coronado",
+                                  "riley": "Riley McIntyre",
+                                  "ryan": "Ryan Hocevar",
+                                  "zane": "Zane Springer"
+                                };
+                                
+                                // First check if it's a simple name (like "arturo" or "antonio")
+                                if (typeof emp.name === 'string' && nameMap[emp.name.toLowerCase()]) {
+                                  return nameMap[emp.name.toLowerCase()];
+                                }
+                                
+                                // Then check if it's an employee key (like "8366")
+                                const isEmployeeKey = !isNaN(Number(emp.name)) || 
+                                  (typeof emp.name === 'string' && emp.name.length <= 5 && !emp.name.includes(' '));
+                                
+                                if (isEmployeeKey) {
+                                  // Try to find the employee by key
+                                  const matchingEmployee = employeeList.find(e => e.key === emp.name);
+                                  return matchingEmployee ? matchingEmployee.fullName : emp.name;
+                                }
+                                
+                                return emp.name;
+                              })()}
+                            </td>
                             <td className="text-right p-2">{safeNumber(emp.hours)}</td>
-                            <td className="text-right p-2">{formatCurrency(empCommission)}</td>
-                            <td className="text-right p-2">{formatCurrency(empTips)}</td>
                             <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
+                            <td className="text-right p-2">
+                              {formatCurrency(empCommission + empTips - (earnings.moneyOwed * hoursProportion))}
+                            </td>
                           </tr>
                         );
                       })}
@@ -290,13 +349,13 @@ export default function SubmissionComplete() {
                       <tr className="border-t border-gray-200 font-medium">
                         <td className="p-2">Total</td>
                         <td className="text-right p-2">{safeNumber(report.totalJobHours)}</td>
-                        <td className="text-right p-2">{formatCurrency(
-                          earnings.creditCommission + earnings.cashCommission + earnings.receiptCommission
-                        )}</td>
-                        <td className="text-right p-2">{formatCurrency(
-                          earnings.creditTips + earnings.cashTips + earnings.receiptTips
-                        )}</td>
                         <td className="text-right p-2">{formatCurrency(earnings.totalEarnings)}</td>
+                        <td className="text-right p-2">{formatCurrency(
+                          (earnings.creditCommission + earnings.cashCommission + 
+                          earnings.receiptCommission + earnings.creditTips + 
+                          earnings.cashTips + earnings.receiptTips - 
+                          earnings.moneyOwed)
+                        )}</td>
                       </tr>
                     </tfoot>
                   </table>
@@ -408,9 +467,7 @@ export default function SubmissionComplete() {
               </div>
             </div>
           </div>
-        )}
-        
-        {!report && (
+        ) : (
           <div className="bg-blue-50 rounded-md border border-blue-200 p-4 mb-6">
             <h3 className="font-bold text-blue-800 mb-2">Report Submitted</h3>
             <p className="text-gray-600">
@@ -431,7 +488,7 @@ export default function SubmissionComplete() {
             variant="outline"
             className="flex-1"
           >
-            Create New Report
+            Submit New Report
           </Button>
         </div>
       </div>
