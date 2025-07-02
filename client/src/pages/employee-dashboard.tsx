@@ -76,9 +76,38 @@ export default function EmployeeDashboard() {
   }, [currentEmployee]);
 
   // Check if current employee has completed training
-  const hasCompletedTraining = trainingAcknowledgments.some(
-    (ack: any) => ack.employeeName.toLowerCase() === employeeName?.toLowerCase()
-  );
+  const hasCompletedTraining = trainingAcknowledgments.some((ack: any) => {
+    if (!employeeName) return false;
+    
+    const empName = employeeName.toLowerCase().trim();
+    const ackName = ack.employeeName.toLowerCase().trim();
+    
+    // Exact match
+    if (empName === ackName) return true;
+    
+    // Check if acknowledgment name is contained in employee name or vice versa
+    if (empName.includes(ackName) || ackName.includes(empName)) return true;
+    
+    // Check first and last name separately
+    const empParts = empName.split(' ');
+    const ackParts = ackName.split(' ');
+    
+    // If both have at least first and last name, compare them
+    if (empParts.length >= 2 && ackParts.length >= 2) {
+      const empFirst = empParts[0];
+      const empLast = empParts[empParts.length - 1];
+      const ackFirst = ackParts[0];
+      const ackLast = ackParts[ackParts.length - 1];
+      
+      // Match if first and last names match
+      if (empFirst === ackFirst && empLast === ackLast) return true;
+    }
+    
+    // Check if any part of the acknowledgment name matches first or last name of employee
+    if (ackParts.some(part => empParts.includes(part) && part.length > 2)) return true;
+    
+    return false;
+  });
 
   // Check if employee is authenticated
   useEffect(() => {
