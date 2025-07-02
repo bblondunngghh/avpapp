@@ -208,51 +208,102 @@ export default function SubmissionComplete() {
         </div>
 
         {/* Report Summary */}
-        {report ? (
+        {report && (
           <div className="bg-white rounded-md border border-gray-200 p-6 mb-6">
             <div className="flex items-center mb-4">
-              <img src={certifiedIcon} alt="Certified" className="h-5 w-5 mr-2" />
+              <img src={checkIcon} alt="Success" className="h-5 w-5 mr-2" />
               <h2 className="text-lg font-semibold text-gray-800">Shift Report Summary</h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div className="bg-blue-50 p-3 rounded border border-blue-100">
                 <div className="flex items-center mb-2">
                   <RestaurantIcon locationId={report.locationId} className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium text-blue-700">Location & Shift</span>
+                  <span className="text-sm font-medium text-blue-700">Location</span>
                 </div>
                 <p className="text-lg font-semibold text-blue-800">{getLocationName(report.locationId)}</p>
-                <p className="text-sm text-blue-600">{report.shift} • {new Date(report.date).toLocaleDateString()}</p>
+                <p className="text-sm text-blue-600">{report.shift} Shift</p>
               </div>
               
               <div className="bg-green-50 p-3 rounded border border-green-100">
                 <div className="flex items-center mb-2">
                   <img src={carIcon} alt="Cars" className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium text-green-700">Total Cars Parked</span>
+                  <span className="text-sm font-medium text-green-700">Cars</span>
                 </div>
                 <p className="text-lg font-semibold text-green-800">{report.totalCars}</p>
                 <div className="text-xs text-green-600">
-                  Credit: {report.creditTransactions} • Cash: {cashCars} • Receipt: {report.totalReceipts}
+                  C: {report.creditTransactions} | $: {cashCars} | R: {report.totalReceipts}
                 </div>
               </div>
               
               <div className="bg-purple-50 p-3 rounded border border-purple-100">
                 <div className="flex items-center mb-2">
                   <img src={financialIcon} alt="Financial" className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium text-purple-700">Total Turn-In</span>
+                  <span className="text-sm font-medium text-purple-700">Total Earnings</span>
                 </div>
-                <p className="text-lg font-semibold text-purple-800">{formatCurrency(Number(report.totalTurnIn || 0))}</p>
-              </div>
-              
-              <div className="bg-orange-50 p-3 rounded border border-orange-100">
-                <div className="flex items-center mb-2">
-                  <img src={employeeIcon} alt="Employees" className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium text-orange-700">Total Earnings</span>
-                </div>
-                <p className="text-lg font-semibold text-orange-800">{formatCurrency(earnings.totalEarnings)}</p>
+                <p className="text-lg font-semibold text-purple-800">{formatCurrency(earnings.totalEarnings)}</p>
               </div>
             </div>
 
+            {/* Employee Breakdown Table */}
+            {employees.length > 0 && (
+              <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
+                <div className="flex items-center mb-3">
+                  <img src={employeeIcon} alt="Employees" className="h-4 w-4 mr-2" />
+                  <h4 className="font-medium text-blue-800">Employee Breakdown</h4>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="text-left p-2">Name</th>
+                        <th className="text-right p-2">Hours</th>
+                        <th className="text-right p-2">Commission</th>
+                        <th className="text-right p-2">Tips</th>
+                        <th className="text-right p-2">Total Earnings</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {employees.map((emp, index) => {
+                        const totalHours = employees.reduce((sum, e) => sum + safeNumber(e.hours), 0);
+                        const hoursProportion = totalHours > 0 ? safeNumber(emp.hours) / totalHours : 0;
+                        
+                        const totalCommission = earnings.creditCommission + earnings.cashCommission + earnings.receiptCommission;
+                        const totalTips = earnings.creditTips + earnings.cashTips + earnings.receiptTips;
+                        const empCommission = totalCommission * hoursProportion;
+                        const empTips = totalTips * hoursProportion;
+                        const empTotalEarnings = empCommission + empTips;
+                        
+                        return (
+                          <tr key={`employee-${index}`} className="border-t border-gray-100">
+                            <td className="p-2">{emp.name}</td>
+                            <td className="text-right p-2">{safeNumber(emp.hours)}</td>
+                            <td className="text-right p-2">{formatCurrency(empCommission)}</td>
+                            <td className="text-right p-2">{formatCurrency(empTips)}</td>
+                            <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t border-gray-200 font-medium">
+                        <td className="p-2">Total</td>
+                        <td className="text-right p-2">{safeNumber(report.totalJobHours)}</td>
+                        <td className="text-right p-2">{formatCurrency(
+                          earnings.creditCommission + earnings.cashCommission + earnings.receiptCommission
+                        )}</td>
+                        <td className="text-right p-2">{formatCurrency(
+                          earnings.creditTips + earnings.cashTips + earnings.receiptTips
+                        )}</td>
+                        <td className="text-right p-2">{formatCurrency(earnings.totalEarnings)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            )}
+            
             {/* Earnings Breakdown Section */}
             <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
               <div className="flex items-center mb-3">
@@ -279,15 +330,25 @@ export default function SubmissionComplete() {
                       <span className="text-gray-600">Receipt Commission:</span> 
                       <strong>{formatCurrency(earnings.receiptCommission)}</strong>
                     </p>
+                    <div className="pt-1 mt-1 border-t border-gray-200">
+                      <p className="flex justify-between font-medium">
+                        <span>Total Commission:</span> 
+                        <span>{formatCurrency(
+                          earnings.creditCommission + 
+                          earnings.cashCommission + 
+                          earnings.receiptCommission
+                        )}</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-
-                {/* Tips Earnings */}
+                
+                {/* Tips & Additional Earnings */}
                 <div className="bg-gray-50 p-3 rounded border border-gray-100">
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">Tips Earnings</h5>
+                  <h5 className="text-sm font-medium text-gray-700 mb-2">Tips & Additional Earnings</h5>
                   <div className="space-y-1 text-xs">
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Credit Tips:</span> 
+                      <span className="text-gray-600">Credit Card Tips:</span> 
                       <strong>{formatCurrency(earnings.creditTips)}</strong>
                     </p>
                     <p className="flex justify-between">
@@ -298,6 +359,16 @@ export default function SubmissionComplete() {
                       <span className="text-gray-600">Receipt Tips:</span> 
                       <strong>{formatCurrency(earnings.receiptTips)}</strong>
                     </p>
+                    <div className="pt-1 mt-1 border-t border-gray-200">
+                      <p className="flex justify-between font-medium">
+                        <span>Total Tips:</span> 
+                        <span>{formatCurrency(
+                          earnings.creditTips + 
+                          earnings.cashTips + 
+                          earnings.receiptTips
+                        )}</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -337,7 +408,9 @@ export default function SubmissionComplete() {
               </div>
             </div>
           </div>
-        ) : (
+        )}
+        
+        {!report && (
           <div className="bg-blue-50 rounded-md border border-blue-200 p-4 mb-6">
             <h3 className="font-bold text-blue-800 mb-2">Report Submitted</h3>
             <p className="text-gray-600">
