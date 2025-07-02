@@ -959,6 +959,11 @@ export default function AdminPanel() {
           const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
           const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
           
+          // DEBUG: Log calculation details for troubleshooting
+          if (employee.fullName === "Kevin Hanrahan") {
+            console.log(`KEVIN DEBUG: tax=${tax}, moneyOwed=${moneyOwed}, cashPaid=${cashPaid}, additionalTax=${additionalTaxPayments}`);
+          }
+          
 
 
           totalEarnings += empEarnings;
@@ -5652,7 +5657,15 @@ export default function AdminPanel() {
                             <div>
                               <p className="text-sm text-gray-500">Additional Tax Payments Needed</p>
                               <h3 className="text-2xl font-bold text-blue-700">
-                                ${employeeAccountingData.reduce((sum, emp) => sum + (parseFloat(emp.totalAdditionalTaxPayments) || 0), 0).toFixed(2)}
+                                ${(() => {
+                                  const total = employeeAccountingData.reduce((sum, emp) => {
+                                    const empValue = parseFloat(emp.totalAdditionalTaxPayments) || 0;
+                                    console.log(`FINAL AGGREGATION: ${emp.name} = ${emp.totalAdditionalTaxPayments} (parsed: ${empValue})`);
+                                    return sum + empValue;
+                                  }, 0);
+                                  console.log(`FINAL TOTAL: ${total}`);
+                                  return total.toFixed(2);
+                                })()}
                               </h3>
                             </div>
                           </div>
