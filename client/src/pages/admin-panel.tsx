@@ -959,10 +959,7 @@ export default function AdminPanel() {
           const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
           const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
           
-          // DEBUG: Log calculation details for troubleshooting
-          if (employee.fullName === "Kevin Hanrahan") {
-            console.log(`KEVIN DEBUG: tax=${tax}, moneyOwed=${moneyOwed}, cashPaid=${cashPaid}, additionalTax=${additionalTaxPayments}`);
-          }
+
           
 
 
@@ -5266,7 +5263,7 @@ export default function AdminPanel() {
                           );
                           
                           const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
-                          const additionalTaxPayments = cashPaid;
+                          const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
 
                           totalEarnings += empEarnings;
                           totalTax += tax;
@@ -5438,10 +5435,19 @@ export default function AdminPanel() {
                       // Tax calculations
                       const tax = empEarnings * 0.22;
                       
-                      // Additional tax payments = cash paid when there's a tax shortfall (matching employee dashboard logic)
-                      const taxNotCoveredByMoneyOwed = Math.max(0, tax - moneyOwed);
-                      const employeeCashPaid = Number(employeeData.cashPaid || 0);
-                      const additionalTaxPayments = taxNotCoveredByMoneyOwed > 0 ? employeeCashPaid : 0;
+                      // Additional tax payments = remaining tax owed after subtracting money owed and cash already paid
+                      const shiftReportCashPaid = Number(employeeData.cashPaid || 0);
+                      
+                      const employeeRecord = employeeRecords.find(emp => emp.key.toLowerCase() === employee.key.toLowerCase());
+                      const employeeTaxPayments = (taxPayments as any[])?.filter((payment: any) => 
+                        payment.employeeId === employeeRecord?.id && payment.reportId === report.id
+                      ) || [];
+                      const taxRecordCashPaid = employeeTaxPayments.reduce((sum: number, payment: any) => 
+                        sum + Number(payment.paidAmount || 0), 0
+                      );
+                      
+                      const cashPaid = Math.max(shiftReportCashPaid, taxRecordCashPaid);
+                      const additionalTaxPayments = Math.max(0, tax - moneyOwed - cashPaid);
                       
 
 
@@ -5657,15 +5663,7 @@ export default function AdminPanel() {
                             <div>
                               <p className="text-sm text-gray-500">Additional Tax Payments Needed</p>
                               <h3 className="text-2xl font-bold text-blue-700">
-                                ${(() => {
-                                  const total = employeeAccountingData.reduce((sum, emp) => {
-                                    const empValue = parseFloat(emp.totalAdditionalTaxPayments) || 0;
-                                    console.log(`FINAL AGGREGATION: ${emp.name} = ${emp.totalAdditionalTaxPayments} (parsed: ${empValue})`);
-                                    return sum + empValue;
-                                  }, 0);
-                                  console.log(`FINAL TOTAL: ${total}`);
-                                  return total.toFixed(2);
-                                })()}
+                                ${employeeAccountingData.reduce((sum, emp) => sum + (parseFloat(emp.totalAdditionalTaxPayments) || 0), 0).toFixed(2)}
                               </h3>
                             </div>
                           </div>
