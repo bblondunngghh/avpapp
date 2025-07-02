@@ -1461,12 +1461,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         {/* Tax Policy Update Notice */}
                         <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                           <div className="flex items-start gap-3">
-                            <div className="bg-blue-100 p-2 rounded-full flex-shrink-0">
-                              <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
+                            <div className="bg-red-100 p-2 rounded-full flex-shrink-0">
+                              <div className="w-4 h-4 bg-red-600 rounded-full"></div>
                             </div>
                             <div className="space-y-2">
                               <h4 className="font-semibold text-blue-800">Tax Policy Update Notice</h4>
-                              <div className="text-sm text-blue-700 space-y-2">
+                              <div className="text-xs text-blue-700 space-y-1">
                                 <p>
                                   <strong>Effective immediately:</strong> The 22% tax requirement has been eliminated from all shift report calculations. This change applies to all current and future shifts.
                                 </p>
