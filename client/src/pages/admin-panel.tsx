@@ -5595,6 +5595,7 @@ export default function AdminPanel() {
                               </TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
                                 ${((employee as any).totalCreditTips || 0).toFixed(2)}
+                                {console.log("Display employee:", employee.name, "creditTips:", (employee as any).totalCreditTips)}
                               </TableCell>
                               <TableCell className="text-center text-green-600 font-medium">
                                 ${((employee as any).totalCashTips || 0).toFixed(2)}
