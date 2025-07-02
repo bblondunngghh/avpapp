@@ -974,6 +974,21 @@ export default function AdminPanel() {
           totalTipsOnly += empTips;
           totalCreditTips += hoursPercent * creditCardTips;
           totalCashTips += hoursPercent * (cashTips + receiptTips);
+          
+          // Debug logging for first employee
+          if (employee.fullName === allEmployeeRecords[0]?.fullName) {
+            console.log(`Debug for ${employee.fullName}:`, {
+              reportId: report.id,
+              creditCardTips,
+              cashTips,
+              receiptTips,
+              hoursPercent,
+              empCreditTips: hoursPercent * creditCardTips,
+              empCashTips: hoursPercent * (cashTips + receiptTips),
+              runningTotalCreditTips: totalCreditTips,
+              runningTotalCashTips: totalCashTips
+            });
+          }
         }
       });
 
