@@ -1,0 +1,23 @@
+Employee structure: {name: 'Elijah Aguilar', key: 'elijah', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Joe Albright', key: 'joe', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Braden Baldez', key: 'bradenbaldez', totalHours: 5, totalCommission: 40, totalTips: 50, …}
+Console.js:61 Employee structure: {name: 'Devin Bean', key: 'devin', totalHours: 7, totalCommission: 63, totalTips: 30, …}
+Console.js:61 Employee structure: {name: 'Brandon Blond', key: 'brandon', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Noe Coronado', key: 'noe', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Isaac Haggins', key: 'isaac', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Kevin Hanrahan', key: 'kevin', totalHours: 5, totalCommission: 24, totalTips: 19, …}
+Console.js:61 Employee structure: {name: 'Ryan Hocevar', key: 'ryan', totalHours: 10, totalCommission: 28, totalTips: 20, …}
+Console.js:61 Employee structure: {name: 'Melvin Lobos', key: 'melvin', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Antonio Martinez', key: 'antonio', totalHours: 6, totalCommission: 64, totalTips: 55, …}
+Console.js:61 Employee structure: {name: 'Riley McIntyre', key: 'riley', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Dylan McMullen', key: 'dylan', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Gabe Ott', key: 'gabe', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Jackson Parks', key: 'jacksonparks', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Dave Roehm', key: 'dave', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Arturo Sanchez', key: 'arturo', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Jack Shelton', key: 'jackshelton', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Zane Springer', key: 'zane', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Ethan Walker', key: 'ethan', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Jacob Weldon', key: 'jacob', totalHours: 0, totalCommission: 0, totalTips: 0, …}
+Console.js:61 Employee structure: {name: 'Brett Willson', key: 'brett', totalHours: 6.5, totalCommission: 90, totalTips: 59, …}
+Console.js:61 Employee structure: {name: 'Jonathan Zaccheo', key: 'jonathan', totalHours: 0, totalCommission: 0, totalTips: 0, …}
