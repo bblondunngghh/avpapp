@@ -7,6 +7,7 @@ import { getQueryFn } from "@/lib/queryClient";
 import LocationIcon from "@/components/location-icon";
 import { MapPin, Building2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import stoveIcon from "@assets/Stove-Gas--Streamline-Ultimate_1751494739426.png";
 
 interface LocationSelectorModalProps {
   isOpen: boolean;
@@ -69,7 +70,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                 if (locationName.toLowerCase().includes('capital grille')) {
                   return (
                     <img 
-                      src="/assets/Stove-Gas--Streamline-Ultimate_1751494739426.png" 
+                      src={stoveIcon} 
                       alt="Capital Grille Stove" 
                       className="w-6 h-6 object-contain"
                     />
