@@ -5,10 +5,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Apple System Font Preview - San Francisco */
-* {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif !important;
-}
+
 
 /* Mobile device specific optimizations */
 @media (max-width: 768px) {
