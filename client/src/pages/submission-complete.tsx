@@ -76,27 +76,54 @@ export default function SubmissionComplete() {
       console.log("Parsed employees:", parsedEmployees);
       setEmployees(parsedEmployees || []);
       
-      // Calculate cash cars
+      // Calculate cash cars and get report values
       const totalCars = report.totalCars || 0;
-      const creditCards = report.creditTransactions || 0;
-      const receipts = report.totalReceipts || 0;
-      const calculatedCashCars = Math.max(0, totalCars - creditCards - receipts);
+      const creditTransactions = report.creditTransactions || 0;
+      const totalReceipts = report.totalReceipts || 0;
+      const calculatedCashCars = Math.max(0, totalCars - creditTransactions - totalReceipts);
       setCashCars(calculatedCashCars);
       
-      // Calculate earnings based on commissions and tips
-      const creditCommission = (report.totalCreditSales || 0) * 0.20;
-      const creditTipPercent = report.creditTipPercent || 15;
-      const creditTips = (report.totalCreditSales || 0) * (creditTipPercent / 100);
+      // Calculate earnings based on location-specific commission and turn-in rates
+      // Get commission rate based on location
+      let commissionRate = 11; // Default (Capital Grille)
+      if (report.locationId === 2) commissionRate = 9; // Bob's Steak
+      else if (report.locationId === 3) commissionRate = 7; // Truluck's
+      else if (report.locationId === 4) commissionRate = 6; // BOA
       
-      const cashRate = report.cashRate || 15;
-      const cashCommission = calculatedCashCars * cashRate;
-      const cashTips = report.totalCashCollected ? Math.max(0, report.totalCashCollected - cashCommission) : 0;
+      // Commission breakdowns - fixed rates based on location
+      const creditCommission = creditTransactions * commissionRate;
+      const cashCommission = calculatedCashCars * commissionRate;
+      const receiptCommission = totalReceipts * commissionRate;
       
-      const receiptCommission = (report.totalReceipts || 0) * 5;
-      const receiptTips = report.receiptTips || 0;
+      // Tips calculations based on collection vs expected difference
+      // Get the correct price per car based on location
+      let pricePerCar = 15; // Default for most locations
+      if (report.locationId === 4) pricePerCar = 13; // BOA uses $13
       
-      const moneyOwed = report.additionalTaxPayments || 0;
-      const totalEarnings = creditCommission + creditTips + cashCommission + cashTips + receiptCommission + receiptTips;
+      // Credit tips = absolute difference between what should be collected and what was collected
+      const creditExpected = creditTransactions * pricePerCar;
+      const creditActual = Number(report.totalCreditSales || 0);
+      const creditTips = Math.abs(creditExpected - creditActual);
+      
+      // Cash tips = difference between cash collected and expected turn-in
+      const cashExpected = calculatedCashCars * pricePerCar;
+      const cashActual = Number(report.totalCashCollected || 0);
+      const cashTips = Math.abs(cashExpected - cashActual);
+      
+      // Receipt tips = absolute difference for receipts (typically $18 each)
+      const receiptExpected = totalReceipts * 18;
+      const receiptSales = totalReceipts * 18; // $18 per receipt
+      const receiptTips = Math.abs(receiptExpected - receiptSales);
+      
+      // Money owed calculation
+      const totalRevenue = receiptSales + Number(report.totalCreditSales || 0);
+      const totalTurnIn = Number(report.totalTurnIn || 0);
+      const moneyOwed = Math.max(0, totalRevenue - totalTurnIn);
+      
+      // Total earnings
+      const totalCommission = creditCommission + cashCommission + receiptCommission;
+      const totalTips = creditTips + cashTips + receiptTips;
+      const totalEarnings = totalCommission + totalTips;
       
       setEarnings({
         creditCommission,
