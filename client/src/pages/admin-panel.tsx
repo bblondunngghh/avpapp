@@ -797,6 +797,7 @@ export default function AdminPanel() {
     hireDate: new Date().toISOString().split('T')[0],
     notes: '',
     ssn: '',
+    fullSsn: '',
     driversLicenseNumber: '',
     dateOfBirth: '',
     motorVehicleRecordsPath: ''
@@ -4351,6 +4352,7 @@ export default function AdminPanel() {
                       hireDate: new Date().toISOString().split('T')[0],
                       notes: '',
                       ssn: '',
+                      fullSsn: '',
                       driversLicenseNumber: '',
                       dateOfBirth: '',
                       motorVehicleRecordsPath: ''
@@ -4473,6 +4475,7 @@ export default function AdminPanel() {
                                   hireDate: employee.hireDate.split('T')[0],
                                   notes: employee.notes || '',
                                   ssn: employee.ssn || '',
+                                  fullSsn: '',
                           driversLicenseNumber: employee.driversLicenseNumber || '',
                           dateOfBirth: employee.dateOfBirth ? new Date(employee.dateOfBirth).toISOString().split('T')[0] : '',
                           motorVehicleRecordsPath: employee.motorVehicleRecordsPath || ''
@@ -4774,7 +4777,11 @@ export default function AdminPanel() {
                     email: '',
                     hireDate: new Date().toISOString().split('T')[0],
                     notes: '',
-                    ssn: ''
+                    ssn: '',
+                    fullSsn: '',
+                    driversLicenseNumber: '',
+                    dateOfBirth: '',
+                    motorVehicleRecordsPath: ''
                   });
                   setEditingEmployeeId(null);
                 }
@@ -4933,13 +4940,13 @@ export default function AdminPanel() {
                           placeholder="e.g., 123-45-6789"
                           maxLength={11}
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          value={newEmployee.ssn && newEmployee.ssn.includes('-') ? newEmployee.ssn : ''}
+                          value={newEmployee.fullSsn || ''}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
                             if (value.length >= 3) value = value.slice(0, 3) + '-' + value.slice(3);
                             if (value.length >= 6) value = value.slice(0, 6) + '-' + value.slice(6);
                             if (value.length <= 11) {
-                              setNewEmployee({...newEmployee, ssn: value});
+                              setNewEmployee({...newEmployee, fullSsn: value});
                             }
                           }}
                         />
