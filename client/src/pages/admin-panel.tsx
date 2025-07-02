@@ -792,7 +792,10 @@ export default function AdminPanel() {
     email: '',
     hireDate: new Date().toISOString().split('T')[0],
     notes: '',
-    ssn: ''
+    ssn: '',
+    driversLicenseNumber: '',
+    dateOfBirth: '',
+    motorVehicleRecordsPath: ''
   });
 
   // Check if admin is authenticated
@@ -4336,7 +4339,11 @@ export default function AdminPanel() {
                       phone: '',
                       email: '',
                       hireDate: new Date().toISOString().split('T')[0],
-                      notes: ''
+                      notes: '',
+                      ssn: '',
+                      driversLicenseNumber: '',
+                      dateOfBirth: '',
+                      motorVehicleRecordsPath: ''
                     });
                     // Open dialog
                     setIsAddEmployeeOpen(true);
@@ -4455,7 +4462,10 @@ export default function AdminPanel() {
                                   email: employee.email || '',
                                   hireDate: employee.hireDate.split('T')[0],
                                   notes: employee.notes || '',
-                                  ssn: employee.ssn || ''
+                                  ssn: employee.ssn || '',
+                          driversLicenseNumber: employee.driversLicenseNumber || '',
+                          dateOfBirth: employee.dateOfBirth ? new Date(employee.dateOfBirth).toISOString().split('T')[0] : '',
+                          motorVehicleRecordsPath: employee.motorVehicleRecordsPath || ''
                                 };
                                 console.log('Setting form data:', employeeData);
                                 setNewEmployee(employeeData);
@@ -4861,22 +4871,69 @@ export default function AdminPanel() {
                       </div>
                     </div>
                     
-                    <div className="grid gap-2">
-                      <Label htmlFor="edit-ssn">Last 4 digits of SSN (optional)</Label>
-                      <input 
-                        id="edit-ssn"
-                        type="text"
-                        placeholder="e.g., 1234"
-                        maxLength={4}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        value={newEmployee.ssn || ''}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, ''); // Only allow digits
-                          if (value.length <= 4) {
-                            setNewEmployee({...newEmployee, ssn: value});
-                          }
-                        }}
-                      />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-ssn">Last 4 digits of SSN</Label>
+                        <input 
+                          id="edit-ssn"
+                          type="text"
+                          placeholder="e.g., 1234"
+                          maxLength={4}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.ssn || ''}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                            if (value.length <= 4) {
+                              setNewEmployee({...newEmployee, ssn: value});
+                            }
+                          }}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-fullSsn">Full SSN (optional)</Label>
+                        <input 
+                          id="edit-fullSsn"
+                          type="text"
+                          placeholder="e.g., 123-45-6789"
+                          maxLength={11}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.ssn && newEmployee.ssn.includes('-') ? newEmployee.ssn : ''}
+                          onChange={(e) => {
+                            let value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                            if (value.length >= 3) value = value.slice(0, 3) + '-' + value.slice(3);
+                            if (value.length >= 6) value = value.slice(0, 6) + '-' + value.slice(6);
+                            if (value.length <= 11) {
+                              setNewEmployee({...newEmployee, ssn: value});
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-driversLicense">Driver's License Number</Label>
+                        <input 
+                          id="edit-driversLicense"
+                          type="text"
+                          placeholder="e.g., D1234567890"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.driversLicenseNumber || ''}
+                          onChange={(e) => setNewEmployee({...newEmployee, driversLicenseNumber: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-dateOfBirth">Date of Birth</Label>
+                        <input 
+                          id="edit-dateOfBirth"
+                          type="date"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newEmployee.dateOfBirth || ''}
+                          onChange={(e) => setNewEmployee({...newEmployee, dateOfBirth: e.target.value})}
+                        />
+                      </div>
                     </div>
                     
                     <div className="grid gap-2">
