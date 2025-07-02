@@ -1391,29 +1391,38 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                             
                             let employeeName = "Employee";
                             if (employee.name) {
-                              // Get the full name from employee key
-                              const nameMap: Record<string, string> = {
-                                "antonio": "Antonio Martinez",
-                                "arturo": "Arturo Sanchez",
-                                "brandon": "Brandon Blond",
-                                "brett": "Brett Willson",
-                                "dave": "Dave Roehm",
-                                "devin": "Devin Bean",
-                                "dylan": "Dylan McMullen",
-                                "elijah": "Elijah Aguilar",
-                                "ethan": "Ethan Walker",
-                                "gabe": "Gabe Ott",
-                                "jacob": "Jacob Weldon",
-                                "joe": "Joe Albright",
-                                "jonathan": "Jonathan Zaccheo",
-                                "kevin": "Kevin Hanrahan",
-                                "melvin": "Melvin Lobos",
-                                "noe": "Noe Coronado",
-                                "riley": "Riley McIntyre",
-                                "ryan": "Ryan Hocevar",
-                                "zane": "Zane Springer"
-                              };
-                              employeeName = nameMap[employee.name] || `Employee ${index+1}`;
+                              // First try to find the employee by key in the employees data
+                              const foundEmployee = employees?.find((emp: any) => 
+                                emp.key?.toLowerCase() === employee.name.toLowerCase()
+                              );
+                              
+                              if (foundEmployee) {
+                                employeeName = foundEmployee.fullName || foundEmployee.key;
+                              } else {
+                                // Fallback to hardcoded mapping for legacy employees
+                                const nameMap: Record<string, string> = {
+                                  "antonio": "Antonio Martinez",
+                                  "arturo": "Arturo Sanchez",
+                                  "brandon": "Brandon Blond",
+                                  "brett": "Brett Willson",
+                                  "dave": "Dave Roehm",
+                                  "devin": "Devin Bean",
+                                  "dylan": "Dylan McMullen",
+                                  "elijah": "Elijah Aguilar",
+                                  "ethan": "Ethan Walker",
+                                  "gabe": "Gabe Ott",
+                                  "jacob": "Jacob Weldon",
+                                  "joe": "Joe Albright",
+                                  "jonathan": "Jonathan Zaccheo",
+                                  "kevin": "Kevin Hanrahan",
+                                  "melvin": "Melvin Lobos",
+                                  "noe": "Noe Coronado",
+                                  "riley": "Riley McIntyre",
+                                  "ryan": "Ryan Hocevar",
+                                  "zane": "Zane Springer"
+                                };
+                                employeeName = nameMap[employee.name] || employee.name || `Employee ${index+1}`;
+                              }
                             }
                             
                             return (
