@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
+import { pushNotificationService } from "./push-notification-service";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -47,7 +48,8 @@ import {
   TrainingAcknowledgment,
   HelpRequest,
   HelpResponse,
-  Location
+  Location,
+  PushSubscription
 } from "@shared/schema";
 import { z } from "zod";
 import { 
@@ -2009,6 +2011,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
           
+          // Also send push notifications
+          try {
+            const activeSubscriptions = await storage.getActivePushSubscriptions();
+            if (activeSubscriptions.length > 0) {
+              await pushNotificationService.sendHelpRequestNotification(
+                activeSubscriptions,
+                requestingLocation.name,
+                1, // Default to 1 attendant needed
+                request.priority || 'normal',
+                appUrl
+              );
+              console.log(`[HELP REQUEST] Push notifications sent to ${activeSubscriptions.length} subscribers`);
+            }
+          } catch (pushError) {
+            console.log('[HELP REQUEST] Push notification failed:', pushError);
+          }
+          
           console.log(`[HELP REQUEST] ${notificationsSent} notifications sent for request from ${requestingLocation.name}`);
         }
       } catch (notificationError) {
@@ -2095,6 +2114,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true, message: 'Help request marked as fulfilled' });
     } catch (error) {
       res.status(500).json({ message: 'Failed to fulfill help request' });
+    }
+  });
+
+  // Push Notification Routes
+  apiRouter.post('/push-subscription', async (req, res) => {
+    try {
+      const subscriptionData = insertPushSubscriptionSchema.parse(req.body);
+      const subscription = await storage.createPushSubscription(subscriptionData);
+      res.status(201).json(subscription);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: 'Invalid subscription data', 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: 'Failed to save push subscription' });
+    }
+  });
+
+  apiRouter.delete('/push-subscription', async (req, res) => {
+    try {
+      const { endpoint } = req.body;
+      if (!endpoint) {
+        return res.status(400).json({ message: 'Endpoint is required' });
+      }
+      
+      const success = await storage.deletePushSubscription(endpoint);
+      if (!success) {
+        return res.status(404).json({ message: 'Subscription not found' });
+      }
+      
+      res.json({ success: true, message: 'Push subscription removed' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to remove push subscription' });
+    }
+  });
+
+  apiRouter.get('/push-subscriptions', async (req, res) => {
+    try {
+      const subscriptions = await storage.getPushSubscriptions();
+      res.json(subscriptions);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to get push subscriptions' });
+    }
+  });
+
+  apiRouter.post('/push-test', async (req, res) => {
+    try {
+      const activeSubscriptions = await storage.getActivePushSubscriptions();
+      if (activeSubscriptions.length === 0) {
+        return res.json({ 
+          message: 'No active push subscriptions to test',
+          subscriberCount: 0 
+        });
+      }
+
+      await pushNotificationService.sendHelpRequestNotification(
+        activeSubscriptions,
+        'Test Location',
+        1,
+        'normal',
+        process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'http://localhost:5000'
+      );
+
+      res.json({ 
+        message: 'Test notifications sent successfully',
+        subscriberCount: activeSubscriptions.length 
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to send test notifications' });
     }
   });
 

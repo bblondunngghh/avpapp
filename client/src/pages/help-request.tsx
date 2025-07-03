@@ -21,6 +21,7 @@ import houseIcon from "@assets/House-3--Streamline-Ultimate_1751310836981.png";
 import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimate_1751311056997.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { PushNotificationSetup } from "@/components/push-notification-setup";
 
 interface HelpRequest {
   id: number;
@@ -433,6 +434,11 @@ export default function HelpRequestPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Push Notifications Section */}
+      <div className="mb-6">
+        <PushNotificationSetup />
+      </div>
 
       {/* Help Request Section */}
       <Card className="border-orange-200 shadow-md mb-6">
