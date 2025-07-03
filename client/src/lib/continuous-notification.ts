@@ -7,6 +7,7 @@ interface ContinuousNotification {
   intervalId: NodeJS.Timeout;
   title: string;
   message: string;
+  isOwnRequest: boolean; // Track if this device sent the request
 }
 
 class ContinuousNotificationService {
@@ -49,14 +50,16 @@ class ContinuousNotificationService {
     }
   }
 
-  public startContinuousNotification(requestId: string, title: string, message: string) {
+  public startContinuousNotification(requestId: string, title: string, message: string, isOwnRequest: boolean = false) {
     // Stop any existing notification for this request
     this.stopContinuousNotification(requestId);
 
-    console.log(`[CONTINUOUS] Starting 3-minute notification cycle for request ${requestId}`);
+    console.log(`[CONTINUOUS] Starting 3-minute notification cycle for request ${requestId}${isOwnRequest ? ' (own request - no sounds)' : ''}`);
 
     const intervalId = setInterval(async () => {
-      await this.sendUrgentNotification(title, message);
+      if (!isOwnRequest) {
+        await this.sendUrgentNotification(title, message);
+      }
     }, this.NOTIFICATION_INTERVAL);
 
     // Store the notification details
@@ -65,13 +68,16 @@ class ContinuousNotificationService {
       startTime: Date.now(),
       intervalId,
       title,
-      message
+      message,
+      isOwnRequest
     };
 
     this.activeNotifications.set(requestId, notification);
 
-    // Send first immediate notification
-    this.sendUrgentNotification(title, message);
+    // Send first immediate notification only if not own request
+    if (!isOwnRequest) {
+      this.sendUrgentNotification(title, message);
+    }
 
     // Auto-stop after 3 minutes
     setTimeout(() => {

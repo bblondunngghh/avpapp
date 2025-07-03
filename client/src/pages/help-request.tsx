@@ -262,11 +262,12 @@ export default function HelpRequestPage() {
         description: "Your valet assistance request has been sent to all locations.",
       });
 
-      // Start continuous notifications for 3 minutes
+      // Start continuous notifications for 3 minutes (exclude this device since it sent the request)
       continuousNotificationService.startContinuousNotification(
         response.id.toString(),
         "🚨 URGENT: Valet Help Needed",
-        `${requestingLocationName} needs ${response.staffCount} valet attendant(s) - ${response.message}`
+        `${requestingLocationName} needs ${response.staffCount} valet attendant(s) - ${response.message}`,
+        true // isOwnRequest = true to prevent sounds on requesting device
       );
 
       setRequestingLocation("");
