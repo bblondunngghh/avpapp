@@ -52,7 +52,7 @@ export function AssistanceCenterPopup() {
 
   const handleGoToAssistanceCenter = () => {
     handleDismiss();
-    window.location.href = '/help-requests';
+    window.location.href = '/help-request';
   };
 
   if (!isVisible) {
