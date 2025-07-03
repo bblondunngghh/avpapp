@@ -61,52 +61,7 @@ export class EmailService {
     return this.transporter !== null && this.config !== null;
   }
 
-  // Send to multiple SMS gateways simultaneously for better delivery
-  public async sendSMSToAllGateways(
-    phoneNumber: string,
-    subject: string,
-    message: string
-  ): Promise<boolean> {
-    if (!this.isConfigured()) {
-      return false;
-    }
 
-    const cleanPhone = phoneNumber.replace(/\D/g, '');
-    const gateways = [
-      `${cleanPhone}@vtext.com`,      // Verizon
-      `${cleanPhone}@txt.att.net`,    // AT&T
-      `${cleanPhone}@tmomail.net`,    // T-Mobile
-      `${cleanPhone}@messaging.sprintpcs.com`, // Sprint
-      `${cleanPhone}@mymetropcs.com`, // Metro
-      `${cleanPhone}@textmsg.com`,    // T-Mobile Alt
-      `${cleanPhone}@email.uscc.net`, // US Cellular
-      `${cleanPhone}@sms.cricketwireless.net` // Cricket
-    ];
-
-    const promises = gateways.map(async (gateway) => {
-      try {
-        const result = await this.transporter!.sendMail({
-          from: this.config!.user,
-          to: gateway,
-          subject,
-          text: message,
-        });
-        console.log(`[EMAIL] SMS sent to ${gateway}, ID: ${result.messageId}`);
-        return true;
-      } catch (error) {
-        console.log(`[EMAIL] Failed to send to ${gateway}`);
-        return false;
-      }
-    });
-
-    const results = await Promise.allSettled(promises);
-    const successCount = results.filter(result => 
-      result.status === 'fulfilled' && result.value === true
-    ).length;
-
-    console.log(`[EMAIL] SMS sent to ${successCount}/${gateways.length} gateways for ${cleanPhone}`);
-    return successCount > 0;
-  }
 
   public async sendHelpRequestNotification(
     toEmail: string,
@@ -143,27 +98,26 @@ export class EmailService {
         const plainTextMessage = `${urgencyText}: ${locationName} needs valet assistance. ${attendantsNeeded} attendant(s) needed. Respond at ${appUrl}/help-request`;
         const subject = `${urgencyText}: ${locationName} Help Request`;
         
+        let targetGateway: string;
+        
         if (isPhoneNumber) {
-          // Send to all gateways simultaneously
-          return await this.sendSMSToAllGateways(toEmail, subject, plainTextMessage);
+          // Use single reliable gateway - T-Mobile
+          const cleanPhone = toEmail.replace(/\D/g, '');
+          targetGateway = `${cleanPhone}@tmomail.net`;
         } else {
-          // Extract phone and send to all gateways
-          const phoneMatch = toEmail.match(/^(\d+)@/);
-          if (phoneMatch) {
-            return await this.sendSMSToAllGateways(phoneMatch[1], subject, plainTextMessage);
-          }
-          
-          // Fallback for direct gateway email
-          const result = await this.transporter!.sendMail({
-            from: this.config!.user,
-            to: toEmail,
-            subject,
-            text: plainTextMessage,
-          });
-
-          console.log(`[EMAIL] SMS notification sent to ${toEmail}, ID: ${result.messageId}`);
-          return true;
+          // Use the provided gateway email
+          targetGateway = toEmail;
         }
+        
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: targetGateway,
+          subject,
+          text: plainTextMessage,
+        });
+
+        console.log(`[EMAIL] SMS notification sent to ${targetGateway}, ID: ${result.messageId}`);
+        return true;
       } else {
         // HTML email for regular email addresses
         const urgencyEmoji = urgencyLevel === 'urgent' ? '🚨' : '📢';
