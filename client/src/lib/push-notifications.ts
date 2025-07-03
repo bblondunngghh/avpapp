@@ -4,18 +4,36 @@ export class PushNotificationService {
   private vapidPublicKey = 'BOMF0n3H-ovZDtGNwzXAlHyyumUQvtwx2BPjpdEP_m1YKDqD5okIs3O6ETWXD8kyR0F1oDJ3gxriCrj6Ozlh84Q';
 
   public async isSupported(): Promise<boolean> {
-    if (!('serviceWorker' in navigator && 'PushManager' in window)) {
+    console.log('[PUSH] Checking browser support...');
+    console.log('[PUSH] User Agent:', navigator.userAgent);
+    console.log('[PUSH] Platform:', navigator.platform);
+    
+    if (!('serviceWorker' in navigator)) {
+      console.log('[PUSH] Service Worker not supported');
       return false;
     }
+    
+    if (!('PushManager' in window)) {
+      console.log('[PUSH] Push Manager not supported');
+      return false;
+    }
+    
+    if (!('Notification' in window)) {
+      console.log('[PUSH] Notifications not supported');
+      return false;
+    }
+
+    console.log('[PUSH] Basic support confirmed');
 
     try {
       // Force service worker re-registration with cache busting for mobile
       if (this.isMobileDevice()) {
+        console.log('[PUSH] Mobile device detected, using cache bust');
         await this.registerServiceWorkerWithCacheBust();
       }
       return true;
     } catch (error) {
-      console.error('Service worker registration failed:', error);
+      console.error('[PUSH] Service worker registration failed:', error);
       return false;
     }
   }
@@ -53,26 +71,45 @@ export class PushNotificationService {
   }
 
   public async subscribe(): Promise<PushSubscription | null> {
+    console.log('[PUSH] Starting subscription process...');
+    
     if (!await this.isSupported()) {
       throw new Error('Push notifications are not supported');
     }
+    console.log('[PUSH] Push notifications supported');
 
     const permission = await this.requestPermission();
+    console.log('[PUSH] Permission status:', permission);
     if (permission !== 'granted') {
       throw new Error('Permission denied for notifications');
     }
 
     // Register service worker
+    console.log('[PUSH] Registering service worker...');
     const registration = await navigator.serviceWorker.register('/sw.js');
     await navigator.serviceWorker.ready;
+    console.log('[PUSH] Service worker ready');
 
-    // Subscribe to push notifications
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: this.urlB64ToUint8Array(this.vapidPublicKey),
-    });
+    // Check if already subscribed
+    const existingSubscription = await registration.pushManager.getSubscription();
+    if (existingSubscription) {
+      console.log('[PUSH] Existing subscription found, unsubscribing first...');
+      await existingSubscription.unsubscribe();
+    }
 
-    return subscription;
+    // Subscribe to push notifications with iOS-specific handling
+    console.log('[PUSH] Creating new subscription...');
+    try {
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: this.urlB64ToUint8Array(this.vapidPublicKey),
+      });
+      console.log('[PUSH] Subscription created successfully:', subscription.endpoint.slice(0, 50) + '...');
+      return subscription;
+    } catch (error) {
+      console.error('[PUSH] Subscription failed:', error);
+      throw new Error(`Failed to create push subscription: ${error}`);
+    }
   }
 
   public async unsubscribe(): Promise<boolean> {
