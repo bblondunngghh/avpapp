@@ -1971,27 +1971,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
           let notificationsSent = 0;
           
           for (const location of otherLocations) {
-            // Prefer email, fallback to SMS
-            if (location.notificationEmail) {
-              await emailService.sendHelpRequestNotification(
-                location.notificationEmail,
-                requestingLocation.name,
-                1, // Default to 1 attendant needed
-                request.priority || 'normal',
-                appUrl
-              );
-              notificationsSent++;
-              console.log(`[HELP REQUEST] Email notification sent to ${location.name}`);
-            } else if (location.smsPhone) {
-              await smsService.sendHelpRequestNotification(
-                location.smsPhone,
-                requestingLocation.name,
-                1, // Default to 1 attendant needed
-                request.priority || 'normal',
-                appUrl
-              );
-              notificationsSent++;
-              console.log(`[HELP REQUEST] SMS notification sent to ${location.name}`);
+            let notificationSent = false;
+            
+            // Try SMS first if available and configured
+            if (location.smsPhone && smsService.isConfigured()) {
+              try {
+                await smsService.sendHelpRequestNotification(
+                  location.smsPhone,
+                  requestingLocation.name,
+                  1, // Default to 1 attendant needed
+                  request.priority || 'normal',
+                  appUrl
+                );
+                notificationsSent++;
+                notificationSent = true;
+                console.log(`[HELP REQUEST] SMS notification sent to ${location.name}`);
+              } catch (error) {
+                console.log(`[HELP REQUEST] SMS failed for ${location.name}, trying email...`);
+              }
+            }
+            
+            // Fallback to email-to-SMS if SMS didn't work
+            if (!notificationSent && location.notificationEmail) {
+              try {
+                await emailService.sendHelpRequestNotification(
+                  location.notificationEmail,
+                  requestingLocation.name,
+                  1, // Default to 1 attendant needed
+                  request.priority || 'normal',
+                  appUrl
+                );
+                notificationsSent++;
+                console.log(`[HELP REQUEST] Email notification sent to ${location.name}`);
+              } catch (error) {
+                console.log(`[HELP REQUEST] All notifications failed for ${location.name}`);
+              }
             }
           }
           

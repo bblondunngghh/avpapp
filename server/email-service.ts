@@ -61,6 +61,53 @@ export class EmailService {
     return this.transporter !== null && this.config !== null;
   }
 
+  // Send to multiple SMS gateways simultaneously for better delivery
+  public async sendSMSToAllGateways(
+    phoneNumber: string,
+    subject: string,
+    message: string
+  ): Promise<boolean> {
+    if (!this.isConfigured()) {
+      return false;
+    }
+
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    const gateways = [
+      `${cleanPhone}@vtext.com`,      // Verizon
+      `${cleanPhone}@txt.att.net`,    // AT&T
+      `${cleanPhone}@tmomail.net`,    // T-Mobile
+      `${cleanPhone}@messaging.sprintpcs.com`, // Sprint
+      `${cleanPhone}@mymetropcs.com`, // Metro
+      `${cleanPhone}@textmsg.com`,    // T-Mobile Alt
+      `${cleanPhone}@email.uscc.net`, // US Cellular
+      `${cleanPhone}@sms.cricketwireless.net` // Cricket
+    ];
+
+    const promises = gateways.map(async (gateway) => {
+      try {
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: gateway,
+          subject,
+          text: message,
+        });
+        console.log(`[EMAIL] SMS sent to ${gateway}, ID: ${result.messageId}`);
+        return true;
+      } catch (error) {
+        console.log(`[EMAIL] Failed to send to ${gateway}`);
+        return false;
+      }
+    });
+
+    const results = await Promise.allSettled(promises);
+    const successCount = results.filter(result => 
+      result.status === 'fulfilled' && result.value === true
+    ).length;
+
+    console.log(`[EMAIL] SMS sent to ${successCount}/${gateways.length} gateways for ${cleanPhone}`);
+    return successCount > 0;
+  }
+
   public async sendHelpRequestNotification(
     toEmail: string,
     locationName: string,
@@ -74,26 +121,49 @@ export class EmailService {
     }
 
     try {
-      // Check if this is an SMS gateway (contains carrier domains)
-      const isSMSGateway = toEmail.includes('@tmomail.net') || 
-                          toEmail.includes('@vtext.com') || 
-                          toEmail.includes('@txt.att.net') ||
-                          toEmail.includes('@messaging.sprintpcs.com');
+      // Check if this is an SMS gateway or phone number
+      const isSMSGateway = toEmail.includes('@') && (
+        toEmail.includes('vtext.com') || 
+        toEmail.includes('txt.att.net') ||
+        toEmail.includes('tmomail.net') ||
+        toEmail.includes('messaging.sprintpcs.com') ||
+        toEmail.includes('msg.fi.google.com') ||
+        toEmail.includes('mymetropcs.com') ||
+        toEmail.includes('textmsg.com') ||
+        toEmail.includes('email.uscc.net') ||
+        toEmail.includes('sms.cricketwireless.net')
+      );
 
-      if (isSMSGateway) {
-        // Plain text message for SMS gateways
+      // Check if it's just a phone number
+      const phonePattern = /^\d{10}$/;
+      const isPhoneNumber = phonePattern.test(toEmail.replace(/\D/g, ''));
+
+      if (isSMSGateway || isPhoneNumber) {
         const urgencyText = urgencyLevel === 'urgent' ? 'URGENT' : 'HELP';
         const plainTextMessage = `${urgencyText}: ${locationName} needs valet assistance. ${attendantsNeeded} attendant(s) needed. Respond at ${appUrl}/help-request`;
+        const subject = `${urgencyText}: ${locationName} Help Request`;
         
-        const result = await this.transporter!.sendMail({
-          from: this.config!.user,
-          to: toEmail,
-          subject: `${urgencyText}: ${locationName} Help Request`,
-          text: plainTextMessage,
-        });
+        if (isPhoneNumber) {
+          // Send to all gateways simultaneously
+          return await this.sendSMSToAllGateways(toEmail, subject, plainTextMessage);
+        } else {
+          // Extract phone and send to all gateways
+          const phoneMatch = toEmail.match(/^(\d+)@/);
+          if (phoneMatch) {
+            return await this.sendSMSToAllGateways(phoneMatch[1], subject, plainTextMessage);
+          }
+          
+          // Fallback for direct gateway email
+          const result = await this.transporter!.sendMail({
+            from: this.config!.user,
+            to: toEmail,
+            subject,
+            text: plainTextMessage,
+          });
 
-        console.log(`[EMAIL] SMS notification sent to ${toEmail}, ID: ${result.messageId}`);
-        return true;
+          console.log(`[EMAIL] SMS notification sent to ${toEmail}, ID: ${result.messageId}`);
+          return true;
+        }
       } else {
         // HTML email for regular email addresses
         const urgencyEmoji = urgencyLevel === 'urgent' ? '🚨' : '📢';
@@ -158,10 +228,48 @@ export class EmailService {
       const isSMSGateway = toEmail.includes('@tmomail.net') || 
                           toEmail.includes('@vtext.com') || 
                           toEmail.includes('@txt.att.net') ||
-                          toEmail.includes('@messaging.sprintpcs.com');
+                          toEmail.includes('@messaging.sprintpcs.com') ||
+                          toEmail.includes('@msg.fi.google.com') ||
+                          toEmail.includes('@mymetropcs.com') ||
+                          toEmail.includes('@textmsg.com');
 
       if (isSMSGateway) {
-        // Plain text message for SMS gateways
+        // Extract phone number and try multiple gateways if needed
+        const phoneMatch = toEmail.match(/^(\d+)@/);
+        if (phoneMatch) {
+          const phoneNumber = phoneMatch[1];
+          const fallbackGateways = [
+            toEmail, // Try original first
+            `${phoneNumber}@vtext.com`, // Verizon (most reliable)
+            `${phoneNumber}@txt.att.net`, // AT&T
+            `${phoneNumber}@textmsg.com`, // T-Mobile backup
+            `${phoneNumber}@mymetropcs.com` // Metro/T-Mobile backup
+          ];
+
+          for (const gateway of fallbackGateways) {
+            try {
+              const plainTextMessage = `RESPONSE: ${responderLocation} responded to ${requestingLocation} help request: "${responseMessage}" - View updates at ${appUrl}/help-request`;
+              
+              const result = await this.transporter!.sendMail({
+                from: this.config!.user,
+                to: gateway,
+                subject: `RESPONSE: ${responderLocation} Responded`,
+                text: plainTextMessage,
+              });
+
+              console.log(`[EMAIL] SMS response notification sent to ${gateway}, ID: ${result.messageId}`);
+              return true;
+            } catch (error) {
+              console.log(`[EMAIL] Gateway ${gateway} failed, trying next...`);
+              continue;
+            }
+          }
+          
+          console.error(`[EMAIL] All SMS gateways failed for ${phoneNumber}`);
+          return false;
+        }
+        
+        // Fallback to original logic if phone extraction fails
         const plainTextMessage = `RESPONSE: ${responderLocation} responded to ${requestingLocation} help request: "${responseMessage}" - View updates at ${appUrl}/help-request`;
         
         const result = await this.transporter!.sendMail({
