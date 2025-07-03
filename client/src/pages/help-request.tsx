@@ -448,11 +448,9 @@ export default function HelpRequestPage() {
           </div>
           
           {/* Description */}
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-700">
-              Daily cover counts are tracked to inform other locations when a certain location is expecting a busy night and could use extra help. Location cover counts will be key when slower locations decide they can afford to make staffing cuts.
-            </p>
-          </div>
+          <p className="mt-4 text-sm text-gray-600 italic">
+            Daily cover counts are tracked to inform other locations when a certain location is expecting a busy night and could use extra help. Location cover counts will be key when slower locations decide they can afford to make staffing cuts.
+          </p>
         </CardContent>
       </Card>
 
