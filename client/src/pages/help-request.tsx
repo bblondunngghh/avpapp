@@ -247,8 +247,12 @@ export default function HelpRequestPage() {
   // Create help request mutation
   const createRequestMutation = useMutation({
     mutationFn: async (data: { requestingLocationId: number; message: string; priority: string; staffCount: number }) => {
+      console.log('[HELP REQUEST] Sending data:', data);
       const response = await apiRequest("POST", "/api/help-requests", data);
-      return response.json();
+      console.log('[HELP REQUEST] Response status:', response.status);
+      const result = await response.json();
+      console.log('[HELP REQUEST] Response data:', result);
+      return result;
     },
     onSuccess: (response: any) => {
       const requestingLocationName = locations.find(loc => loc.id === response.requestingLocationId)?.name || "Unknown Location";
