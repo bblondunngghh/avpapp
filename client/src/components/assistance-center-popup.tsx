@@ -9,7 +9,7 @@ import athleticsTeamIcon from "@assets/Athletics-Team-Running--Streamline-Ultima
 import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimate_1751311056997.png";
 import checkCompleteIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 
-const POPUP_STORAGE_KEY = 'assistance-center-popup-dismissed';
+const POPUP_SESSION_KEY = 'assistance-center-popup-session-dismissed';
 const POPUP_LAUNCH_DATE = new Date('2025-07-03'); // July 3, 2025
 const POPUP_DURATION_DAYS = 5;
 
@@ -18,10 +18,10 @@ export function AssistanceCenterPopup() {
 
   useEffect(() => {
     const checkPopupVisibility = () => {
-      // Check if user has already dismissed the popup
-      const dismissedDate = localStorage.getItem(POPUP_STORAGE_KEY);
-      if (dismissedDate) {
-        console.log('[POPUP] Already dismissed, not showing');
+      // Check if user has already dismissed the popup in this session
+      const sessionDismissed = sessionStorage.getItem(POPUP_SESSION_KEY);
+      if (sessionDismissed) {
+        console.log('[POPUP] Already dismissed this session, not showing');
         return false;
       }
 
@@ -47,7 +47,7 @@ export function AssistanceCenterPopup() {
 
   const handleDismiss = () => {
     setIsVisible(false);
-    localStorage.setItem(POPUP_STORAGE_KEY, new Date().toISOString());
+    sessionStorage.setItem(POPUP_SESSION_KEY, new Date().toISOString());
   };
 
   const handleGoToAssistanceCenter = () => {
