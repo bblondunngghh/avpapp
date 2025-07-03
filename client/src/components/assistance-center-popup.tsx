@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
-import { X, HelpCircle, Users, Phone, Clock, CheckCircle } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import insuranceHandIcon from "@assets/Insurance-Hand--Streamline-Ultimate_1751309954246.png";
+import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate_1751309681398.png";
+import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate_1751310266454.png";
+import athleticsTeamIcon from "@assets/Athletics-Team-Running--Streamline-Ultimate_1751310499313.png";
+import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimate_1751311056997.png";
+import checkCompleteIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 
 const POPUP_STORAGE_KEY = 'assistance-center-popup-dismissed';
 const POPUP_LAUNCH_DATE = new Date('2025-07-03'); // July 3, 2025
@@ -68,7 +74,7 @@ export function AssistanceCenterPopup() {
           
           <div className="flex items-center gap-3 mb-2">
             <div className="bg-blue-100 p-2 rounded-full">
-              <HelpCircle className="h-6 w-6 text-blue-600" />
+              <img src={insuranceHandIcon} alt="Insurance Hand" className="h-6 w-6" />
             </div>
             <div>
               <CardTitle className="text-xl text-blue-900">
@@ -84,7 +90,7 @@ export function AssistanceCenterPopup() {
         <CardContent className="space-y-4">
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
             <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-              <Users className="h-4 w-4" />
+              <img src={deliveryManIcon} alt="Delivery Man" className="h-4 w-4" />
               How to Use the Assistance Center:
             </h3>
             
@@ -121,7 +127,7 @@ export function AssistanceCenterPopup() {
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="bg-green-50 p-3 rounded-lg border border-green-200">
               <div className="flex items-center gap-2 text-green-700 font-medium mb-1">
-                <Phone className="h-4 w-4" />
+                <img src={sendEmailIcon} alt="Send Email" className="h-4 w-4" />
                 Instant Alerts
               </div>
               <p className="text-green-600 text-xs">
@@ -131,7 +137,7 @@ export function AssistanceCenterPopup() {
             
             <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
               <div className="flex items-center gap-2 text-purple-700 font-medium mb-1">
-                <Clock className="h-4 w-4" />
+                <img src={athleticsTeamIcon} alt="Athletics Team" className="h-4 w-4" />
                 24/7 Available
               </div>
               <p className="text-purple-600 text-xs">
@@ -145,7 +151,7 @@ export function AssistanceCenterPopup() {
               onClick={handleGoToAssistanceCenter}
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
-              <HelpCircle className="h-4 w-4 mr-2" />
+              <img src={taskListQuestionIcon} alt="Task List Question" className="h-4 w-4 mr-2" />
               Try Assistance Center
             </Button>
             
@@ -154,7 +160,7 @@ export function AssistanceCenterPopup() {
               onClick={handleDismiss}
               className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50"
             >
-              <CheckCircle className="h-4 w-4 mr-2" />
+              <img src={checkCompleteIcon} alt="Check Complete" className="h-4 w-4 mr-2" />
               Got It
             </Button>
           </div>
