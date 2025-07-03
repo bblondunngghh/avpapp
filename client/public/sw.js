@@ -1,12 +1,44 @@
-// Service Worker for Push Notifications
+// Service Worker for Push Notifications - Version 1.1.0
+const CACHE_VERSION = 'v1.1.0';
+const STATIC_CACHE = `access-valet-static-${CACHE_VERSION}`;
+
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installed');
+  console.log('Service Worker installed - Version 1.1.0');
+  
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then((cache) => {
+      console.log('Cache opened');
+      return cache.addAll([
+        '/',
+        '/help-request',
+        '/manifest.json'
+      ]);
+    })
+  );
+  
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activated');
-  event.waitUntil(clients.claim());
+  console.log('Service Worker activated - Version 1.1.0');
+  
+  event.waitUntil(
+    Promise.all([
+      // Clear old caches
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== STATIC_CACHE) {
+              console.log('Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Take control of all pages
+      clients.claim()
+    ])
+  );
 });
 
 self.addEventListener('push', (event) => {

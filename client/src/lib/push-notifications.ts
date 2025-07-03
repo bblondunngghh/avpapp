@@ -4,7 +4,36 @@ export class PushNotificationService {
   private vapidPublicKey = 'BMELZJJCzJwjSJhpzPqNKWE_6-FqbQgKqRGFOPwQckhLnf0nHj5-BTSA-RLKb4VFNYoMKRheFYxg3yp8tPcb1iI';
 
   public async isSupported(): Promise<boolean> {
-    return 'serviceWorker' in navigator && 'PushManager' in window;
+    if (!('serviceWorker' in navigator && 'PushManager' in window)) {
+      return false;
+    }
+
+    try {
+      // Force service worker re-registration with cache busting for mobile
+      if (this.isMobileDevice()) {
+        await this.registerServiceWorkerWithCacheBust();
+      }
+      return true;
+    } catch (error) {
+      console.error('Service worker registration failed:', error);
+      return false;
+    }
+  }
+
+  private async registerServiceWorkerWithCacheBust(): Promise<void> {
+    try {
+      // Add timestamp to force cache refresh
+      const timestamp = Date.now();
+      const swUrl = `/sw.js?v=${timestamp}`;
+      
+      const registration = await navigator.serviceWorker.register(swUrl);
+      await registration.update();
+      console.log('Service worker registered with cache bust:', swUrl);
+    } catch (error) {
+      console.warn('Failed to register service worker with cache bust:', error);
+      // Fallback to regular registration
+      await navigator.serviceWorker.register('/sw.js');
+    }
   }
 
   public async getPermissionStatus(): Promise<NotificationPermission> {
@@ -69,12 +98,38 @@ export class PushNotificationService {
       return null;
     }
 
-    const registration = await navigator.serviceWorker.getRegistration();
-    if (!registration) {
+    try {
+      // Force service worker update on mobile devices
+      if (this.isMobileDevice()) {
+        await this.updateServiceWorker();
+      }
+      
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        return null;
+      }
+
+      return await registration.pushManager.getSubscription();
+    } catch (error) {
+      console.error('Error getting push subscription:', error);
       return null;
     }
+  }
 
-    return await registration.pushManager.getSubscription();
+  private isMobileDevice(): boolean {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  private async updateServiceWorker(): Promise<void> {
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration) {
+        await registration.update();
+        console.log('Service worker updated for mobile device');
+      }
+    } catch (error) {
+      console.warn('Failed to update service worker:', error);
+    }
   }
 
   public async sendSubscriptionToServer(subscription: PushSubscription): Promise<void> {

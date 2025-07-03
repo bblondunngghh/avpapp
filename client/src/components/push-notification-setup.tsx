@@ -15,7 +15,19 @@ export function PushNotificationSetup() {
 
   useEffect(() => {
     checkSupport();
+    
+    // Force refresh for mobile devices after deployment
+    if (isMobileDevice() && !sessionStorage.getItem('push-refreshed')) {
+      sessionStorage.setItem('push-refreshed', 'true');
+      setTimeout(() => {
+        checkSupport();
+      }, 1000);
+    }
   }, []);
+
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
 
   const checkSupport = async () => {
     try {
