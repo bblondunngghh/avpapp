@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, Smartphone, Volume2 } from 'lucide-react';
+import { Bell, BellOff, Smartphone } from 'lucide-react';
 import { pushNotificationService } from '@/lib/push-notifications';
-import { notificationSoundService } from '@/lib/notification-sound';
 import { useToast } from '@/hooks/use-toast';
 
 export function PushNotificationSetup() {
@@ -108,31 +107,7 @@ export function PushNotificationSetup() {
     }
   };
 
-  const testNotification = () => {
-    if (permission === 'granted') {
-      pushNotificationService.showLocalNotification(
-        'Test Notification',
-        'This is a test notification to verify everything is working!',
-        '/icon-192x192.png'
-      );
-    }
-  };
 
-  const testNotificationSound = async () => {
-    try {
-      await notificationSoundService.playLoudNotificationSound(1.0, 1500);
-      toast({
-        title: "Sound Test",
-        description: "MAXIMUM VOLUME multi-layered alarm sequence with harmonic overdrive played!",
-      });
-    } catch (error) {
-      toast({
-        title: "Sound Test Failed",
-        description: "Unable to play notification sound",
-        variant: "destructive",
-      });
-    }
-  };
 
   if (!isSupported) {
     return (
@@ -189,34 +164,15 @@ export function PushNotificationSetup() {
               {isLoading ? 'Enabling...' : 'Enable Notifications'}
             </Button>
           ) : (
-            <>
-              <Button
-                onClick={handleUnsubscribe}
-                disabled={isLoading}
-                variant="outline"
-                className="flex-1"
-              >
-                <BellOff className="w-4 h-4 mr-2" />
-                {isLoading ? 'Disabling...' : 'Disable Notifications'}
-              </Button>
-              
-              <Button
-                onClick={testNotification}
-                variant="secondary"
-                className="flex-1"
-              >
-                Test Notification
-              </Button>
-              
-              <Button
-                onClick={testNotificationSound}
-                variant="secondary"
-                size="sm"
-                className="px-3"
-              >
-                <Volume2 className="w-4 h-4" />
-              </Button>
-            </>
+            <Button
+              onClick={handleUnsubscribe}
+              disabled={isLoading}
+              variant="outline"
+              className="w-full"
+            >
+              <BellOff className="w-4 h-4 mr-2" />
+              {isLoading ? 'Disabling...' : 'Disable Notifications'}
+            </Button>
           )}
         </div>
 
