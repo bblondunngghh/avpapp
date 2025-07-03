@@ -22,7 +22,9 @@ export function AssistanceCenterPopup() {
       const sessionDismissed = sessionStorage.getItem(POPUP_SESSION_KEY);
       if (sessionDismissed) {
         console.log('[POPUP] Already dismissed this session, not showing');
-        return false;
+        // Temporarily clear for testing - remove this line later
+        sessionStorage.removeItem(POPUP_SESSION_KEY);
+        return true; // Force show for testing
       }
 
       // Check if we're within the 5-day display window
