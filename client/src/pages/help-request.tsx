@@ -247,7 +247,8 @@ export default function HelpRequestPage() {
   // Create help request mutation
   const createRequestMutation = useMutation({
     mutationFn: async (data: { requestingLocationId: number; message: string; priority: string; staffCount: number }) => {
-      return apiRequest("POST", "/api/help-requests", data);
+      const response = await apiRequest("POST", "/api/help-requests", data);
+      return response.json();
     },
     onSuccess: (response: any) => {
       const requestingLocationName = locations.find(loc => loc.id === response.requestingLocationId)?.name || "Unknown Location";
@@ -268,7 +269,8 @@ export default function HelpRequestPage() {
       setHelpType("");
       queryClient.invalidateQueries({ queryKey: ["/api/help-requests/active"] });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('[HELP REQUEST] Submit error:', error);
       toast({
         title: "Error",
         description: "Failed to send help request. Please try again.",
@@ -280,7 +282,8 @@ export default function HelpRequestPage() {
   // Create response mutation
   const createResponseMutation = useMutation({
     mutationFn: async (data: { helpRequestId: number; respondingLocationId: number; attendantsOffered: number; message: string }) => {
-      return apiRequest("POST", "/api/help-requests/respond", data);
+      const response = await apiRequest("POST", "/api/help-requests/respond", data);
+      return response.json();
     },
     onSuccess: (response: any, variables) => {
       // Stop continuous notifications for this help request
@@ -328,12 +331,15 @@ export default function HelpRequestPage() {
       return;
     }
 
-    createRequestMutation.mutate({
+    const requestData = {
       requestingLocationId: location.id,
       message: `Valet assistance needed: ${helpType}`,
       priority: "normal",
       staffCount: 1,
-    });
+    };
+    
+    console.log('[HELP REQUEST] Submitting request:', requestData);
+    createRequestMutation.mutate(requestData);
   };
 
   const handleSubmitResponse = (requestId: number) => {
