@@ -1,8 +1,20 @@
+import webpush from 'web-push';
+
 // Push Notification Service using Web Push API
 export class PushNotificationService {
-  private vapidPublicKey = 'BMELZJJCzJwjSJhpzPqNKWE_6-FqbQgKqRGFOPwQckhLnf0nHj5-BTSA-RLKb4VFNYoMKRheFYxg3yp8tPcb1iI';
-  private vapidPrivateKey = 'your-vapid-private-key-here'; // In production, use environment variable
+  private vapidPublicKey = 'BOMF0n3H-ovZDtGNwzXAlHyyumUQvtwx2BPjpdEP_m1YKDqD5okIs3O6ETWXD8kyR0F1oDJ3gxriCrj6Ozlh84Q';
+  private vapidPrivateKey = 'hssg3ghAVbZC23s954PvM3ll4TjkDNOjZSPITcCUeuk';
   private vapidEmail = 'brandon@accessvaletparking.com';
+
+  constructor() {
+    // Configure VAPID details for web-push
+    webpush.setVapidDetails(
+      `mailto:${this.vapidEmail}`,
+      this.vapidPublicKey,
+      this.vapidPrivateKey
+    );
+    console.log('[PUSH] Web push service initialized with VAPID keys');
+  }
 
   public async sendHelpRequestNotification(
     subscriptions: any[],
@@ -49,12 +61,15 @@ export class PushNotificationService {
     // Send to all active subscriptions
     const promises = subscriptions.map(async (subscription) => {
       try {
-        // Since we don't have web-push library, we'll use a simplified fetch approach
-        console.log(`[PUSH] Would send notification to subscription: ${subscription.endpoint.slice(0, 50)}...`);
-        console.log(`[PUSH] Payload: ${title} - ${body}`);
+        await webpush.sendNotification(subscription, notificationPayload);
+        console.log(`[PUSH] ✓ Notification sent to: ${subscription.endpoint.slice(0, 50)}...`);
         return true;
-      } catch (error) {
-        console.error(`[PUSH] Failed to send to subscription ${subscription.id}:`, error);
+      } catch (error: any) {
+        console.error(`[PUSH] ✗ Failed to send to subscription ${subscription.id}:`, error);
+        // Handle expired subscriptions
+        if (error.statusCode === 410) {
+          console.log(`[PUSH] Subscription expired, should remove: ${subscription.endpoint.slice(0, 50)}...`);
+        }
         return false;
       }
     });
@@ -91,8 +106,23 @@ export class PushNotificationService {
       }
     });
 
-    console.log(`[PUSH] Would send cover count reminder to ${subscriptions.length} subscribers`);
-    console.log(`[PUSH] Payload: ${title} - ${body}`);
+    const promises = subscriptions.map(async (subscription) => {
+      try {
+        await webpush.sendNotification(subscription, notificationPayload);
+        console.log(`[PUSH] ✓ Cover count reminder sent to: ${subscription.endpoint.slice(0, 50)}...`);
+        return true;
+      } catch (error: any) {
+        console.error(`[PUSH] ✗ Failed to send cover count reminder:`, error);
+        return false;
+      }
+    });
+
+    const results = await Promise.allSettled(promises);
+    const successCount = results.filter(result => 
+      result.status === 'fulfilled' && result.value === true
+    ).length;
+
+    console.log(`[PUSH] Sent cover count reminders to ${successCount}/${subscriptions.length} subscribers`);
   }
 
   // Simulate push notification for demo purposes

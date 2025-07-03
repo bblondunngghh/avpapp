@@ -1,7 +1,7 @@
 // Web Push Notifications Service
 export class PushNotificationService {
-  // Demo VAPID public key - in production, this should be generated properly
-  private vapidPublicKey = 'BMELZJJCzJwjSJhpzPqNKWE_6-FqbQgKqRGFOPwQckhLnf0nHj5-BTSA-RLKb4VFNYoMKRheFYxg3yp8tPcb1iI';
+  // Production VAPID public key - properly generated P-256 key
+  private vapidPublicKey = 'BOMF0n3H-ovZDtGNwzXAlHyyumUQvtwx2BPjpdEP_m1YKDqD5okIs3O6ETWXD8kyR0F1oDJ3gxriCrj6Ozlh84Q';
 
   public async isSupported(): Promise<boolean> {
     if (!('serviceWorker' in navigator && 'PushManager' in window)) {
