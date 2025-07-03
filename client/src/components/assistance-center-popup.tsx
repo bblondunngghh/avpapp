@@ -151,7 +151,7 @@ export function AssistanceCenterPopup() {
               onClick={handleGoToAssistanceCenter}
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
-              <img src={taskListQuestionIcon} alt="Task List Question" className="h-4 w-4 mr-2" />
+              <img src={insuranceHandIcon} alt="Insurance Hand" className="h-4 w-4 mr-2" />
               Try Assistance Center
             </Button>
             
