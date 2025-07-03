@@ -107,14 +107,14 @@ export function PushNotificationSetup() {
 
   if (!isSupported) {
     return (
-      <Card className="w-full max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <Card className="border-blue-200 shadow-md">
+        <CardHeader className="bg-blue-50 border-b border-blue-200">
+          <CardTitle className="flex items-center gap-2 text-blue-800">
             <BellOff className="w-5 h-5" />
             Push Notifications
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4">
           <p className="text-sm text-muted-foreground">
             Push notifications are not supported in this browser.
           </p>
@@ -124,14 +124,14 @@ export function PushNotificationSetup() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="border-blue-200 shadow-md">
+      <CardHeader className="bg-blue-50 border-b border-blue-200">
+        <CardTitle className="flex items-center gap-2 text-blue-800">
           <Smartphone className="w-5 h-5" />
           Push Notifications
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-4">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">Status:</span>
           <Badge variant={isSubscribed ? "default" : "secondary"}>
