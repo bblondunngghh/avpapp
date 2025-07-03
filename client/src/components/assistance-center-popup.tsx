@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const POPUP_STORAGE_KEY = 'assistance-center-popup-dismissed';
-const POPUP_LAUNCH_DATE = new Date('2025-01-03'); // January 3, 2025
+const POPUP_LAUNCH_DATE = new Date('2025-07-03'); // July 3, 2025
 const POPUP_DURATION_DAYS = 5;
 
 export function AssistanceCenterPopup() {
@@ -15,6 +15,7 @@ export function AssistanceCenterPopup() {
       // Check if user has already dismissed the popup
       const dismissedDate = localStorage.getItem(POPUP_STORAGE_KEY);
       if (dismissedDate) {
+        console.log('[POPUP] Already dismissed, not showing');
         return false;
       }
 
@@ -23,10 +24,19 @@ export function AssistanceCenterPopup() {
       const endDate = new Date(POPUP_LAUNCH_DATE);
       endDate.setDate(endDate.getDate() + POPUP_DURATION_DAYS);
 
+      console.log('[POPUP] Date check:', {
+        now: now.toISOString(),
+        launchDate: POPUP_LAUNCH_DATE.toISOString(),
+        endDate: endDate.toISOString(),
+        shouldShow: now >= POPUP_LAUNCH_DATE && now <= endDate
+      });
+
       return now >= POPUP_LAUNCH_DATE && now <= endDate;
     };
 
-    setIsVisible(checkPopupVisibility());
+    const shouldShow = checkPopupVisibility();
+    console.log('[POPUP] Setting visibility:', shouldShow);
+    setIsVisible(shouldShow);
   }, []);
 
   const handleDismiss = () => {
