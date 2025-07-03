@@ -134,6 +134,9 @@ export function PushNotificationSetup() {
           <Smartphone className="w-5 h-5" />
           Push Notifications
         </CardTitle>
+        <p className="text-sm text-blue-700 mt-2">
+          Please ensure that push notifications are enabled
+        </p>
       </CardHeader>
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">

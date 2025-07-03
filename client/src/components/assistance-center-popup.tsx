@@ -18,13 +18,11 @@ export function AssistanceCenterPopup() {
 
   useEffect(() => {
     const checkPopupVisibility = () => {
-      // Check if user has already dismissed the popup in this session
-      const sessionDismissed = sessionStorage.getItem(POPUP_SESSION_KEY);
-      if (sessionDismissed) {
-        console.log('[POPUP] Already dismissed this session, not showing');
-        // Temporarily clear for testing - remove this line later
-        sessionStorage.removeItem(POPUP_SESSION_KEY);
-        return true; // Force show for testing
+      // Check if user has permanently dismissed the popup
+      const dismissed = localStorage.getItem(POPUP_SESSION_KEY);
+      if (dismissed) {
+        console.log('[POPUP] User has already dismissed popup permanently');
+        return false;
       }
 
       // Check if we're within the 5-day display window
@@ -49,7 +47,7 @@ export function AssistanceCenterPopup() {
 
   const handleDismiss = () => {
     setIsVisible(false);
-    sessionStorage.setItem(POPUP_SESSION_KEY, new Date().toISOString());
+    localStorage.setItem(POPUP_SESSION_KEY, new Date().toISOString());
   };
 
   const handleGoToAssistanceCenter = () => {
