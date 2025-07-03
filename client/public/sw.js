@@ -83,21 +83,21 @@ self.addEventListener('push', (event) => {
   );
 });
 
-// Function to play loud notification sound
+// Function to play urgent notification sound at maximum volume
 async function playLoudNotificationSound() {
   try {
-    // Send message to all clients to play sound
+    // Send message to all clients to play urgent sound
     const clients = await self.clients.matchAll({ includeUncontrolled: true });
     
     clients.forEach(client => {
       client.postMessage({
         type: 'PLAY_NOTIFICATION_SOUND',
-        volume: 0.8,
-        duration: 1000
+        volume: 1.0, // Maximum volume
+        duration: 1500
       });
     });
     
-    console.log('[SW] Notification sound command sent to clients');
+    console.log('[SW] URGENT notification sound command sent to clients at max volume');
   } catch (error) {
     console.warn('[SW] Could not send sound command:', error);
   }

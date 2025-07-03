@@ -120,10 +120,10 @@ export function PushNotificationSetup() {
 
   const testNotificationSound = async () => {
     try {
-      await notificationSoundService.playLoudNotificationSound(0.8, 1500);
+      await notificationSoundService.playLoudNotificationSound(1.0, 1500);
       toast({
         title: "Sound Test",
-        description: "Notification sound played successfully!",
+        description: "Urgent notification alarm played at maximum volume!",
       });
     } catch (error) {
       toast({

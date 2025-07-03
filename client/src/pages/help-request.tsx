@@ -22,6 +22,7 @@ import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimat
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PushNotificationSetup } from "@/components/push-notification-setup";
+import { continuousNotificationService } from "@/lib/continuous-notification";
 
 interface HelpRequest {
   id: number;
@@ -248,11 +249,21 @@ export default function HelpRequestPage() {
     mutationFn: async (data: { requestingLocationId: number; message: string; priority: string; staffCount: number }) => {
       return apiRequest("POST", "/api/help-requests", data);
     },
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      const requestingLocationName = locations.find(loc => loc.id === response.requestingLocationId)?.name || "Unknown Location";
+      
       toast({
         title: "Help Request Sent",
         description: "Your valet assistance request has been sent to all locations.",
       });
+
+      // Start continuous notifications for 3 minutes
+      continuousNotificationService.startContinuousNotification(
+        response.id.toString(),
+        "🚨 URGENT: Valet Help Needed",
+        `${requestingLocationName} needs ${response.staffCount} valet attendant(s) - ${response.message}`
+      );
+
       setRequestingLocation("");
       setHelpType("");
       queryClient.invalidateQueries({ queryKey: ["/api/help-requests/active"] });
@@ -271,7 +282,10 @@ export default function HelpRequestPage() {
     mutationFn: async (data: { helpRequestId: number; respondingLocationId: number; attendantsOffered: number; message: string }) => {
       return apiRequest("POST", "/api/help-requests/respond", data);
     },
-    onSuccess: () => {
+    onSuccess: (response: any, variables) => {
+      // Stop continuous notifications for this help request
+      continuousNotificationService.stopContinuousNotification(variables.helpRequestId.toString());
+      
       toast({
         title: "Help Dispatched!",
         description: "Your assistance team has been sent and the requesting location has been notified.",
