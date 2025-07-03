@@ -46,49 +46,19 @@ export default function Header() {
           </h1>
         </div>
         
-        {/* Navigation buttons container aligned with page content */}
-        <div className="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center relative z-10" style={{height: '56px'}}>
-          {/* Left-aligned Assistance Center button - hidden on iPad */}
-          <div className="flex items-center">
-            {!isIPad && (
+        {/* Navigation container with hamburger menu for all devices */}
+        <div className="max-w-4xl mx-auto px-4 py-2 flex justify-end items-center relative z-10" style={{height: '56px'}}>
+          {/* Hamburger menu for all devices - positioned at content edge */}
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
               <Button 
-                variant="outline" 
-                size="sm" 
-                className="bg-white border-orange-200 text-orange-700 hover:text-orange-800 hover:bg-orange-50 hidden md:flex font-medium"
-                onClick={() => handleNavigation('/help-request')}
+                variant="ghost" 
+                size="icon" 
+                className="text-white -mr-1"
               >
-                <img src={insuranceHandIcon} alt="Assistance" className="mr-2 h-4 w-4" />
-                Assistance Center
+                <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
               </Button>
-            )}
-          </div>
-          
-          {/* Right-aligned navigation */}
-          <div className="flex items-center gap-2">
-            {/* Admin Login button - hidden on iPad */}
-            {!isIPad && (
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                className="bg-white text-blue-700 hover:bg-gray-100 hidden md:flex font-medium"
-                onClick={() => handleNavigation('/admin-login')}
-              >
-                <img src={lockShieldIcon} alt="Admin" className="mr-2 h-4 w-4" />
-                Admin Login
-              </Button>
-            )}
-            
-            {/* Hamburger menu - positioned precisely at content edge for iPad */}
-            <Sheet open={open} onOpenChange={setOpen}>
-              <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className={`text-white ${isIPad ? 'flex -mr-1' : 'md:hidden'}`}
-                >
-                  <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
+            </SheetTrigger>
               <SheetContent>
                 <div className="flex flex-col gap-4 mt-8">
                   <Button 
@@ -138,7 +108,6 @@ export default function Header() {
                 </div>
               </SheetContent>
             </Sheet>
-          </div>
         </div>
       </div>
     </header>
