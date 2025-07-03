@@ -28,7 +28,7 @@ export class EmailService {
     }
     
     // If EMAIL_PASS is still the old format, use the correct app password
-    if (pass === 'aynw mvuj ysfw corv' || pass === 'aynwmvujysfwcorv' || pass?.length < 16) {
+    if (pass === 'aynw mvuj ysfw corv' || pass === 'aynwmvujysfwcorv' || (pass && pass.length < 16)) {
       pass = 'aynwmvujysfwcorv';
     }
 
@@ -74,44 +74,67 @@ export class EmailService {
     }
 
     try {
-      const urgencyEmoji = urgencyLevel === 'urgent' ? '🚨' : '📢';
-      const subject = `${urgencyEmoji} Help Request: ${locationName} Needs Assistance`;
-      
-      const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #d97706; margin-bottom: 20px;">${urgencyEmoji} Valet Help Request</h2>
-          
-          <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="margin-top: 0; color: #374151;">Location: ${locationName}</h3>
-            <p style="color: #6b7280; margin: 10px 0;">
-              <strong>Attendants Needed:</strong> ${attendantsNeeded}<br>
-              <strong>Priority:</strong> ${urgencyLevel.toUpperCase()}<br>
-              <strong>Time:</strong> ${new Date().toLocaleTimeString()}
+      // Check if this is an SMS gateway (contains carrier domains)
+      const isSMSGateway = toEmail.includes('@tmomail.net') || 
+                          toEmail.includes('@vtext.com') || 
+                          toEmail.includes('@txt.att.net') ||
+                          toEmail.includes('@messaging.sprintpcs.com');
+
+      if (isSMSGateway) {
+        // Plain text message for SMS gateways
+        const urgencyText = urgencyLevel === 'urgent' ? 'URGENT' : 'HELP';
+        const plainTextMessage = `${urgencyText}: ${locationName} needs valet assistance. ${attendantsNeeded} attendant(s) needed. Respond at ${appUrl}/help-request`;
+        
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: toEmail,
+          subject: `${urgencyText}: ${locationName} Help Request`,
+          text: plainTextMessage,
+        });
+
+        console.log(`[EMAIL] SMS notification sent to ${toEmail}, ID: ${result.messageId}`);
+        return true;
+      } else {
+        // HTML email for regular email addresses
+        const urgencyEmoji = urgencyLevel === 'urgent' ? '🚨' : '📢';
+        const subject = `${urgencyEmoji} Help Request: ${locationName} Needs Assistance`;
+        
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #d97706; margin-bottom: 20px;">${urgencyEmoji} Valet Help Request</h2>
+            
+            <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="margin-top: 0; color: #374151;">Location: ${locationName}</h3>
+              <p style="color: #6b7280; margin: 10px 0;">
+                <strong>Attendants Needed:</strong> ${attendantsNeeded}<br>
+                <strong>Priority:</strong> ${urgencyLevel.toUpperCase()}<br>
+                <strong>Time:</strong> ${new Date().toLocaleTimeString()}
+              </p>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${appUrl}/help-request" 
+                 style="background: #d97706; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                Respond to Help Request
+              </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 14px; text-align: center;">
+              Click the button above or visit: <a href="${appUrl}/help-request">${appUrl}/help-request</a>
             </p>
           </div>
+        `;
 
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${appUrl}/help-request" 
-               style="background: #d97706; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-              Respond to Help Request
-            </a>
-          </div>
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: toEmail,
+          subject,
+          html,
+        });
 
-          <p style="color: #6b7280; font-size: 14px; text-align: center;">
-            Click the button above or visit: <a href="${appUrl}/help-request">${appUrl}/help-request</a>
-          </p>
-        </div>
-      `;
-
-      const result = await this.transporter!.sendMail({
-        from: this.config!.user,
-        to: toEmail,
-        subject,
-        html,
-      });
-
-      console.log(`[EMAIL] Help request notification sent to ${toEmail}, ID: ${result.messageId}`);
-      return true;
+        console.log(`[EMAIL] Help request notification sent to ${toEmail}, ID: ${result.messageId}`);
+        return true;
+      }
     } catch (error) {
       console.error(`[EMAIL] Failed to send notification to ${toEmail}:`, error);
       return false;
@@ -131,42 +154,64 @@ export class EmailService {
     }
 
     try {
-      const subject = `✅ Help Response: ${responderLocation} Responded`;
-      
-      const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #059669; margin-bottom: 20px;">✅ Help Response Received</h2>
-          
-          <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="margin-top: 0; color: #374151;">From: ${responderLocation}</h3>
-            <h4 style="color: #6b7280; margin: 10px 0;">To: ${requestingLocation}</h4>
-            <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #059669;">
-              <p style="margin: 0; color: #374151;">"${responseMessage}"</p>
+      // Check if this is an SMS gateway (contains carrier domains)
+      const isSMSGateway = toEmail.includes('@tmomail.net') || 
+                          toEmail.includes('@vtext.com') || 
+                          toEmail.includes('@txt.att.net') ||
+                          toEmail.includes('@messaging.sprintpcs.com');
+
+      if (isSMSGateway) {
+        // Plain text message for SMS gateways
+        const plainTextMessage = `RESPONSE: ${responderLocation} responded to ${requestingLocation} help request: "${responseMessage}" - View updates at ${appUrl}/help-request`;
+        
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: toEmail,
+          subject: `RESPONSE: ${responderLocation} Responded`,
+          text: plainTextMessage,
+        });
+
+        console.log(`[EMAIL] SMS response notification sent to ${toEmail}, ID: ${result.messageId}`);
+        return true;
+      } else {
+        // HTML email for regular email addresses
+        const subject = `✅ Help Response: ${responderLocation} Responded`;
+        
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #059669; margin-bottom: 20px;">✅ Help Response Received</h2>
+            
+            <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="margin-top: 0; color: #374151;">From: ${responderLocation}</h3>
+              <h4 style="color: #6b7280; margin: 10px 0;">To: ${requestingLocation}</h4>
+              <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #059669;">
+                <p style="margin: 0; color: #374151;">"${responseMessage}"</p>
+              </div>
             </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${appUrl}/help-request" 
+                 style="background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                View Help Center
+              </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 14px; text-align: center;">
+              Visit: <a href="${appUrl}/help-request">${appUrl}/help-request</a>
+            </p>
           </div>
+        `;
 
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${appUrl}/help-request" 
-               style="background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-              View Help Center
-            </a>
-          </div>
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: toEmail,
+          subject,
+          html,
+        });
 
-          <p style="color: #6b7280; font-size: 14px; text-align: center;">
-            Visit: <a href="${appUrl}/help-request">${appUrl}/help-request</a>
-          </p>
-        </div>
-      `;
-
-      const result = await this.transporter!.sendMail({
-        from: this.config!.user,
-        to: toEmail,
-        subject,
-        html,
-      });
-
-      console.log(`[EMAIL] Help response notification sent to ${toEmail}, ID: ${result.messageId}`);
-      return true;
+        console.log(`[EMAIL] Help response notification sent to ${toEmail}, ID: ${result.messageId}`);
+        return true;
+      }
     } catch (error) {
       console.error(`[EMAIL] Failed to send response notification to ${toEmail}:`, error);
       return false;
