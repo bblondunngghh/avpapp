@@ -54,8 +54,9 @@ self.addEventListener('push', (event) => {
     icon: '/icon-192x192.png',
     badge: '/icon-192x192.png',
     image: data.image,
-    vibrate: [200, 100, 200],
+    vibrate: [300, 100, 300, 100, 300, 100, 300], // Longer vibration pattern
     requireInteraction: true,
+    silent: false, // Ensure sound plays
     actions: [
       {
         action: 'view',
@@ -75,9 +76,32 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Access Valet Parking', options)
+    Promise.all([
+      self.registration.showNotification(data.title || 'Access Valet Parking', options),
+      playLoudNotificationSound()
+    ])
   );
 });
+
+// Function to play loud notification sound
+async function playLoudNotificationSound() {
+  try {
+    // Send message to all clients to play sound
+    const clients = await self.clients.matchAll({ includeUncontrolled: true });
+    
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'PLAY_NOTIFICATION_SOUND',
+        volume: 0.8,
+        duration: 1000
+      });
+    });
+    
+    console.log('[SW] Notification sound command sent to clients');
+  } catch (error) {
+    console.warn('[SW] Could not send sound command:', error);
+  }
+}
 
 self.addEventListener('notificationclick', (event) => {
   console.log('Notification clicked:', event);

@@ -31,6 +31,7 @@ import Demo from "@/pages/demo";
 import NotificationsPage from "@/pages/notifications";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
+import { notificationSoundService } from "@/lib/notification-sound";
 import avpLogo from "@assets/AVPLOGO PROPER3_1750779399227.png";
 
 function Router() {
@@ -118,6 +119,8 @@ function Router() {
 
     const updateActivity = () => {
       setLastActivity(Date.now());
+      // Enable audio context after user interaction
+      notificationSoundService.enableSoundForUserInteraction();
     };
 
     // Track user activity

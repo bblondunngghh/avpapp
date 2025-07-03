@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, Smartphone } from 'lucide-react';
+import { Bell, BellOff, Smartphone, Volume2 } from 'lucide-react';
 import { pushNotificationService } from '@/lib/push-notifications';
+import { notificationSoundService } from '@/lib/notification-sound';
 import { useToast } from '@/hooks/use-toast';
 
 export function PushNotificationSetup() {
@@ -117,6 +118,22 @@ export function PushNotificationSetup() {
     }
   };
 
+  const testNotificationSound = async () => {
+    try {
+      await notificationSoundService.playLoudNotificationSound(0.8, 1500);
+      toast({
+        title: "Sound Test",
+        description: "Notification sound played successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Sound Test Failed",
+        description: "Unable to play notification sound",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!isSupported) {
     return (
       <Card className="border-blue-200 shadow-md">
@@ -189,6 +206,15 @@ export function PushNotificationSetup() {
                 className="flex-1"
               >
                 Test Notification
+              </Button>
+              
+              <Button
+                onClick={testNotificationSound}
+                variant="secondary"
+                size="sm"
+                className="px-3"
+              >
+                <Volume2 className="w-4 h-4" />
               </Button>
             </>
           )}
