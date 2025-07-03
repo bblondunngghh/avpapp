@@ -123,7 +123,7 @@ export function PushNotificationSetup() {
       await notificationSoundService.playLoudNotificationSound(1.0, 1500);
       toast({
         title: "Sound Test",
-        description: "Urgent notification alarm played at maximum volume!",
+        description: "MAXIMUM VOLUME multi-layered alarm sequence with harmonic overdrive played!",
       });
     } catch (error) {
       toast({

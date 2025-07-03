@@ -98,22 +98,23 @@ class ContinuousNotificationService {
 
   private async sendUrgentNotification(title: string, message: string) {
     try {
-      // Play urgent sound
-      await notificationSoundService.playLoudNotificationSound(1.0, 1500);
+      // Play MAXIMUM VOLUME urgent sound - force override any volume parameter
+      await notificationSoundService.playLoudNotificationSound(1.0, 2000);
 
       // Show browser notification if permissions granted
       if ('Notification' in window && Notification.permission === 'granted') {
         const notification = new Notification(title, {
           body: message,
           icon: '/icon-192x192.png',
-          requireInteraction: true
+          requireInteraction: true,
+          silent: false // Ensure not silent
         });
 
-        // Auto-close after 10 seconds
-        setTimeout(() => notification.close(), 10000);
+        // Auto-close after 15 seconds to allow full alarm sequence
+        setTimeout(() => notification.close(), 15000);
       }
 
-      console.log(`[CONTINUOUS] Urgent notification sent: ${title}`);
+      console.log(`[CONTINUOUS] MAXIMUM VOLUME urgent notification sent: ${title}`);
     } catch (error) {
       console.warn('[CONTINUOUS] Failed to send urgent notification:', error);
     }
