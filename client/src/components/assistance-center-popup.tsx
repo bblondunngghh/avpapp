@@ -78,7 +78,7 @@ export function AssistanceCenterPopup() {
             </div>
             <div>
               <CardTitle className="text-xl text-blue-900">
-                🎉 NEW: Assistance Center Now Live!
+                NEW: Assistance Center Now Live!
               </CardTitle>
               <CardDescription className="text-blue-700">
                 Get help from other locations instantly
@@ -138,10 +138,10 @@ export function AssistanceCenterPopup() {
             <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
               <div className="flex items-center gap-2 text-purple-700 font-medium mb-1">
                 <img src={athleticsTeamIcon} alt="Athletics Team" className="h-4 w-4" />
-                24/7 Available
+                Always Available
               </div>
               <p className="text-purple-600 text-xs">
-                Request assistance any time during operating hours
+                Get help whenever locations are providing services
               </p>
             </div>
           </div>
