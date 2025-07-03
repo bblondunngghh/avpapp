@@ -405,9 +405,6 @@ export default function HelpRequestPage() {
             <img src={bookIcon} alt="Book" className="h-5 w-5" />
             Daily Cover Count Reports
           </CardTitle>
-          <CardDescription className="text-blue-700 text-sm">
-            Daily cover counts are tracked to inform other locations when a certain location is expecting a busy night and could use extra help. Location cover counts will be key when slower locations decide they can afford to make staffing cuts.
-          </CardDescription>
         </CardHeader>
         <CardContent className="p-4">
           <div className="mb-4">
@@ -448,6 +445,13 @@ export default function HelpRequestPage() {
                 </div>
               );
             })}
+          </div>
+          
+          {/* Description */}
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-700">
+              Daily cover counts are tracked to inform other locations when a certain location is expecting a busy night and could use extra help. Location cover counts will be key when slower locations decide they can afford to make staffing cuts.
+            </p>
           </div>
         </CardContent>
       </Card>
