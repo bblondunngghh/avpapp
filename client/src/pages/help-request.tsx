@@ -435,11 +435,6 @@ export default function HelpRequestPage() {
         </CardContent>
       </Card>
 
-      {/* Push Notifications Section */}
-      <div className="mb-6">
-        <PushNotificationSetup />
-      </div>
-
       {/* Help Request Section */}
       <Card className="border-orange-200 shadow-md mb-6">
         <CardHeader className="bg-orange-50 border-b border-orange-200">
@@ -750,6 +745,11 @@ export default function HelpRequestPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Push Notifications Section */}
+      <div className="mb-6">
+        <PushNotificationSetup />
+      </div>
 
       {/* Cover Count Dialog */}
         <Dialog open={showCoverCountDialog} onOpenChange={setShowCoverCountDialog}>

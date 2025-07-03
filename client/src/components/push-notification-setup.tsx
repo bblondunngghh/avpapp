@@ -131,22 +131,25 @@ export function PushNotificationSetup() {
           Push Notifications
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 p-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Status:</span>
-          <Badge variant={isSubscribed ? "default" : "secondary"}>
-            {isSubscribed ? 'Enabled' : 'Disabled'}
-          </Badge>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Permission:</span>
-          <Badge variant={permission === 'granted' ? "default" : permission === 'denied' ? "destructive" : "secondary"}>
-            {permission.charAt(0).toUpperCase() + permission.slice(1)}
-          </Badge>
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Status:</span>
+              <Badge variant={isSubscribed ? "default" : "secondary"}>
+                {isSubscribed ? 'Enabled' : 'Disabled'}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Permission:</span>
+              <Badge variant={permission === 'granted' ? "default" : permission === 'denied' ? "destructive" : "secondary"}>
+                {permission.charAt(0).toUpperCase() + permission.slice(1)}
+              </Badge>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex gap-2">
           {!isSubscribed ? (
             <Button
               onClick={handleSubscribe}
@@ -157,12 +160,12 @@ export function PushNotificationSetup() {
               {isLoading ? 'Enabling...' : 'Enable Notifications'}
             </Button>
           ) : (
-            <div className="space-y-2">
+            <>
               <Button
                 onClick={handleUnsubscribe}
                 disabled={isLoading}
                 variant="outline"
-                className="w-full"
+                className="flex-1"
               >
                 <BellOff className="w-4 h-4 mr-2" />
                 {isLoading ? 'Disabling...' : 'Disable Notifications'}
@@ -171,11 +174,11 @@ export function PushNotificationSetup() {
               <Button
                 onClick={testNotification}
                 variant="secondary"
-                className="w-full"
+                className="flex-1"
               >
                 Test Notification
               </Button>
-            </div>
+            </>
           )}
         </div>
 
