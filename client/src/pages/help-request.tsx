@@ -718,14 +718,14 @@ export default function HelpRequestPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-col sm:flex-row gap-2 sm:justify-between sm:items-center">
                         <Button 
                           size="sm" 
                           variant="outline"
                           onClick={() => setSelectedRequestId(request.id)}
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 flex-shrink-0"
                         >
-                          Respond to {request.requestingLocation}
+                          Respond
                         </Button>
                         
                         {/* Completed button positioned to the right */}
@@ -755,7 +755,7 @@ export default function HelpRequestPage() {
                                 });
                               }
                             }}
-                            className="text-green-600 border-green-200 hover:bg-green-50"
+                            className="text-green-600 border-green-200 hover:bg-green-50 flex-shrink-0"
                           >
                             Completed
                           </Button>
