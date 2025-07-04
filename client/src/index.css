@@ -1,5 +1,4 @@
-/* Import Fjalla One font */
-@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+/* SF Pro font will use system font stack - no import needed */
 
 @tailwind base;
 @tailwind components;
@@ -62,11 +61,11 @@
   }
 }
 
-/* Global heading styles and buttons with Fjalla One font (non-bold) */
+/* Global heading styles and buttons with SF Pro font */
 @layer base {
   h1, h2, h3, h4, h5, h6, button, .button, [role="button"] {
-    font-family: 'Fjalla One', sans-serif;
-    font-weight: 400; /* Normal weight, not bold */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500; /* Medium weight for headings and buttons in SF Pro */
   }
 }
 
@@ -108,12 +107,12 @@
 
 .report-title {
   font-size: 1.5rem;
-  font-weight: 400; /* Normal weight, not bold */
+  font-weight: 500; /* Medium weight for SF Pro */
   color: hsl(210 100% 50%); /* Vibrant blue color scheme */
   letter-spacing: 1px;
   margin-bottom: 1rem;
   text-align: center;
-  font-family: 'Fjalla One', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   text-transform: uppercase;
 }
 
@@ -159,8 +158,8 @@
 .address {
   text-align: center;
   font-size: 0.875rem;
-  font-weight: 400; /* Normal weight, not bold */
-  font-family: 'Fjalla One', sans-serif;
+  font-weight: 400; /* Normal weight for SF Pro */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   margin-bottom: 1rem;
   letter-spacing: 0.5px;
   background-color: #f8f9fa;
@@ -174,13 +173,13 @@
 
 .section-title {
   font-size: 1.25rem;
-  font-weight: 400; /* Normal weight, not bold */
+  font-weight: 500; /* Medium weight for SF Pro */
   margin-bottom: 1.5rem;
   color: hsl(243 75% 59%);
   border-bottom: 2px solid #e5e7eb;
   padding-bottom: 0.75rem;
   position: relative;
-  font-family: 'Fjalla One', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .section-title::after {
@@ -268,8 +267,8 @@ input[type="date"].paperform-input {
   @apply bg-gradient-to-r from-sky-600 to-teal-500 hover:from-sky-700 hover:to-teal-600 text-white py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
   position: relative;
   overflow: hidden;
-  font-family: 'Fjalla One', sans-serif;
-  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 500;
 }
 
 .submit-button::after {
@@ -370,13 +369,13 @@ input[type="date"].paperform-input {
 @layer base {
   * {
     @apply border-border;
-    font-family: 'Fjalla One', sans-serif !important;
-    font-weight: 400 !important; /* Normal weight, not bold */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    font-weight: 400 !important; /* Normal weight for SF Pro */
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Fjalla One', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight: 400; /* Normal weight, not bold */
     /* Prevent overscroll behavior */
     overscroll-behavior: none;
@@ -462,8 +461,8 @@ input[type="date"].paperform-input {
 
 .app-title {
   @apply text-xl tracking-wide;
-  font-family: 'Fjalla One', sans-serif;
-  font-weight: 400; /* Normal weight, not bold */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 600; /* Semi-bold for better readability in SF Pro */
   text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
