@@ -41,7 +41,7 @@ export default function Header() {
         <div className="absolute inset-0 flex items-center justify-center py-2">
           <h1 className="app-title flex items-center gap-2">
             <img src={navCarIcon} alt="Car" className="h-6 w-6 animate-bounce-slow" />
-            <span>Access Valet Parking</span>
+            <span>ACCESS VALET PARKING</span>
             <img src={carToolKeysIcon} alt="Car Keys" className="h-6 w-6 animate-bounce-slow" />
           </h1>
         </div>
