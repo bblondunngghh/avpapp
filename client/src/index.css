@@ -460,7 +460,8 @@ input[type="date"].paperform-input {
 }
 
 .app-title {
-  @apply text-xl tracking-wide;
+  @apply tracking-wide;
+  font-size: 23px;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-weight: 700; /* Bold for stronger visual presence */
   text-shadow: 0 1px 2px rgba(0,0,0,0.1);
