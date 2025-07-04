@@ -462,7 +462,7 @@ input[type="date"].paperform-input {
 .app-title {
   font-size: 22px;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-weight: 600; /* Semi-bold for better balance */
+  font-weight: 700; /* Full bold for stronger presence */
   letter-spacing: 0.5px; /* Tighter letter spacing for readability */
   text-shadow: 0 1px 3px rgba(0,0,0,0.15);
   line-height: 1.2; /* Better line height for cleaner appearance */
