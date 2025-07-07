@@ -11,6 +11,7 @@ interface EmailConfig {
 export class EmailService {
   private transporter: nodemailer.Transporter | null = null;
   private config: EmailConfig | null = null;
+  private employeeEmailsEnabled: boolean = false; // Temporarily disabled for bulk updates
 
   constructor() {
     this.initializeTransporter();
@@ -338,6 +339,11 @@ export class EmailService {
     driverLicense: string,
     socialSecurityNumber: string
   ): Promise<boolean> {
+    if (!this.employeeEmailsEnabled) {
+      console.log('[EMAIL] Skipping new employee notification - temporarily disabled for bulk updates');
+      return false;
+    }
+
     if (!this.isConfigured()) {
       console.log('[EMAIL] Skipping email - service not configured');
       return false;
