@@ -923,6 +923,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const employee = await storage.createEmployee(employeeData as any);
       console.log("Employee created:", employee);
+      
+      // Send email notification to accountant for QuickBooks entry
+      try {
+        const success = await emailService.sendNewEmployeeNotification(
+          employee.fullName,
+          employeeData.dateOfBirth ? employeeData.dateOfBirth.toLocaleDateString() : 'Not provided',
+          employee.driverLicenseNumber || 'Not provided',
+          employee.fullSsn || 'Not provided'
+        );
+        
+        if (success) {
+          console.log(`[EMAIL] New employee notification sent for ${employee.fullName}`);
+        } else {
+          console.log(`[EMAIL] Failed to send notification for ${employee.fullName}`);
+        }
+      } catch (emailError) {
+        console.error('[EMAIL] Error sending new employee notification:', emailError);
+      }
+      
       res.status(200).json(employee);
     } catch (error: any) {
       console.error("Error creating employee:", error);
@@ -2447,6 +2466,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error sending test SMS:', error);
       res.status(500).json({ message: 'Failed to send test SMS' });
+    }
+  });
+
+  // Test email endpoint for new employee notifications
+  apiRouter.post('/test-employee-email', async (req, res) => {
+    try {
+      console.log('[EMAIL] Test employee email requested');
+      
+      const success = await emailService.sendNewEmployeeNotification(
+        'John Test Doe',
+        '01/15/1990',
+        'TX123456789',
+        '123-45-6789'
+      );
+
+      if (success) {
+        console.log('[EMAIL] Test employee notification sent successfully');
+        res.json({ success: true, message: 'Test employee email sent successfully to brandon@accessvaletparking.com' });
+      } else {
+        console.log('[EMAIL] Failed to send test employee notification');
+        res.status(500).json({ success: false, message: 'Failed to send test email' });
+      }
+    } catch (error) {
+      console.error('[EMAIL] Error sending test employee email:', error);
+      res.status(500).json({ message: 'Failed to send test email' });
     }
   });
 
