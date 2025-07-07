@@ -3,6 +3,8 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { redirectToLogin, redirectToLogout, isUnauthorizedError } from "@/lib/authUtils";
 import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate, parseEmployeesData } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
 import checkCompleteIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
@@ -469,73 +471,57 @@ export default function AdminPanel() {
   const [selectedWeekOffset, setSelectedWeekOffset] = useState(0); // 0 = current week, 1 = last week, etc.
   const [isEmailingReport, setIsEmailingReport] = useState(false);
   
-  // Initial setup - check authentication and adapt UI for mobile
+  // Use Replit Auth for admin authentication
+  const { user, isLoading, isAuthenticated, error } = useAuth();
+  const { toast } = useToast();
+
+  // Authentication protection - redirect if not authenticated
   useEffect(() => {
-    let cleanupFunction: (() => void) | null = null;
-    
-    const initializeAdmin = async () => {
-      try {
-        // Check if we need to adapt UI for mobile
-        const isMobile = window.innerWidth < 768;
-        if (isMobile) {
-          // Apply mobile-specific styles if needed
-          document.body.classList.add('mobile-admin');
-        }
-        
-        // Import admin auth utility
-        const adminAuth = await import("@/lib/admin-auth");
-        
-        // Double check authentication status
-        if (!adminAuth.isAdminAuthenticated()) {
-          // If not authenticated, redirect to login
-          navigate("/admin-login");
-          return;
-        }
-        
-        // Set up session refresh
-        const refreshAdminSession = adminAuth.refreshAdminSession;
-        
-        // Add event listeners for user activity
-        const activityEvents = ["mousedown", "keydown", "touchstart", "scroll"];
-        
-        const handleUserActivity = () => {
-          refreshAdminSession();
-        };
-        
-        // Add event listeners
-        activityEvents.forEach(event => {
-          window.addEventListener(event, handleUserActivity);
-        });
-        
-        // Set cleanup function
-        cleanupFunction = () => {
-          activityEvents.forEach(event => {
-            window.removeEventListener(event, handleUserActivity);
-          });
-          document.body.classList.remove('mobile-admin');
-        };
-      } catch (error) {
-        console.error("Error in admin panel initialization:", error);
-        // If there's an error, redirect to login as a fallback
-        navigate("/admin-login");
-      }
-    };
-    
-    initializeAdmin();
-    
-    return () => {
-      if (cleanupFunction) {
-        cleanupFunction();
-      }
-    };
-  }, [navigate]);
+    if (!isLoading && !isAuthenticated) {
+      toast({
+        title: "Unauthorized",
+        description: "You need to log in to access the admin panel. Redirecting...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        redirectToLogin();
+      }, 500); // Wait for 0.5 second before redirecting
+      return;
+    }
+  }, [isAuthenticated, isLoading, toast]);
+
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show access denied if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">You need to be logged in to access the admin panel.</p>
+          <button onClick={redirectToLogin} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Login to Continue
+          </button>
+        </div>
+      </div>
+    );
+  }
   
   // Statistics state
   const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
   const [carDistributionByLocation, setCarDistributionByLocation] = useState<Array<{name: string; value: number; color: string}>>([]);
   const [salesTrendData, setSalesTrendData] = useState<Array<{date: string; sales: number; cars: number}>>([]);
   const [reportsByDay, setReportsByDay] = useState<Array<{name: string; reports: number}>>([]);
-  const { toast } = useToast();
   const [employeeStats, setEmployeeStats] = useState<{
     name: string;
     totalHours: number;
@@ -830,7 +816,7 @@ export default function AdminPanel() {
   }, []);
 
   // Fetch all shift reports
-  const { data: reports = [], isLoading, refetch: refetchReports } = useQuery<ShiftReport[]>({
+  const { data: reports = [], isLoading: reportsLoading, refetch: refetchReports } = useQuery<ShiftReport[]>({
     queryKey: ["/api/shift-reports"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });

@@ -8,6 +8,7 @@ import { pushNotificationService } from "./push-notification-service";
 import { securityService, type AuthenticatedRequest } from "./security";
 import { createCorsConfig } from "./cors-config";
 import { initializeEnvironment } from "./environment-config";
+import { setupAuth, isAuthenticated, getCurrentUser } from "./replit-auth";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -236,6 +237,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Initialize comprehensive environment configuration
   initializeEnvironment();
+  
+  // Setup Replit Auth first (requires environment configuration)
+  await setupAuth(app);
   
   // Apply enhanced CORS security
   const enhancedCors = createCorsConfig();
@@ -493,6 +497,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create API routes
   const apiRouter = express.Router();
   
+  // Add authentication routes (protected with isAuthenticated middleware for admin operations)
+  apiRouter.get('/auth/user', isAuthenticated, getCurrentUser, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
   // Serve uploaded files
   app.use('/uploads', express.static('./uploads'));
   
