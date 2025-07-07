@@ -4461,7 +4461,7 @@ export default function AdminPanel() {
             <CardContent>
               {isLoadingEmployees ? (
                 <div className="text-center py-8">Loading employees...</div>
-              ) : employeeRecords.length === 0 ? (
+              ) : !employeeRecords || employeeRecords.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   No employees found. Add an employee to get started.
                 </div>

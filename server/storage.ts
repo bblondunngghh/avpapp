@@ -1,5 +1,5 @@
 import { 
-  users, type User, type InsertUser, 
+  users, type User, 
   employees, type Employee, type InsertEmployee, type UpdateEmployee,
   locations, type Location, type InsertLocation, type UpdateLocation,
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
