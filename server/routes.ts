@@ -1,13 +1,13 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
-import cors from "cors";
 import { storage } from "./storage";
 import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
 import { pushNotificationService } from "./push-notification-service";
-import { SecurityService } from "./security";
-import { getCorsConfig, securityHeaders, isOriginAllowedForSensitiveOps } from "./cors-config";
+import { securityService, type AuthenticatedRequest } from "./security";
+import { createCorsConfig } from "./cors-config";
+import { initializeEnvironment } from "./environment-config";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -234,53 +234,20 @@ async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
-  // CORS Configuration for API Security
-  const corsConfig = getCorsConfig();
-  const corsOptions = {
-    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-      // Always allow requests with no origin (mobile apps, curl, same-origin requests)
-      if (!origin) return callback(null, true);
-      
-      // Check if origin is in allowed list
-      const isAllowed = corsConfig.allowedOrigins.some(allowedOrigin => {
-        if (typeof allowedOrigin === 'string') {
-          return origin === allowedOrigin;
-        } else {
-          return allowedOrigin.test(origin);
-        }
-      });
-      
-      if (isAllowed) {
-        // Only log in development mode to reduce noise
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[CORS] ✓ Allowed origin: ${origin}`);
-        }
-        callback(null, true);
-      } else {
-        console.warn(`[CORS] ✗ Blocked unauthorized origin: ${origin}`);
-        callback(new Error('CORS policy violation'), false);
-      }
-    },
-    methods: corsConfig.methods,
-    allowedHeaders: corsConfig.allowedHeaders,
-    credentials: corsConfig.credentials,
-    optionsSuccessStatus: corsConfig.optionsSuccessStatus
-  };
+  // Initialize comprehensive environment configuration
+  initializeEnvironment();
   
-  // Apply CORS security to all routes
-  app.use(cors(corsOptions));
+  // Apply enhanced CORS security
+  const enhancedCors = createCorsConfig();
+  app.use(enhancedCors.middleware);
   
-  // Apply balanced security headers
-  app.use((req, res, next) => {
-    res.header('X-Content-Type-Options', 'nosniff');
-    res.header('X-Frame-Options', 'DENY');
-    res.header('X-XSS-Protection', '1; mode=block');
-    res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
-    // Note: Skipping CSP for now to avoid external resource conflicts
-    next();
-  });
+  // Apply comprehensive security headers
+  app.use(securityService.setSecurityHeaders);
   
-  console.log(`[CORS] Enhanced security configured with ${corsConfig.allowedOrigins.length} allowed origins`);
+  // Apply global rate limiting
+  app.use('/api', securityService.rateLimit(150, 900000)); // 150 requests per 15 minutes
+  
+  console.log(`[CORS] Enhanced security configured with multiple allowed origins`);
   
   // Enhanced security middleware for sensitive operations
   const sensitiveOperationsGuard = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -929,67 +896,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Employee routes
   
-  // Get all employees
-  apiRouter.get('/employees', async (req, res) => {
-    try {
-      const employees = await storage.getEmployees();
-      res.json(employees);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch employees' });
+  // Get all employees (authentication required)
+  apiRouter.get('/employees', 
+    securityService.requireAuth,
+    securityService.protectSensitiveOperation,
+    async (req: AuthenticatedRequest, res) => {
+      try {
+        const employees = await storage.getEmployees();
+        res.json(employees);
+      } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch employees' });
+      }
     }
-  });
+  );
 
-  // Get all employees (including inactive) for accounting purposes
-  apiRouter.get('/employees/all', async (req, res) => {
-    try {
-      const employees = await storage.getAllEmployees();
-      res.json(employees);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch all employees' });
-    }
-  });
-  
-  // Get active employees
-  apiRouter.get('/employees/active', async (req, res) => {
-    try {
-      const employees = await storage.getActiveEmployees();
-      res.json(employees);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch active employees' });
-    }
-  });
-  
-  // Get shift leaders
-  apiRouter.get('/employees/shift-leaders', async (req, res) => {
-    try {
-      const employees = await storage.getShiftLeaders();
-      res.json(employees);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch shift leaders' });
-    }
-  });
-  
-  // Get employee by ID
-  apiRouter.get('/employees/:id', async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: 'Invalid employee ID' });
+  // Get all employees (including inactive) for accounting purposes (admin only)
+  apiRouter.get('/employees/all', 
+    securityService.requireAdminAuth,
+    securityService.protectSensitiveOperation,
+    async (req: AuthenticatedRequest, res) => {
+      try {
+        const employees = await storage.getAllEmployees();
+        res.json(employees);
+      } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch all employees' });
       }
-      
-      const employee = await storage.getEmployee(id);
-      if (!employee) {
-        return res.status(404).json({ message: 'Employee not found' });
-      }
-      
-      res.json(employee);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch employee' });
     }
-  });
+  );
   
-  // Create a new employee
-  apiRouter.post('/employees', async (req, res) => {
+  // Get active employees (authentication required)
+  apiRouter.get('/employees/active', 
+    securityService.requireAuth,
+    async (req: AuthenticatedRequest, res) => {
+      try {
+        const employees = await storage.getActiveEmployees();
+        res.json(employees);
+      } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch active employees' });
+      }
+    }
+  );
+  
+  // Get shift leaders (authentication required)
+  apiRouter.get('/employees/shift-leaders', 
+    securityService.requireAuth,
+    async (req: AuthenticatedRequest, res) => {
+      try {
+        const employees = await storage.getShiftLeaders();
+        res.json(employees);
+      } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch shift leaders' });
+      }
+    }
+  );
+  
+  // Get employee by ID (authentication required)
+  apiRouter.get('/employees/:id', 
+    securityService.requireAuth,
+    securityService.protectSensitiveOperation,
+    async (req: AuthenticatedRequest, res) => {
+      try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) {
+          return res.status(400).json({ message: 'Invalid employee ID' });
+        }
+        
+        const employee = await storage.getEmployee(id);
+        if (!employee) {
+          return res.status(404).json({ message: 'Employee not found' });
+        }
+        
+        res.json(employee);
+      } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch employee' });
+      }
+    }
+  );
+  
+  // Create a new employee (admin only)
+  apiRouter.post('/employees', 
+    securityService.requireAdminAuth,
+    securityService.protectSensitiveOperation,
+    async (req: AuthenticatedRequest, res) => {
     try {
       console.log("POST /employees - Request Body:", req.body);
       
@@ -1073,8 +1061,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Update an employee
-  apiRouter.put('/employees/:id', async (req, res) => {
+  // Update an employee (admin only)
+  apiRouter.put('/employees/:id', 
+    securityService.requireAdminAuth,
+    securityService.protectSensitiveOperation,
+    async (req: AuthenticatedRequest, res) => {
     try {
       console.log('PUT /employees/:id - ID:', req.params.id, 'Body:', req.body);
       

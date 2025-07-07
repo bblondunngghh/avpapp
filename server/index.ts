@@ -1,3 +1,17 @@
+// Load environment variables from .env file manually for Replit
+import fs from 'fs';
+if (fs.existsSync('.env')) {
+  const envContent = fs.readFileSync('.env', 'utf-8');
+  envContent.split('\n').forEach(line => {
+    const [key, ...valueParts] = line.split('=');
+    if (key && valueParts.length > 0) {
+      const value = valueParts.join('=').trim();
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  });
+}
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
