@@ -463,6 +463,7 @@ interface TicketDistribution {
 }
 
 export default function AdminPanel() {
+  // ALL HOOKS MUST BE CALLED FIRST - NO CONDITIONAL LOGIC BEFORE HOOKS
   const [, navigate] = useLocation();
   const [isAddingEmployees, setIsAddingEmployees] = useState(false);
   const [monthlyData, setMonthlyData] = useState<Array<{name: string; sales: number}>>([]);
@@ -470,6 +471,77 @@ export default function AdminPanel() {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [selectedWeekOffset, setSelectedWeekOffset] = useState(0); // 0 = current week, 1 = last week, etc.
   const [isEmailingReport, setIsEmailingReport] = useState(false);
+  
+  // Statistics state (moved from later in component)
+  const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
+  const [carDistributionByLocation, setCarDistributionByLocation] = useState<Array<{name: string; value: number; color: string}>>([]);
+  const [salesTrendData, setSalesTrendData] = useState<Array<{date: string; sales: number; cars: number}>>([]);
+  const [reportsByDay, setReportsByDay] = useState<Array<{name: string; reports: number}>>([]);
+  const [employeeStats, setEmployeeStats] = useState<{
+    name: string;
+    totalHours: number;
+    totalEarnings: number;
+    totalCommission: number;
+    totalTips: number;
+    totalMoneyOwed: number;
+    totalCashPaid: number;
+    reports: number;
+    locationId: number;
+  }[]>([]);
+
+  // Partner pay state
+  const [monthlyRevenue, setMonthlyRevenue] = useState<number>(0);
+  const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
+  const [currentMonth, setCurrentMonth] = useState<string>("");
+  const [savedExpenses, setSavedExpenses] = useState<Record<string, number>>({});
+  const [isEditingExpenses, setIsEditingExpenses] = useState<boolean>(false);
+  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
+  const [expensesPassword, setExpensesPassword] = useState<string>("");
+  
+  const manualRevenue = useMemo(() => ({
+    // Pre-set monthly revenue values
+    "2025-01": 17901,
+    "2025-02": 27556,
+    "2025-03": 25411,
+    "2025-04": 20974,
+    "2025-05": 19431
+  } as Record<string, number>), []);
+  
+  // Partner pay history data for table display
+  const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
+    month: string;
+    brandon: number;
+    ryan: number;
+    dave: number;
+    total: number;
+  }>>([]);
+
+  // Additional state declarations
+  const [currentReportsMonth, setCurrentReportsMonth] = useState<string>(new Date().toISOString().slice(0, 7));
+  const [employeeAccountingData, setEmployeeAccountingData] = useState<Array<{
+    name: string;
+    key: string;
+    totalHours: string;
+    totalCommission: string;
+    totalTips: string;
+    totalEarnings: string;
+    totalTax: string;
+    totalMoneyOwed: string;
+    totalAdditionalTaxPayments: string;
+    moneyOwedAfterTax: string;
+    advance: string;
+    shiftsWorked: number;
+  }>>([]);
+
+  // Employee accounting month filter - default to current month
+  const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+
+  // Employee shift breakdown modal state
+  const [selectedEmployeeShifts, setSelectedEmployeeShifts] = useState<any>(null);
+  const [showEmployeeShiftsModal, setShowEmployeeShiftsModal] = useState(false);
   
   // Use Admin Auth for admin authentication
   const { user, isLoading, isAuthenticated, error } = useAdminAuth();
@@ -516,49 +588,6 @@ export default function AdminPanel() {
       </div>
     );
   }
-  
-  // Statistics state
-  const [dailyCarVolume, setDailyCarVolume] = useState<Array<{name: string; cars: number}>>([]);
-  const [carDistributionByLocation, setCarDistributionByLocation] = useState<Array<{name: string; value: number; color: string}>>([]);
-  const [salesTrendData, setSalesTrendData] = useState<Array<{date: string; sales: number; cars: number}>>([]);
-  const [reportsByDay, setReportsByDay] = useState<Array<{name: string; reports: number}>>([]);
-  const [employeeStats, setEmployeeStats] = useState<{
-    name: string;
-    totalHours: number;
-    totalEarnings: number;
-    totalCommission: number;
-    totalTips: number;
-    totalMoneyOwed: number;
-    totalCashPaid: number;
-    reports: number;
-    locationId: number;
-  }[]>([]);
-  
-  // Partner pay state
-  const [monthlyRevenue, setMonthlyRevenue] = useState<number>(0);
-  const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
-  const [currentMonth, setCurrentMonth] = useState<string>("");
-  const [savedExpenses, setSavedExpenses] = useState<Record<string, number>>({});
-  const [isEditingExpenses, setIsEditingExpenses] = useState<boolean>(false);
-  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
-  const [expensesPassword, setExpensesPassword] = useState<string>("");
-  const manualRevenue = useMemo(() => ({
-    // Pre-set monthly revenue values
-    "2025-01": 17901,
-    "2025-02": 27556,
-    "2025-03": 25411,
-    "2025-04": 20974,
-    "2025-05": 19431
-  } as Record<string, number>), []);
-  
-  // Partner pay history data for table display
-  const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
-    month: string;
-    brandon: number;
-    ryan: number;
-    dave: number;
-    total: number;
-  }>>([]);
 
   // Employee accounting month filter - default to current month
   const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {

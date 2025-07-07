@@ -7,7 +7,7 @@ interface AdminUser {
 
 export function useAdminAuth() {
   const { data: user, isLoading, error } = useQuery<AdminUser>({
-    queryKey: ['/api/admin/user'],
+    queryKey: ['/api/admin/verify'],
     retry: false,
     retryOnMount: false,
     refetchOnWindowFocus: false,
