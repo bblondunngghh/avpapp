@@ -235,53 +235,87 @@ async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // CORS Configuration for API Security
-  // Temporarily disabled CORS restrictions for development stability
-  // TODO: Re-enable once application is confirmed working
+  const corsConfig = getCorsConfig();
   const corsOptions = {
-    origin: true, // Allow all origins during development
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Origin',
-      'X-Requested-With',
-      'Content-Type',
-      'Accept',
-      'Authorization',
-      'Cache-Control'
-    ],
-    credentials: true,
-    optionsSuccessStatus: 200
+    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+      // Always allow requests with no origin (mobile apps, curl, same-origin requests)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin is in allowed list
+      const isAllowed = corsConfig.allowedOrigins.some(allowedOrigin => {
+        if (typeof allowedOrigin === 'string') {
+          return origin === allowedOrigin;
+        } else {
+          return allowedOrigin.test(origin);
+        }
+      });
+      
+      if (isAllowed) {
+        // Only log in development mode to reduce noise
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[CORS] ✓ Allowed origin: ${origin}`);
+        }
+        callback(null, true);
+      } else {
+        console.warn(`[CORS] ✗ Blocked unauthorized origin: ${origin}`);
+        callback(new Error('CORS policy violation'), false);
+      }
+    },
+    methods: corsConfig.methods,
+    allowedHeaders: corsConfig.allowedHeaders,
+    credentials: corsConfig.credentials,
+    optionsSuccessStatus: corsConfig.optionsSuccessStatus
   };
   
-  // Apply basic CORS to all routes
+  // Apply CORS security to all routes
   app.use(cors(corsOptions));
   
-  // Apply basic security headers
+  // Apply balanced security headers
   app.use((req, res, next) => {
     res.header('X-Content-Type-Options', 'nosniff');
-    // Temporarily disabled other security headers for development
+    res.header('X-Frame-Options', 'DENY');
+    res.header('X-XSS-Protection', '1; mode=block');
+    res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+    // Note: Skipping CSP for now to avoid external resource conflicts
     next();
   });
   
-  console.log(`[CORS] Basic security headers applied - development mode`);
+  console.log(`[CORS] Enhanced security configured with ${corsConfig.allowedOrigins.length} allowed origins`);
   
   // Enhanced security middleware for sensitive operations
   const sensitiveOperationsGuard = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const origin = req.get('Origin');
     const userAgent = req.get('User-Agent') || '';
-    const referer = req.get('Referer') || '';
     
-    // Log security information (reduced logging for better performance)
+    // Enhanced protection for employee data endpoints
     if (req.path.includes('/employees') || req.path.includes('/employee-')) {
-      console.log(`[SECURITY] ${req.method} ${req.path} from origin: ${origin || 'no-origin'}`);
+      // Log employee data access attempts
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[SECURITY] ${req.method} ${req.path} from origin: ${origin || 'same-origin'}`);
+      }
+      
+      // Block obvious bots and scrapers (but allow legitimate tools in development)
+      const suspiciousPatterns = [
+        /googlebot/i, /bingbot/i, /slurp/i, /duckduckbot/i,
+        /baiduspider/i, /yandexbot/i, /facebookexternalhit/i,
+        /twitterbot/i, /linkedinbot/i, /whatsapp/i,
+        /crawler/i, /spider/i, /scraper/i
+      ];
+      
+      if (suspiciousPatterns.some(pattern => pattern.test(userAgent))) {
+        console.warn(`[SECURITY] Blocked bot access to employee data: ${userAgent}`);
+        return res.status(403).json({ 
+          error: 'Access denied', 
+          message: 'Automated access to employee data is not permitted',
+          code: 'BOT_ACCESS_DENIED'
+        });
+      }
     }
-    
-    // Temporarily relaxed for development - will be re-enabled once CORS is working
-    // TODO: Re-enable employee data protection after CORS issues are resolved
     
     next();
   };
   
-  // Apply enhanced security to API routes (currently in development mode)
+  // Apply enhanced security to API routes
   app.use('/api', sensitiveOperationsGuard);
   
   // Serve PDF templates
