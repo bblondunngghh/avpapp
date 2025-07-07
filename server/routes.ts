@@ -5,6 +5,7 @@ import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
 import { pushNotificationService } from "./push-notification-service";
+import { SecurityService } from "./security";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -908,6 +909,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = insertEmployeeSchema.parse(req.body);
       
+      // Store original sensitive data for email notifications (before hashing)
+      const originalSensitiveData = {
+        fullSsn: validatedData.fullSsn,
+        driversLicenseNumber: validatedData.driversLicenseNumber,
+        dateOfBirth: validatedData.dateOfBirth
+      };
+      
       // Convert date strings to Date objects for database storage
       const employeeData = {
         ...validatedData,
@@ -915,22 +923,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dateOfBirth: validatedData.dateOfBirth ? parseDateOfBirth(validatedData.dateOfBirth) : undefined
       };
       
+      // Hash sensitive PII data before storing in database
+      const secureEmployeeData = await SecurityService.sanitizeEmployeeData(employeeData);
+      console.log('[SECURITY] Sensitive data hashed for employee:', employeeData.fullName);
+      
       // Check if employee with this key already exists
-      const existingEmployee = await storage.getEmployeeByKey(employeeData.key);
+      const existingEmployee = await storage.getEmployeeByKey(secureEmployeeData.key);
       if (existingEmployee) {
         return res.status(400).json({ message: 'Employee with this key already exists' });
       }
       
-      const employee = await storage.createEmployee(employeeData as any);
-      console.log("Employee created:", employee);
+      const employee = await storage.createEmployee(secureEmployeeData as any);
+      console.log("Employee created with encrypted PII:", employee.fullName);
       
-      // Send email notification to accountant for QuickBooks entry
+      // Send email notification to accountant for QuickBooks entry using original (unhashed) data
       try {
-        const driversLicense = employee.driversLicenseNumber || employeeData.driversLicenseNumber || '';
-        const socialSecurity = employee.fullSsn || employeeData.fullSsn || '';
-        const dateOfBirth = employeeData.dateOfBirth ? employeeData.dateOfBirth.toLocaleDateString() : '';
+        const driversLicense = originalSensitiveData.driversLicenseNumber || '';
+        const socialSecurity = originalSensitiveData.fullSsn || '';
+        const dateOfBirth = originalSensitiveData.dateOfBirth || '';
         
-        console.log('[EMAIL] Employee data for notification:', {
+        console.log('[EMAIL] Employee data for notification (using original values):', {
           fullName: employee.fullName,
           dateOfBirth: dateOfBirth || 'Not provided',
           driversLicenseNumber: driversLicense || 'Not provided',
@@ -987,12 +999,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = updateEmployeeSchema.parse(req.body);
       
+      // Store original sensitive data for email notifications (before hashing)
+      const originalSensitiveData = {
+        fullSsn: validatedData.fullSsn,
+        driversLicenseNumber: validatedData.driversLicenseNumber,
+        dateOfBirth: validatedData.dateOfBirth
+      };
+      
       // Convert date strings to Date objects for database storage
       const updateData = {
         ...validatedData,
         hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined,
         dateOfBirth: validatedData.dateOfBirth ? parseDateOfBirth(validatedData.dateOfBirth) : undefined
       } as any;
+      
+      // Hash sensitive PII data before storing in database
+      const secureUpdateData = await SecurityService.sanitizeEmployeeData(updateData);
+      console.log('[SECURITY] Sensitive data hashed for employee update:', validatedData.fullName || 'Unknown');
       
       // Check if employee exists
       const existingEmployee = await storage.getEmployee(id);
@@ -1008,20 +1031,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      const updatedEmployee = await storage.updateEmployee(id, updateData);
+      const updatedEmployee = await storage.updateEmployee(id, secureUpdateData);
       
-      // Check if this update completes the critical information needed for email notification
+      // Check if this update completes the critical information needed for email notification using original data
       try {
-        const driversLicense = updatedEmployee.driversLicenseNumber || '';
-        const socialSecurity = updatedEmployee.fullSsn || '';
-        const dateOfBirth = updatedEmployee.dateOfBirth ? updatedEmployee.dateOfBirth.toLocaleDateString() : '';
+        // Use original unhashed data for email notification
+        const driversLicense = originalSensitiveData.driversLicenseNumber || '';
+        const socialSecurity = originalSensitiveData.fullSsn || '';
+        const dateOfBirth = originalSensitiveData.dateOfBirth || '';
         
         // Check if critical information was just completed and if we should send email
         const wasIncomplete = !existingEmployee.driversLicenseNumber || !existingEmployee.fullSsn || !existingEmployee.dateOfBirth;
         const isNowComplete = driversLicense && socialSecurity && dateOfBirth;
         
         if (wasIncomplete && isNowComplete) {
-          console.log(`[EMAIL] Employee ${updatedEmployee.fullName} now has complete information - sending notification`);
+          console.log(`[EMAIL] Employee ${updatedEmployee.fullName} now has complete information - sending notification with original data`);
           
           const success = await emailService.sendNewEmployeeNotification(
             updatedEmployee.fullName,
