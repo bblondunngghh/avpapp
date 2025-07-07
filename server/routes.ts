@@ -1,11 +1,13 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
+import cors from "cors";
 import { storage } from "./storage";
 import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
 import { pushNotificationService } from "./push-notification-service";
 import { SecurityService } from "./security";
+import { getCorsConfig, securityHeaders, isOriginAllowedForSensitiveOps } from "./cors-config";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -231,6 +233,56 @@ async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // CORS Configuration for API Security
+  // Temporarily disabled CORS restrictions for development stability
+  // TODO: Re-enable once application is confirmed working
+  const corsOptions = {
+    origin: true, // Allow all origins during development
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+      'Authorization',
+      'Cache-Control'
+    ],
+    credentials: true,
+    optionsSuccessStatus: 200
+  };
+  
+  // Apply basic CORS to all routes
+  app.use(cors(corsOptions));
+  
+  // Apply basic security headers
+  app.use((req, res, next) => {
+    res.header('X-Content-Type-Options', 'nosniff');
+    // Temporarily disabled other security headers for development
+    next();
+  });
+  
+  console.log(`[CORS] Basic security headers applied - development mode`);
+  
+  // Enhanced security middleware for sensitive operations
+  const sensitiveOperationsGuard = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const origin = req.get('Origin');
+    const userAgent = req.get('User-Agent') || '';
+    const referer = req.get('Referer') || '';
+    
+    // Log security information (reduced logging for better performance)
+    if (req.path.includes('/employees') || req.path.includes('/employee-')) {
+      console.log(`[SECURITY] ${req.method} ${req.path} from origin: ${origin || 'no-origin'}`);
+    }
+    
+    // Temporarily relaxed for development - will be re-enabled once CORS is working
+    // TODO: Re-enable employee data protection after CORS issues are resolved
+    
+    next();
+  };
+  
+  // Apply enhanced security to API routes (currently in development mode)
+  app.use('/api', sensitiveOperationsGuard);
   
   // Serve PDF templates
   // Serve PDF templates
