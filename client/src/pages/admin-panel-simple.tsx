@@ -85,7 +85,7 @@ export default function AdminPanelSimple() {
                 OAuth authentication is working successfully! You can now access the full admin panel.
               </p>
               <Button 
-                onClick={() => navigate("/admin")} 
+                onClick={() => navigate("/admin-full")} 
                 className="mt-4"
                 variant="default"
               >
