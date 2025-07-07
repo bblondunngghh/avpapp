@@ -344,7 +344,7 @@ export class EmailService {
     }
 
     try {
-      const accountantEmail = 'brandon@accessvaletparking.com';
+      const accountantEmails = ['brandon@accessvaletparking.com', 'hkeirstead1947@gmail.com'];
       const subject = 'New Employee Added - QuickBooks Entry Required';
       
       const html = `
@@ -391,12 +391,12 @@ export class EmailService {
 
       const result = await this.transporter!.sendMail({
         from: this.config!.user,
-        to: accountantEmail,
+        to: accountantEmails.join(', '),
         subject,
         html,
       });
 
-      console.log(`[EMAIL] New employee notification sent to ${accountantEmail}, ID: ${result.messageId}`);
+      console.log(`[EMAIL] New employee notification sent to ${accountantEmails.join(', ')}, ID: ${result.messageId}`);
       return true;
     } catch (error) {
       console.error(`[EMAIL] Failed to send new employee notification:`, error);

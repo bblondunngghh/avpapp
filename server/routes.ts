@@ -2530,7 +2530,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (success) {
         console.log('[EMAIL] Test employee notification sent successfully');
-        res.json({ success: true, message: 'Test employee email sent successfully to brandon@accessvaletparking.com' });
+        res.json({ success: true, message: 'Test employee email sent successfully to brandon@accessvaletparking.com and hkeirstead1947@gmail.com' });
       } else {
         console.log('[EMAIL] Failed to send test employee notification');
         res.status(500).json({ success: false, message: 'Failed to send test email' });
