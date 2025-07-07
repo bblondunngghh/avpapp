@@ -9,6 +9,7 @@ import { securityService, type AuthenticatedRequest } from "./security";
 import { createCorsConfig } from "./cors-config";
 import { initializeEnvironment } from "./environment-config";
 import { setupAuth, isAuthenticated, getCurrentUser } from "./replit-auth";
+import { adminLogin, adminLogout, getCurrentAdmin, requireAdminAuth } from "./admin-auth";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -497,6 +498,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create API routes
   const apiRouter = express.Router();
   
+  // Custom admin authentication routes (must come before other routes)
+  apiRouter.post('/admin/login', adminLogin);
+  apiRouter.post('/admin/logout', adminLogout);
+  apiRouter.get('/admin/user', getCurrentAdmin);
+  
   // Add authentication routes (protected with isAuthenticated middleware for admin operations)
   apiRouter.get('/auth/user', isAuthenticated, getCurrentUser, async (req: any, res) => {
     try {
@@ -941,7 +947,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get all employees (including inactive) for accounting purposes (admin only)
   apiRouter.get('/employees/all', 
-    securityService.requireAdminAuth,
+    requireAdminAuth,
     securityService.protectSensitiveOperation,
     async (req: AuthenticatedRequest, res) => {
       try {
@@ -955,7 +961,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get active employees (authentication required)
   apiRouter.get('/employees/active', 
-    securityService.requireAuth,
+    requireAdminAuth,
     async (req: AuthenticatedRequest, res) => {
       try {
         const employees = await storage.getActiveEmployees();
@@ -968,7 +974,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get shift leaders (authentication required)
   apiRouter.get('/employees/shift-leaders', 
-    securityService.requireAuth,
+    requireAdminAuth,
     async (req: AuthenticatedRequest, res) => {
       try {
         const employees = await storage.getShiftLeaders();

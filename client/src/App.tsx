@@ -188,6 +188,7 @@ function Router() {
           <Route path="/admin-redirect" component={SimpleMobileAdmin} />
           <Route path="/admin-simple" component={AdminPanelSimple} />
           <Route path="/admin" component={AdminPanelSimple} />
+          <Route path="/admin-login" component={AdminLogin} />
           <Route path="/admin-full" component={AdminPanel} />
           <Route path="/admin-panel" component={AdminPanelSimple} />
           <Route path="/admin/csv-upload" component={CSVUploadPage} />
