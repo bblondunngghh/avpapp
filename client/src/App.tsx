@@ -13,6 +13,7 @@ import ReportsWrapper from "@/pages/reports-wrapper";
 import SubmissionComplete from "@/pages/submission-complete";
 import AdminLogin from "@/pages/admin-login";
 import AdminPanel from "@/pages/admin-panel";
+import AdminPanelSimple from "@/pages/admin-panel-simple";
 import MobileAdminPanel from "@/pages/mobile-admin-panel"; // Mobile-friendly version
 import SimpleMobileAdmin from "@/pages/simple-mobile-admin"; // Super-simplified mobile admin for iOS
 import AdminAuthGuard from "@/pages/admin-auth-guard";
@@ -185,6 +186,7 @@ function Router() {
           <Route path="/simple-admin" component={SimpleMobileAdmin} />
           <Route path="/basic-admin" component={SimpleMobileAdmin} />
           <Route path="/admin-redirect" component={SimpleMobileAdmin} />
+          <Route path="/admin-simple" component={AdminPanelSimple} />
           <Route path="/admin">
             {() => {
               // Check if iPad - force desktop admin panel

@@ -790,30 +790,7 @@ export default function AdminPanel() {
     motorVehicleRecordsPath: ''
   });
 
-  // Check if admin is authenticated
-  useEffect(() => {
-    // Import admin auth utility
-    import("@/lib/admin-auth").then(({ isAdminAuthenticated }) => {
-      // If not authenticated or session expired, redirect to login
-      if (!isAdminAuthenticated()) {
-        navigate("/admin-login");
-      }
-    });
-    
-    // Check authentication status every 15 seconds
-    const authCheckInterval = setInterval(() => {
-      import("@/lib/admin-auth").then(({ isAdminAuthenticated }) => {
-        if (!isAdminAuthenticated()) {
-          navigate("/admin-login");
-          clearInterval(authCheckInterval);
-        }
-      });
-    }, 15000); // Check every 15 seconds
-    
-    return () => {
-      clearInterval(authCheckInterval);
-    };
-  }, []);
+  // OAuth authentication is handled by useAuth hook
 
   // Fetch all shift reports
   const { data: reports = [], isLoading: reportsLoading, refetch: refetchReports } = useQuery<ShiftReport[]>({
