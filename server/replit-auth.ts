@@ -90,7 +90,7 @@ export async function setupAuth(app: Express) {
         name: `replitauth:${domain}`,
         config,
         scope: "openid email profile offline_access",
-        callbackURL: `https://${domain}/api/auth/callback`,
+        callbackURL: `https://${domain}/api/callback`,
       },
       verify,
     );
@@ -102,6 +102,8 @@ export async function setupAuth(app: Express) {
 
   // Admin login route
   app.get("/api/login", (req, res, next) => {
+    console.log(`[AUTH] Login attempt - hostname: ${req.hostname}, host: ${req.get('host')}`);
+    console.log(`[AUTH] Available strategies:`, passport._strategies ? Object.keys(passport._strategies) : 'none');
     passport.authenticate(`replitauth:${req.hostname}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
