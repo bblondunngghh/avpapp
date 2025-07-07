@@ -671,7 +671,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {employees
+                        {(employees || [])
                           .filter((emp: any) => emp.isActive && emp.isShiftLeader)
                           .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName))
                           .map((emp: any) => (
