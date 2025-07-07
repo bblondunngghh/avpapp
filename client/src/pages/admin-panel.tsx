@@ -10,6 +10,7 @@ import deleteIncompleteIcon from "@assets/Delete-1--Streamline-Ultimate.png";
 import deleteIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import newBinIcon from "@assets/Bin-1--Streamline-Ultimate_1749748616601.png";
 import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
+import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
 import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
@@ -466,6 +467,7 @@ export default function AdminPanel() {
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [selectedWeekOffset, setSelectedWeekOffset] = useState(0); // 0 = current week, 1 = last week, etc.
+  const [isEmailingReport, setIsEmailingReport] = useState(false);
   
   // Initial setup - check authentication and adapt UI for mobile
   useEffect(() => {
@@ -4416,6 +4418,43 @@ export default function AdminPanel() {
                     className="w-4 h-4"
                   />
                   Add Employee
+                </Button>
+                
+                <Button 
+                  onClick={async () => {
+                    setIsEmailingReport(true);
+                    try {
+                      const response = await fetch('/api/email-all-employees-report', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                      });
+                      
+                      const result = await response.json();
+                      
+                      if (response.ok) {
+                        alert(result.message);
+                      } else {
+                        alert(`Failed to send email report: ${result.message}`);
+                      }
+                    } catch (error) {
+                      console.error('Error sending email report:', error);
+                      alert('Failed to send email report. Please try again.');
+                    } finally {
+                      setIsEmailingReport(false);
+                    }
+                  }}
+                  disabled={isEmailingReport}
+                  className="flex items-center gap-1"
+                  variant="outline"
+                >
+                  <img 
+                    src={sendEmailIcon} 
+                    alt="Email" 
+                    className="w-4 h-4"
+                  />
+                  {isEmailingReport ? 'Sending...' : 'Email 2025 Report'}
                 </Button>
               </div>
             </CardHeader>

@@ -403,6 +403,78 @@ export class EmailService {
       return false;
     }
   }
+
+  public async sendAllEmployeesReport(employees: any[]): Promise<boolean> {
+    if (!this.isConfigured()) {
+      console.log('[EMAIL] Skipping email - service not configured');
+      return false;
+    }
+
+    try {
+      const recipientEmail = 'brandon@accessvaletparking.com';
+      const subject = '2025 Employee Information Report';
+      
+      const employeeRows = employees.map(emp => `
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+          <td style="padding: 12px 8px; color: #1f2937;">${emp.fullName}</td>
+          <td style="padding: 12px 8px; color: #1f2937;">${emp.fullSsn || 'Not provided'}</td>
+          <td style="padding: 12px 8px; color: #1f2937;">${emp.driversLicenseNumber || 'Not provided'}</td>
+          <td style="padding: 12px 8px; color: #1f2937;">${emp.dateOfBirth ? new Date(emp.dateOfBirth).toLocaleDateString() : 'Not provided'}</td>
+        </tr>
+      `).join('');
+      
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+          <h2 style="color: #1f2937; margin-bottom: 20px;">📊 2025 Employee Information Report</h2>
+          
+          <p style="color: #374151; margin-bottom: 20px;">
+            Complete employee information report for Access Valet Parking - 2025. 
+            Total employees: ${employees.length}
+          </p>
+
+          <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 20px; overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin: 0;">
+              <thead>
+                <tr style="background: #374151; color: white;">
+                  <th style="padding: 12px 8px; text-align: left; font-weight: bold;">Full Name</th>
+                  <th style="padding: 12px 8px; text-align: left; font-weight: bold;">SSN</th>
+                  <th style="padding: 12px 8px; text-align: left; font-weight: bold;">TX Driver License</th>
+                  <th style="padding: 12px 8px; text-align: left; font-weight: bold;">Date of Birth</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${employeeRows}
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background: #fef3c7; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #92400e; font-size: 14px;">
+              <strong>Note:</strong> This report contains sensitive employee information. Please handle securely.
+            </p>
+          </div>
+
+          <p style="color: #6b7280; font-size: 14px; text-align: center; margin-top: 30px;">
+            Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}<br>
+            Access Valet Parking Management System
+          </p>
+        </div>
+      `;
+
+      const result = await this.transporter!.sendMail({
+        from: this.config!.user,
+        to: recipientEmail,
+        subject,
+        html,
+      });
+
+      console.log(`[EMAIL] All employees report sent to ${recipientEmail}, ID: ${result.messageId}`);
+      return true;
+    } catch (error) {
+      console.error(`[EMAIL] Failed to send all employees report:`, error);
+      return false;
+    }
+  }
 }
 
 // Export singleton instance

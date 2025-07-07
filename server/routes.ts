@@ -2541,6 +2541,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Email all employees report
+  apiRouter.post('/email-all-employees-report', async (req, res) => {
+    try {
+      console.log('[EMAIL] All employees report requested');
+      
+      // Get all employees from storage
+      const employees = await storage.getAllEmployees();
+      
+      // Filter for 2025 employees (hired in 2025 or currently active)
+      const currentYear = new Date().getFullYear();
+      const employees2025 = employees.filter(emp => {
+        const hireYear = emp.hireDate ? new Date(emp.hireDate).getFullYear() : null;
+        // Include if hired in 2025 or currently active
+        return hireYear === currentYear || emp.isActive;
+      });
+      
+      if (employees2025.length === 0) {
+        return res.status(400).json({ message: 'No employees found for 2025' });
+      }
+      
+      const success = await emailService.sendAllEmployeesReport(employees2025);
+
+      if (success) {
+        console.log(`[EMAIL] All employees report sent successfully (${employees2025.length} employees)`);
+        res.json({ 
+          success: true, 
+          message: `2025 employee report sent successfully to brandon@accessvaletparking.com (${employees2025.length} employees)` 
+        });
+      } else {
+        console.log('[EMAIL] Failed to send all employees report');
+        res.status(500).json({ success: false, message: 'Failed to send employee report' });
+      }
+    } catch (error) {
+      console.error('[EMAIL] Error sending all employees report:', error);
+      res.status(500).json({ message: 'Failed to send employee report' });
+    }
+  });
+
   // Register API routes
   app.use('/api', apiRouter);
 
