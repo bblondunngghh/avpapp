@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { redirectToLogin, redirectToLogout, isUnauthorizedError } from "@/lib/authUtils";
 import { employeeWorkedInShift, findEmployeeInShift, parseLocalDate, parseEmployeesData } from "@/lib/employee-utils";
 import { formatDateForDisplay, parseReportDate } from "@/lib/timezone";
@@ -471,8 +471,8 @@ export default function AdminPanel() {
   const [selectedWeekOffset, setSelectedWeekOffset] = useState(0); // 0 = current week, 1 = last week, etc.
   const [isEmailingReport, setIsEmailingReport] = useState(false);
   
-  // Use Replit Auth for admin authentication
-  const { user, isLoading, isAuthenticated, error } = useAuth();
+  // Use Admin Auth for admin authentication
+  const { user, isLoading, isAuthenticated, error } = useAdminAuth();
   const { toast } = useToast();
 
   // Authentication protection - redirect if not authenticated
