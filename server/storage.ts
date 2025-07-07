@@ -1,5 +1,5 @@
 import { 
-  users, type User, type UpsertUser, 
+  users, type User, type InsertUser, 
   employees, type Employee, type InsertEmployee, type UpdateEmployee,
   locations, type Location, type InsertLocation, type UpdateLocation,
   shiftReports, type ShiftReport, type InsertShiftReport, type UpdateShiftReport,
@@ -25,9 +25,10 @@ const PostgresSessionStore = connectPg(session);
 export interface IStorage {
   sessionStore: session.Store;
   
-  // User methods (Replit Auth)
-  getUser(id: string): Promise<User | undefined>;
-  upsertUser(user: UpsertUser): Promise<User>;
+  // User methods
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
   
   // Employee methods
   getEmployees(): Promise<Employee[]>;
@@ -123,29 +124,35 @@ export class DatabaseStorage implements IStorage {
     createTableIfMissing: true 
   });
 
-  // User methods (Replit Auth)
-  async getUser(id: string): Promise<User | undefined> {
-    return withRetry(async () => {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    try {
       const [user] = await db.select().from(users).where(eq(users.id, id));
       return user || undefined;
-    });
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      throw new Error("Failed to fetch user");
+    }
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    return withRetry(async () => {
-      const [user] = await db
-        .insert(users)
-        .values(userData)
-        .onConflictDoUpdate({
-          target: users.id,
-          set: {
-            ...userData,
-            updatedAt: new Date(),
-          },
-        })
-        .returning();
-      return user;
-    });
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    try {
+      const [user] = await db.select().from(users).where(eq(users.username, username));
+      return user || undefined;
+    } catch (error) {
+      console.error("Error fetching user by username:", error);
+      return undefined;
+    }
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    try {
+      const [newUser] = await db.insert(users).values(user).returning();
+      return newUser;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw new Error("Failed to create user");
+    }
   }
 
   // Employee methods

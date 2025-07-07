@@ -8,8 +8,6 @@ import { pushNotificationService } from "./push-notification-service";
 import { securityService, type AuthenticatedRequest } from "./security";
 import { createCorsConfig } from "./cors-config";
 import { initializeEnvironment } from "./environment-config";
-import { setupAuth, isAuthenticated, getCurrentUser } from "./replit-auth";
-import { adminLogin, adminLogout, getCurrentAdmin, requireAdminAuth } from "./admin-auth";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -238,9 +236,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Initialize comprehensive environment configuration
   initializeEnvironment();
-  
-  // Setup Replit Auth first (requires environment configuration)
-  await setupAuth(app);
   
   // Apply enhanced CORS security
   const enhancedCors = createCorsConfig();
@@ -498,36 +493,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create API routes
   const apiRouter = express.Router();
   
-  // Custom admin authentication routes (must come before other routes)
-  apiRouter.post('/admin/login', adminLogin);
-  apiRouter.post('/admin/logout', adminLogout);
-  apiRouter.get('/admin/user', getCurrentAdmin);
-  
-  // Add authentication routes (protected with isAuthenticated middleware for admin operations)
-  apiRouter.get('/auth/user', isAuthenticated, getCurrentUser, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      
-      // Bridge OAuth authentication with security service
-      // Set up session variables that the security service expects
-      if (!req.session.isAuthenticated) {
-        req.session.isAuthenticated = true;
-        req.session.isAdmin = true; // OAuth users are admin users
-        req.session.userId = userId;
-        console.log(`[AUTH] Session bridged for admin user: ${user.email}`);
-      }
-      
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
-
   // Serve uploaded files
   app.use('/uploads', express.static('./uploads'));
   
@@ -947,7 +912,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get all employees (including inactive) for accounting purposes (admin only)
   apiRouter.get('/employees/all', 
-    requireAdminAuth,
+    securityService.requireAdminAuth,
     securityService.protectSensitiveOperation,
     async (req: AuthenticatedRequest, res) => {
       try {
@@ -961,7 +926,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get active employees (authentication required)
   apiRouter.get('/employees/active', 
-    requireAdminAuth,
+    securityService.requireAuth,
     async (req: AuthenticatedRequest, res) => {
       try {
         const employees = await storage.getActiveEmployees();
@@ -974,7 +939,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get shift leaders (authentication required)
   apiRouter.get('/employees/shift-leaders', 
-    requireAdminAuth,
+    securityService.requireAuth,
     async (req: AuthenticatedRequest, res) => {
       try {
         const employees = await storage.getShiftLeaders();
