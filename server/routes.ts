@@ -926,17 +926,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Send email notification to accountant for QuickBooks entry
       try {
-        const success = await emailService.sendNewEmployeeNotification(
-          employee.fullName,
-          employeeData.dateOfBirth ? employeeData.dateOfBirth.toLocaleDateString() : 'Not provided',
-          employee.driverLicenseNumber || 'Not provided',
-          employee.fullSsn || 'Not provided'
-        );
+        const driversLicense = employee.driversLicenseNumber || employeeData.driversLicenseNumber || '';
+        const socialSecurity = employee.fullSsn || employeeData.fullSsn || '';
+        const dateOfBirth = employeeData.dateOfBirth ? employeeData.dateOfBirth.toLocaleDateString() : '';
         
-        if (success) {
-          console.log(`[EMAIL] New employee notification sent for ${employee.fullName}`);
+        console.log('[EMAIL] Employee data for notification:', {
+          fullName: employee.fullName,
+          dateOfBirth: dateOfBirth || 'Not provided',
+          driversLicenseNumber: driversLicense || 'Not provided',
+          fullSsn: socialSecurity || 'Not provided'
+        });
+        
+        // Only send email if we have the critical information
+        if (driversLicense && socialSecurity && dateOfBirth) {
+          const success = await emailService.sendNewEmployeeNotification(
+            employee.fullName,
+            dateOfBirth,
+            driversLicense,
+            socialSecurity
+          );
+          
+          if (success) {
+            console.log(`[EMAIL] New employee notification sent for ${employee.fullName}`);
+          } else {
+            console.log(`[EMAIL] Failed to send notification for ${employee.fullName}`);
+          }
         } else {
-          console.log(`[EMAIL] Failed to send notification for ${employee.fullName}`);
+          console.log(`[EMAIL] Delaying notification for ${employee.fullName} - missing critical information. Will send when employee is updated with complete data.`);
         }
       } catch (emailError) {
         console.error('[EMAIL] Error sending new employee notification:', emailError);
@@ -993,6 +1009,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const updatedEmployee = await storage.updateEmployee(id, updateData);
+      
+      // Check if this update completes the critical information needed for email notification
+      try {
+        const driversLicense = updatedEmployee.driversLicenseNumber || '';
+        const socialSecurity = updatedEmployee.fullSsn || '';
+        const dateOfBirth = updatedEmployee.dateOfBirth ? updatedEmployee.dateOfBirth.toLocaleDateString() : '';
+        
+        // Check if critical information was just completed and if we should send email
+        const wasIncomplete = !existingEmployee.driversLicenseNumber || !existingEmployee.fullSsn || !existingEmployee.dateOfBirth;
+        const isNowComplete = driversLicense && socialSecurity && dateOfBirth;
+        
+        if (wasIncomplete && isNowComplete) {
+          console.log(`[EMAIL] Employee ${updatedEmployee.fullName} now has complete information - sending notification`);
+          
+          const success = await emailService.sendNewEmployeeNotification(
+            updatedEmployee.fullName,
+            dateOfBirth,
+            driversLicense,
+            socialSecurity
+          );
+          
+          if (success) {
+            console.log(`[EMAIL] Delayed employee notification sent for ${updatedEmployee.fullName}`);
+          } else {
+            console.log(`[EMAIL] Failed to send delayed notification for ${updatedEmployee.fullName}`);
+          }
+        }
+      } catch (emailError) {
+        console.error('[EMAIL] Error sending delayed employee notification:', emailError);
+      }
+      
       res.json(updatedEmployee);
     } catch (error) {
       if (error instanceof z.ZodError) {
