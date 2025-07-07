@@ -101,7 +101,7 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   // Admin login route
-  app.get("/api/auth/login", (req, res, next) => {
+  app.get("/api/login", (req, res, next) => {
     passport.authenticate(`replitauth:${req.hostname}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
@@ -109,15 +109,15 @@ export async function setupAuth(app: Express) {
   });
 
   // Auth callback
-  app.get("/api/auth/callback", (req, res, next) => {
+  app.get("/api/callback", (req, res, next) => {
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/admin",
-      failureRedirect: "/api/auth/login",
+      failureRedirect: "/api/login",
     })(req, res, next);
   });
 
   // Admin logout
-  app.get("/api/auth/logout", (req, res) => {
+  app.get("/api/logout", (req, res) => {
     req.logout(() => {
       res.redirect(
         client.buildEndSessionUrl(config, {
@@ -126,6 +126,27 @@ export async function setupAuth(app: Express) {
         }).href
       );
     });
+  });
+
+  // Get current authenticated user
+  app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
+    try {
+      if (!req.user || !req.user.claims) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Failed to fetch user" });
+    }
   });
 }
 
