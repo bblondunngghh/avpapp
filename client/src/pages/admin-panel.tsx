@@ -4434,9 +4434,9 @@ export default function AdminPanel() {
                       <TableHead>Name</TableHead>
                       <TableHead>SSN</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Training Complete</TableHead>
+                      <TableHead className="text-center">Training Complete</TableHead>
                       <TableHead>Shift Leader</TableHead>
-                      <TableHead>Phone</TableHead>
+                      <TableHead className="min-w-[120px]">Phone</TableHead>
                       <TableHead>Hire Date</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -4496,7 +4496,7 @@ export default function AdminPanel() {
                               </span>
                             )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-center">
                             {hasCompletedTraining ? (
                               <div className="flex justify-center">
                                 <img 
@@ -4526,7 +4526,7 @@ export default function AdminPanel() {
                               <span>No</span>
                             )}
                           </TableCell>
-                        <TableCell>{employee.phone || '-'}</TableCell>
+                        <TableCell className="whitespace-nowrap min-w-[120px]">{employee.phone || '-'}</TableCell>
                         <TableCell>{new Date(employee.hireDate).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end space-x-2">
