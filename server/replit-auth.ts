@@ -143,6 +143,15 @@ export async function setupAuth(app: Express) {
         return res.status(404).json({ error: "User not found" });
       }
 
+      // Bridge OAuth authentication with security service
+      // Set up session variables that the security service expects
+      if (!req.session.isAuthenticated) {
+        req.session.isAuthenticated = true;
+        req.session.isAdmin = true; // OAuth users are admin users
+        req.session.userId = userId;
+        console.log(`[AUTH] Session bridged for admin user: ${user.email}`);
+      }
+
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
