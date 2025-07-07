@@ -4437,7 +4437,6 @@ export default function AdminPanel() {
                       <TableHead>Training Complete</TableHead>
                       <TableHead>Shift Leader</TableHead>
                       <TableHead>Phone</TableHead>
-                      <TableHead>Email</TableHead>
                       <TableHead>Hire Date</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -4528,7 +4527,6 @@ export default function AdminPanel() {
                             )}
                           </TableCell>
                         <TableCell>{employee.phone || '-'}</TableCell>
-                        <TableCell>{employee.email || '-'}</TableCell>
                         <TableCell>{new Date(employee.hireDate).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end space-x-2">
