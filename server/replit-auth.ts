@@ -110,6 +110,7 @@ export async function setupAuth(app: Express) {
 
   // Auth callback
   app.get("/api/callback", (req, res, next) => {
+    console.log(`[CALLBACK] Processing callback for hostname: ${req.hostname}`);
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/admin",
       failureRedirect: "/api/login",
