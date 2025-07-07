@@ -907,12 +907,12 @@ export default function AdminPanel() {
 
   // Calculate employee accounting data when dependencies change
   useEffect(() => {
-    if (!allEmployeeRecords.length || !reports.length) {
+    if (!allEmployeeRecords || !allEmployeeRecords.length || !reports || !reports.length) {
       setEmployeeAccountingData([]);
       return;
     }
 
-    const calculatedData = allEmployeeRecords.map(employee => {
+    const calculatedData = (allEmployeeRecords || []).map(employee => {
       const employeeReports = reports.filter((report: any) => {
         const reportDate = parseLocalDate(report.date);
         const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
@@ -4481,7 +4481,7 @@ export default function AdminPanel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {employeeRecords.map(employee => {
+                    {(employeeRecords || []).map(employee => {
                       // Check if employee has completed training with improved name matching
                       const hasCompletedTraining = trainingAcknowledgments?.some((ack: any) => {
                         const empName = employee.fullName.toLowerCase().trim();
@@ -4640,13 +4640,13 @@ export default function AdminPanel() {
                     {/* Total employees row */}
                     <TableRow className="bg-muted/50">
                       <TableCell colSpan={2} className="font-medium">
-                        Total Employees: {employeeRecords.length}
+                        Total Employees: {(employeeRecords || []).length}
                       </TableCell>
                       <TableCell colSpan={1}>
-                        Active: {employeeRecords.filter(e => e.isActive).length}
+                        Active: {(employeeRecords || []).filter(e => e.isActive).length}
                       </TableCell>
                       <TableCell colSpan={1}>
-                        Shift Leaders: {employeeRecords.filter(e => e.isShiftLeader).length}
+                        Shift Leaders: {(employeeRecords || []).filter(e => e.isShiftLeader).length}
                       </TableCell>
                       <TableCell colSpan={4}></TableCell>
                     </TableRow>
@@ -5339,7 +5339,7 @@ export default function AdminPanel() {
                   size="sm"
                   onClick={() => {
                     // Calculate employee accounting data with month filtering
-                    const employeeAccountingData = allEmployeeRecords.map(employee => {
+                    const employeeAccountingData = (allEmployeeRecords || []).map(employee => {
                       const employeeReports = reports.filter((report: any) => {
                         const reportDate = parseLocalDate(report.date);
                         const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
@@ -5486,6 +5486,10 @@ export default function AdminPanel() {
 
               {(() => {
                 // Calculate employee accounting data with month filtering
+                if (!allEmployeeRecords || !Array.isArray(allEmployeeRecords)) {
+                  return <div className="text-center py-8 text-gray-500">Loading employee data...</div>;
+                }
+                
                 const employeeAccountingData = allEmployeeRecords.map(employee => {
                   const employeeReports = reports.filter((report: any) => {
                     // Apply month filter first - use timezone-safe date parsing

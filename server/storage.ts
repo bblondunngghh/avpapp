@@ -28,7 +28,7 @@ export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  createUser(user: any): Promise<User>;
   
   // Employee methods
   getEmployees(): Promise<Employee[]>;
@@ -127,7 +127,7 @@ export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
     try {
-      const [user] = await db.select().from(users).where(eq(users.id, id));
+      const [user] = await db.select().from(users).where(eq(users.id, String(id)));
       return user || undefined;
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -137,7 +137,7 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     try {
-      const [user] = await db.select().from(users).where(eq(users.username, username));
+      const [user] = await db.select().from(users).where(eq(users.id, username));
       return user || undefined;
     } catch (error) {
       console.error("Error fetching user by username:", error);
@@ -145,7 +145,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async createUser(user: InsertUser): Promise<User> {
+  async createUser(user: any): Promise<User> {
     try {
       const [newUser] = await db.insert(users).values(user).returning();
       return newUser;
@@ -225,7 +225,15 @@ export class DatabaseStorage implements IStorage {
 
   async createEmployee(employeeData: InsertEmployee): Promise<Employee> {
     try {
-      const [employee] = await db.insert(employees).values(employeeData).returning();
+      // Convert string dates to Date objects
+      const processedData = {
+        ...employeeData,
+        hireDate: employeeData.hireDate ? new Date(employeeData.hireDate) : new Date(),
+        terminationDate: employeeData.terminationDate ? new Date(employeeData.terminationDate) : null,
+        dateOfBirth: employeeData.dateOfBirth ? new Date(employeeData.dateOfBirth) : null
+      };
+      
+      const [employee] = await db.insert(employees).values(processedData).returning();
       return employee;
     } catch (error) {
       console.error("Error creating employee:", error);
@@ -235,9 +243,18 @@ export class DatabaseStorage implements IStorage {
 
   async updateEmployee(id: number, employeeData: UpdateEmployee): Promise<Employee | undefined> {
     try {
+      // Convert string dates to Date objects
+      const processedData = {
+        ...employeeData,
+        updatedAt: new Date(),
+        hireDate: employeeData.hireDate ? new Date(employeeData.hireDate) : undefined,
+        terminationDate: employeeData.terminationDate ? new Date(employeeData.terminationDate) : undefined,
+        dateOfBirth: employeeData.dateOfBirth ? new Date(employeeData.dateOfBirth) : undefined
+      };
+      
       const [updatedEmployee] = await db
         .update(employees)
-        .set(employeeData)
+        .set(processedData)
         .where(eq(employees.id, id))
         .returning();
       return updatedEmployee || undefined;
@@ -431,9 +448,7 @@ export class DatabaseStorage implements IStorage {
   async createShiftReport(reportData: InsertShiftReport): Promise<ShiftReport> {
     try {
       const [report] = await db.insert(shiftReports).values({
-        ...reportData,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        ...reportData
       }).returning();
       return report;
     } catch (error) {
@@ -448,7 +463,8 @@ export class DatabaseStorage implements IStorage {
         .update(shiftReports)
         .set({
           ...reportData,
-          updatedAt: new Date()
+          updatedAt: new Date(),
+          employees: typeof reportData.employees === 'string' ? reportData.employees : JSON.stringify(reportData.employees)
         })
         .where(eq(shiftReports.id, id))
         .returning();
