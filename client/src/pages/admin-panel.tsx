@@ -563,14 +563,7 @@ export default function AdminPanel() {
     "2025-05": 19431
   } as Record<string, number>), []);
   
-  // Partner pay history data for table display
-  const [partnerPaymentHistory, setPartnerPaymentHistory] = useState<Array<{
-    month: string;
-    brandon: number;
-    ryan: number;
-    dave: number;
-    total: number;
-  }>>([]);
+
 
   // Employee accounting month filter - default to current month
   const [selectedAccountingMonth, setSelectedAccountingMonth] = useState<string>(() => {
@@ -739,9 +732,7 @@ export default function AdminPanel() {
       if (savedExpensesFromStorage) {
         setSavedExpenses(JSON.parse(savedExpensesFromStorage));
       }
-      
-      // Initialize empty partner payment history to prevent errors
-      setPartnerPaymentHistory([]);
+
     } catch (error) {
       console.error("Error loading saved expenses:", error);
     }
@@ -3602,107 +3593,9 @@ export default function AdminPanel() {
                           </div>
                         </div>
                       </div>
-                      
-                      <div>
-                        <h4 className="text-md font-medium mb-3 text-gray-700">Partner Distribution</h4>
-                        
-                        <div className="space-y-4">
-                          {/* Fixed Partner Shares */}
-                          <div className="border border-blue-100 rounded-md p-3 bg-blue-50">
-                            <p className="mb-2 text-sm">Fixed Partner Shares:</p>
-                            <ul className="space-y-1">
-                              <li className="flex justify-between items-center">
-                                <span>Brandon:</span> 
-                                <span className="font-medium">50%</span>
-                              </li>
-                              <li className="flex justify-between items-center">
-                                <span>Ryan:</span> 
-                                <span className="font-medium">40%</span>
-                              </li>
-                              <li className="flex justify-between items-center">
-                                <span>Dave:</span> 
-                                <span className="font-medium">10%</span>
-                              </li>
-                            </ul>
-                          </div>
-                          
-                          {/* Calculated Distributions */}
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-blue-800">Brandon (50%)</Label>
-                              <div className="flex h-10 w-full items-center rounded-md border border-blue-300 bg-blue-50 px-3 font-medium">
-                                ${((monthlyRevenue - monthlyExpenses) * 0.5).toFixed(2)}
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <Label className="text-indigo-800">Ryan (40%)</Label>
-                              <div className="flex h-10 w-full items-center rounded-md border border-indigo-300 bg-indigo-50 px-3 font-medium">
-                                ${((monthlyRevenue - monthlyExpenses) * 0.4).toFixed(2)}
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <Label className="text-blue-900">Dave (10%)</Label>
-                              <div className="flex h-10 w-full items-center rounded-md border border-blue-400 bg-blue-100 px-3 font-medium text-blue-900">
-                                ${((monthlyRevenue - monthlyExpenses) * 0.1).toFixed(2)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+
                     </div>
-                    
-                    {/* Partner Payment Distribution History Table */}
-                    <div className="mt-8 border border-gray-200 rounded-lg p-4 bg-white">
-                      <h3 className="text-lg font-semibold mb-4">Partner Payment Distribution History</h3>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Month</TableHead>
-                            <TableHead className="text-blue-800 text-center">Brandon (50%)</TableHead>
-                            <TableHead className="text-indigo-800 text-center">Ryan (40%)</TableHead>
-                            <TableHead className="text-teal-800 text-center">Dave (10%)</TableHead>
-                            <TableHead className="text-right">Total After Expenses</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {partnerPaymentHistory.map((entry, index) => (
-                            <TableRow key={index}>
-                              <TableCell className="font-medium">{entry.month}</TableCell>
-                              <TableCell className="text-blue-800 font-medium text-center">${entry.brandon.toFixed(2)}</TableCell>
-                              <TableCell className="text-indigo-800 font-medium text-center">${entry.ryan.toFixed(2)}</TableCell>
-                              <TableCell className="text-teal-800 font-medium text-center">${entry.dave.toFixed(2)}</TableCell>
-                              <TableCell className="text-right font-semibold">${entry.total.toFixed(2)}</TableCell>
-                            </TableRow>
-                          ))}
-                          {partnerPaymentHistory.length === 0 && (
-                            <TableRow>
-                              <TableCell colSpan={5} className="text-center text-gray-500">
-                                No partner payment history available. Select a month and add expenses to generate history.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                          {partnerPaymentHistory.length > 0 && (
-                            <TableRow className="bg-muted/50 font-semibold border-t-2">
-                              <TableCell className="font-bold">TOTALS</TableCell>
-                              <TableCell className="text-blue-800 font-bold text-center">
-                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.brandon, 0).toFixed(2)}
-                              </TableCell>
-                              <TableCell className="text-indigo-800 font-bold text-center">
-                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.ryan, 0).toFixed(2)}
-                              </TableCell>
-                              <TableCell className="text-teal-800 font-bold text-center">
-                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.dave, 0).toFixed(2)}
-                              </TableCell>
-                              <TableCell className="text-right font-bold">
-                                ${partnerPaymentHistory.reduce((sum, entry) => sum + entry.total, 0).toFixed(2)}
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
+
                   </div>
                 
                   {/* Detailed Performance Table */}
