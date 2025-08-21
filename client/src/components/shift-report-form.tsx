@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { insertShiftReportSchema, type Employee, type Location, type EmployeeWithCashPaid } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, getQueryFn } from "@/lib/queryClient";
 // import notesTasksIcon from "@assets/NOTES TASKS_1750779398802.png";
 // import sendEmailIcon from "@assets/SEND EMAIL_1750779398746.png";
 
@@ -54,7 +54,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
 
   // Fetch employees for payroll calculations
   const { data: employees = [] } = useQuery<Employee[]>({
-    queryKey: ["/api/employees"]
+    queryKey: ["/api/employees"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
   // Fetch existing report if editing

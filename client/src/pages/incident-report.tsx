@@ -14,7 +14,7 @@ import { Camera, CarFront, ChevronLeft, Plus, Trash2, Upload, X } from "lucide-r
 import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate.png";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Employee } from "@shared/schema";
 
@@ -56,7 +56,8 @@ export default function IncidentReport() {
   
   // Fetch employees for the dropdown
   const { data: employees = [] } = useQuery<Employee[]>({
-    queryKey: ["/api/employees"]
+    queryKey: ["/api/employees"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
   
   // Initialize form
