@@ -301,8 +301,8 @@ input[type="date"].paperform-input {
   --input: 214.3 31.8% 91.4%;
   --primary: 210 100% 50%; /* Vibrant Blue */
   --primary-foreground: 210 40% 98%;
-  --secondary: 210 100% 85%; /* Light Blue accent */
-  --secondary-foreground: 210 40% 20%;
+  --secondary: 210 100% 35%; /* Dark Blue accent */
+  --secondary-foreground: 210 40% 98%;
   --accent: 200 98% 61%; /* Sky blue accent */
   --accent-foreground: 210 40% 98%;
   --destructive: 0 84% 60%;
@@ -341,7 +341,7 @@ input[type="date"].paperform-input {
   --input: 240 4% 16%;
   --primary: 243 75% 59%; /* Indigo - slightly brighter */
   --primary-foreground: 213 31% 91%;
-  --secondary: 210 100% 25%; /* Dark Blue accent */
+  --secondary: 210 100% 20%; /* Darker Blue accent */
   --secondary-foreground: 210 40% 95%;
   --accent: 200 98% 61%; /* Sky blue accent */
   --accent-foreground: 213 31% 91%;

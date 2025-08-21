@@ -2455,8 +2455,8 @@ export default function AdminPanel() {
                       <h3 className="text-blue-700 dark:text-blue-400 font-medium text-sm mb-1">Total Reports</h3>
                       <p className="text-2xl font-bold">{reports.length}</p>
                     </div>
-                    <div className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 border p-4 rounded-lg">
-                      <h3 className="text-blue-700 dark:text-blue-400 font-medium text-sm mb-1">Total Cars</h3>
+                    <div className="bg-blue-100 dark:bg-blue-950/30 border-blue-300 dark:border-blue-900 border p-4 rounded-lg">
+                      <h3 className="text-blue-800 dark:text-blue-300 font-medium text-sm mb-1">Total Cars</h3>
                       <p className="text-2xl font-bold">
                         {reports.reduce((sum, report) => sum + report.totalCars, 0)}
                       </p>
@@ -2852,7 +2852,7 @@ export default function AdminPanel() {
                       </div>
                       <div className="bg-white p-3 rounded-md border border-blue-100">
                         <div className="text-sm font-medium text-gray-600">Total Cash Sales</div>
-                        <div className="text-2xl font-bold text-blue-600">${totals.totalCash.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-blue-800">${totals.totalCash.toLocaleString()}</div>
                       </div>
                       <div className="bg-white p-3 rounded-md border border-blue-100">
                         <div className="text-sm font-medium text-gray-600">Total Credit Sales</div>
@@ -3404,7 +3404,7 @@ export default function AdminPanel() {
                                     // Save button - only shown for new expenses
                                     (<Button 
                                       size="sm" 
-                                      className="bg-blue-600 hover:bg-blue-700"
+                                      className="bg-blue-800 hover:bg-blue-900"
                                       onClick={() => {
                                         if (!currentMonth) return;
                                         
@@ -3524,7 +3524,7 @@ export default function AdminPanel() {
                                   )}
                                   
                                   {savedExpenses[currentMonth] !== undefined && !isEditingExpenses && (
-                                    <div className="text-sm self-center text-blue-600 ml-2">
+                                    <div className="text-sm self-center text-blue-800 ml-2">
                                       ✓ Expenses saved and locked
                                     </div>
                                   )}
@@ -3595,7 +3595,7 @@ export default function AdminPanel() {
                             
                             <div>
                               <Label htmlFor="distributable-income">Distributable Income</Label>
-                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-blue-50 px-3 font-medium text-blue-800">
+                              <div className="flex h-10 w-full items-center rounded-md border border-input bg-blue-100 px-3 font-medium text-blue-900">
                                 ${(monthlyRevenue - monthlyExpenses).toFixed(2)}
                               </div>
                             </div>
@@ -3643,8 +3643,8 @@ export default function AdminPanel() {
                             </div>
                             
                             <div>
-                              <Label className="text-blue-800">Dave (10%)</Label>
-                              <div className="flex h-10 w-full items-center rounded-md border border-blue-300 bg-blue-50 px-3 font-medium">
+                              <Label className="text-blue-900">Dave (10%)</Label>
+                              <div className="flex h-10 w-full items-center rounded-md border border-blue-400 bg-blue-100 px-3 font-medium text-blue-900">
                                 ${((monthlyRevenue - monthlyExpenses) * 0.1).toFixed(2)}
                               </div>
                             </div>
@@ -5717,7 +5717,7 @@ export default function AdminPanel() {
                             </div>
                             <div>
                               <p className="text-sm text-gray-500">Total Money Owed to Employees</p>
-                              <h3 className="text-2xl font-bold text-blue-700">
+                              <h3 className="text-2xl font-bold text-blue-800">
                                 ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
                               </h3>
                             </div>
@@ -5869,15 +5869,15 @@ export default function AdminPanel() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="border-blue-200 bg-blue-50">
+                      <Card className="border-blue-300 bg-blue-100">
                         <CardContent className="pt-4">
                           <div className="flex items-center gap-3">
-                            <div className="bg-blue-100 p-2 rounded-full">
-                              <Clock className="h-4 w-4 text-blue-600" />
+                            <div className="bg-blue-200 p-2 rounded-full">
+                              <Clock className="h-4 w-4 text-blue-800" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-blue-800">Total Employees</p>
-                              <p className="text-2xl font-bold text-blue-900">{weeklyData.length}</p>
+                              <p className="text-sm font-medium text-blue-900">Total Employees</p>
+                              <p className="text-2xl font-bold text-blue-950">{weeklyData.length}</p>
                             </div>
                           </div>
                         </CardContent>
@@ -5937,7 +5937,7 @@ export default function AdminPanel() {
                                     </span>
                                   )}
                                   {empData.status === 'safe' && (
-                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                    <span className="inline-flex items-center rounded-full bg-blue-200 px-2.5 py-0.5 text-xs font-medium text-blue-900">
                                       Safe
                                     </span>
                                   )}
@@ -6549,7 +6549,7 @@ export default function AdminPanel() {
                               <TableCell className="text-center">
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                   location.active 
-                                    ? 'bg-blue-100 text-blue-800' 
+                                    ? 'bg-blue-200 text-blue-900' 
                                     : 'bg-red-100 text-red-800'
                                 }`}>
                                   {location.active ? 'Active' : 'Inactive'}
@@ -6843,11 +6843,11 @@ export default function AdminPanel() {
                         <TableCell className="text-center">{shift.hours}</TableCell>
                         <TableCell className="text-center">{shift.hoursPercent}</TableCell>
                         <TableCell className="text-center text-blue-600">${shift.commission}</TableCell>
-                        <TableCell className="text-center text-blue-600">${shift.tips}</TableCell>
+                        <TableCell className="text-center text-blue-800">${shift.tips}</TableCell>
                         <TableCell className="text-center font-medium">${shift.earnings}</TableCell>
-                        <TableCell className="text-center text-blue-600">${shift.moneyOwed}</TableCell>
+                        <TableCell className="text-center text-blue-800">${shift.moneyOwed}</TableCell>
                         <TableCell className="text-center">${shift.tax}</TableCell>
-                        <TableCell className="text-center text-blue-600">${shift.cashPaid}</TableCell>
+                        <TableCell className="text-center text-blue-800">${shift.cashPaid}</TableCell>
                       </TableRow>
                     ))}
                     
@@ -6864,13 +6864,13 @@ export default function AdminPanel() {
                         <TableCell className="text-center text-blue-600">
                           ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.commission), 0).toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-blue-600">
+                        <TableCell className="text-center text-blue-800">
                           ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.tips), 0).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center font-medium">
                           ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.earnings), 0).toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-blue-600">
+                        <TableCell className="text-center text-blue-800">
                           ${selectedEmployeeShifts.shifts.reduce((sum: number, shift: any) => sum + Number(shift.moneyOwed), 0).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center">
