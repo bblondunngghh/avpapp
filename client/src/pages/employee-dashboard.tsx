@@ -585,52 +585,20 @@ export default function EmployeeDashboard() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-indigo-50 p-4 rounded-md border border-indigo-100">
-                      <div className="text-sm font-medium mb-2">Commission Breakdown</div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Total Commission:</span>
-                          <span>${paySummary.totalCommission.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span>Total Tips:</span>
-                          <span>${paySummary.totalTips.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm font-bold pt-1 border-t border-indigo-200">
-                          <span>Total Earnings:</span>
-                          <span>${paySummary.totalEarnings.toFixed(2)}</span>
-                        </div>
+                  <div className="bg-indigo-50 p-4 rounded-md border border-indigo-100">
+                    <div className="text-sm font-medium mb-2">Commission Breakdown</div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Total Commission:</span>
+                        <span>${paySummary.totalCommission.toFixed(2)}</span>
                       </div>
-                    </div>
-                    
-                    <div className="bg-blue-50 p-4 rounded-md border border-blue-100">
-                      <div className="text-sm font-medium mb-2">Tax Obligations</div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <div className="flex items-center gap-1">
-                            <span>Estimated Taxes (22%):</span>
-                          </div>
-                          <span>${paySummary.totalTax.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <div>
-                            <span>Additional Tax Payments:</span>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              Cash payments made to cover tax obligations
-                            </p>
-                          </div>
-                          <span>${paySummary.totalAdditionalTaxPayments.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm font-bold pt-1 border-t border-blue-200">
-                          <div>
-                            <span>Net Tax Obligation:</span>
-                            <p className="text-xs text-gray-500 mt-0.5 font-normal">
-                              Final tax amount after subtracting money owed and additional tax payments
-                            </p>
-                          </div>
-                          <span>${Math.max(0, paySummary.totalTax - paySummary.totalMoneyOwed - paySummary.totalAdditionalTaxPayments).toFixed(2)}</span>
-                        </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Total Tips:</span>
+                        <span>${paySummary.totalTips.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold pt-1 border-t border-indigo-200">
+                        <span>Total Earnings:</span>
+                        <span>${paySummary.totalEarnings.toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
