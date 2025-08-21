@@ -2304,9 +2304,9 @@ export default function AdminPanel() {
           <Card>
             <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <CardTitle>Shift Reports</CardTitle>
+                <CardTitle>Sales and Car Volume Trends</CardTitle>
                 <CardDescription>
-                  View all shift reports across all locations
+                  Sales performance trends across the year
                 </CardDescription>
               </div>
               <div className="flex flex-wrap items-end gap-4">
@@ -2416,8 +2416,8 @@ export default function AdminPanel() {
                   
                   {/* Monthly Sales Area Chart */}
                   <div className="border rounded-lg p-4">
-                    <h3 className="text-lg font-medium mb-2">Monthly Sales Performance</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Sales performance trends across the year</p>
+                    <h3 className="text-lg font-medium mb-2">Monthly Performance</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Detailed monthly breakdown</p>
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
