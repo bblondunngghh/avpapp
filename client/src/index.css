@@ -301,8 +301,8 @@ input[type="date"].paperform-input {
   --input: 214.3 31.8% 91.4%;
   --primary: 210 100% 50%; /* Vibrant Blue */
   --primary-foreground: 210 40% 98%;
-  --secondary: 174 84% 32%; /* Teal accent */
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 210 100% 85%; /* Light Blue accent */
+  --secondary-foreground: 210 40% 20%;
   --accent: 200 98% 61%; /* Sky blue accent */
   --accent-foreground: 210 40% 98%;
   --destructive: 0 84% 60%;
@@ -312,7 +312,7 @@ input[type="date"].paperform-input {
   
   /* Chart colors */
   --chart-1: 210 100% 50%; /* Vibrant Blue */
-  --chart-2: 174 84% 32%; /* Teal */
+  --chart-2: 220 100% 60%; /* Light Blue */
   --chart-3: 200 98% 61%; /* Sky Blue */
   --chart-4: 335 78% 60%; /* Pink */
   --chart-5: 32 95% 44%;  /* Orange */
@@ -322,7 +322,7 @@ input[type="date"].paperform-input {
   --sidebar-foreground: 0 0% 100%;
   --sidebar-primary: 0 0% 100%;
   --sidebar-primary-foreground: 243 75% 59%;
-  --sidebar-accent: 174 84% 32%;
+  --sidebar-accent: 210 100% 50%;
   --sidebar-accent-foreground: 0 0% 100%;
   --sidebar-border: 243 65% 69%;
   --sidebar-ring: 243 65% 69%;
@@ -341,8 +341,8 @@ input[type="date"].paperform-input {
   --input: 240 4% 16%;
   --primary: 243 75% 59%; /* Indigo - slightly brighter */
   --primary-foreground: 213 31% 91%;
-  --secondary: 174 84% 32%; /* Teal accent */
-  --secondary-foreground: 213 31% 91%;
+  --secondary: 210 100% 25%; /* Dark Blue accent */
+  --secondary-foreground: 210 40% 95%;
   --accent: 200 98% 61%; /* Sky blue accent */
   --accent-foreground: 213 31% 91%;
   --destructive: 0 84% 60%;
@@ -351,7 +351,7 @@ input[type="date"].paperform-input {
   
   /* Chart colors - Slightly adjusted for dark mode */
   --chart-1: 243 75% 69%; /* Brighter Indigo */
-  --chart-2: 174 84% 42%; /* Brighter Teal */
+  --chart-2: 220 100% 70%; /* Brighter Light Blue */
   --chart-3: 262 83% 68%; /* Brighter Purple */
   --chart-4: 335 78% 70%; /* Brighter Pink */
   --chart-5: 32 95% 54%;  /* Brighter Orange */
@@ -361,7 +361,7 @@ input[type="date"].paperform-input {
   --sidebar-foreground: 213 31% 91%;
   --sidebar-primary: 213 31% 91%;
   --sidebar-primary-foreground: 240 21% 12%;
-  --sidebar-accent: 174 84% 32%;
+  --sidebar-accent: 210 100% 50%;
   --sidebar-accent-foreground: 213 31% 91%;
   --sidebar-border: 240 21% 22%;
   --sidebar-ring: 240 21% 22%;
