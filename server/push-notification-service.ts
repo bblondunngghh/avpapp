@@ -1,48 +1,19 @@
 import webpush from 'web-push';
-import { getEnvironmentConfig, validateVapidConfig } from './environment-config';
 
 // Push Notification Service using Web Push API
 export class PushNotificationService {
-  private vapidPublicKey: string;
-  private vapidPrivateKey: string;
-  private vapidEmail: string;
-  private isConfigured: boolean = false;
+  private vapidPublicKey = 'BOMF0n3H-ovZDtGNwzXAlHyyumUQvtwx2BPjpdEP_m1YKDqD5okIs3O6ETWXD8kyR0F1oDJ3gxriCrj6Ozlh84Q';
+  private vapidPrivateKey = 'hssg3ghAVbZC23s954PvM3ll4TjkDNOjZSPITcCUeuk';
+  private vapidEmail = 'brandon@accessvaletparking.com';
 
   constructor() {
-    this.initializeVapidKeys();
-  }
-
-  private initializeVapidKeys() {
-    try {
-      const envConfig = getEnvironmentConfig();
-      
-      // Validate VAPID configuration
-      if (!validateVapidConfig(envConfig)) {
-        console.log('[PUSH] Push notification service disabled - invalid VAPID configuration');
-        return;
-      }
-
-      this.vapidPublicKey = envConfig.vapidPublicKey;
-      this.vapidPrivateKey = envConfig.vapidPrivateKey;
-      this.vapidEmail = envConfig.vapidEmail;
-
-      // Configure VAPID details for web-push
-      webpush.setVapidDetails(
-        `mailto:${this.vapidEmail}`,
-        this.vapidPublicKey,
-        this.vapidPrivateKey
-      );
-
-      this.isConfigured = true;
-      console.log('[PUSH] Web push service initialized with VAPID keys');
-    } catch (error) {
-      console.error('[PUSH] Failed to initialize push notification service:', error);
-      console.log('[PUSH] Push notifications disabled');
-    }
-  }
-
-  public getVapidPublicKey(): string | null {
-    return this.isConfigured ? this.vapidPublicKey : null;
+    // Configure VAPID details for web-push
+    webpush.setVapidDetails(
+      `mailto:${this.vapidEmail}`,
+      this.vapidPublicKey,
+      this.vapidPrivateKey
+    );
+    console.log('[PUSH] Web push service initialized with VAPID keys');
   }
 
   public async sendHelpRequestNotification(

@@ -10,7 +10,6 @@ import deleteIncompleteIcon from "@assets/Delete-1--Streamline-Ultimate.png";
 import deleteIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import newBinIcon from "@assets/Bin-1--Streamline-Ultimate_1749748616601.png";
 import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
-import sendEmailIcon from "@assets/Send-Email-1--Streamline-Ultimate.png";
 import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
@@ -467,7 +466,6 @@ export default function AdminPanel() {
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [selectedWeekOffset, setSelectedWeekOffset] = useState(0); // 0 = current week, 1 = last week, etc.
-  const [isEmailingReport, setIsEmailingReport] = useState(false);
   
   // Initial setup - check authentication and adapt UI for mobile
   useEffect(() => {
@@ -907,12 +905,12 @@ export default function AdminPanel() {
 
   // Calculate employee accounting data when dependencies change
   useEffect(() => {
-    if (!allEmployeeRecords || !allEmployeeRecords.length || !reports || !reports.length) {
+    if (!allEmployeeRecords.length || !reports.length) {
       setEmployeeAccountingData([]);
       return;
     }
 
-    const calculatedData = (allEmployeeRecords || []).map(employee => {
+    const calculatedData = allEmployeeRecords.map(employee => {
       const employeeReports = reports.filter((report: any) => {
         const reportDate = parseLocalDate(report.date);
         const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
@@ -4419,49 +4417,12 @@ export default function AdminPanel() {
                   />
                   Add Employee
                 </Button>
-                
-                <Button 
-                  onClick={async () => {
-                    setIsEmailingReport(true);
-                    try {
-                      const response = await fetch('/api/email-all-employees-report', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                      });
-                      
-                      const result = await response.json();
-                      
-                      if (response.ok) {
-                        alert(result.message);
-                      } else {
-                        alert(`Failed to send email report: ${result.message}`);
-                      }
-                    } catch (error) {
-                      console.error('Error sending email report:', error);
-                      alert('Failed to send email report. Please try again.');
-                    } finally {
-                      setIsEmailingReport(false);
-                    }
-                  }}
-                  disabled={isEmailingReport}
-                  className="flex items-center gap-1"
-                  variant="outline"
-                >
-                  <img 
-                    src={sendEmailIcon} 
-                    alt="Email" 
-                    className="w-4 h-4"
-                  />
-                  {isEmailingReport ? 'Sending...' : 'Email 2025 Report'}
-                </Button>
               </div>
             </CardHeader>
             <CardContent>
               {isLoadingEmployees ? (
                 <div className="text-center py-8">Loading employees...</div>
-              ) : !employeeRecords || employeeRecords.length === 0 ? (
+              ) : employeeRecords.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   No employees found. Add an employee to get started.
                 </div>
@@ -4481,7 +4442,7 @@ export default function AdminPanel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {(employeeRecords || []).map(employee => {
+                    {employeeRecords.map(employee => {
                       // Check if employee has completed training with improved name matching
                       const hasCompletedTraining = trainingAcknowledgments?.some((ack: any) => {
                         const empName = employee.fullName.toLowerCase().trim();
@@ -4640,13 +4601,13 @@ export default function AdminPanel() {
                     {/* Total employees row */}
                     <TableRow className="bg-muted/50">
                       <TableCell colSpan={2} className="font-medium">
-                        Total Employees: {(employeeRecords || []).length}
+                        Total Employees: {employeeRecords.length}
                       </TableCell>
                       <TableCell colSpan={1}>
-                        Active: {(employeeRecords || []).filter(e => e.isActive).length}
+                        Active: {employeeRecords.filter(e => e.isActive).length}
                       </TableCell>
                       <TableCell colSpan={1}>
-                        Shift Leaders: {(employeeRecords || []).filter(e => e.isShiftLeader).length}
+                        Shift Leaders: {employeeRecords.filter(e => e.isShiftLeader).length}
                       </TableCell>
                       <TableCell colSpan={4}></TableCell>
                     </TableRow>
@@ -5339,7 +5300,7 @@ export default function AdminPanel() {
                   size="sm"
                   onClick={() => {
                     // Calculate employee accounting data with month filtering
-                    const employeeAccountingData = (allEmployeeRecords || []).map(employee => {
+                    const employeeAccountingData = allEmployeeRecords.map(employee => {
                       const employeeReports = reports.filter((report: any) => {
                         const reportDate = parseLocalDate(report.date);
                         const reportMonth = `${reportDate.getFullYear()}-${String(reportDate.getMonth() + 1).padStart(2, '0')}`;
@@ -5486,10 +5447,6 @@ export default function AdminPanel() {
 
               {(() => {
                 // Calculate employee accounting data with month filtering
-                if (!allEmployeeRecords || !Array.isArray(allEmployeeRecords)) {
-                  return <div className="text-center py-8 text-gray-500">Loading employee data...</div>;
-                }
-                
                 const employeeAccountingData = allEmployeeRecords.map(employee => {
                   const employeeReports = reports.filter((report: any) => {
                     // Apply month filter first - use timezone-safe date parsing

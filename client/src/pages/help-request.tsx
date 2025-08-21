@@ -19,7 +19,7 @@ import rabbitRunningIcon from "@/assets/rabbit-running-icon.png";
 import athleticsTeamRunningIcon from "@/assets/athletics-team-running-icon.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate_1751310836981.png";
 import taskListQuestionIcon from "@assets/Task-List-Question--Streamline-Ultimate_1751311056997.png";
-import { apiRequest, getQueryFn } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PushNotificationSetup } from "@/components/push-notification-setup";
 import { continuousNotificationService } from "@/lib/continuous-notification";
@@ -178,7 +178,6 @@ export default function HelpRequestPage() {
   // Fetch employees to get shift leaders for dropdown
   const { data: employees = [] } = useQuery<Employee[]>({
     queryKey: ["/api/employees"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
   // Check for new responses to show popup notifications

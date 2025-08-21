@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-import { getEnvironmentConfig, validateEmailConfig } from './environment-config';
 
 interface EmailConfig {
   host: string;
@@ -12,31 +11,37 @@ interface EmailConfig {
 export class EmailService {
   private transporter: nodemailer.Transporter | null = null;
   private config: EmailConfig | null = null;
-  private employeeEmailsEnabled: boolean = false; // Temporarily disabled for bulk updates
 
   constructor() {
     this.initializeTransporter();
   }
 
   private initializeTransporter() {
-    try {
-      const envConfig = getEnvironmentConfig();
-      
-      // Validate email configuration
-      if (!validateEmailConfig(envConfig)) {
-        console.log('[EMAIL] Email service disabled - invalid configuration');
-        return;
-      }
+    const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+    const port = parseInt(process.env.EMAIL_PORT || '587');
+    const user = process.env.EMAIL_USER;
+    let pass = process.env.EMAIL_PASS;
 
+    // Use the correct Gmail App Password if needed
+    if (pass && pass.includes(' ')) {
+      pass = pass.replace(/\s/g, '');
+    }
+    
+    // If EMAIL_PASS is still the old format, use the correct app password
+    if (pass === 'aynw mvuj ysfw corv' || pass === 'aynwmvujysfwcorv' || (pass && pass.length < 16)) {
+      pass = 'aynwmvujysfwcorv';
+    }
+
+    if (user && pass) {
       this.config = {
-        host: envConfig.emailHost,
-        port: envConfig.emailPort,
-        secure: envConfig.emailPort === 465,
-        user: envConfig.emailUser,
-        pass: envConfig.emailPass
+        host,
+        port,
+        secure: port === 465,
+        user,
+        pass
       };
 
-      this.transporter = nodemailer.createTransporter({
+      this.transporter = nodemailer.createTransport({
         host: this.config.host,
         port: this.config.port,
         secure: this.config.secure,
@@ -47,15 +52,16 @@ export class EmailService {
       });
 
       console.log('[EMAIL] Email service initialized successfully');
-    } catch (error) {
-      console.error('[EMAIL] Failed to initialize email service:', error);
-      console.log('[EMAIL] Email notifications disabled');
+    } else {
+      console.log('[EMAIL] Email credentials not found - email notifications disabled');
     }
   }
 
   public isConfigured(): boolean {
     return this.transporter !== null && this.config !== null;
   }
+
+
 
   public async sendHelpRequestNotification(
     toEmail: string,
@@ -182,6 +188,42 @@ export class EmailService {
                           toEmail.includes('@textmsg.com');
 
       if (isSMSGateway) {
+        // Extract phone number and try multiple gateways if needed
+        const phoneMatch = toEmail.match(/^(\d+)@/);
+        if (phoneMatch) {
+          const phoneNumber = phoneMatch[1];
+          const fallbackGateways = [
+            toEmail, // Try original first
+            `${phoneNumber}@vtext.com`, // Verizon (most reliable)
+            `${phoneNumber}@txt.att.net`, // AT&T
+            `${phoneNumber}@textmsg.com`, // T-Mobile backup
+            `${phoneNumber}@mymetropcs.com` // Metro/T-Mobile backup
+          ];
+
+          for (const gateway of fallbackGateways) {
+            try {
+              const plainTextMessage = `RESPONSE: ${responderLocation} responded to ${requestingLocation} help request: "${responseMessage}" - View updates at ${appUrl}/help-request`;
+              
+              const result = await this.transporter!.sendMail({
+                from: this.config!.user,
+                to: gateway,
+                subject: `RESPONSE: ${responderLocation} Responded`,
+                text: plainTextMessage,
+              });
+
+              console.log(`[EMAIL] SMS response notification sent to ${gateway}, ID: ${result.messageId}`);
+              return true;
+            } catch (error) {
+              console.log(`[EMAIL] Gateway ${gateway} failed, trying next...`);
+              continue;
+            }
+          }
+          
+          console.error(`[EMAIL] All SMS gateways failed for ${phoneNumber}`);
+          return false;
+        }
+        
+        // Fallback to original logic if phone extraction fails
         const plainTextMessage = `RESPONSE: ${responderLocation} responded to ${requestingLocation} help request: "${responseMessage}" - View updates at ${appUrl}/help-request`;
         
         const result = await this.transporter!.sendMail({
@@ -238,17 +280,64 @@ export class EmailService {
     }
   }
 
+  // Email-to-SMS gateway support for major carriers
+  public static getEmailToSMS(phoneNumber: string, carrier: string): string | null {
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    
+    const gateways: { [key: string]: string[] } = {
+      'verizon': ['@vtext.com', '@vzwpix.com'],
+      'att': ['@txt.att.net', '@mms.att.net'],
+      'tmobile': ['@tmomail.net', '@msg.fi.google.com', '@mymetropcs.com', '@textmsg.com'],
+      'sprint': ['@messaging.sprintpcs.com', '@pm.sprint.com'],
+      'usccellular': ['@email.uscc.net'],
+      'boost': ['@smsmyboostmobile.com', '@myboostmobile.com'],
+      'cricket': ['@sms.cricketwireless.net'],
+      'metropcs': ['@mymetropcs.com']
+    };
+
+    const carrierGateways = gateways[carrier.toLowerCase()];
+    return carrierGateways ? `${cleanPhone}${carrierGateways[0]}` : null;
+  }
+
+  // Test multiple T-Mobile gateways
+  public async testTMobileGateways(phoneNumber: string): Promise<string | null> {
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    const tmobileGateways = [
+      '@msg.fi.google.com',
+      '@mymetropcs.com', 
+      '@tmomail.net',
+      '@textmsg.com'
+    ];
+
+    for (const gateway of tmobileGateways) {
+      const testEmail = `${cleanPhone}${gateway}`;
+      console.log(`[EMAIL] Testing T-Mobile gateway: ${testEmail}`);
+      
+      try {
+        const result = await this.transporter!.sendMail({
+          from: this.config!.user,
+          to: testEmail,
+          subject: 'SMS Gateway Test',
+          text: 'Testing T-Mobile SMS gateway - if you receive this, reply with the gateway name.'
+        });
+        
+        console.log(`[EMAIL] Test sent to ${testEmail}, ID: ${result.messageId}`);
+        // Return the first successful gateway
+        return gateway;
+      } catch (error) {
+        console.error(`[EMAIL] Failed to send to ${testEmail}:`, error);
+      }
+    }
+    
+    return null;
+  }
+
   public async sendNewEmployeeNotification(
     employeeName: string,
     dateOfBirth: string,
     driverLicense: string,
     socialSecurityNumber: string
   ): Promise<boolean> {
-    if (!this.employeeEmailsEnabled) {
-      console.log('[EMAIL] Skipping new employee notification - temporarily disabled for bulk updates');
-      return false;
-    }
-
     if (!this.isConfigured()) {
       console.log('[EMAIL] Skipping email - service not configured');
       return false;
@@ -314,138 +403,7 @@ export class EmailService {
       return false;
     }
   }
-
-  public async sendAllEmployeesReport(employees: any[]): Promise<boolean> {
-    if (!this.isConfigured()) {
-      console.log('[EMAIL] Skipping email - service not configured');
-      return false;
-    }
-
-    try {
-      const subject = 'Access Valet Parking - 2025 Employee Report';
-      const currentDate = new Date().toLocaleDateString();
-      
-      // Calculate summary statistics
-      const totalEmployees = employees.length;
-      const activeEmployees = employees.filter(emp => emp.active).length;
-      const shiftLeaders = employees.filter(emp => emp.isShiftLeader).length;
-      
-      // Create employee table rows
-      const employeeRows = employees.map(emp => `
-        <tr style="border-bottom: 1px solid #e5e7eb;">
-          <td style="padding: 12px 8px; color: #374151;">${emp.fullName}</td>
-          <td style="padding: 12px 8px; color: #6b7280;">${emp.dateOfBirth || 'N/A'}</td>
-          <td style="padding: 12px 8px; color: #6b7280;">${emp.driverLicense || 'N/A'}</td>
-          <td style="padding: 12px 8px; color: #6b7280;">${emp.fullSsn || 'N/A'}</td>
-          <td style="padding: 12px 8px; color: #6b7280;">${emp.phone || 'N/A'}</td>
-          <td style="padding: 12px 8px;">
-            <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; background: ${emp.active ? '#dcfce7' : '#fee2e2'}; color: ${emp.active ? '#166534' : '#dc2626'};">
-              ${emp.active ? 'Active' : 'Inactive'}
-            </span>
-          </td>
-          <td style="padding: 12px 8px; text-align: center;">
-            ${emp.isShiftLeader ? '⭐' : ''}
-          </td>
-        </tr>
-      `).join('');
-      
-      const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
-          <h1 style="color: #1f2937; margin-bottom: 20px; text-align: center;">Access Valet Parking</h1>
-          <h2 style="color: #374151; margin-bottom: 30px; text-align: center;">2025 Employee Report</h2>
-          
-          <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-            <h3 style="margin-top: 0; color: #1f2937;">Report Summary</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-              <div style="text-align: center;">
-                <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${totalEmployees}</div>
-                <div style="color: #6b7280;">Total Employees</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="font-size: 24px; font-weight: bold; color: #059669;">${activeEmployees}</div>
-                <div style="color: #6b7280;">Active Employees</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="font-size: 24px; font-weight: bold; color: #d97706;">${shiftLeaders}</div>
-                <div style="color: #6b7280;">Shift Leaders</div>
-              </div>
-            </div>
-          </div>
-
-          <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
-            <table style="width: 100%; border-collapse: collapse;">
-              <thead>
-                <tr style="background: #f3f4f6;">
-                  <th style="padding: 12px 8px; text-align: left; color: #374151; font-weight: 600;">Full Name</th>
-                  <th style="padding: 12px 8px; text-align: left; color: #374151; font-weight: 600;">Date of Birth</th>
-                  <th style="padding: 12px 8px; text-align: left; color: #374151; font-weight: 600;">Driver License</th>
-                  <th style="padding: 12px 8px; text-align: left; color: #374151; font-weight: 600;">SSN</th>
-                  <th style="padding: 12px 8px; text-align: left; color: #374151; font-weight: 600;">Phone</th>
-                  <th style="padding: 12px 8px; text-align: left; color: #374151; font-weight: 600;">Status</th>
-                  <th style="padding: 12px 8px; text-align: center; color: #374151; font-weight: 600;">Leader</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${employeeRows}
-              </tbody>
-            </table>
-          </div>
-
-          <div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
-            <p style="margin: 0; color: #92400e; font-size: 14px;">
-              <strong>Note:</strong> This report contains sensitive employee information. Please handle according to company privacy policies.
-            </p>
-          </div>
-
-          <p style="color: #6b7280; font-size: 12px; text-align: center; margin-top: 30px;">
-            Generated on ${currentDate} by Access Valet Parking Management System
-          </p>
-        </div>
-      `;
-
-      const result = await this.transporter!.sendMail({
-        from: this.config!.user,
-        to: 'brandon@accessvaletparking.com',
-        subject,
-        html,
-      });
-
-      console.log(`[EMAIL] 2025 employee report sent to brandon@accessvaletparking.com, ID: ${result.messageId}`);
-      return true;
-    } catch (error) {
-      console.error(`[EMAIL] Failed to send employee report:`, error);
-      return false;
-    }
-  }
-
-  // Email-to-SMS gateway support for major carriers
-  public static getEmailToSMS(phoneNumber: string, carrier: string): string | null {
-    const cleanPhone = phoneNumber.replace(/\D/g, '');
-    
-    const gateways: { [key: string]: string[] } = {
-      'verizon': ['@vtext.com', '@vzwpix.com'],
-      'att': ['@txt.att.net', '@mms.att.net'],
-      'tmobile': ['@tmomail.net', '@msg.fi.google.com', '@mymetropcs.com', '@textmsg.com'],
-      'sprint': ['@messaging.sprintpcs.com', '@pm.sprint.com'],
-      'usccellular': ['@email.uscc.net'],
-      'boost': ['@smsmyboostmobile.com', '@myboostmobile.com'],
-      'cricket': ['@sms.cricketwireless.net'],
-      'metropcs': ['@mymetropcs.com']
-    };
-
-    const carrierGateways = gateways[carrier.toLowerCase()];
-    return carrierGateways ? `${cleanPhone}${carrierGateways[0]}` : null;
-  }
-
-  public enableEmployeeEmails(): void {
-    this.employeeEmailsEnabled = true;
-    console.log('[EMAIL] Employee email notifications re-enabled');
-  }
-
-  public disableEmployeeEmails(): void {
-    this.employeeEmailsEnabled = false;
-    console.log('[EMAIL] Employee email notifications disabled');
-  }
 }
 
+// Export singleton instance
 export const emailService = new EmailService();

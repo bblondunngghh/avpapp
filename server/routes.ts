@@ -5,9 +5,6 @@ import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
 import { pushNotificationService } from "./push-notification-service";
-import { securityService, type AuthenticatedRequest } from "./security";
-import { createCorsConfig } from "./cors-config";
-import { initializeEnvironment } from "./environment-config";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -233,57 +230,6 @@ async function syncCashPaymentsToTaxRecords(shiftReport: ShiftReport) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
-  // Initialize comprehensive environment configuration
-  initializeEnvironment();
-  
-  // Apply enhanced CORS security
-  const enhancedCors = createCorsConfig();
-  app.use(enhancedCors.middleware);
-  
-  // Apply comprehensive security headers
-  app.use(securityService.setSecurityHeaders);
-  
-  // Apply global rate limiting
-  app.use('/api', securityService.rateLimit(150, 900000)); // 150 requests per 15 minutes
-  
-  console.log(`[CORS] Enhanced security configured with multiple allowed origins`);
-  
-  // Enhanced security middleware for sensitive operations
-  const sensitiveOperationsGuard = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const origin = req.get('Origin');
-    const userAgent = req.get('User-Agent') || '';
-    
-    // Enhanced protection for employee data endpoints
-    if (req.path.includes('/employees') || req.path.includes('/employee-')) {
-      // Log employee data access attempts
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[SECURITY] ${req.method} ${req.path} from origin: ${origin || 'same-origin'}`);
-      }
-      
-      // Block obvious bots and scrapers (but allow legitimate tools in development)
-      const suspiciousPatterns = [
-        /googlebot/i, /bingbot/i, /slurp/i, /duckduckbot/i,
-        /baiduspider/i, /yandexbot/i, /facebookexternalhit/i,
-        /twitterbot/i, /linkedinbot/i, /whatsapp/i,
-        /crawler/i, /spider/i, /scraper/i
-      ];
-      
-      if (suspiciousPatterns.some(pattern => pattern.test(userAgent))) {
-        console.warn(`[SECURITY] Blocked bot access to employee data: ${userAgent}`);
-        return res.status(403).json({ 
-          error: 'Access denied', 
-          message: 'Automated access to employee data is not permitted',
-          code: 'BOT_ACCESS_DENIED'
-        });
-      }
-    }
-    
-    next();
-  };
-  
-  // Apply enhanced security to API routes
-  app.use('/api', sensitiveOperationsGuard);
   
   // Serve PDF templates
   // Serve PDF templates
@@ -896,99 +842,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Employee routes
   
-  // Get all employees (authentication required)
-  apiRouter.get('/employees', 
-    securityService.requireAuth,
-    securityService.protectSensitiveOperation,
-    async (req: AuthenticatedRequest, res) => {
-      try {
-        const employees = await storage.getEmployees();
-        res.json(employees);
-      } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch employees' });
-      }
+  // Get all employees
+  apiRouter.get('/employees', async (req, res) => {
+    try {
+      const employees = await storage.getEmployees();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch employees' });
     }
-  );
+  });
 
-  // Get all employees (including inactive) for accounting purposes (admin only)
-  apiRouter.get('/employees/all', 
-    securityService.requireAdminAuth,
-    securityService.protectSensitiveOperation,
-    async (req: AuthenticatedRequest, res) => {
-      try {
-        const employees = await storage.getAllEmployees();
-        res.json(employees);
-      } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch all employees' });
-      }
+  // Get all employees (including inactive) for accounting purposes
+  apiRouter.get('/employees/all', async (req, res) => {
+    try {
+      const employees = await storage.getAllEmployees();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch all employees' });
     }
-  );
+  });
   
-  // Get active employees (authentication required)
-  apiRouter.get('/employees/active', 
-    securityService.requireAuth,
-    async (req: AuthenticatedRequest, res) => {
-      try {
-        const employees = await storage.getActiveEmployees();
-        res.json(employees);
-      } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch active employees' });
-      }
+  // Get active employees
+  apiRouter.get('/employees/active', async (req, res) => {
+    try {
+      const employees = await storage.getActiveEmployees();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch active employees' });
     }
-  );
+  });
   
-  // Get shift leaders (authentication required)
-  apiRouter.get('/employees/shift-leaders', 
-    securityService.requireAuth,
-    async (req: AuthenticatedRequest, res) => {
-      try {
-        const employees = await storage.getShiftLeaders();
-        res.json(employees);
-      } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch shift leaders' });
-      }
+  // Get shift leaders
+  apiRouter.get('/employees/shift-leaders', async (req, res) => {
+    try {
+      const employees = await storage.getShiftLeaders();
+      res.json(employees);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch shift leaders' });
     }
-  );
+  });
   
-  // Get employee by ID (authentication required)
-  apiRouter.get('/employees/:id', 
-    securityService.requireAuth,
-    securityService.protectSensitiveOperation,
-    async (req: AuthenticatedRequest, res) => {
-      try {
-        const id = parseInt(req.params.id);
-        if (isNaN(id)) {
-          return res.status(400).json({ message: 'Invalid employee ID' });
-        }
-        
-        const employee = await storage.getEmployee(id);
-        if (!employee) {
-          return res.status(404).json({ message: 'Employee not found' });
-        }
-        
-        res.json(employee);
-      } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch employee' });
+  // Get employee by ID
+  apiRouter.get('/employees/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid employee ID' });
       }
+      
+      const employee = await storage.getEmployee(id);
+      if (!employee) {
+        return res.status(404).json({ message: 'Employee not found' });
+      }
+      
+      res.json(employee);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch employee' });
     }
-  );
+  });
   
-  // Create a new employee (admin only)
-  apiRouter.post('/employees', 
-    securityService.requireAdminAuth,
-    securityService.protectSensitiveOperation,
-    async (req: AuthenticatedRequest, res) => {
+  // Create a new employee
+  apiRouter.post('/employees', async (req, res) => {
     try {
       console.log("POST /employees - Request Body:", req.body);
       
       const validatedData = insertEmployeeSchema.parse(req.body);
-      
-      // Store original sensitive data for email notifications (before hashing)
-      const originalSensitiveData = {
-        fullSsn: validatedData.fullSsn,
-        driversLicenseNumber: validatedData.driversLicenseNumber,
-        dateOfBirth: validatedData.dateOfBirth
-      };
       
       // Convert date strings to Date objects for database storage
       const employeeData = {
@@ -997,26 +915,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dateOfBirth: validatedData.dateOfBirth ? parseDateOfBirth(validatedData.dateOfBirth) : undefined
       };
       
-      // Hash sensitive PII data before storing in database
-      const secureEmployeeData = await SecurityService.sanitizeEmployeeData(employeeData);
-      console.log('[SECURITY] Sensitive data hashed for employee:', employeeData.fullName);
-      
       // Check if employee with this key already exists
-      const existingEmployee = await storage.getEmployeeByKey(secureEmployeeData.key);
+      const existingEmployee = await storage.getEmployeeByKey(employeeData.key);
       if (existingEmployee) {
         return res.status(400).json({ message: 'Employee with this key already exists' });
       }
       
-      const employee = await storage.createEmployee(secureEmployeeData as any);
-      console.log("Employee created with encrypted PII:", employee.fullName);
+      const employee = await storage.createEmployee(employeeData as any);
+      console.log("Employee created:", employee);
       
-      // Send email notification to accountant for QuickBooks entry using original (unhashed) data
+      // Send email notification to accountant for QuickBooks entry
       try {
-        const driversLicense = originalSensitiveData.driversLicenseNumber || '';
-        const socialSecurity = originalSensitiveData.fullSsn || '';
-        const dateOfBirth = originalSensitiveData.dateOfBirth || '';
+        const driversLicense = employee.driversLicenseNumber || employeeData.driversLicenseNumber || '';
+        const socialSecurity = employee.fullSsn || employeeData.fullSsn || '';
+        const dateOfBirth = employeeData.dateOfBirth ? employeeData.dateOfBirth.toLocaleDateString() : '';
         
-        console.log('[EMAIL] Employee data for notification (using original values):', {
+        console.log('[EMAIL] Employee data for notification:', {
           fullName: employee.fullName,
           dateOfBirth: dateOfBirth || 'Not provided',
           driversLicenseNumber: driversLicense || 'Not provided',
@@ -1061,11 +975,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Update an employee (admin only)
-  apiRouter.put('/employees/:id', 
-    securityService.requireAdminAuth,
-    securityService.protectSensitiveOperation,
-    async (req: AuthenticatedRequest, res) => {
+  // Update an employee
+  apiRouter.put('/employees/:id', async (req, res) => {
     try {
       console.log('PUT /employees/:id - ID:', req.params.id, 'Body:', req.body);
       
@@ -1076,23 +987,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const validatedData = updateEmployeeSchema.parse(req.body);
       
-      // Store original sensitive data for email notifications (before hashing)
-      const originalSensitiveData = {
-        fullSsn: validatedData.fullSsn,
-        driversLicenseNumber: validatedData.driversLicenseNumber,
-        dateOfBirth: validatedData.dateOfBirth
-      };
-      
       // Convert date strings to Date objects for database storage
       const updateData = {
         ...validatedData,
         hireDate: validatedData.hireDate ? new Date(validatedData.hireDate) : undefined,
         dateOfBirth: validatedData.dateOfBirth ? parseDateOfBirth(validatedData.dateOfBirth) : undefined
       } as any;
-      
-      // Hash sensitive PII data before storing in database
-      const secureUpdateData = await SecurityService.sanitizeEmployeeData(updateData);
-      console.log('[SECURITY] Sensitive data hashed for employee update:', validatedData.fullName || 'Unknown');
       
       // Check if employee exists
       const existingEmployee = await storage.getEmployee(id);
@@ -1108,21 +1008,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      const updatedEmployee = await storage.updateEmployee(id, secureUpdateData);
+      const updatedEmployee = await storage.updateEmployee(id, updateData);
       
-      // Check if this update completes the critical information needed for email notification using original data
+      // Check if this update completes the critical information needed for email notification
       try {
-        // Use original unhashed data for email notification
-        const driversLicense = originalSensitiveData.driversLicenseNumber || '';
-        const socialSecurity = originalSensitiveData.fullSsn || '';
-        const dateOfBirth = originalSensitiveData.dateOfBirth || '';
+        const driversLicense = updatedEmployee.driversLicenseNumber || '';
+        const socialSecurity = updatedEmployee.fullSsn || '';
+        const dateOfBirth = updatedEmployee.dateOfBirth ? updatedEmployee.dateOfBirth.toLocaleDateString() : '';
         
         // Check if critical information was just completed and if we should send email
         const wasIncomplete = !existingEmployee.driversLicenseNumber || !existingEmployee.fullSsn || !existingEmployee.dateOfBirth;
         const isNowComplete = driversLicense && socialSecurity && dateOfBirth;
         
         if (wasIncomplete && isNowComplete) {
-          console.log(`[EMAIL] Employee ${updatedEmployee.fullName} now has complete information - sending notification with original data`);
+          console.log(`[EMAIL] Employee ${updatedEmployee.fullName} now has complete information - sending notification`);
           
           const success = await emailService.sendNewEmployeeNotification(
             updatedEmployee.fullName,
@@ -2639,44 +2538,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[EMAIL] Error sending test employee email:', error);
       res.status(500).json({ message: 'Failed to send test email' });
-    }
-  });
-
-  // Email all employees report
-  apiRouter.post('/email-all-employees-report', async (req, res) => {
-    try {
-      console.log('[EMAIL] All employees report requested');
-      
-      // Get all employees from storage
-      const employees = await storage.getAllEmployees();
-      
-      // Filter for 2025 employees (hired in 2025 or currently active)
-      const currentYear = new Date().getFullYear();
-      const employees2025 = employees.filter(emp => {
-        const hireYear = emp.hireDate ? new Date(emp.hireDate).getFullYear() : null;
-        // Include if hired in 2025 or currently active
-        return hireYear === currentYear || emp.isActive;
-      });
-      
-      if (employees2025.length === 0) {
-        return res.status(400).json({ message: 'No employees found for 2025' });
-      }
-      
-      const success = await emailService.sendAllEmployeesReport(employees2025);
-
-      if (success) {
-        console.log(`[EMAIL] All employees report sent successfully (${employees2025.length} employees)`);
-        res.json({ 
-          success: true, 
-          message: `2025 employee report sent successfully to brandon@accessvaletparking.com (${employees2025.length} employees)` 
-        });
-      } else {
-        console.log('[EMAIL] Failed to send all employees report');
-        res.status(500).json({ success: false, message: 'Failed to send employee report' });
-      }
-    } catch (error) {
-      console.error('[EMAIL] Error sending all employees report:', error);
-      res.status(500).json({ message: 'Failed to send employee report' });
     }
   });
 
