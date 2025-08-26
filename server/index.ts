@@ -4,13 +4,19 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { BackupService } from "./backup";
 import path from "path";
+import fs from "fs";
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
-// Serve uploaded files statically
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+// Ensure uploads directory exists and serve uploaded files statically
+const uploadsDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  console.log('[STARTUP] Creating uploads directory:', uploadsDir);
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -43,7 +49,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
+  try {
+    console.log('[STARTUP] Starting server initialization...');
+    const server = await registerRoutes(app);
 
   app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -78,9 +86,17 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
+    console.log('[STARTUP] Setting up Vite development middleware...');
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    console.log('[STARTUP] Setting up static file serving...');
+    try {
+      serveStatic(app);
+      console.log('[STARTUP] Static file serving configured');
+    } catch (staticError) {
+      console.error('[STARTUP] Static file setup failed:', staticError);
+      // Continue anyway - the app can still serve API routes
+    }
   }
 
   // Serve the app on the configured port
@@ -89,6 +105,7 @@ app.use((req, res, next) => {
   const host = process.env.NODE_ENV === "development" ? "127.0.0.1" : "0.0.0.0";
   
   server.listen(port, host, () => {
+    console.log(`[STARTUP] ✅ Server successfully started on ${host}:${port}`);
     log(`serving on ${host}:${port}`);
     
     // Add global error handlers to prevent crashes
@@ -113,4 +130,10 @@ app.use((req, res, next) => {
       }
     }, 10000); // Wait 10 seconds for database to be ready
   });
+
+  } catch (startupError) {
+    console.error('[STARTUP] ❌ Critical startup error:', startupError);
+    console.error('[STARTUP] Stack trace:', startupError.stack);
+    process.exit(1);
+  }
 })();
