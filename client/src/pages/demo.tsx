@@ -16,7 +16,7 @@ import {
   CheckCircle,
   Star
 } from "lucide-react";
-import newLogoImage from "@assets/AVPLOGO PROPER3_1750779399227.png";
+import newLogoImage from "@assets/PROPER.png";
 import { getVersionDisplay } from "@/config/version";
 
 export default function Demo() {

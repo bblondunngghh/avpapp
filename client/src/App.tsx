@@ -34,7 +34,7 @@ import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 // import { AssistanceCenterPopup } from "@/components/assistance-center-popup";
 import { notificationSoundService } from "@/lib/notification-sound";
-import avpLogo from "@assets/AVPLOGO PROPER3_1750779399227.png";
+import avpLogo from "@assets/PROPER.png";
 
 function Router() {
   const [location, setLocation] = useLocation();
