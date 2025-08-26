@@ -3294,6 +3294,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Root health check endpoint for Railway deployment
+  app.get('/health', async (req, res) => {
+    try {
+      // Quick database connectivity test
+      await storage.getEmployees();
+      res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+    } catch (error) {
+      console.error('Root health check failed:', error);
+      res.status(503).json({ status: 'error', message: 'Database unavailable' });
+    }
+  });
+
   // Register API routes
   app.use('/api', apiRouter);
 
