@@ -1,7 +1,7 @@
 // Minimal test server for debugging Railway deployment
-const http = require('http');
+import http from 'http';
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000; // Default to 5000 as Railway might expect this
 
 console.log('Starting minimal server...');
 console.log('PORT env var:', process.env.PORT);

@@ -101,7 +101,7 @@ app.use((req, res, next) => {
 
   // Serve the app on the configured port
   // this serves both the API and the client.
-  const port = parseInt(process.env.PORT || "3000"); // Railway uses PORT env var
+  const port = parseInt(process.env.PORT || "5000"); // Default to 5000 as configured in Railway
   
   console.log('[STARTUP] Environment variables:');
   console.log('- NODE_ENV:', process.env.NODE_ENV);
