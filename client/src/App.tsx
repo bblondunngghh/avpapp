@@ -29,6 +29,7 @@ import AccountantPage from "@/pages/tax-payments"; // Renamed from TaxPaymentsPa
 import Contracts from "@/pages/contracts";
 import Demo from "@/pages/demo";
 import NotificationsPage from "@/pages/notifications";
+import PublicSchedule from "@/pages/public-schedule";
 import Header from "@/components/layout/header";
 import BottomNavigation from "@/components/layout/bottom-navigation";
 // import { AssistanceCenterPopup } from "@/components/assistance-center-popup";
@@ -136,6 +137,8 @@ function Router() {
       const timeSinceLastActivity = now - lastActivity;
       
       // 60 seconds = 60,000 milliseconds
+      // TEMPORARILY DISABLED - Auto-logout for development
+      /*
       if (timeSinceLastActivity > 60000) {
         // Clear authentication and redirect
         sessionStorage.removeItem('adminAuthenticated');
@@ -146,6 +149,7 @@ function Router() {
         console.log('Auto-logout: Inactivity timeout');
         window.location.href = '/';
       }
+      */
     }, 10000);
 
     return () => {
@@ -163,6 +167,8 @@ function Router() {
   
   return (
     <div className="flex flex-col min-h-screen pb-16">
+      {/* Global gradient background */}
+      <div className="app-gradient-fixed"></div>
       {!isAdminPage && !isEmployeePage && !isDemoPage && <Header />}
       <main className={`${isAdminPage || isEmployeePage || isDemoPage ? '' : 'container mx-auto px-4 py-4 mt-16'} flex-grow`}>
         <Switch>
@@ -247,6 +253,7 @@ function Router() {
           <Route path="/help-request" component={HelpRequestPage} />
           <Route path="/notifications" component={NotificationsPage} />
           <Route path="/demo" component={Demo} />
+          <Route path="/schedule" component={PublicSchedule} />
           <Route component={NotFound} />
         </Switch>
       </main>

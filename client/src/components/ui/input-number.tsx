@@ -2,17 +2,17 @@ import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export interface InputMoneyProps
+export interface InputNumberProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
 }
 
-const InputMoney = React.forwardRef<HTMLInputElement, InputMoneyProps>(
+const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
   ({ className, error, ...props }, ref) => {
-    // Create a custom input layout with dollar sign
+    // Create a custom input layout with # symbol
     return (
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-400 font-medium z-10">$</span>
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white font-medium z-10">#</span>
         <input
           type="number"
           className={cn(
@@ -22,7 +22,6 @@ const InputMoney = React.forwardRef<HTMLInputElement, InputMoneyProps>(
           )}
           style={{ paddingLeft: '1.75rem' }}
           ref={ref}
-          step="0.01"
           min="0"
           onWheel={(e) => e.currentTarget.blur()}
           {...props}
@@ -32,6 +31,6 @@ const InputMoney = React.forwardRef<HTMLInputElement, InputMoneyProps>(
   }
 );
 
-InputMoney.displayName = "InputMoney";
+InputNumber.displayName = "InputNumber";
 
-export { InputMoney };
+export { InputNumber };

@@ -6,6 +6,7 @@ import carIcon from "@assets/Car-4--Streamline-Ultimate.png";
 import financialIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
 import employeeIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import earningsIcon from "@assets/Cash-User--Streamline-Ultimate.png";
+import houseIcon from "@assets/House-3--Streamline-Ultimate_1750259532490.png";
 
 import checkIcon from "@assets/Check-Circle-1--Streamline-Ultimate.png";
 import alertIcon from "@assets/Alert-Triangle--Streamline-Ultimate.png";
@@ -267,6 +268,10 @@ export default function SubmissionComplete() {
   const handleNewReport = () => {
     navigate("/report-selection");
   };
+
+  const handleHome = () => {
+    navigate("/");
+  };
   
   // Format currency
   const formatCurrency = (amount: number | null | undefined) => {
@@ -289,14 +294,24 @@ export default function SubmissionComplete() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="max-w-3xl w-full bg-white rounded-lg shadow-lg p-8">
+    <>
+      <div className="app-gradient-fixed"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen-safe p-4 relative z-10">
+        <div className="max-w-3xl w-full bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl p-8 text-white">
+        <Button 
+          variant="outline" 
+          onClick={handleHome} 
+          className="mb-6 p-2 h-10 w-10 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20"
+        >
+          <img src={houseIcon} alt="Home" className="w-5 h-5" />
+        </Button>
+        
         <div className="flex justify-center mb-4">
           <img src={certifiedIcon} alt="Certified" className="h-16 w-16" />
         </div>
         
-        <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">Report Submitted Successfully!</h1>
-        <p className="text-gray-600 mb-6 text-center">
+        <h1 className="text-2xl font-bold text-white mb-2 text-center">Report Submitted Successfully!</h1>
+        <p className="text-slate-300 mb-6 text-center">
           {params?.reportId 
             ? `Your report #${params.reportId} has been saved to the database.`
             : "Your report has been saved to the database."}
@@ -307,20 +322,19 @@ export default function SubmissionComplete() {
             <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
           </div>
         ) : error ? (
-          <div className="bg-red-50 rounded-md border border-red-200 p-4 mb-6">
-            <h3 className="font-bold text-red-800 mb-2">Error Loading Report</h3>
-            <p className="text-red-600">
+          <div className="bg-red-900/20 backdrop-blur-sm rounded-md border border-red-500/50 p-4 mb-6">
+            <h3 className="font-bold text-red-300 mb-2">Error Loading Report</h3>
+            <p className="text-red-200">
               Unable to load report details. Please check your connection.
             </p>
           </div>
         ) : report ? (
-          <div className="bg-blue-50 rounded-md border border-blue-200 p-4 mb-6">
+          <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 rounded-lg p-4 mb-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-bold text-blue-800">Report Details</h3>
+              <h3 className="font-bold text-white">Report Details</h3>
               {report.locationId && (
                 <div className="flex items-center">
-                  <RestaurantIcon locationId={report.locationId} size={20} />
-                  <span className="ml-2 text-blue-700">
+                  <span className="text-slate-300">
                     {LOCATIONS.find(l => l.id === report.locationId)?.name || 'Unknown Location'}
                   </span>
                 </div>
@@ -328,46 +342,46 @@ export default function SubmissionComplete() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="bg-white p-3 rounded-md border border-blue-100">
+              <div className="bg-slate-600/30 backdrop-blur-sm p-3 rounded-md border border-slate-500/50">
                 <div className="flex items-center mb-2">
                   <img src={carIcon} alt="Car" className="h-4 w-4 mr-2" />
-                  <h4 className="font-medium text-blue-800">Cars Summary</h4>
+                  <h4 className="font-medium text-white">Cars Summary</h4>
                 </div>
                 <div className="space-y-1 pl-6">
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Total Cars:</span> <strong>{safeNumber(report.totalCars)}</strong>
+                  <p className="text-sm text-slate-300 flex justify-between">
+                    <span>Total Cars:</span> <strong className="text-white">{safeNumber(report.totalCars)}</strong>
                   </p>
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Credit Transactions:</span> <strong>{safeNumber(report.creditTransactions)}</strong>
+                  <p className="text-sm text-slate-300 flex justify-between">
+                    <span>Credit Transactions:</span> <strong className="text-white">{safeNumber(report.creditTransactions)}</strong>
                   </p>
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Receipts:</span> <strong>{safeNumber(report.totalReceipts)}</strong>
+                  <p className="text-sm text-slate-300 flex justify-between">
+                    <span>Receipts:</span> <strong className="text-white">{safeNumber(report.totalReceipts)}</strong>
                   </p>
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Cash Cars:</span> <strong>{cashCars}</strong>
+                  <p className="text-sm text-slate-300 flex justify-between">
+                    <span>Cash Cars:</span> <strong className="text-white">{cashCars}</strong>
                   </p>
                 </div>
               </div>
               
-              <div className="bg-white p-3 rounded-md border border-blue-100">
+              <div className="bg-slate-600/30 backdrop-blur-sm p-3 rounded-md border border-slate-500/50">
                 <div className="flex items-center mb-2">
                   <img src={financialIcon} alt="Financial" className="h-4 w-4 mr-2" />
-                  <h4 className="font-medium text-green-800">Financial Summary</h4>
+                  <h4 className="font-medium text-white">Financial Summary</h4>
                 </div>
                 <div className="space-y-1 pl-6">
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Credit Sales:</span> <strong>{formatCurrency(report.totalCreditSales)}</strong>
+                  <p className="text-sm text-slate-300 flex justify-between">
+                    <span>Credit Sales:</span> <strong className="text-white">{formatCurrency(report.totalCreditSales)}</strong>
                   </p>
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Cash Collected:</span> <strong>{formatCurrency(report.totalCashCollected)}</strong>
+                  <p className="text-sm text-slate-300 flex justify-between">
+                    <span>Cash Collected:</span> <strong className="text-white">{formatCurrency(report.totalCashCollected)}</strong>
                   </p>
-                  <p className="text-sm text-gray-700 flex justify-between">
-                    <span>Total Turn-in:</span> <strong className="text-green-700">{formatCurrency(report.totalTurnIn)}</strong>
+                  <p className="text-sm text-slate-300 flex justify-between">
+                    <span>Total Turn-in:</span> <strong className="text-green-400">{formatCurrency(report.totalTurnIn)}</strong>
                   </p>
                   
                   {earnings.moneyOwed > 0 && (
-                    <div className="mt-2 pt-2 border-t border-gray-100">
-                      <p className="text-sm text-red-700 flex justify-between font-medium">
+                    <div className="mt-2 pt-2 border-t border-slate-600/50">
+                      <p className="text-sm text-red-400 flex justify-between font-medium">
                         <span>Money Owed to Employees:</span> <strong>{formatCurrency(earnings.moneyOwed)}</strong>
                       </p>
                     </div>
@@ -378,19 +392,19 @@ export default function SubmissionComplete() {
             
             {/* Employee Section */}
             {employees.length > 0 && (
-              <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
+              <div className="mt-4 bg-slate-600/30 backdrop-blur-sm p-3 rounded-md border border-slate-500/50">
                 <div className="flex items-center mb-2">
                   <img src={employeeIcon} alt="Employee" className="h-4 w-4 mr-2" />
-                  <h4 className="font-medium text-purple-800">Employee Details</h4>
+                  <h4 className="font-medium text-white">Employee Details</h4>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="text-left p-2">Name</th>
-                        <th className="text-right p-2">Hours</th>
-                        <th className="text-right p-2">Total Earnings</th>
-                        <th className="text-right p-2">Advance</th>
+                      <tr className="bg-slate-700/50">
+                        <th className="text-left p-2 text-white">Name</th>
+                        <th className="text-right p-2 text-white">Hours</th>
+                        <th className="text-right p-2 text-white">Total Earnings</th>
+                        <th className="text-right p-2 text-white">Advance</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -406,8 +420,8 @@ export default function SubmissionComplete() {
                         const empTotalEarnings = empCommission + empTips;
                         
                         return (
-                          <tr key={`employee-${index}`} className="border-t border-gray-100">
-                            <td className="p-2">
+                          <tr key={`employee-${index}`} className="border-t border-slate-600/50">
+                            <td className="p-2 text-slate-300">
                               {/* Use the employee's full name from the database if available */}
                               {(() => {
                                 // Map common first names to full names
@@ -451,9 +465,9 @@ export default function SubmissionComplete() {
                                 return emp.name;
                               })()}
                             </td>
-                            <td className="text-right p-2">{safeNumber(emp.hours)}</td>
-                            <td className="text-right p-2">{formatCurrency(empTotalEarnings)}</td>
-                            <td className="text-right p-2">
+                            <td className="text-right p-2 text-white">{safeNumber(emp.hours)}</td>
+                            <td className="text-right p-2 text-white">{formatCurrency(empTotalEarnings)}</td>
+                            <td className="text-right p-2 text-white">
                               {formatCurrency(empCommission + empTips - (earnings.moneyOwed * hoursProportion))}
                             </td>
                           </tr>
@@ -461,11 +475,11 @@ export default function SubmissionComplete() {
                       })}
                     </tbody>
                     <tfoot>
-                      <tr className="border-t border-gray-200 font-medium">
-                        <td className="p-2">Total</td>
-                        <td className="text-right p-2">{safeNumber(report.totalJobHours)}</td>
-                        <td className="text-right p-2">{formatCurrency(earnings.totalEarnings)}</td>
-                        <td className="text-right p-2">{formatCurrency(
+                      <tr className="border-t border-slate-500/50 font-medium">
+                        <td className="p-2 text-white">Total</td>
+                        <td className="text-right p-2 text-white">{safeNumber(report.totalJobHours)}</td>
+                        <td className="text-right p-2 text-white">{formatCurrency(earnings.totalEarnings)}</td>
+                        <td className="text-right p-2 text-white">{formatCurrency(
                           (earnings.creditCommission + earnings.cashCommission + 
                           earnings.receiptCommission + earnings.creditTips + 
                           earnings.cashTips + earnings.receiptTips - 
@@ -479,35 +493,35 @@ export default function SubmissionComplete() {
             )}
             
             {/* Earnings Breakdown Section */}
-            <div className="mt-4 bg-white p-3 rounded-md border border-blue-100">
+            <div className="mt-4 bg-slate-600/30 backdrop-blur-sm p-3 rounded-md border border-slate-500/50">
               <div className="flex items-center mb-3">
                 <img src={earningsIcon} alt="Earnings" className="h-4 w-4 mr-2" />
-                <h4 className="font-medium text-blue-800">
+                <h4 className="font-medium text-white">
                   Detailed Earnings Breakdown
                 </h4>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Commission Earnings */}
-                <div className="bg-gray-50 p-3 rounded border border-gray-100">
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">Commission Earnings</h5>
+                <div className="bg-slate-700/30 backdrop-blur-sm p-3 rounded border border-slate-600/50">
+                  <h5 className="text-sm font-medium text-white mb-2">Commission Earnings</h5>
                   <div className="space-y-1 text-xs">
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Credit Commission:</span> 
-                      <strong>{formatCurrency(earnings.creditCommission)}</strong>
+                      <span className="text-slate-300">Credit Commission:</span> 
+                      <strong className="text-white">{formatCurrency(earnings.creditCommission)}</strong>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Cash Commission:</span> 
-                      <strong>{formatCurrency(earnings.cashCommission)}</strong>
+                      <span className="text-slate-300">Cash Commission:</span> 
+                      <strong className="text-white">{formatCurrency(earnings.cashCommission)}</strong>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Receipt Commission:</span> 
-                      <strong>{formatCurrency(earnings.receiptCommission)}</strong>
+                      <span className="text-slate-300">Receipt Commission:</span> 
+                      <strong className="text-white">{formatCurrency(earnings.receiptCommission)}</strong>
                     </p>
-                    <div className="pt-1 mt-1 border-t border-gray-200">
+                    <div className="pt-1 mt-1 border-t border-slate-600/50">
                       <p className="flex justify-between font-medium">
-                        <span>Total Commission:</span> 
-                        <span>{formatCurrency(
+                        <span className="text-white">Total Commission:</span> 
+                        <span className="text-white">{formatCurrency(
                           earnings.creditCommission + 
                           earnings.cashCommission + 
                           earnings.receiptCommission
@@ -518,25 +532,25 @@ export default function SubmissionComplete() {
                 </div>
                 
                 {/* Tips & Additional Earnings */}
-                <div className="bg-gray-50 p-3 rounded border border-gray-100">
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">Tips & Additional Earnings</h5>
+                <div className="bg-slate-700/30 backdrop-blur-sm p-3 rounded border border-slate-600/50">
+                  <h5 className="text-sm font-medium text-white mb-2">Tips & Additional Earnings</h5>
                   <div className="space-y-1 text-xs">
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Credit Card Tips:</span> 
-                      <strong>{formatCurrency(earnings.creditTips)}</strong>
+                      <span className="text-slate-300">Credit Card Tips:</span> 
+                      <strong className="text-white">{formatCurrency(earnings.creditTips)}</strong>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Cash Tips:</span> 
-                      <strong>{formatCurrency(earnings.cashTips)}</strong>
+                      <span className="text-slate-300">Cash Tips:</span> 
+                      <strong className="text-white">{formatCurrency(earnings.cashTips)}</strong>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Receipt Tips:</span> 
-                      <strong>{formatCurrency(earnings.receiptTips)}</strong>
+                      <span className="text-slate-300">Receipt Tips:</span> 
+                      <strong className="text-white">{formatCurrency(earnings.receiptTips)}</strong>
                     </p>
-                    <div className="pt-1 mt-1 border-t border-gray-200">
+                    <div className="pt-1 mt-1 border-t border-slate-600/50">
                       <p className="flex justify-between font-medium">
-                        <span>Total Tips:</span> 
-                        <span>{formatCurrency(
+                        <span className="text-white">Total Tips:</span> 
+                        <span className="text-white">{formatCurrency(
                           earnings.creditTips + 
                           earnings.cashTips + 
                           earnings.receiptTips
@@ -547,20 +561,20 @@ export default function SubmissionComplete() {
                 </div>
               </div>
 
-              <div className="mt-3 bg-blue-50 p-3 rounded border border-blue-100">
-                <h5 className="text-sm font-medium text-blue-700 mb-2">Total Earnings Summary</h5>
+              <div className="mt-3 bg-slate-700/30 backdrop-blur-sm p-3 rounded border border-slate-600/50">
+                <h5 className="text-sm font-medium text-white mb-2">Total Earnings Summary</h5>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <p className="flex justify-between">
-                    <span className="text-gray-600">Total Commission:</span> 
-                    <strong>{formatCurrency(
+                    <span className="text-slate-300">Total Commission:</span> 
+                    <strong className="text-white">{formatCurrency(
                       earnings.creditCommission + 
                       earnings.cashCommission + 
                       earnings.receiptCommission
                     )}</strong>
                   </p>
                   <p className="flex justify-between">
-                    <span className="text-gray-600">Total Tips:</span> 
-                    <strong>{formatCurrency(
+                    <span className="text-slate-300">Total Tips:</span> 
+                    <strong className="text-white">{formatCurrency(
                       earnings.creditTips + 
                       earnings.cashTips + 
                       earnings.receiptTips
@@ -568,56 +582,46 @@ export default function SubmissionComplete() {
                   </p>
                   {earnings.moneyOwed > 0 && (
                     <p className="flex justify-between">
-                      <span className="text-gray-600">Money Owed:</span> 
-                      <strong className="text-red-600">{formatCurrency(earnings.moneyOwed)}</strong>
+                      <span className="text-slate-300">Money Owed:</span> 
+                      <strong className="text-red-400">{formatCurrency(earnings.moneyOwed)}</strong>
                     </p>
                   )}
                 </div>
-                <div className="mt-2 pt-2 border-t border-blue-200">
+                <div className="mt-2 pt-2 border-t border-slate-600/50">
                   <p className="flex justify-between font-medium">
-                    <span>Total Employee Earnings:</span>
-                    <span className="text-blue-800 text-lg">{formatCurrency(earnings.totalEarnings)}</span>
+                    <span className="text-white">Total Employee Earnings:</span>
+                    <span className="text-blue-400 text-lg">{formatCurrency(earnings.totalEarnings)}</span>
                   </p>
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="bg-blue-50 rounded-md border border-blue-200 p-4 mb-6">
-            <h3 className="font-bold text-blue-800 mb-2">Report Submitted</h3>
-            <p className="text-gray-600">
+          <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 rounded-lg p-4 mb-6">
+            <h3 className="font-bold text-white mb-2">Report Submitted</h3>
+            <p className="text-slate-300">
               The shift report has been successfully processed and stored.
             </p>
           </div>
         )}
         
-        {/* Tax Policy Update Notice */}
-        <div className="bg-green-50 rounded-md border border-green-200 p-4 mb-6">
-          <h3 className="font-bold text-green-800 mb-3">Important Tax Policy Update</h3>
-          <p className="text-gray-700 leading-relaxed">
-            After reviewing payroll data for the past few months, we have determined that the 22% tax payment is not expected to be required moving forward. However, please note that this could change if employees move into a higher tax bracket, potentially requiring us to reimplement the paid-in tax obligation. Any money owed will be contributed to your taxes and should cover your tax obligations, with any remaining balances redistributed back to you via direct deposit or check.
-          </p>
-          <p className="text-gray-700 mt-3 font-medium">
-            Thank you for your continued hard work and dedication.
-          </p>
-        </div>
-        
         <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
           <Button 
             onClick={handleViewReports}
-            className="flex-1 bg-blue-600 hover:bg-blue-700"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
           >
             View All Reports
           </Button>
           <Button 
             onClick={handleNewReport}
             variant="outline"
-            className="flex-1"
+            className="flex-1 bg-slate-700/50 border-slate-500 text-white hover:bg-white/20 hover:border-white/50"
           >
             Submit New Report
           </Button>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

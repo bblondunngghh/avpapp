@@ -244,13 +244,13 @@ export default function PermitsPage() {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active':
-        return 'text-green-600 bg-green-100';
+        return 'text-green-100 bg-green-600/30';
       case 'expiring':
-        return 'text-amber-600 bg-amber-100';
+        return 'text-amber-100 bg-amber-600/30';
       case 'expired':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-100 bg-red-600/30';
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-100 bg-gray-600/30';
     }
   };
 
@@ -276,46 +276,44 @@ export default function PermitsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6">
+    <>
+      <div className="app-gradient-fixed"></div>
+      <div className="min-h-screen-safe max-w-6xl mx-auto px-4 py-6 relative z-10">
+      <Button
+        variant="ghost"
+        className="mb-6 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20"
+        onClick={() => navigate("/")}
+      >
+        <img src={houseIcon} alt="House" className="h-4 w-4 mr-2" />
+        Back to Dashboard
+      </Button>
+      
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2"
-          >
-            <img src={houseIcon} alt="House" className="h-4 w-4" />
-            Back to Dashboard
-          </Button>
-          <div>
-            <h1 className="text-3xl text-black">Company Permits & Licenses</h1>
-            <p className="text-gray-600 mt-1">View all active permits and licensing documentation</p>
-          </div>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl text-white">Company Permits & Licenses</h1>
+        <p className="text-blue-200 mt-1">View all active permits and licensing documentation</p>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card>
+        <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Permits</p>
-                <p className="text-2xl font-semibold">{permits.length}</p>
+                <p className="text-sm text-blue-200">Total Permits</p>
+                <p className="text-2xl font-semibold text-white">{permits.length}</p>
               </div>
               <img src={newspaperIcon} alt="Newspaper" className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active</p>
-                <p className="text-2xl font-semibold text-green-600">
+                <p className="text-sm text-blue-200">Active</p>
+                <p className="text-2xl font-semibold text-green-400">
                   {permits.filter(p => p.status === 'Active').length}
                 </p>
               </div>
@@ -324,24 +322,24 @@ export default function PermitsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Locations</p>
-                <p className="text-2xl font-semibold">4</p>
+                <p className="text-sm text-blue-200">Locations</p>
+                <p className="text-2xl font-semibold text-white">4</p>
               </div>
               <img src={pinLocationIcon} alt="Pin Location" className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Expiring Soon</p>
-                <p className="text-2xl font-semibold text-amber-600">{getExpiringSoonCount()}</p>
+                <p className="text-sm text-blue-200">Expiring Soon</p>
+                <p className="text-2xl font-semibold text-amber-400">{getExpiringSoonCount()}</p>
               </div>
               <img src={calendarWarningIcon} alt="Calendar Warning" className="h-8 w-8" />
             </div>
@@ -350,41 +348,41 @@ export default function PermitsPage() {
       </div>
 
       {/* Permits List */}
-      <Card>
+      <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
         <CardHeader>
-          <CardTitle className="text-black">Permit Details</CardTitle>
+          <CardTitle className="text-white">Permit Details</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {permits.map((permit) => (
-              <div key={permit.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div key={permit.id} className="border border-white/20 rounded-lg p-4 hover:shadow-md transition-shadow bg-white/5 backdrop-blur-sm">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-black">{permit.name}</h3>
+                      <h3 className="text-lg font-semibold text-white">{permit.name}</h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(permit.status)}`}>
                         {permit.status}
                       </span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-blue-200">
                       <div>
-                        <span className="font-medium">Type:</span> {permit.type}
+                        <span className="font-medium text-white">Type:</span> {permit.type}
                       </div>
                       <div>
-                        <span className="font-medium">Location:</span> {permit.location}
+                        <span className="font-medium text-white">Location:</span> {permit.location}
                       </div>
                       <div>
-                        <span className="font-medium">Permit #:</span> {permit.permitNumber}
+                        <span className="font-medium text-white">Permit #:</span> {permit.permitNumber}
                       </div>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-blue-200">
                       <div className="mb-1">
-                        <span className="font-medium">Issued:</span> {formatDate(permit.issueDate)}
+                        <span className="font-medium text-white">Issued:</span> {formatDate(permit.issueDate)}
                       </div>
                       <div>
-                        <span className="font-medium">Expires:</span> {formatDate(permit.expirationDate)}
+                        <span className="font-medium text-white">Expires:</span> {formatDate(permit.expirationDate)}
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -392,7 +390,7 @@ export default function PermitsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleEditPermit(permit)}
-                        className="flex items-center gap-1"
+                        className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20"
                       >
                         <img src={paperWriteIcon} alt="Paper Write" className="h-3 w-3" />
                         Edit
@@ -402,7 +400,7 @@ export default function PermitsPage() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleViewPDF(permit)}
-                          className="flex items-center gap-1"
+                          className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20"
                         >
                           <img src={eyeIcon} alt="Eye" className="h-3 w-3" />
                           View PDF
@@ -419,10 +417,10 @@ export default function PermitsPage() {
 
       {/* Edit Permit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-gradient-to-r from-[#2a2a2a] via-blue-900 to-indigo-900 border-[#3a3a3a] text-white">
           <DialogHeader>
-            <DialogTitle className="text-black">Edit Permit</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Edit Permit</DialogTitle>
+            <DialogDescription className="text-blue-200">
               Update permit information and upload a PDF document.
             </DialogDescription>
           </DialogHeader>
@@ -430,39 +428,42 @@ export default function PermitsPage() {
           {editingPermit && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="permitName">Permit Name</Label>
+                <Label htmlFor="permitName" className="text-white">Permit Name</Label>
                 <Input
                   id="permitName"
                   value={editingPermit.name}
                   onChange={(e) => setEditingPermit({...editingPermit, name: e.target.value})}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="permitType">Type</Label>
+                <Label htmlFor="permitType" className="text-white">Type</Label>
                 <Input
                   id="permitType"
                   value={editingPermit.type}
                   onChange={(e) => setEditingPermit({...editingPermit, type: e.target.value})}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="permitNumber">Permit Number</Label>
+                <Label htmlFor="permitNumber" className="text-white">Permit Number</Label>
                 <Input
                   id="permitNumber"
                   value={editingPermit.permitNumber}
                   onChange={(e) => setEditingPermit({...editingPermit, permitNumber: e.target.value})}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor="status" className="text-white">Status</Label>
                 <Select 
                   value={editingPermit.status} 
                   onValueChange={(value) => setEditingPermit({...editingPermit, status: value})}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -474,32 +475,34 @@ export default function PermitsPage() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="issueDate">Issue Date</Label>
+                <Label htmlFor="issueDate" className="text-white">Issue Date</Label>
                 <Input
                   id="issueDate"
                   type="date"
                   value={editingPermit.issueDate}
                   onChange={(e) => setEditingPermit({...editingPermit, issueDate: e.target.value})}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="expirationDate">Expiration Date</Label>
+                <Label htmlFor="expirationDate" className="text-white">Expiration Date</Label>
                 <Input
                   id="expirationDate"
                   type="date"
                   value={editingPermit.expirationDate}
                   onChange={(e) => setEditingPermit({...editingPermit, expirationDate: e.target.value})}
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white"
                 />
               </div>
               
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="location" className="text-white">Location</Label>
                 <Select 
                   value={editingPermit.location} 
                   onValueChange={(value) => setEditingPermit({...editingPermit, location: value})}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -513,24 +516,24 @@ export default function PermitsPage() {
               </div>
               
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="pdfUpload">Upload PDF Document</Label>
+                <Label htmlFor="pdfUpload" className="text-white">Upload PDF Document</Label>
                 <div className="flex items-center gap-2">
                   <Input
                     id="pdfUpload"
                     type="file"
                     accept=".pdf"
                     onChange={handleFileChange}
-                    className="flex-1"
+                    className="flex-1 bg-white/10 backdrop-blur-sm border-white/20 text-white"
                   />
                   {selectedFile && (
-                    <div className="flex items-center gap-1 text-sm text-green-600">
+                    <div className="flex items-center gap-1 text-sm text-green-400">
                       <CheckCircle className="h-4 w-4" />
                       {selectedFile.name}
                     </div>
                   )}
                 </div>
                 {editingPermit.pdfUrl && !selectedFile && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-blue-200">
                     Current PDF: Available for viewing
                   </div>
                 )}
@@ -539,10 +542,10 @@ export default function PermitsPage() {
           )}
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20">
               Cancel
             </Button>
-            <Button onClick={handleSavePermit}>
+            <Button onClick={handleSavePermit} className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20">
               Save Changes
             </Button>
           </DialogFooter>
@@ -551,17 +554,17 @@ export default function PermitsPage() {
 
       {/* Password Dialog */}
       <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-gradient-to-r from-[#2a2a2a] via-blue-900 to-indigo-900 border-[#3a3a3a] text-white">
           <DialogHeader>
-            <DialogTitle className="text-black">Enter Password</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Enter Password</DialogTitle>
+            <DialogDescription className="text-blue-200">
               This action requires authorization. Please enter the password to edit permits.
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-white">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -570,6 +573,7 @@ export default function PermitsPage() {
                 onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
                 placeholder="Enter password..."
                 autoFocus
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200"
               />
             </div>
           </div>
@@ -579,10 +583,10 @@ export default function PermitsPage() {
               setIsPasswordDialogOpen(false);
               setPassword("");
               setPendingEditPermit(null);
-            }}>
+            }} className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20">
               Cancel
             </Button>
-            <Button onClick={handlePasswordSubmit}>
+            <Button onClick={handlePasswordSubmit} className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20">
               Continue
             </Button>
           </DialogFooter>
@@ -591,15 +595,15 @@ export default function PermitsPage() {
 
       {/* PDF Viewer Modal */}
       <Dialog open={isPDFViewerOpen} onOpenChange={setIsPDFViewerOpen}>
-        <DialogContent className="max-w-6xl w-full h-[90vh] p-6">
+        <DialogContent className="max-w-6xl w-full h-[90vh] p-6 bg-gradient-to-r from-[#2a2a2a] via-blue-900 to-indigo-900 border-[#3a3a3a] text-white">
           <DialogHeader>
-            <DialogTitle className="text-black">View PDF Document</DialogTitle>
+            <DialogTitle className="text-white">View PDF Document</DialogTitle>
           </DialogHeader>
           <div className="flex-1 h-full">
             {viewingPDF && (
               <div className="w-full h-full flex flex-col">
-                <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-2">
+                <div className="mb-4 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
+                  <p className="text-sm text-blue-200 mb-2">
                     If the PDF doesn't display below, you can download it directly:
                   </p>
                   <Button 
@@ -610,7 +614,7 @@ export default function PermitsPage() {
                       link.download = 'permit-document.pdf';
                       link.click();
                     }}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20"
                   >
                     <Download className="h-4 w-4" />
                     Download PDF
@@ -629,12 +633,13 @@ export default function PermitsPage() {
             <Button onClick={() => {
               setIsPDFViewerOpen(false);
               setViewingPDF(null);
-            }}>
+            }} className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20">
               Close
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </>
   );
 }

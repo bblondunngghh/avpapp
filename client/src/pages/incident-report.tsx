@@ -153,36 +153,38 @@ export default function IncidentReport() {
   };
   
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      <Button 
-        variant="ghost" 
-        className="mb-6" 
-        onClick={() => navigate("/")}
-      >
-        <img src={houseIcon} alt="House" className="h-4 w-4 mr-2" />
-        Back to Dashboard
-      </Button>
-      <div className="mb-8">
-        <h1 className="text-2xl text-orange-700 uppercase">Incident Report</h1>
-        <p className="text-gray-600 mt-1">
-          Please fill out this form to report any incidents or damages.
-        </p>
-      </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    <>
+      <div className="app-gradient-fixed"></div>
+      <div className="min-h-screen-safe max-w-4xl mx-auto px-4 py-6 relative z-10">
+        <Button 
+          variant="ghost" 
+          className="mb-6 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20" 
+          onClick={() => navigate("/")}
+        >
+          <img src={houseIcon} alt="House" className="h-4 w-4 mr-2" />
+          Back to Dashboard
+        </Button>
+        <div className="mb-8">
+          <h1 className="text-2xl text-white uppercase">Incident Report</h1>
+          <p className="text-blue-200 mt-1">
+            Please fill out this form to report any incidents or damages.
+          </p>
+        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Customer Information */}
-          <Card>
+          <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-medium mb-4">Customer Information</h2>
+              <h2 className="text-lg font-medium mb-4 text-white">Customer Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="customerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel className="text-white">Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input placeholder="John Doe" className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -194,9 +196,9 @@ export default function IncidentReport() {
                   name="customerEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-white">Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="john.doe@example.com" type="email" {...field} />
+                        <Input placeholder="john.doe@example.com" type="email" className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,9 +210,9 @@ export default function IncidentReport() {
                   name="customerPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel className="text-white">Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="(555) 123-4567" {...field} />
+                        <Input placeholder="(555) 123-4567" className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -221,9 +223,9 @@ export default function IncidentReport() {
           </Card>
           
           {/* Incident Details */}
-          <Card>
+          <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-medium mb-4">Incident Details</h2>
+              <h2 className="text-lg font-medium mb-4 text-white">Incident Details</h2>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
@@ -231,9 +233,9 @@ export default function IncidentReport() {
                     name="incidentDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Date</FormLabel>
+                        <FormLabel className="text-white">Date</FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} />
+                          <Input type="date" className="bg-white/10 backdrop-blur-sm border-white/20 text-white" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -245,9 +247,9 @@ export default function IncidentReport() {
                     name="incidentTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Time</FormLabel>
+                        <FormLabel className="text-white">Time</FormLabel>
                         <FormControl>
-                          <Input type="time" {...field} />
+                          <Input type="time" className="bg-white/10 backdrop-blur-sm border-white/20 text-white" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -261,13 +263,13 @@ export default function IncidentReport() {
                     name="incidentLocation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Location</FormLabel>
+                        <FormLabel className="text-white">Location</FormLabel>
                         <FormControl>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
                               <SelectValue placeholder="Select Location" />
                             </SelectTrigger>
                             <SelectContent>
@@ -289,13 +291,13 @@ export default function IncidentReport() {
                     name="employeeId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Employee Involved</FormLabel>
+                        <FormLabel className="text-white">Employee Involved</FormLabel>
                         <FormControl>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
                               <SelectValue placeholder="Select Employee" />
                             </SelectTrigger>
                             <SelectContent className="z-50">
@@ -319,11 +321,11 @@ export default function IncidentReport() {
                     name="incidentDescription"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Incident Description</FormLabel>
+                        <FormLabel className="text-white">Incident Description</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder="Please describe what happened in detail..." 
-                            className="min-h-[120px]" 
+                            className="min-h-[120px] bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" 
                             {...field} 
                           />
                         </FormControl>
@@ -338,9 +340,9 @@ export default function IncidentReport() {
                   name="witnessName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Witness (if any)</FormLabel>
+                      <FormLabel className="text-white">Witness (if any)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Witness Name" {...field} />
+                        <Input placeholder="Witness Name" className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -352,9 +354,9 @@ export default function IncidentReport() {
                   name="witnessPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Witness Phone (if any)</FormLabel>
+                      <FormLabel className="text-white">Witness Phone (if any)</FormLabel>
                       <FormControl>
-                        <Input placeholder="(555) 123-4567" {...field} />
+                        <Input placeholder="(555) 123-4567" className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -365,18 +367,18 @@ export default function IncidentReport() {
           </Card>
           
           {/* Vehicle Information */}
-          <Card>
+          <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-medium mb-4">Vehicle Information</h2>
+              <h2 className="text-lg font-medium mb-4 text-white">Vehicle Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <FormField
                   control={form.control}
                   name="vehicleMake"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Make</FormLabel>
+                      <FormLabel className="text-white">Make</FormLabel>
                       <FormControl>
-                        <Input placeholder="Toyota, Ford, BMW..." {...field} />
+                        <Input placeholder="Toyota, Ford, BMW..." className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -388,9 +390,9 @@ export default function IncidentReport() {
                   name="vehicleModel"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Model</FormLabel>
+                      <FormLabel className="text-white">Model</FormLabel>
                       <FormControl>
-                        <Input placeholder="Camry, F-150, X5..." {...field} />
+                        <Input placeholder="Camry, F-150, X5..." className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -402,9 +404,9 @@ export default function IncidentReport() {
                   name="vehicleYear"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Year</FormLabel>
+                      <FormLabel className="text-white">Year</FormLabel>
                       <FormControl>
-                        <Input placeholder="2023" {...field} />
+                        <Input placeholder="2023" className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -416,9 +418,9 @@ export default function IncidentReport() {
                   name="vehicleColor"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Color</FormLabel>
+                      <FormLabel className="text-white">Color</FormLabel>
                       <FormControl>
-                        <Input placeholder="White, Black, Silver..." {...field} />
+                        <Input placeholder="White, Black, Silver..." className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -430,9 +432,9 @@ export default function IncidentReport() {
                   name="vehicleLicensePlate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>License Plate</FormLabel>
+                      <FormLabel className="text-white">License Plate</FormLabel>
                       <FormControl>
-                        <Input placeholder="ABC123" {...field} />
+                        <Input placeholder="ABC123" className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -445,11 +447,11 @@ export default function IncidentReport() {
                     name="damageDescription"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Damage Description</FormLabel>
+                        <FormLabel className="text-white">Damage Description</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder="Please describe the damage in detail..." 
-                            className="min-h-[100px]" 
+                            className="min-h-[100px] bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" 
                             {...field} 
                           />
                         </FormControl>
@@ -463,22 +465,22 @@ export default function IncidentReport() {
           </Card>
           
           {/* Photo Upload Section */}
-          <Card>
+          <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-medium mb-4">Damage Photos</h2>
-              <p className="text-sm text-gray-500 mb-4">
+              <h2 className="text-lg font-medium mb-4 text-white">Damage Photos</h2>
+              <p className="text-sm text-blue-200 mb-4">
                 Please upload photos of the damage from multiple angles. Clear photos help us process the incident report faster.
               </p>
               
               <div className="mb-6">
                 <label htmlFor="photo-upload" className="block">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-sky-400 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-white/30 rounded-lg p-8 text-center hover:border-white/50 transition-colors cursor-pointer bg-white/5 backdrop-blur-sm">
                     <div className="flex flex-col items-center">
-                      <Camera className="h-10 w-10 text-gray-400 mb-2" />
-                      <span className="text-sm font-medium text-gray-700">
+                      <Camera className="h-10 w-10 text-white/70 mb-2" />
+                      <span className="text-sm font-medium text-white">
                         Click to upload photos
                       </span>
-                      <span className="text-xs text-gray-500 mt-1">
+                      <span className="text-xs text-blue-200 mt-1">
                         JPG, PNG or HEIC up to 10MB
                       </span>
                     </div>
@@ -525,20 +527,20 @@ export default function IncidentReport() {
           </Card>
           
           {/* Additional Notes */}
-          <Card>
+          <Card className="bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-xl text-white">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-medium mb-4">Additional Information</h2>
+              <h2 className="text-lg font-medium mb-4 text-white">Additional Information</h2>
               
               <FormField
                 control={form.control}
                 name="additionalNotes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Additional Notes</FormLabel>
+                    <FormLabel className="text-white">Additional Notes</FormLabel>
                     <FormControl>
                       <Textarea 
                         placeholder="Any other information you would like to provide..." 
-                        className="min-h-[100px]" 
+                        className="min-h-[100px] bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200" 
                         {...field} 
                       />
                     </FormControl>
@@ -553,7 +555,7 @@ export default function IncidentReport() {
           <div className="flex justify-end">
             <Button 
               type="submit" 
-              className="bg-orange-600 hover:bg-orange-700 text-white w-full md:w-auto"
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 w-full md:w-auto"
               disabled={submitMutation.isPending}
             >
               {submitMutation.isPending ? (
@@ -570,6 +572,7 @@ export default function IncidentReport() {
           </div>
         </form>
       </Form>
-    </div>
+      </div>
+    </>
   );
 }

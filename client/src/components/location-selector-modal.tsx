@@ -30,7 +30,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
+      <DialogContent className="sm:max-w-md bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 text-white">
         <DialogHeader className="text-center space-y-3 pb-2">
           <div className="mx-auto w-12 h-12 flex items-center justify-center">
             <img 
@@ -39,19 +39,19 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               className="w-12 h-12 object-contain"
             />
           </div>
-          <DialogTitle className="text-xl font-bold text-blue-900 text-center">Select Location</DialogTitle>
-          <DialogDescription className="text-center text-blue-700">
+          <DialogTitle className="text-xl font-bold text-white text-center">Select Location</DialogTitle>
+          <DialogDescription className="text-center text-gray-300">
             Choose a location to create a new shift report
           </DialogDescription>
         </DialogHeader>
         
         <div className="grid grid-cols-1 gap-3 mt-4 px-1">
           {isLoading ? (
-            <Card className="border-blue-200 shadow-md">
+            <Card className="bg-slate-700/50 border border-slate-600/50 shadow-xl">
               <CardContent className="text-center py-8">
                 <div className="animate-pulse flex flex-col items-center space-y-3">
-                  <div className="w-12 h-12 bg-blue-200 rounded-full"></div>
-                  <div className="text-blue-600 font-medium">Loading locations...</div>
+                  <div className="w-12 h-12 bg-slate-600/50 rounded-full"></div>
+                  <div className="text-gray-300 font-medium">Loading locations...</div>
                 </div>
               </CardContent>
             </Card>
@@ -100,18 +100,18 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               return (
                 <Card 
                   key={location.id}
-                  className="border-blue-200 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-white hover:bg-blue-50 border-2 hover:border-blue-400"
+                  className="bg-slate-700/50 border border-slate-600/50 shadow-xl hover:bg-slate-600/50 transition-all duration-300 cursor-pointer hover:border-slate-500/60 hover:shadow-2xl"
                   onClick={() => handleLocationSelect(location.id)}
                 >
                   <CardContent className="flex items-center space-x-3 py-4 px-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600/80 to-indigo-700/80 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm">
                       {getLocationIcon(location.name)}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-blue-900">{location.name.toUpperCase()}</h3>
-                      <p className="text-blue-600 text-xs">Click to create report</p>
+                      <h3 className="text-lg font-bold text-white">{location.name.toUpperCase()}</h3>
+                      <p className="text-gray-300 text-xs">Click to create report</p>
                     </div>
-                    <div className="text-blue-400">
+                    <div className="text-gray-400 hover:text-gray-300 transition-colors">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
@@ -120,13 +120,13 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                 </Card>
               );
             }) || (
-              <Card className="border-blue-200 shadow-md">
+              <Card className="bg-slate-700/50 border border-slate-600/50 shadow-xl">
                 <CardContent className="text-center py-8">
                   <div className="flex flex-col items-center space-y-3">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-slate-600/50 rounded-full flex items-center justify-center backdrop-blur-sm">
                       <Building2 className="h-6 w-6 text-gray-400" />
                     </div>
-                    <div className="text-gray-600 font-medium">No locations available</div>
+                    <div className="text-gray-300 font-medium">No locations available</div>
                   </div>
                 </CardContent>
               </Card>

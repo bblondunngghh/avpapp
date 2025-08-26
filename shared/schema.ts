@@ -248,13 +248,26 @@ export type InsertShiftReport = z.infer<typeof insertShiftReportSchema>;
 export type UpdateShiftReport = z.infer<typeof updateShiftReportSchema>;
 export type ShiftReport = typeof shiftReports.$inferSelect;
 
-// Location constants
+// Location constants with ID mapping
 export const LOCATIONS = {
   CAPITAL_GRILLE: "The Capital Grille",
   BOBS_STEAK: "Bob's Steak and Chop House",
   TRULUCKS: "Truluck's",
   BOA_STEAKHOUSE: "BOA Steakhouse"
 };
+
+// Location ID to Code Mapping
+export const LOCATION_CODE_MAP: Record<number, string> = {
+  1: "CG", // Capital Grille
+  2: "BS", // Bob's Steak and Chop House
+  3: "TL", // Truluck's
+  4: "BOA", // BOA Steakhouse
+};
+
+// Helper function to get location code from ID
+export function getLocationCode(locationId: number): string {
+  return LOCATION_CODE_MAP[locationId] || `LOC${locationId}`;
+}
 
 // Shift constants
 export const SHIFTS = {
@@ -293,6 +306,147 @@ export const updateTicketDistributionSchema = createInsertSchema(ticketDistribut
 export type InsertTicketDistribution = z.infer<typeof insertTicketDistributionSchema>;
 export type UpdateTicketDistribution = z.infer<typeof updateTicketDistributionSchema>;
 export type TicketDistribution = typeof ticketDistributions.$inferSelect;
+
+// Company Payroll Data Table - Main shift report data
+export const companyPayrollData = pgTable("company_payroll_data", {
+  id: serial("id").primaryKey(),
+  
+  // Shift Information Card
+  location: text("location").notNull(), // CG, TL, BS, BOA etc.
+  date: text("date").notNull(), // YYYY-MM-DD format
+  shift: text("shift").notNull(), // Lunch, Dinner
+  shiftLeader: text("shift_leader").notNull(),
+  carsParked: integer("cars_parked").notNull(),
+  
+  // Shift Details Card
+  ccTransactions: integer("cc_transactions").notNull(),
+  totalCcSales: doublePrecision("total_cc_sales").notNull(),
+  totalReceipts: integer("total_receipts").notNull(),
+  cashCollected: doublePrecision("cash_collected").notNull(),
+  moneyOwed: doublePrecision("money_owed").default(0), // When money is owed to company
+  cashTurnIn: doublePrecision("cash_turn_in").default(0), // When company has cash to turn in
+  
+  // Financial Summary Card - All calculated values
+  cashComm: doublePrecision("cash_comm").notNull(),
+  ccComm: doublePrecision("cc_comm").notNull(),
+  receiptComm: doublePrecision("receipt_comm").notNull(),
+  totalComm: doublePrecision("total_comm").notNull(),
+  cashTips: doublePrecision("cash_tips").notNull(),
+  ccTips: doublePrecision("cc_tips").notNull(),
+  receiptTips: doublePrecision("receipt_tips").notNull(),
+  totalTips: doublePrecision("total_tips").notNull(),
+  totalCommAndTips: doublePrecision("total_comm_and_tips").notNull(),
+  companyCashTurnIn: doublePrecision("company_cash_turn_in").notNull(),
+  
+  // Shift Notes
+  shiftNotes: text("shift_notes"),
+  
+  // Metadata
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+// Employee Payroll Data Table - Individual employee data per shift
+export const employeePayrollData = pgTable("employee_payroll_data", {
+  id: serial("id").primaryKey(),
+  companyPayrollId: integer("company_payroll_id").notNull(), // Foreign key to company_payroll_data
+  
+  // Basic Info
+  location: text("location").notNull(), // CG, TL, BS, BOA etc.
+  totalJobHours: doublePrecision("total_job_hours").notNull(),
+  
+  // Employee Details
+  employeeName: text("employee_name").notNull(),
+  employeeHoursWorked: doublePrecision("employee_hours_worked").notNull(),
+  
+  // Individual Employee Commission
+  cashComm: doublePrecision("cash_comm").notNull(),
+  ccComm: doublePrecision("cc_comm").notNull(),
+  receiptComm: doublePrecision("receipt_comm").notNull(),
+  
+  // Individual Employee Tips
+  cashTips: doublePrecision("cash_tips").notNull(),
+  ccTips: doublePrecision("cc_tips").notNull(),
+  receiptTips: doublePrecision("receipt_tips").notNull(),
+  
+  // Money Owed to Employee
+  moneyOwed: doublePrecision("money_owed").notNull(),
+  
+  // Metadata
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+// Schemas for the new tables
+export const insertCompanyPayrollDataSchema = createInsertSchema(companyPayrollData)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  });
+
+export const updateCompanyPayrollDataSchema = insertCompanyPayrollDataSchema.partial();
+
+export const insertEmployeePayrollDataSchema = createInsertSchema(employeePayrollData)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  });
+
+export const updateEmployeePayrollDataSchema = insertEmployeePayrollDataSchema.partial();
+
+export type InsertCompanyPayrollData = z.infer<typeof insertCompanyPayrollDataSchema>;
+export type UpdateCompanyPayrollData = z.infer<typeof updateCompanyPayrollDataSchema>;
+export type CompanyPayrollData = typeof companyPayrollData.$inferSelect;
+
+export type InsertEmployeePayrollData = z.infer<typeof insertEmployeePayrollDataSchema>;
+export type UpdateEmployeePayrollData = z.infer<typeof updateEmployeePayrollDataSchema>;
+export type EmployeePayrollData = typeof employeePayrollData.$inferSelect;
+
+// Employee Payroll Data Table - Individual employee data per shift
+export const employeeShiftPayroll = pgTable("employee_shift_payroll", {
+  id: serial("id").primaryKey(),
+  shiftReportId: integer("shift_report_id").notNull().references(() => shiftReports.id, { onDelete: "cascade" }),
+  
+  // Basic Info
+  location: text("location").notNull(), // CG, TL, BS, BOA etc.
+  totalJobHours: doublePrecision("total_job_hours").notNull(),
+  
+  // Employee Details
+  employeeName: text("employee_name").notNull(),
+  employeeHoursWorked: doublePrecision("employee_hours_worked").notNull(),
+  
+  // Individual Employee Commission
+  cashComm: doublePrecision("cash_comm").notNull(),
+  ccComm: doublePrecision("cc_comm").notNull(),
+  receiptComm: doublePrecision("receipt_comm").notNull(),
+  
+  // Individual Employee Tips
+  cashTips: doublePrecision("cash_tips").notNull(),
+  ccTips: doublePrecision("cc_tips").notNull(),
+  receiptTips: doublePrecision("receipt_tips").notNull(),
+  
+  // Money Owed to Employee
+  moneyOwed: doublePrecision("money_owed").notNull(),
+  
+  // Metadata
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const insertEmployeeShiftPayrollSchema = createInsertSchema(employeeShiftPayroll)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  });
+
+export const updateEmployeeShiftPayrollSchema = insertEmployeeShiftPayrollSchema.partial();
+
+export type InsertEmployeeShiftPayroll = z.infer<typeof insertEmployeeShiftPayrollSchema>;
+export type UpdateEmployeeShiftPayroll = z.infer<typeof updateEmployeeShiftPayrollSchema>;
+export type EmployeeShiftPayroll = typeof employeeShiftPayroll.$inferSelect;
 
 // Employee Tax Payments schema
 export const employeeTaxPayments = pgTable("employee_tax_payments", {
@@ -399,7 +553,8 @@ export type Permit = typeof permits.$inferSelect;
 // Training Acknowledgments schema
 export const trainingAcknowledgments = pgTable("training_acknowledgments", {
   id: serial("id").primaryKey(),
-  employeeName: text("employee_name").notNull(),
+  employeeKey: text("employee_key"), // Links to employees table - optional for backward compatibility
+  employeeName: text("employee_name").notNull(), // Keep for backup/display
   date: text("date").notNull(),
   signatureData: text("signature_data").notNull(), // Base64 encoded signature image
   ipAddress: text("ip_address"),
@@ -501,3 +656,112 @@ export type InsertCoverCountReport = z.infer<typeof insertCoverCountReportSchema
 export type CoverCountReport = typeof coverCountReports.$inferSelect;
 export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+
+// Employee Shifts schema for scheduler
+export const shifts = pgTable("shifts", {
+  id: serial("id").primaryKey(),
+  employeeId: integer("employee_id").notNull().references(() => employees.id),
+  locationId: integer("location_id").notNull().references(() => locations.id),
+  shiftDate: text("shift_date").notNull(), // YYYY-MM-DD format
+  startTime: text("start_time").notNull(), // HH:MM format (24-hour)
+  endTime: text("end_time").notNull(), // HH:MM format (24-hour)
+  position: text("position").notNull(), // 'valet' or 'shift-leader'
+  notes: text("notes"), // Optional notes about the shift
+  isPublished: boolean("is_published").default(false).notNull(), // Whether shift is published to employee
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const insertShiftSchema = createInsertSchema(shifts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateShiftSchema = createInsertSchema(shifts).omit({
+  id: true,
+  createdAt: true,
+}).partial();
+
+export type InsertShift = z.infer<typeof insertShiftSchema>;
+export type UpdateShift = z.infer<typeof updateShiftSchema>;
+export type Shift = typeof shifts.$inferSelect;
+
+// Time Off Requests schema
+export const timeOffRequests = pgTable("time_off_requests", {
+  id: serial("id").primaryKey(),
+  employeeId: integer("employee_id").notNull().references(() => employees.id),
+  requestDate: text("request_date").notNull(), // YYYY-MM-DD format - the date they want off
+  reason: text("reason"), // Optional reason for the time off
+  status: text("status").notNull().default("pending"), // 'pending', 'approved', 'denied'
+  adminNotes: text("admin_notes"), // Optional notes from admin when approving/denying
+  reviewedBy: integer("reviewed_by").references(() => employees.id), // Admin who reviewed the request
+  reviewedAt: timestamp("reviewed_at"), // When the request was reviewed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const insertTimeOffRequestSchema = createInsertSchema(timeOffRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateTimeOffRequestSchema = createInsertSchema(timeOffRequests).omit({
+  id: true,
+  createdAt: true,
+}).partial();
+
+export type InsertTimeOffRequest = z.infer<typeof insertTimeOffRequestSchema>;
+export type UpdateTimeOffRequest = z.infer<typeof updateTimeOffRequestSchema>;
+export type TimeOffRequest = typeof timeOffRequests.$inferSelect;
+
+// Schedule Templates schema
+export const scheduleTemplates = pgTable("schedule_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  shifts: text("shifts").notNull().default("[]"), // JSON string of shift patterns
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const insertScheduleTemplateSchema = createInsertSchema(scheduleTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateScheduleTemplateSchema = createInsertSchema(scheduleTemplates).omit({
+  id: true,
+  createdAt: true,
+}).partial();
+
+export type InsertScheduleTemplate = z.infer<typeof insertScheduleTemplateSchema>;
+export type UpdateScheduleTemplate = z.infer<typeof updateScheduleTemplateSchema>;
+export type ScheduleTemplate = typeof scheduleTemplates.$inferSelect;
+
+// Custom Shift Presets schema
+export const customShiftPresets = pgTable("custom_shift_presets", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  startTime: text("start_time").notNull(), // Format: "HH:MM"
+  endTime: text("end_time").notNull(), // Format: "HH:MM"
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export const insertCustomShiftPresetSchema = createInsertSchema(customShiftPresets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateCustomShiftPresetSchema = createInsertSchema(customShiftPresets).omit({
+  id: true,
+  createdAt: true,
+}).partial();
+
+export type InsertCustomShiftPreset = z.infer<typeof insertCustomShiftPresetSchema>;
+export type UpdateCustomShiftPreset = z.infer<typeof updateCustomShiftPresetSchema>;
+export type CustomShiftPreset = typeof customShiftPresets.$inferSelect;

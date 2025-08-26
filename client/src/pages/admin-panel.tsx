@@ -28,8 +28,8 @@ function CompactCustomerInfo({ name, email, phone }: {
       <div className="font-medium">{name}</div>
       {isExpanded ? (
         <div className="space-y-1">
-          <div className="text-gray-500 break-all">{email}</div>
-          <div className="text-gray-500">{phone}</div>
+          <div className="text-slate-500 break-all">{email}</div>
+          <div className="text-slate-500">{phone}</div>
           <button 
             onClick={() => setIsExpanded(false)}
             className="text-blue-600 text-xs hover:underline"
@@ -206,7 +206,7 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
           size="sm"
           onClick={() => setShowPasswordPrompt(true)}
           disabled={deleteMutation.isPending}
-          className="px-3 border-gray-300 hover:bg-gray-50"
+          className="px-3 border-gray-300 hover:bg-slate-700/30"
         >
           <img src={binIcon} alt="Delete" className="h-4 w-4" />
         </Button>
@@ -228,7 +228,7 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
       )}
       
       {showPasswordPrompt && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <div className="bg-slate-700/30 border border-gray-200 rounded-lg p-3">
           <p className="text-sm text-gray-800 mb-3">Enter password to delete incident report:</p>
           <input
             type="password"
@@ -288,7 +288,7 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
       )}
       
       {showDeleteConfirm && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <div className="bg-slate-700/30 border border-gray-200 rounded-lg p-3">
           <p className="text-sm text-gray-800 mb-3">Delete this incident report?</p>
           <div className="flex gap-2">
             <Button
@@ -354,7 +354,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, Upload, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight, User, Plus } from "lucide-react";
+import { LogOut, FileSpreadsheet, Users, Home, Download, FileDown, Upload, MapPin, BarChart as BarChartIcon, Ticket, PlusCircle, ArrowUpDown, Calendar, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, DollarSign, Clock, CheckCircle, XCircle, AlertCircle, Car, ChevronLeft, ChevronRight, User, Plus, Menu, X } from "lucide-react";
 import monitorHeartNotesIcon from "@assets/Monitor-Heart-Notes--Streamline-Ultimate.png";
 import analyticsBoardBarsIcon from "@assets/Analytics-Board-Bars--Streamline-Ultimate.png";
 import tagsAddIcon from "@assets/Tags-Add--Streamline-Ultimate.png";
@@ -466,6 +466,17 @@ export default function AdminPanel() {
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [selectedWeekOffset, setSelectedWeekOffset] = useState(0); // 0 = current week, 1 = last week, etc.
+  
+  // Sidebar navigation state
+  const [activeTab, setActiveTab] = useState("reports");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Edit Reports state
+  const [selectedEditReport, setSelectedEditReport] = useState(null);
+  const [editReportStartDate, setEditReportStartDate] = useState('');
+  const [editReportEndDate, setEditReportEndDate] = useState('');
+  const [editReportLocationFilter, setEditReportLocationFilter] = useState('all');
+  const [editReportSearchTerm, setEditReportSearchTerm] = useState('');
   
   // Initial setup - check authentication and adapt UI for mobile
   useEffect(() => {
@@ -816,6 +827,27 @@ export default function AdminPanel() {
     queryKey: ["/api/shift-reports"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Filtered reports for editing
+  const filteredEditReports = useMemo(() => {
+    return reports.filter(report => {
+      const reportDate = new Date(report.date);
+      const startDate = editReportStartDate ? new Date(editReportStartDate) : null;
+      const endDate = editReportEndDate ? new Date(editReportEndDate) : null;
+      
+      // Date filtering
+      if (startDate && reportDate < startDate) return false;
+      if (endDate && reportDate > endDate) return false;
+      
+      // Location filtering
+      if (editReportLocationFilter !== 'all' && report.locationId !== parseInt(editReportLocationFilter)) return false;
+      
+      // Search term filtering (shift leader)
+      if (editReportSearchTerm && !report.shiftLeader?.toLowerCase().includes(editReportSearchTerm.toLowerCase())) return false;
+      
+      return true;
+    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [reports, editReportStartDate, editReportEndDate, editReportLocationFilter, editReportSearchTerm]);
   
   // Fetch ticket distributions
   const { data: distributionsData = [], isLoading: isLoadingDistributions } = useQuery<TicketDistribution[]>({
@@ -2060,247 +2092,192 @@ export default function AdminPanel() {
     return locations?.find((loc: any) => loc.id === locationId)?.name || "Unknown";
   };
 
+  // Navigation items configuration
+  const navigationItems = [
+    { id: "reports", label: "Reports", icon: analyticsBoardBarsIcon },
+    { id: "locations", label: "Performance", icon: pinLocationIcon },
+    { id: "tickets", label: "Tickets", icon: tagsAddIcon },
+    { id: "manage-employees", label: "Employees", icon: deliveryManIcon },
+    { id: "employee-accounting", label: "Employee Accounting", icon: cashUserIcon },
+    { id: "hours-tracker", label: "Hours Tracker", icon: timeClockNineIcon },
+    { id: "incident-reports", label: "Incident Reports", icon: carRepairFireIcon },
+    { id: "location-management", label: "Location Management", icon: pinLocationIcon }
+  ];
+
+  const actionItems = [
+    { 
+      id: "csv-upload", 
+      label: "CSV Upload", 
+      icon: folderUploadIcon, 
+      action: () => {
+        const password = prompt("Please enter the password to access CSV Upload:");
+        if (password === "bbonly") {
+          navigate("/admin/csv-upload");
+        } else if (password !== null) {
+          alert("Incorrect password. Access denied.");
+        }
+      }
+    },
+    { id: "edit-reports", label: "Edit Reports", icon: paperWriteIcon, action: () => navigate("/reports") },
+    { id: "document-generator", label: "Document Generator", icon: contractIcon, action: () => navigate("/contracts") },
+    { id: "logout", label: "Logout", icon: logoutIcon, action: handleLogout, isLogout: true }
+  ];
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl text-blue-600">Admin Panel</h1>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/")}
-              className="flex items-center gap-1"
+      <div className="admin-panel flex min-h-screen w-screen bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900 absolute inset-0">
+        {/* Sidebar */}
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0 lg:static lg:inset-0`}>
+          {/* Enhanced glassmorphism background */}
+          <div className="relative h-full overflow-hidden bg-gradient-to-b from-slate-900/80 via-blue-900/80 to-indigo-900/80 border-r border-white/20 backdrop-blur-xl shadow-2xl">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCojZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10 h-full flex flex-col">
+          <div className="flex items-center justify-between p-3 border-b border-white/20">
+            <div className="flex items-center gap-2">
+              <img src={monitorHeartNotesIcon} alt="Monitor Heart" className="h-7 w-7" />
+              <h1 className="text-lg font-bold text-white">Admin Panel</h1>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden text-slate-400 hover:text-white"
             >
-              <img src={houseIcon} alt="House" className="h-4 w-4" />
-              Home
-            </Button>
-            <Button variant="outline" onClick={handleLogout}>
-              <img src={logoutIcon} alt="Logout" className="h-4 w-4 mr-2" />
-              Logout
+              <X className="h-5 w-5" />
             </Button>
           </div>
-        </div>
-        <div className="flex flex-wrap gap-2 justify-end">
-
-          <Button 
-            variant="outline" 
-            onClick={() => {
-              const password = prompt("Please enter the password to access CSV Upload:");
-              if (password === "bbonly") {
-                navigate("/admin/csv-upload");
-              } else if (password !== null) {
-                // Only show error if user didn't cancel
-                alert("Incorrect password. Access denied.");
-              }
-            }}
-            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-          >
-            <img src={folderUploadIcon} alt="Folder Upload" className="h-4 w-4" />
-            CSV Upload
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={() => navigate("/reports")}
-            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-          >
-            <img src={paperWriteIcon} alt="Paper Write" className="h-4 w-4" />
-            Edit Reports
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={() => navigate("/contracts")}
-            className="bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-          >
-            <img src={contractIcon} alt="Contract" className="h-4 w-4" />
-            Document Generator
-          </Button>
-        </div>
-      </div>
-      <Tabs defaultValue="reports" className="w-full">
-        <TabsList className="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:flex lg:flex-wrap gap-1 h-auto">
-          <TabsTrigger value="reports" className="flex-shrink-0 flex items-center">
-            <img src={monitorHeartNotesIcon} alt="Monitor Heart Notes" className="h-4 w-4 mr-2" />
-            Reports
-          </TabsTrigger>
-
-          <TabsTrigger value="locations" className="flex-shrink-0 flex items-center">
-            <img src={analyticsBoardBarsIcon} alt="Analytics Board Bars" className="h-4 w-4 mr-2" />
-            Partner Distribution
-          </TabsTrigger>
-          <TabsTrigger value="tickets" className="flex-shrink-0 flex items-center">
-            <img src={tagsAddIcon} alt="Tags Add" className="h-4 w-4 mr-2" />
-            Tickets
-          </TabsTrigger>
-          <TabsTrigger value="manage-employees" className="flex-shrink-0 flex items-center">
-            <img src={deliveryManIcon} alt="Delivery Man" className="h-4 w-4 mr-2" />
-            Employees
-          </TabsTrigger>
-          <TabsTrigger value="employee-accounting" className="flex-shrink-0 flex items-center">
-            <img src={cashUserIcon} alt="Cash User" className="h-4 w-4 mr-2" />
-            Employee Accounting
-          </TabsTrigger>
-          <TabsTrigger value="hours-tracker" className="flex-shrink-0 flex items-center relative">
-            <img src={timeClockNineIcon} alt="Time Clock Nine" className="h-4 w-4 mr-2" />
-            Hours Tracker
-            {(() => {
-              // Calculate badge count for critical/warning employees
-              const weeklyHours: Record<string, { totalHours: number }> = {};
-              const today = new Date();
-              const weekStart = new Date(today);
-              weekStart.setDate(today.getDate() - today.getDay() - (selectedWeekOffset * 7));
-              weekStart.setHours(0, 0, 0, 0);
-              const weekEnd = new Date(weekStart);
-              weekEnd.setDate(weekStart.getDate() + 6);
-              weekEnd.setHours(23, 59, 59, 999);
-
-              // Only process if we have reports data
-              if (Array.isArray(reports) && reports.length > 0) {
-                reports.forEach((report: any) => {
-                  const reportDate = parseReportDate(report.date);
-                  if (reportDate >= weekStart && reportDate <= weekEnd) {
-                    let weeklyEmployees = [];
-                    try {
-                      if (typeof report.employees === 'string') {
-                        // Handle double-escaped JSON from database
-                        let employeeData = report.employees;
-                        
-                        // If it starts with a curly brace but is wrapped in quotes, it's double-escaped
-                        if (employeeData.startsWith('"{') && employeeData.endsWith('}"')) {
-                          // Remove outer quotes and unescape inner quotes
-                          employeeData = employeeData.slice(1, -1).replace(/\\"/g, '"');
-                        }
-                        
-                        weeklyEmployees = JSON.parse(employeeData);
-                      } else if (Array.isArray(report.employees)) {
-                        weeklyEmployees = report.employees;
-                      }
-                    } catch (e) {
-                      // If JSON parsing fails, try alternative parsing for malformed data
-                      try {
-                        if (typeof report.employees === 'string') {
-                          // Handle the database format: {"{"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}"}
-                          let rawData = report.employees;
-                          
-                          // Remove outer wrapper: {" ... "}
-                          if (rawData.startsWith('{"') && rawData.endsWith('"}')) {
-                            rawData = rawData.slice(2, -2);
-                          }
-                          
-                          // Fix escaped quotes
-                          rawData = rawData.replace(/\\"/g, '"');
-                          
-                          // Now we should have: {"name":"elijah","hours":8,"cashPaid":0}","{"name":"antonio","hours":7,"cashPaid":0}
-                          // Split by "},"{" and rebuild as proper JSON array
-                          if (rawData.includes('},{')) {
-                            // Split on },{ boundary
-                            const parts = rawData.split('},{');
-                            const employees = [];
-                            
-                            for (let i = 0; i < parts.length; i++) {
-                              let part = parts[i];
-                              
-                              // Add missing braces for each part
-                              if (i === 0 && !part.startsWith('{')) part = '{' + part;
-                              if (i === parts.length - 1 && !part.endsWith('}')) part = part + '}';
-                              if (i > 0 && !part.startsWith('{')) part = '{' + part;
-                              if (i < parts.length - 1 && !part.endsWith('}')) part = part + '}';
-                              
-                              try {
-                                const emp = JSON.parse(part);
-                                employees.push(emp);
-                              } catch (e) {
-                                console.log('Failed to parse employee part:', part);
-                              }
-                            }
-                            
-                            weeklyEmployees = employees;
-                          } else if (!rawData.startsWith('[')) {
-                            // Single employee case
-                            try {
-                              weeklyEmployees = [JSON.parse(rawData)];
-                            } catch (e) {
-                              weeklyEmployees = [];
-                            }
-                          }
-                        }
-                      } catch (e2) {
-                        weeklyEmployees = [];
-                      }
-                    }
-
-                    // Safety check to ensure weeklyEmployees is an array
-                    if (!Array.isArray(weeklyEmployees)) {
-                      weeklyEmployees = [];
-                    }
-
-                    weeklyEmployees.forEach((emp: any) => {
-                      if (emp && emp.name && typeof emp.hours === 'number') {
-                        if (!weeklyHours[emp.name]) {
-                          weeklyHours[emp.name] = { totalHours: 0 };
-                        }
-                        weeklyHours[emp.name].totalHours += emp.hours;
-                      }
-                    });
+          
+          {/* Navigation Items */}
+          <div className="p-3 space-y-1">
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Navigation</div>
+            {navigationItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 relative ${
+                  activeTab === item.id
+                    ? 'bg-white/20 text-white border border-white/30 shadow-lg backdrop-blur-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10 hover:backdrop-blur-sm'
+                }`}
+              >
+                <img src={item.icon} alt={item.label} className="h-5 w-5 flex-shrink-0" />
+                <span className="text-sm whitespace-nowrap">{item.label}</span>
+              </button>
+            ))}
+          </div>
+          
+          {/* Action Items */}
+          <div className="p-3 space-y-1 border-t border-white/20">
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Actions</div>
+            {actionItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (item.action) {
+                    item.action();
+                  } else {
+                    setActiveTab(item.id);
+                    setSidebarOpen(false);
                   }
-                });
-              }
-
-              const alertCount = Object.values(weeklyHours).filter(emp => emp.totalHours >= 30).length;
-              
-
-              return alertCount > 0 ? (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                  !
-                </span>
-              ) : null;
-            })()}
-          </TabsTrigger>
-          <TabsTrigger value="incident-reports" className="flex-shrink-0 flex items-center relative">
-            <img src={carRepairFireIcon} alt="Car Repair Fire" className="h-4 w-4 mr-2" />
-            Incident Reports
-            {(() => {
-              const { data: incidentReports } = useQuery({
-                queryKey: ["/api/incident-reports"],
-                queryFn: getQueryFn({ on401: "returnNull" }),
-              });
-              
-              // Check for incidents that are not completed
-              const incompleteIncidents = incidentReports?.filter((report: any) => {
-                return report.repairStatus !== 'completed';
-              }) || [];
-              
-              return incompleteIncidents.length > 0 ? (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                  {incompleteIncidents.length}
-                </span>
-              ) : null;
-            })()}
-          </TabsTrigger>
-          <TabsTrigger value="location-management" className="flex-shrink-0 flex items-center">
-            <img src={pinLocationIcon} alt="Pin Location" className="h-4 w-4 mr-2" />
-            Location Management
-          </TabsTrigger>
-        </TabsList>
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 ${
+                  !item.action && activeTab === item.id
+                    ? 'bg-white/20 text-white border border-white/30 shadow-lg backdrop-blur-sm'
+                    : item.isLogout
+                    ? 'text-red-400 hover:text-red-300 hover:bg-red-500/20 hover:backdrop-blur-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10 hover:backdrop-blur-sm'
+                }`}
+              >
+                <img src={item.icon} alt={item.label} className="h-5 w-5 flex-shrink-0" />
+                <span className="text-sm whitespace-nowrap">{item.label}</span>
+              </button>
+            ))}
+          </div>
+          
+          {/* Spacer to push content up */}
+          <div className="flex-1"></div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Sidebar overlay for mobile */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" 
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        
+        {/* Main content */}
+        <div className="flex-1 flex flex-col min-h-screen">
+          {/* Mobile header */}
+          <div className="lg:hidden bg-gray-900/60 backdrop-blur-xl border-b border-gray-800/50 p-4">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(true)}
+                className="text-slate-400 hover:text-white"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <div className="flex items-center gap-3">
+                <img src={monitorHeartNotesIcon} alt="Monitor Heart" className="h-6 w-6" />
+                <h1 className="text-lg font-bold text-white">Admin Panel</h1>
+              </div>
+              <div></div>
+            </div>
+          </div>
+          
+          {/* Content area */}
+          <div className="flex-1 w-full h-full p-6 overflow-auto max-w-none">
+            <Tabs value={activeTab} className="w-full max-w-none">
+              {/* Hide TabsList since we have sidebar navigation */}
+              <TabsList className="hidden">
+                {/* Empty - navigation is handled by sidebar */}
+              </TabsList>
         
 
         
         <TabsContent value="reports">
-          <Card>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            <Card className="relative z-10 bg-transparent border-0 shadow-none">
             <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <CardTitle>Sales and Car Volume Trends</CardTitle>
-                <CardDescription>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <img src={analyticsBoardBarsIcon} alt="Reports" className="h-5 w-5" />
+                  Reports
+                </CardTitle>
+                <CardDescription className="text-slate-400">
                   Sales performance trends across the year
                 </CardDescription>
               </div>
               <div className="flex flex-wrap items-end gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="stats-start-date">Start Date</Label>
+                  <Label htmlFor="stats-start-date" className="text-slate-300">Start Date</Label>
                   <div className="relative">
                     <input
                       id="stats-start-date"
                       type="date"
-                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      className="px-3 py-2 rounded-md border border-slate-600/50 bg-slate-700/50 text-white text-sm shadow-sm backdrop-blur-sm"
                       value={startDate ? startDate.toISOString().substring(0, 10) : ""}
                       onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
                     />
@@ -2308,12 +2285,12 @@ export default function AdminPanel() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="stats-end-date">End Date</Label>
+                  <Label htmlFor="stats-end-date" className="text-slate-300">End Date</Label>
                   <div className="relative">
                     <input
                       id="stats-end-date"
                       type="date"
-                      className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                      className="px-3 py-2 rounded-md border border-slate-600/50 bg-slate-700/50 text-white text-sm shadow-sm backdrop-blur-sm"
                       value={endDate ? endDate.toISOString().substring(0, 10) : ""}
                       onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
                     />
@@ -2321,8 +2298,8 @@ export default function AdminPanel() {
                 </div>
                 
                 <Button 
-                  variant="secondary" 
                   size="sm"
+                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   onClick={() => {
                     setStartDate(undefined);
                     setEndDate(undefined);
@@ -2335,125 +2312,34 @@ export default function AdminPanel() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-center py-8">Loading statistics data...</div>
+                <div className="text-center py-8 text-slate-400">Loading statistics data...</div>
               ) : reports.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-slate-500">
                   No data found. Create shift reports to see statistics.
                 </div>
               ) : (
                 <div className="space-y-8">
-                  {/* Sales Trend Chart (Last 14 days) */}
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Sales & Car Volume Trends (Last 14 Days)</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Daily trends showing sales revenue and car volume</p>
-                    <div className="w-full h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart
-                          data={salesTrendData}
-                          margin={{
-                            top: 20,
-                            right: 30,
-                            left: 20,
-                            bottom: 20,
-                          }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="date" />
-                          <YAxis 
-                            yAxisId="left" 
-                            orientation="left" 
-                            stroke="#4f46e5"
-                            label={{ value: 'Sales ($)', angle: -90, position: 'insideLeft' }}
-                            tickFormatter={(value) => `$${value}`}
-                          />
-                          <YAxis 
-                            yAxisId="right" 
-                            orientation="right" 
-                            stroke="#10b981"
-                            label={{ value: 'Cars', angle: -90, position: 'insideRight' }}
-                          />
-                          <Tooltip formatter={(value, name) => {
-                            if (name === 'Sales ($)') return [`$${Number(value).toFixed(2)}`, 'Sales'];
-                            return [value, 'Cars'];
-                          }} />
-                          <Legend />
-                          <Bar 
-                            yAxisId="right" 
-                            dataKey="cars" 
-                            fill="#10b981" 
-                            name="Cars" 
-                            barSize={20}
-                          />
-                          <Line 
-                            yAxisId="left" 
-                            type="monotone" 
-                            dataKey="sales" 
-                            stroke="#4f46e5" 
-                            strokeWidth={2}
-                            activeDot={{ r: 6 }}
-                            name="Sales ($)"
-                          />
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                  
-                  {/* Monthly Sales Area Chart */}
-                  <div className="border rounded-lg p-4">
-                    <h3 className="text-lg font-medium mb-2">Monthly Performance</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Detailed monthly breakdown</p>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart
-                          data={monthlyData}
-                          margin={{
-                            top: 20,
-                            right: 30,
-                            left: 20,
-                            bottom: 20,
-                          }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis 
-                            tickFormatter={(value) => `$${value}`}
-                            domain={[0, 35000]} 
-                          />
-                          <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Sales']} />
-                          <Legend />
-                          <Area 
-                            type="monotone" 
-                            dataKey="sales" 
-                            name="Total Sales ($)" 
-                            stroke="#4f46e5" 
-                            fill="#4f46e580"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                  
                   {/* Report Summary Stats Cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 border p-4 rounded-lg">
-                      <h3 className="text-blue-700 dark:text-blue-400 font-medium text-sm mb-1">Total Reports</h3>
-                      <p className="text-2xl font-bold">{reports.length}</p>
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                      <h3 className="text-blue-400 font-medium text-sm mb-1">Total Reports</h3>
+                      <p className="text-2xl font-bold text-white">{reports.length}</p>
                     </div>
-                    <div className="bg-blue-100 dark:bg-blue-950/30 border-blue-300 dark:border-blue-900 border p-4 rounded-lg">
-                      <h3 className="text-blue-800 dark:text-blue-300 font-medium text-sm mb-1">Total Cars</h3>
-                      <p className="text-2xl font-bold">
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                      <h3 className="text-blue-400 font-medium text-sm mb-1">Total Cars</h3>
+                      <p className="text-2xl font-bold text-white">
                         {reports.reduce((sum, report) => sum + report.totalCars, 0)}
                       </p>
                     </div>
-                    <div className="bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900 border p-4 rounded-lg">
-                      <h3 className="text-purple-700 dark:text-purple-400 font-medium text-sm mb-1">Total Sales</h3>
-                      <p className="text-2xl font-bold">
-                        ${monthlyData.reduce((sum, month) => sum + month.sales, 0).toFixed(2)}
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                      <h3 className="text-purple-400 font-medium text-sm mb-1">Total Sales</h3>
+                      <p className="text-2xl font-bold text-white">
+                        ${reports.reduce((sum, report) => sum + (report.totalCreditSales || 0) + (report.totalReceiptSales || 0), 0).toFixed(2)}
                       </p>
                     </div>
-                    <div className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900 border p-4 rounded-lg">
-                      <h3 className="text-amber-700 dark:text-amber-400 font-medium text-sm mb-1">Busiest Day</h3>
-                      <p className="text-2xl font-bold">
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                      <h3 className="text-amber-400 font-medium text-sm mb-1">Busiest Day</h3>
+                      <p className="text-2xl font-bold text-white">
                         {dailyCarVolume.reduce((max, day) => max.cars > day.cars ? max : day, { name: '', cars: 0 }).name}
                       </p>
                     </div>
@@ -2462,24 +2348,35 @@ export default function AdminPanel() {
               )}
             </CardContent>
           </Card>
+          </div>
         </TabsContent>
         
         <TabsContent value="reports">
-          <Card>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            <Card className="relative z-10 bg-transparent border-0 shadow-none">
             <CardHeader className="space-y-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <CardTitle>Shift Reports - {getCurrentMonthName()}</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <img src={analyticsBoardBarsIcon} alt="Reports" className="h-5 w-5" />
+                    Shift Reports - {getCurrentMonthName()}
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
                     View shift reports for the selected month
                   </CardDescription>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button 
-                    variant="outline" 
                     size="sm" 
                     onClick={exportReportsToCSV}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <img 
                       src={databaseUploadIcon} 
@@ -2489,10 +2386,9 @@ export default function AdminPanel() {
                     Export CSV
                   </Button>
                   <Button 
-                    variant="outline" 
                     size="sm" 
                     onClick={exportReportsToPDF}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <img 
                       src={networkUploadIcon} 
@@ -2502,10 +2398,9 @@ export default function AdminPanel() {
                     Export PDF
                   </Button>
                   <Button 
-                    variant="outline" 
                     size="sm" 
                     onClick={exportCapitalGrilleReceiptsToPDF}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <img 
                       src={monitorUploadIcon} 
@@ -2518,28 +2413,26 @@ export default function AdminPanel() {
               </div>
               
               {/* Month Navigation and Location Filter Controls */}
-              <div className="space-y-3 bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+              <div className="space-y-3 bg-slate-700/50 backdrop-blur-sm p-3 rounded-lg border border-slate-600/50">
                 {/* Month Navigation */}
                 <div className="flex items-center justify-center gap-4">
                   <Button
-                    variant="outline"
                     size="sm"
                     onClick={goToPreviousMonth}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <ChevronLeft className="h-4 w-4" />
                     Previous Month
                   </Button>
                   
-                  <div className="text-sm font-medium text-center min-w-[150px]">
+                  <div className="text-sm font-medium text-center min-w-[150px] text-white">
                     {getCurrentMonthName()}
                   </div>
                   
                   <Button
-                    variant="outline"
                     size="sm"
                     onClick={goToNextMonth}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     Next Month
                     <ChevronRight className="h-4 w-4" />
@@ -2548,7 +2441,7 @@ export default function AdminPanel() {
                 
                 {/* Location Filter */}
                 <div className="flex items-center justify-center gap-2">
-                  <Label htmlFor="location-filter" className="text-sm font-medium">Filter by Location:</Label>
+                  <Label htmlFor="location-filter" className="text-sm font-medium text-slate-300">Filter by Location:</Label>
                   <Select value={selectedReportsLocation} onValueChange={setSelectedReportsLocation}>
                     <SelectTrigger className="w-[200px]" id="location-filter">
                       <SelectValue placeholder="Select location" />
@@ -2584,7 +2477,7 @@ export default function AdminPanel() {
                 
                 if (filteredReports.length === 0) {
                   return (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-slate-500">
                       No reports found for {getCurrentMonthName()}. {reports.length === 0 ? 'Create a report to get started.' : 'Navigate to a different month to view other reports.'}
                     </div>
                   );
@@ -2593,20 +2486,20 @@ export default function AdminPanel() {
                 return (
                   <div className="overflow-x-auto">
                   <Table>
-                    <TableCaption>A list of all shift reports.</TableCaption>
+                    <TableCaption className="text-slate-400">A list of all shift reports.</TableCaption>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Shift</TableHead>
-                        <TableHead>Leader</TableHead>
-                        <TableHead className="text-center">Cars</TableHead>
-                        <TableHead className="text-center">Cash</TableHead>
-                        <TableHead className="text-center">Credit Card Sales</TableHead>
-                        <TableHead className="text-center">Receipt Sales</TableHead>
-                        <TableHead className="text-center">Money Owed</TableHead>
-                        <TableHead className="text-center">Turn-In</TableHead>
+                        <TableHead className="text-white">ID</TableHead>
+                        <TableHead className="text-white">Date</TableHead>
+                        <TableHead className="text-white">Location</TableHead>
+                        <TableHead className="text-white">Shift</TableHead>
+                        <TableHead className="text-white">Leader</TableHead>
+                        <TableHead className="text-center text-white">Cars</TableHead>
+                        <TableHead className="text-center text-white">Cash</TableHead>
+                        <TableHead className="text-center text-white">Credit Card Sales</TableHead>
+                        <TableHead className="text-center text-white">Receipt Sales</TableHead>
+                        <TableHead className="text-center text-white">Money Owed</TableHead>
+                        <TableHead className="text-center text-white">Turn-In</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2682,21 +2575,21 @@ export default function AdminPanel() {
                         
                         return (
                           <TableRow key={report.id}>
-                            <TableCell>{report.id}</TableCell>
-                            <TableCell>{date.toLocaleDateString()}</TableCell>
-                            <TableCell>{getLocationName(report.locationId)}</TableCell>
-                            <TableCell>{report.shift}</TableCell>
-                            <TableCell>{EMPLOYEE_NAMES[report.manager] || report.manager}</TableCell>
-                            <TableCell className="text-center">{report.totalCars}</TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-white">{report.id}</TableCell>
+                            <TableCell className="text-white">{date.toLocaleDateString()}</TableCell>
+                            <TableCell className="text-white">{getLocationName(report.locationId)}</TableCell>
+                            <TableCell className="text-white">{report.shift}</TableCell>
+                            <TableCell className="text-white">{EMPLOYEE_NAMES[report.manager] || report.manager}</TableCell>
+                            <TableCell className="text-center text-white">{report.totalCars}</TableCell>
+                            <TableCell className="text-center text-white">
                               ${(report.companyCashTurnIn || 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
-                            <TableCell className="text-center">${(report.totalReceiptSales || 0).toFixed(2)}</TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center text-white">${(report.totalCreditSales || 0).toFixed(2)}</TableCell>
+                            <TableCell className="text-center text-white">${(report.totalReceiptSales || 0).toFixed(2)}</TableCell>
+                            <TableCell className="text-center text-white">
                               ${moneyOwed.toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center">${expectedTurnIn.toFixed(2)}</TableCell>
+                            <TableCell className="text-center text-white">${expectedTurnIn.toFixed(2)}</TableCell>
                           </TableRow>
                         );
                       })}
@@ -2741,18 +2634,18 @@ export default function AdminPanel() {
                         
                         if (filteredReports.length > 0) {
                           return (
-                            <TableRow className="bg-gray-50 font-semibold border-t-2">
-                              <TableCell className="font-bold">TOTAL</TableCell>
-                              <TableCell></TableCell>
-                              <TableCell></TableCell>
-                              <TableCell></TableCell>
-                              <TableCell></TableCell>
-                              <TableCell className="text-center font-bold">{totalCars}</TableCell>
-                              <TableCell className="text-center font-bold">${totalCash.toFixed(2)}</TableCell>
-                              <TableCell className="text-center font-bold">${totalCreditSales.toFixed(2)}</TableCell>
-                              <TableCell className="text-center font-bold">${totalReceiptSales.toFixed(2)}</TableCell>
-                              <TableCell className="text-center font-bold">${totalMoneyOwed.toFixed(2)}</TableCell>
-                              <TableCell className="text-center font-bold">${totalTurnIn.toFixed(2)}</TableCell>
+                            <TableRow className="bg-slate-700/30 font-semibold border-t-2">
+                              <TableCell className="font-bold text-white">TOTAL</TableCell>
+                              <TableCell className="text-white"></TableCell>
+                              <TableCell className="text-white"></TableCell>
+                              <TableCell className="text-white"></TableCell>
+                              <TableCell className="text-white"></TableCell>
+                              <TableCell className="text-center font-bold text-white">{totalCars}</TableCell>
+                              <TableCell className="text-center font-bold text-white">${totalCash.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold text-white">${totalCreditSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold text-white">${totalReceiptSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold text-white">${totalMoneyOwed.toFixed(2)}</TableCell>
+                              <TableCell className="text-center font-bold text-white">${totalTurnIn.toFixed(2)}</TableCell>
                             </TableRow>
                           );
                         }
@@ -2765,13 +2658,25 @@ export default function AdminPanel() {
                 })()}
             </CardContent>
           </Card>
+          </div>
         </TabsContent>
         
         <TabsContent value="reports">
-          <Card>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            <Card className="relative z-10 bg-transparent border-0 shadow-none">
             <CardHeader>
-              <CardTitle>Summary Report</CardTitle>
-              <CardDescription>Monthly totals and statistics</CardDescription>
+              <CardTitle className="flex items-center gap-2 text-white">
+                <img src={analyticsBoardBarsIcon} alt="Reports" className="h-5 w-5" />
+                Summary Report
+              </CardTitle>
+              <CardDescription className="text-slate-400">Monthly totals and statistics</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Summary Totals Table */}
@@ -2821,33 +2726,33 @@ export default function AdminPanel() {
                 });
 
                 return filteredReports.length > 0 ? (
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h3 className="text-lg font-semibold mb-4 text-blue-800">
+                  <div className="mt-6 p-4 bg-slate-700/50 backdrop-blur-sm rounded-lg border border-slate-600/50">
+                    <h3 className="text-lg font-semibold mb-4 text-blue-400">
                       Summary Totals {(startDate || endDate) && (
-                        <span className="text-sm font-normal text-blue-600">
+                        <span className="text-sm font-normal text-slate-400">
                           ({startDate ? startDate.toLocaleDateString() : 'Start'} - {endDate ? endDate.toLocaleDateString() : 'End'})
                         </span>
                       )}
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-white p-3 rounded-md border border-blue-100">
-                        <div className="text-sm font-medium text-gray-600">Total Cars Parked</div>
-                        <div className="text-2xl font-bold text-blue-600">{totals.totalCars.toLocaleString()}</div>
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                        <div className="text-sm font-medium text-slate-400">Total Cars Parked</div>
+                        <div className="text-2xl font-bold text-blue-400">{totals.totalCars.toLocaleString()}</div>
                       </div>
-                      <div className="bg-white p-3 rounded-md border border-blue-100">
-                        <div className="text-sm font-medium text-gray-600">Total Cash Sales</div>
-                        <div className="text-2xl font-bold text-blue-800">${totals.totalCash.toLocaleString()}</div>
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                        <div className="text-sm font-medium text-slate-400">Total Cash Sales</div>
+                        <div className="text-2xl font-bold text-blue-400">${totals.totalCash.toLocaleString()}</div>
                       </div>
-                      <div className="bg-white p-3 rounded-md border border-blue-100">
-                        <div className="text-sm font-medium text-gray-600">Total Credit Sales</div>
-                        <div className="text-2xl font-bold text-purple-600">${totals.totalCredit.toLocaleString()}</div>
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                        <div className="text-sm font-medium text-slate-400">Total Credit Sales</div>
+                        <div className="text-2xl font-bold text-purple-400">${totals.totalCredit.toLocaleString()}</div>
                       </div>
-                      <div className="bg-white p-3 rounded-md border border-blue-100">
-                        <div className="text-sm font-medium text-gray-600">Total Turn-In</div>
-                        <div className="text-2xl font-bold text-orange-600">${totals.totalTurnIn.toLocaleString()}</div>
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                        <div className="text-sm font-medium text-slate-400">Total Turn-In</div>
+                        <div className="text-2xl font-bold text-orange-400">${totals.totalTurnIn.toLocaleString()}</div>
                       </div>
                     </div>
-                    <div className="mt-3 text-xs text-blue-600">
+                    <div className="mt-3 text-xs text-blue-400">
                       Showing totals for {filteredReports.length} report(s) in the selected date range
                     </div>
                   </div>
@@ -2855,6 +2760,7 @@ export default function AdminPanel() {
               })()}
             </CardContent>
           </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="payroll">
@@ -2889,7 +2795,7 @@ export default function AdminPanel() {
                 </div>
               </div>
               
-              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900">
+              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-slate-700/30 dark:bg-gray-900">
                 <div className="space-y-2">
                   <Label htmlFor="employee-month-filter">Filter by Month</Label>
                   <Select
@@ -2918,8 +2824,8 @@ export default function AdminPanel() {
                 </div>
                 
                 <Button 
-                  variant="secondary" 
                   size="sm"
+                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   onClick={() => {
                     setSelectedMonth(null);
                   }}
@@ -2932,25 +2838,25 @@ export default function AdminPanel() {
               {isLoading ? (
                 <div className="text-center py-8">Loading employee data...</div>
               ) : employeeAccountingData.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-slate-500">
                   No employee data found.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
-                    <TableCaption>Employee financial summary across all reports.</TableCaption>
+                    <TableCaption className="text-slate-400">Employee financial summary across all reports.</TableCaption>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Employee</TableHead>
-                        <TableHead className="text-right">Total Hours</TableHead>
-                        <TableHead className="text-right">Location</TableHead>
-                        <TableHead className="text-right">Commission</TableHead>
-                        <TableHead className="text-right">Tips</TableHead>
-                        <TableHead className="text-right">Money Owed</TableHead>
-                        <TableHead className="text-right">Total Earnings</TableHead>
-                        <TableHead className="text-right">Est. Taxes (22%)</TableHead>
-                        <TableHead className="text-right">Cash Paid</TableHead>
-                        <TableHead className="text-right">Tax Balance</TableHead>
+                        <TableHead className="text-white">Employee</TableHead>
+                        <TableHead className="text-right text-white">Total Hours</TableHead>
+                        <TableHead className="text-right text-white">Location</TableHead>
+                        <TableHead className="text-right text-white">Commission</TableHead>
+                        <TableHead className="text-right text-white">Tips</TableHead>
+                        <TableHead className="text-right text-white">Money Owed</TableHead>
+                        <TableHead className="text-right text-white">Total Earnings</TableHead>
+                        <TableHead className="text-right text-white">Est. Taxes (22%)</TableHead>
+                        <TableHead className="text-right text-white">Cash Paid</TableHead>
+                        <TableHead className="text-right text-white">Tax Balance</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -2999,18 +2905,28 @@ export default function AdminPanel() {
         </TabsContent>
         
         <TabsContent value="locations">
-          <Card>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            <Card className="relative z-10 bg-transparent border-0 shadow-none">
             <CardHeader className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <CardTitle>Location Performance</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <img src={pinLocationIcon} alt="Performance" className="h-5 w-5" />
+                    Location Performance
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
                     View performance metrics for all locations
                   </CardDescription>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button 
-                    variant="outline" 
                     size="sm" 
                     onClick={() => {
                       // CSV Export for location stats
@@ -3032,7 +2948,7 @@ export default function AdminPanel() {
                       link.click();
                       document.body.removeChild(link);
                     }}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <FileDown className="h-4 w-4" />
                     Export CSV
@@ -3087,7 +3003,7 @@ export default function AdminPanel() {
                       // Save PDF
                       doc.save("location-performance.pdf");
                     }}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <Download className="h-4 w-4" />
                     Export PDF
@@ -3095,9 +3011,9 @@ export default function AdminPanel() {
                 </div>
               </div>
               
-              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900">
+              <div className="flex flex-wrap items-end gap-4 border border-white/20 p-4 rounded-xl bg-slate-700/50 backdrop-blur-sm">
                 <div className="space-y-2">
-                  <Label htmlFor="month-filter">Filter by Month</Label>
+                  <Label htmlFor="month-filter" className="text-white">Filter by Month</Label>
                   <Select
                     value={selectedMonth || "all"}
                     onValueChange={(value) => setSelectedMonth(value === "all" ? null : value)}
@@ -3124,8 +3040,8 @@ export default function AdminPanel() {
                 </div>
                 
                 <Button 
-                  variant="secondary" 
                   size="sm"
+                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   onClick={() => {
                     setSelectedMonth(null);
                   }}
@@ -3138,7 +3054,7 @@ export default function AdminPanel() {
               {isLoading ? (
                 <div className="text-center py-8">Loading location data...</div>
               ) : locationStats.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-slate-500">
                   No location data found. Create shift reports to see location performance.
                 </div>
               ) : (
@@ -3148,39 +3064,39 @@ export default function AdminPanel() {
                     {locationStats.map(location => {
                       // Define color schemes for each location
                       let colorScheme = {
-                        border: "border-blue-400",
-                        header: "text-blue-700",
-                        background: "bg-blue-50 dark:bg-blue-950/30"
+                        border: "border-white/20",
+                        header: "text-blue-400",
+                        background: "bg-slate-700/50 backdrop-blur-sm"
                       };
                       
                       // Different color for each location based on ID
                       switch(location.id) {
                         case 1: // Capital Grille
                           colorScheme = {
-                            border: "border-blue-500",
-                            header: "text-blue-700",
-                            background: "bg-blue-50 dark:bg-blue-950/30"
+                            border: "border-white/20",
+                            header: "text-blue-400",
+                            background: "bg-slate-700/50 backdrop-blur-sm"
                           };
                           break;
                         case 2: // Bob's Steak
                           colorScheme = {
-                            border: "border-blue-500",
-                            header: "text-blue-700",
-                            background: "bg-blue-50 dark:bg-blue-950/30"
+                            border: "border-white/20",
+                            header: "text-green-400",
+                            background: "bg-slate-700/50 backdrop-blur-sm"
                           };
                           break;
                         case 3: // Truluck's
                           colorScheme = {
-                            border: "border-red-500",
-                            header: "text-red-700",
-                            background: "bg-red-50 dark:bg-red-950/30"
+                            border: "border-white/20",
+                            header: "text-red-400",
+                            background: "bg-slate-700/50 backdrop-blur-sm"
                           };
                           break;
                         case 4: // BOA Steakhouse
                           colorScheme = {
-                            border: "border-sky-500",
-                            header: "text-sky-700",
-                            background: "bg-sky-50 dark:bg-sky-950/30"
+                            border: "border-white/20",
+                            header: "text-purple-400",
+                            background: "bg-slate-700/50 backdrop-blur-sm"
                           };
                           break;
                       }
@@ -3188,25 +3104,25 @@ export default function AdminPanel() {
                       return (
                         <div 
                           key={location.id} 
-                          className={`p-4 rounded-lg shadow border-2 ${colorScheme.border} ${colorScheme.background}`}
+                          className={`p-4 rounded-lg shadow-lg border ${colorScheme.border} ${colorScheme.background}`}
                         >
-                          <h3 className={`text-lg mb-2 ${colorScheme.header}`}>{location.name}</h3>
+                          <h3 className={`text-lg mb-2 font-semibold ${colorScheme.header}`}>{location.name}</h3>
                           <div className="grid grid-cols-2 gap-2">
                             <div>
-                              <p className="text-sm text-gray-500">Total Cars</p>
-                              <p className="text-xl">{location.totalCars}</p>
+                              <p className="text-sm text-slate-400">Total Cars</p>
+                              <p className="text-xl text-white font-bold">{location.totalCars}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500">Total Income</p>
-                              <p className="text-xl">${location.totalIncome.toFixed(2)}</p>
+                              <p className="text-sm text-slate-400">Total Income</p>
+                              <p className="text-xl text-white font-bold">${location.totalIncome.toFixed(2)}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500">Reports</p>
-                              <p className="text-xl">{location.reports}</p>
+                              <p className="text-sm text-slate-400">Reports</p>
+                              <p className="text-xl text-white font-bold">{location.reports}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500">Daily Revenue Average</p>
-                              <p className="text-xl">
+                              <p className="text-sm text-slate-400">Daily Revenue Average</p>
+                              <p className="text-xl text-white font-bold">
                                 ${location.reports > 0 
                                   ? (location.totalIncome / location.reports).toFixed(2) 
                                   : '0.00'}
@@ -3218,89 +3134,102 @@ export default function AdminPanel() {
                     })}
                   </div>
                   {/* Detailed Performance Table */}
-                  <div className="overflow-x-auto">
+                  <div className="mt-6 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+                    {/* Glass morphism overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
+                    
+                    {/* Content with z-index */}
+                    <div className="relative z-10">
+                    <div className="overflow-x-auto">
                     <Table>
-                      <TableCaption>Detailed location performance breakdown</TableCaption>
+                      <TableCaption className="text-slate-400">Detailed location performance breakdown</TableCaption>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Location</TableHead>
-                          <TableHead className="text-right">Total Cars</TableHead>
-                          <TableHead className="text-right">Cash Sales</TableHead>
-                          <TableHead className="text-right">Credit Sales</TableHead>
-                          <TableHead className="text-right">Receipt Sales</TableHead>
-                          <TableHead className="text-right">Total Income</TableHead>
-                          <TableHead className="text-right">Reports</TableHead>
+                          <TableHead className="text-white">Location</TableHead>
+                          <TableHead className="text-right text-white">Total Cars</TableHead>
+                          <TableHead className="text-right text-white">Cash Sales</TableHead>
+                          <TableHead className="text-right text-white">Credit Sales</TableHead>
+                          <TableHead className="text-right text-white">Receipt Sales</TableHead>
+                          <TableHead className="text-right text-white">Total Income</TableHead>
+                          <TableHead className="text-right text-white">Reports</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {locationStats.map(location => {
                           // Define color for text based on location ID
-                          let textColor = "text-blue-700";
+                          let textColor = "text-blue-400";
                           
                           // Different color for each location based on ID
                           switch(location.id) {
                             case 1: // Capital Grille
-                              textColor = "text-blue-700";
+                              textColor = "text-blue-400";
                               break;
                             case 2: // Bob's Steak
-                              textColor = "text-green-700";
+                              textColor = "text-green-400";
                               break;
                             case 3: // Truluck's
-                              textColor = "text-red-700";
+                              textColor = "text-red-400";
                               break;
                             case 4: // BOA Steakhouse
-                              textColor = "text-sky-700";
+                              textColor = "text-purple-400";
                               break;
                           }
                           
                           return (
-                            <TableRow key={location.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
+                            <TableRow key={location.id} className="hover:bg-white/10">
                               <TableCell className={`font-medium ${textColor}`}>{location.name}</TableCell>
-                              <TableCell className="text-right">{location.totalCars}</TableCell>
-                              <TableCell className="text-right">${location.cashSales.toFixed(2)}</TableCell>
-                              <TableCell className="text-right">${location.creditSales.toFixed(2)}</TableCell>
-                              <TableCell className="text-right">${location.receiptSales.toFixed(2)}</TableCell>
-                              <TableCell className={`text-right font-semibold ${textColor}`}>${location.totalIncome.toFixed(2)}</TableCell>
-                              <TableCell className="text-right">{location.reports}</TableCell>
+                              <TableCell className="text-right text-white">{location.totalCars}</TableCell>
+                              <TableCell className="text-right text-white">${location.cashSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-white">${location.creditSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-white">${location.receiptSales.toFixed(2)}</TableCell>
+                              <TableCell className="text-right font-semibold text-white">${location.totalIncome.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-white">{location.reports}</TableCell>
                             </TableRow>
                           );
                         })}
                         {/* Total Row */}
-                        <TableRow className="bg-gray-50 dark:bg-gray-800 font-semibold">
-                          <TableCell>TOTAL</TableCell>
-                          <TableCell className="text-right">
+                        <TableRow className="bg-slate-700/30 font-semibold border-t-2 border-white/20">
+                          <TableCell className="text-white font-bold">TOTAL</TableCell>
+                          <TableCell className="text-right text-white font-bold">
                             {locationStats.reduce((sum, loc) => sum + loc.totalCars, 0)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right text-white font-bold">
                             ${locationStats.reduce((sum, loc) => sum + loc.cashSales, 0).toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right text-white font-bold">
                             ${locationStats.reduce((sum, loc) => sum + loc.creditSales, 0).toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right text-white font-bold">
                             ${locationStats.reduce((sum, loc) => sum + loc.receiptSales, 0).toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right text-white font-bold">
                             ${locationStats.reduce((sum, loc) => sum + loc.totalIncome, 0).toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right text-white font-bold">
                             {locationStats.reduce((sum, loc) => sum + loc.reports, 0)}
                           </TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
+                    </div>
+                    </div>
                   </div>
                   
                   {/* Monthly Sales Analysis Section */}
-                  <div className="mt-10">
-                    <h3 className="text-xl font-medium mb-4">Monthly Sales Analysis</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
+                  <div className="mt-10 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+                    {/* Glass morphism overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
+                    
+                    {/* Content with z-index */}
+                    <div className="relative z-10">
+                    <h3 className="text-xl font-medium mb-4 text-white">Monthly Sales Analysis</h3>
+                    <p className="text-sm text-slate-400 mb-4">
                       View sales performance broken down by month (January - December)
                     </p>
                     
-                    <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 dark:bg-gray-900 mb-6">
+                    <div className="flex flex-wrap items-end gap-4 border border-white/20 p-4 rounded-md bg-slate-700/50 backdrop-blur-sm mb-6">
                       <div className="space-y-2">
-                        <Label htmlFor="location-filter">Filter by Location</Label>
+                        <Label htmlFor="location-filter" className="text-slate-300">Filter by Location</Label>
                         <Select
                           value={selectedLocation?.toString() || "0"}
                           onValueChange={(value) => setSelectedLocation(value === "0" ? null : parseInt(value))}
@@ -3320,12 +3249,12 @@ export default function AdminPanel() {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="chart-start-date">Start Date</Label>
+                        <Label htmlFor="chart-start-date" className="text-slate-300">Start Date</Label>
                         <div className="relative">
                           <input
                             id="chart-start-date"
                             type="date"
-                            className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                            className="px-3 py-2 rounded-md border border-slate-600/50 bg-slate-700/50 text-white text-sm shadow-sm backdrop-blur-sm"
                             value={startDate ? startDate.toISOString().substring(0, 10) : ""}
                             onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : undefined)}
                           />
@@ -3333,12 +3262,12 @@ export default function AdminPanel() {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="chart-end-date">End Date</Label>
+                        <Label htmlFor="chart-end-date" className="text-slate-300">End Date</Label>
                         <div className="relative">
                           <input
                             id="chart-end-date"
                             type="date"
-                            className="px-3 py-2 rounded-md border border-input bg-background text-sm shadow-sm"
+                            className="px-3 py-2 rounded-md border border-slate-600/50 bg-slate-700/50 text-white text-sm shadow-sm backdrop-blur-sm"
                             value={endDate ? endDate.toISOString().substring(0, 10) : ""}
                             onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : undefined)}
                           />
@@ -3346,8 +3275,8 @@ export default function AdminPanel() {
                       </div>
                       
                       <Button 
-                        variant="secondary" 
                         size="sm"
+                        className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                         onClick={() => {
                           setStartDate(undefined);
                           setEndDate(undefined);
@@ -3387,46 +3316,166 @@ export default function AdminPanel() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
+                    </div>
+                  </div>
+                  
+                  {/* Monthly Sales Table Card */}
+                  <div className="mt-6 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+                    {/* Glass morphism overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
+                    
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCojZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+                    
+                    {/* Content with z-index */}
+                    <div className="relative z-10">
                     
                     <div className="overflow-x-auto">
                       <Table>
-                        <TableCaption>Monthly Sales Breakdown</TableCaption>
+                        <TableCaption className="text-slate-400">Monthly Sales Breakdown</TableCaption>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Month</TableHead>
-                            <TableHead className="text-right">Total Sales ($)</TableHead>
+                            <TableHead className="text-white">Month</TableHead>
+                            <TableHead className="text-right text-white">Total Sales ($)</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {monthlyData.map((month) => (
                             <TableRow key={month.name}>
-                              <TableCell className="font-medium">{month.name}</TableCell>
-                              <TableCell className="text-right font-medium">${month.sales.toFixed(2)}</TableCell>
+                              <TableCell className="font-medium text-white">{month.name}</TableCell>
+                              <TableCell className="text-right font-medium text-white">${month.sales.toFixed(2)}</TableCell>
                             </TableRow>
                           ))}
-                          <TableRow className="bg-muted/50">
-                            <TableCell className="font-bold">Total</TableCell>
-                            <TableCell className="text-right font-bold">
+                          <TableRow className="bg-slate-700/30 border-t-2 border-white/20">
+                            <TableCell className="font-bold text-white">Total</TableCell>
+                            <TableCell className="text-right font-bold text-white">
                               ${monthlyData.reduce((sum, month) => sum + month.sales, 0).toFixed(2)}
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </div>
+                    </div>
                   </div>
                 </>
               )}
+              
+              {/* Performance Visualization Charts */}
+              {!isLoading && reports.length > 0 && (
+                <div className="mt-10 space-y-8">
+                  {/* Sales Trend Chart (Last 14 days) */}
+                  <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 rounded-lg p-4">
+                    <h3 className="text-lg font-medium mb-2 text-white">Sales & Car Volume Trends (Last 14 Days)</h3>
+                    <p className="text-sm text-slate-400 mb-4">Daily trends showing sales revenue and car volume</p>
+                    <div className="w-full h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                          data={salesTrendData}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 20,
+                            bottom: 20,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="date" />
+                          <YAxis 
+                            yAxisId="left" 
+                            orientation="left" 
+                            stroke="#4f46e5"
+                            label={{ value: 'Sales ($)', angle: -90, position: 'insideLeft' }}
+                            tickFormatter={(value) => `$${value}`}
+                          />
+                          <YAxis 
+                            yAxisId="right" 
+                            orientation="right" 
+                            stroke="#10b981"
+                            label={{ value: 'Cars', angle: -90, position: 'insideRight' }}
+                          />
+                          <Tooltip formatter={(value, name) => {
+                            if (name === 'Sales ($)') return [`$${Number(value).toFixed(2)}`, 'Sales'];
+                            return [value, 'Cars'];
+                          }} />
+                          <Legend />
+                          <Bar 
+                            yAxisId="right" 
+                            dataKey="cars" 
+                            fill="#10b981" 
+                            name="Cars" 
+                            barSize={20}
+                          />
+                          <Line 
+                            yAxisId="left" 
+                            type="monotone" 
+                            dataKey="sales" 
+                            stroke="#4f46e5" 
+                            strokeWidth={2}
+                            activeDot={{ r: 6 }}
+                            name="Sales ($)"
+                          />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                  
+                  {/* Monthly Sales Area Chart */}
+                  <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 rounded-lg p-4">
+                    <h3 className="text-lg font-medium mb-2 text-white">Monthly Performance</h3>
+                    <p className="text-sm text-slate-400 mb-4">Detailed monthly breakdown</p>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={monthlyData}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 20,
+                            bottom: 20,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis 
+                            tickFormatter={(value) => `$${value}`}
+                            domain={[0, 35000]} 
+                          />
+                          <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Sales']} />
+                          <Legend />
+                          <Area 
+                            type="monotone" 
+                            dataKey="sales" 
+                            name="Total Sales ($)" 
+                            stroke="#4f46e5" 
+                            fill="#4f46e580"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
+          </div>
         </TabsContent>
         
         <TabsContent value="tickets">
-          <Card>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+            {/* Glass morphism overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+          <Card className="bg-transparent border-0 shadow-none">
             <CardHeader className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <CardTitle>Ticket Distribution Tracking</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <img src={tagsAddIcon} alt="Tickets" className="h-5 w-5" />
+                    Ticket Distribution Tracking
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
                     Manage and track ticket allocations across locations
                   </CardDescription>
                 </div>
@@ -3434,7 +3483,7 @@ export default function AdminPanel() {
                   <DialogTrigger asChild>
                     <Button 
                       size="sm"
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       <img 
                         src={addCircleIcon} 
@@ -3444,41 +3493,71 @@ export default function AdminPanel() {
                       Allocate Tickets
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <>
+                    <style>{`
+                      [data-radix-dialog-content] {
+                        position: fixed !important;
+                        top: 50% !important;
+                        left: 50% !important;
+                        transform: translate(-50%, -50%) !important;
+                        max-height: 85vh !important;
+                        max-width: 90vw !important;
+                        width: auto !important;
+                        margin: 0 !important;
+                        overflow-y: auto !important;
+                        z-index: 9999 !important;
+                      }
+                      [data-radix-dialog-overlay] {
+                        z-index: 9998 !important;
+                      }
+                    `}</style>
+                    <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md max-h-[85vh] overflow-y-auto bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl z-50">
+                    {/* Enhanced Glass morphism overlay - reports style */}
+                    <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                    
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+                    
+                    {/* Content with z-index */}
+                    <div className="relative z-10">
                     <DialogHeader>
-                      <DialogTitle>Allocate New Tickets</DialogTitle>
-                      <DialogDescription>
+                      <DialogTitle className="text-white">Allocate New Tickets</DialogTitle>
+                      <DialogDescription className="text-slate-400">
                         Distribute tickets to a specific location and track their usage.
                       </DialogDescription>
                     </DialogHeader>
                     
                     <div className="grid gap-4 py-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="location">Location</Label>
-                        <select 
-                          id="location"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          value={newDistribution.locationId}
-                          onChange={(e) => setNewDistribution({
+                        <Label htmlFor="location" className="text-white">Location</Label>
+                        <Select
+                          value={newDistribution.locationId.toString()}
+                          onValueChange={(value) => setNewDistribution({
                             ...newDistribution,
-                            locationId: parseInt(e.target.value)
+                            locationId: parseInt(value)
                           })}
                         >
-                          {LOCATIONS.map(location => (
-                            <option key={location.id} value={location.id}>
-                              {location.name}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger className="bg-slate-700/50 border-white/20 text-white backdrop-blur-sm">
+                            <SelectValue placeholder="Select a location" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {LOCATIONS.map(location => (
+                              <SelectItem key={location.id} value={location.id.toString()}>
+                                {location.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="allocatedTickets">Number of Tickets</Label>
+                        <Label htmlFor="allocatedTickets" className="text-white">Number of Tickets</Label>
                         <input 
                           id="allocatedTickets"
                           type="number"
                           min="1"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-slate-700/50 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newDistribution.allocatedTickets || ''}
                           onChange={(e) => setNewDistribution({
                             ...newDistribution,
@@ -3488,11 +3567,11 @@ export default function AdminPanel() {
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="batchNumber">Batch Number/ID</Label>
+                        <Label htmlFor="batchNumber" className="text-white">Batch Number/ID</Label>
                         <input 
                           id="batchNumber"
                           type="text"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-slate-700/50 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newDistribution.batchNumber}
                           onChange={(e) => setNewDistribution({
                             ...newDistribution,
@@ -3503,10 +3582,10 @@ export default function AdminPanel() {
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="notes">Notes (Optional)</Label>
+                        <Label htmlFor="notes" className="text-white">Notes (Optional)</Label>
                         <textarea 
                           id="notes"
-                          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
+                          className="flex w-full rounded-md border border-white/20 bg-slate-700/50 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
                           value={newDistribution.notes}
                           onChange={(e) => setNewDistribution({
                             ...newDistribution,
@@ -3520,13 +3599,14 @@ export default function AdminPanel() {
                     <DialogFooter>
                       <Button 
                         type="button" 
-                        variant="secondary"
+                        className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                         onClick={() => setIsAddDistributionOpen(false)}
                       >
                         Cancel
                       </Button>
                       <Button 
                         type="button"
+                        className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                         onClick={async () => {
                           if (!newDistribution.batchNumber || newDistribution.allocatedTickets <= 0) {
                             alert("Please fill in all required fields");
@@ -3567,17 +3647,35 @@ export default function AdminPanel() {
                         Save
                       </Button>
                     </DialogFooter>
+                    </div>
                   </DialogContent>
+                  </>
                 </Dialog>
               </div>
             </CardHeader>
             
             {/* Add Tickets Modal */}
             <Dialog open={isAddTicketsOpen} onOpenChange={setIsAddTicketsOpen}>
-              <DialogContent>
+              <>
+                <style>{`
+                  .add-tickets-modal [data-radix-dialog-content] {
+                    position: fixed !important;
+                    top: 50% !important;
+                    left: 50% !important;
+                    transform: translate(-50%, -50%) !important;
+                    max-height: 85vh !important;
+                    max-width: 90vw !important;
+                    width: auto !important;
+                    margin: 0 !important;
+                    overflow-y: auto !important;
+                    z-index: 9999 !important;
+                  }
+                `}</style>
+                <div className="add-tickets-modal">
+              <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md max-h-[85vh] overflow-y-auto bg-gradient-to-br from-slate-900/95 via-blue-900/90 to-indigo-900/95 backdrop-blur-xl border border-white/20 shadow-2xl z-50 [&>button]:z-50 [&>button]:text-white [&>button]:hover:text-white">
                 <DialogHeader>
-                  <DialogTitle>Add Tickets</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-white">Add Tickets</DialogTitle>
+                  <DialogDescription className="text-slate-400">
                     Add additional tickets to {selectedDistributionForAdd ? `batch "${selectedDistributionForAdd.batchNumber}"` : 'the selected batch'}.
                   </DialogDescription>
                 </DialogHeader>
@@ -3585,8 +3683,8 @@ export default function AdminPanel() {
                 <div className="grid gap-4 py-4">
                   {selectedDistributionForAdd && (
                     <div className="grid gap-2">
-                      <Label className="text-sm text-gray-600">Current Information</Label>
-                      <div className="bg-gray-50 p-3 rounded-md text-sm">
+                      <Label className="text-sm text-white">Current Information</Label>
+                      <div className="bg-slate-700/30 p-3 rounded-md text-sm text-white">
                         <div><strong>Batch:</strong> {selectedDistributionForAdd.batchNumber}</div>
                         <div><strong>Location:</strong> {LOCATIONS.find(loc => loc.id === selectedDistributionForAdd.locationId)?.name}</div>
                         <div><strong>Current Allocated:</strong> {selectedDistributionForAdd.allocatedTickets}</div>
@@ -3597,12 +3695,12 @@ export default function AdminPanel() {
                   )}
                   
                   <div className="grid gap-2">
-                    <Label htmlFor="additionalTickets">Number of Tickets to Add</Label>
+                    <Label htmlFor="additionalTickets" className="text-white">Number of Tickets to Add</Label>
                     <input 
                       id="additionalTickets"
                       type="number"
                       min="1"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-slate-600/50 bg-slate-700/50 text-white px-3 py-2 text-sm backdrop-blur-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="Enter number of tickets"
                       value={additionalTickets}
                       onChange={(e) => setAdditionalTickets(parseInt(e.target.value) || 0)}
@@ -3610,7 +3708,7 @@ export default function AdminPanel() {
                   </div>
                   
                   {additionalTickets > 0 && selectedDistributionForAdd && (
-                    <div className="bg-blue-50 p-3 rounded-md text-sm">
+                    <div className="bg-blue-500/20 border border-blue-400/30 p-3 rounded-md text-sm text-white">
                       <div><strong>New Total:</strong> {selectedDistributionForAdd.allocatedTickets + additionalTickets}</div>
                     </div>
                   )}
@@ -3619,7 +3717,7 @@ export default function AdminPanel() {
                 <DialogFooter>
                   <Button 
                     type="button" 
-                    variant="secondary"
+                    className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                     onClick={() => {
                       setIsAddTicketsOpen(false);
                       setSelectedDistributionForAdd(null);
@@ -3687,13 +3785,15 @@ export default function AdminPanel() {
                   </Button>
                 </DialogFooter>
               </DialogContent>
+                </div>
+              </>
             </Dialog>
             
             <CardContent>
               {isLoadingDistributions ? (
                 <div className="text-center py-8">Loading ticket data...</div>
               ) : ticketDistributions.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-slate-500">
                   No ticket distributions found. Allocate tickets using the button above.
                 </div>
               ) : (
@@ -3702,15 +3802,15 @@ export default function AdminPanel() {
                     <TableCaption>Ticket distribution and usage tracking across all locations.</TableCaption>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Batch Number</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead className="text-right">Allocated</TableHead>
-                        <TableHead className="text-right">Used</TableHead>
-                        <TableHead className="text-right">Remaining</TableHead>
-                        <TableHead className="text-right">Usage %</TableHead>
-                        <TableHead className="text-right">Date Created</TableHead>
-                        <TableHead>Notes</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-white">Batch Number</TableHead>
+                        <TableHead className="text-white">Location</TableHead>
+                        <TableHead className="text-right text-white">Allocated</TableHead>
+                        <TableHead className="text-right text-white">Used</TableHead>
+                        <TableHead className="text-right text-white">Remaining</TableHead>
+                        <TableHead className="text-right text-white">Usage %</TableHead>
+                        <TableHead className="text-right text-white">Date Created</TableHead>
+                        <TableHead className="text-white">Notes</TableHead>
+                        <TableHead className="text-right text-white">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -3734,7 +3834,7 @@ export default function AdminPanel() {
                         return (
                           <TableRow key={distribution.id}>
                             <TableCell className="font-medium">{distribution.batchNumber}</TableCell>
-                            <TableCell>{location?.name || 'Unknown'}</TableCell>
+                            <TableCell className="text-white">{location?.name || 'Unknown'}</TableCell>
                             <TableCell className="text-right">{distribution.allocatedTickets}</TableCell>
                             <TableCell className="text-right">{distribution.usedTickets}</TableCell>
                             <TableCell className="text-right font-medium">{remaining}</TableCell>
@@ -3752,7 +3852,7 @@ export default function AdminPanel() {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  className="px-2 h-8"
+                                  className="px-2 h-8 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                                   onClick={async () => {
                                     // Prompt for the number of used tickets to update
                                     const usedTicketsStr = prompt(
@@ -3824,7 +3924,7 @@ export default function AdminPanel() {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  className="px-2 h-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                  className="px-2 h-8 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                                   onClick={() => {
                                     setSelectedDistributionForAdd(distribution);
                                     setAdditionalTickets(0);
@@ -3839,7 +3939,7 @@ export default function AdminPanel() {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  className="px-2 h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  className="px-2 h-8 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                                   onClick={async () => {
                                     if (confirm(`Are you sure you want to delete this ticket batch "${distribution.batchNumber}" for ${location?.name}?`)) {
                                       try {
@@ -3886,17 +3986,44 @@ export default function AdminPanel() {
               )}
             </CardContent>
           </Card>
+            </div>
+          </div>
         </TabsContent>
         
         {/* Employee Management Tab */}
         <TabsContent value="manage-employees">
-          <Card>
-            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* TEST CARD - Using Reports Section Styling */}
+          <div className="mb-6 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold text-white mb-2">TEST CARD - REPORTS STYLE</h3>
+              <p className="text-slate-400">This test card now uses the EXACT same styling as the reports section. It should have the blue gradient background with glass effects.</p>
+            </div>
+          </div>
+          
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
-                <CardTitle>Employee Management</CardTitle>
-                <CardDescription>
+                <h2 className="text-xl font-bold text-white">Employee Management</h2>
+                <p className="text-slate-400">
                   Add, edit and manage employees for shift leader selection and payroll calculations
-                </CardDescription>
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Button 
@@ -3920,7 +4047,7 @@ export default function AdminPanel() {
                     // Open dialog
                     setIsAddEmployeeOpen(true);
                   }}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <img 
                     src={addCircleIcon} 
@@ -3930,27 +4057,28 @@ export default function AdminPanel() {
                   Add Employee
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            
+            <div className="relative z-10">
               {isLoadingEmployees ? (
-                <div className="text-center py-8">Loading employees...</div>
+                <div className="text-center py-8 text-slate-400">Loading employees...</div>
               ) : employeeRecords.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-slate-400">
                   No employees found. Add an employee to get started.
                 </div>
               ) : (
                 <Table>
-                  <TableCaption>List of all employees</TableCaption>
+                  <TableCaption className="text-slate-400">List of all employees</TableCaption>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>SSN</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-center">Training Complete</TableHead>
-                      <TableHead>Shift Leader</TableHead>
-                      <TableHead className="min-w-[120px]">Phone</TableHead>
-                      <TableHead>Hire Date</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className="text-white">Name</TableHead>
+                      <TableHead className="text-white">SSN</TableHead>
+                      <TableHead className="text-white">Status</TableHead>
+                      <TableHead className="text-center text-white">Training Complete</TableHead>
+                      <TableHead className="text-white">Shift Leader</TableHead>
+                      <TableHead className="min-w-[120px] text-white">Phone</TableHead>
+                      <TableHead className="text-white">Hire Date</TableHead>
+                      <TableHead className="text-right text-white">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -3989,12 +4117,12 @@ export default function AdminPanel() {
 
                       return (
                         <TableRow key={employee.id}>
-                          <TableCell className="font-medium">{employee.fullName}</TableCell>
+                          <TableCell className="font-medium text-white">{employee.fullName}</TableCell>
                           <TableCell>
                             {employee.ssn ? (
-                              <span className="font-mono text-sm">****{employee.ssn.slice(-4)}</span>
+                              <span className="font-mono text-sm text-white">****{employee.ssn.slice(-4)}</span>
                             ) : (
-                              <span className="text-gray-400 text-sm">Not set</span>
+                              <span className="text-slate-400 text-sm">Not set</span>
                             )}
                           </TableCell>
                           <TableCell>
@@ -4035,17 +4163,17 @@ export default function AdminPanel() {
                                 Yes
                               </span>
                             ) : (
-                              <span>No</span>
+                              <span className="text-white">No</span>
                             )}
                           </TableCell>
-                        <TableCell className="whitespace-nowrap min-w-[120px]">{employee.phone || '-'}</TableCell>
-                        <TableCell>{new Date(employee.hireDate).toLocaleDateString()}</TableCell>
+                        <TableCell className="whitespace-nowrap min-w-[120px] text-white">{employee.phone || '-'}</TableCell>
+                        <TableCell className="text-white">{new Date(employee.hireDate).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end space-x-2">
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="px-2 h-7 text-xs"
+                              className="px-2 h-7 text-xs bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                               onClick={() => {
                                 console.log('Opening edit dialog for employee:', employee);
                                 // Set current employee data to form
@@ -4078,7 +4206,7 @@ export default function AdminPanel() {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="px-2 h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50"
+                              className="px-2 h-7 text-xs bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                               onClick={async () => {
                                 if (confirm(`Are you sure you want to delete ${employee.fullName}?`)) {
                                   try {
@@ -4672,7 +4800,7 @@ export default function AdminPanel() {
                             }
                           }}
                         />
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-500">
                           Upload PDF, JPEG, or PNG files up to 10MB
                         </p>
                       </div>
@@ -4687,7 +4815,7 @@ export default function AdminPanel() {
                             <CheckCircle className="h-5 w-5 text-green-600" />
                             <div className="flex-1">
                               <div className="text-sm font-medium text-green-700">Training Completed</div>
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-slate-500">
                                 Completed on {getTrainingCompletionDate(newEmployee.fullName)}
                               </div>
                             </div>
@@ -4697,7 +4825,7 @@ export default function AdminPanel() {
                             <AlertCircle className="h-5 w-5 text-amber-600" />
                             <div className="flex-1">
                               <div className="text-sm font-medium text-amber-700">Training Required</div>
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-slate-500">
                                 Employee must complete safety training before accessing dashboard
                               </div>
                             </div>
@@ -4755,25 +4883,34 @@ export default function AdminPanel() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="employee-accounting">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+            <div className="mb-6">
+              <h2 className="flex items-center gap-2 text-xl font-bold text-white mb-2">
+                <img src={cashUserIcon} alt="Employee Accounting" className="h-5 w-5" />
                 Employee Accounting Overview
-              </CardTitle>
-              <CardDescription>
+              </h2>
+              <p className="text-slate-400">
                 Comprehensive financial breakdown for all employees including earnings, taxes, and money owed calculations. Includes both active and inactive employees for audit compliance.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap items-end gap-4 border p-4 rounded-md bg-gray-50 mb-6">
+              </p>
+            </div>
+              <div className="flex flex-wrap items-end gap-4 border border-white/20 p-4 rounded-xl bg-slate-700/50 backdrop-blur-sm mb-6">
                 <div className="space-y-2">
-                  <label htmlFor="accounting-month-select" className="text-sm font-medium">Filter by Month</label>
+                  <label htmlFor="accounting-month-select" className="text-sm font-medium text-white">Filter by Month</label>
                   <Select value={selectedAccountingMonth} onValueChange={setSelectedAccountingMonth}>
                     <SelectTrigger className="w-48">
                       <SelectValue placeholder="Select a month" />
@@ -4797,7 +4934,7 @@ export default function AdminPanel() {
                 </div>
                 
                 <Button 
-                  variant="secondary" 
+                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300" 
                   size="sm"
                   onClick={() => {
                     const now = new Date();
@@ -4810,6 +4947,7 @@ export default function AdminPanel() {
                 <Button 
                   variant="outline" 
                   size="sm"
+                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   onClick={() => {
                     // Calculate employee accounting data with month filtering
                     const employeeAccountingData = allEmployeeRecords.map(employee => {
@@ -5133,27 +5271,27 @@ export default function AdminPanel() {
                   <div className="space-y-6">
                     <div className="overflow-x-auto">
                       <Table>
-                        <TableCaption>Employee Financial Summary - All Periods (Sorted by Last Name)</TableCaption>
+                        <TableCaption className="text-slate-400">Employee Financial Summary - All Periods (Sorted by Last Name)</TableCaption>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Employee</TableHead>
-                            <TableHead className="text-center">Hours</TableHead>
-                            <TableHead className="text-center">Shifts</TableHead>
-                            <TableHead className="text-center">Commission</TableHead>
-                            <TableHead className="text-center">Credit Tips</TableHead>
-                            <TableHead className="text-center">Cash Tips</TableHead>
-                            <TableHead className="text-center">Total Earnings</TableHead>
-                            <TableHead className="text-center">Money Owed</TableHead>
-                            <TableHead className="text-center">Advance</TableHead>
+                            <TableHead className="text-white">Employee</TableHead>
+                            <TableHead className="text-center text-white">Hours</TableHead>
+                            <TableHead className="text-center text-white">Shifts</TableHead>
+                            <TableHead className="text-center text-white">Commission</TableHead>
+                            <TableHead className="text-center text-white">Credit Tips</TableHead>
+                            <TableHead className="text-center text-white">Cash Tips</TableHead>
+                            <TableHead className="text-center text-white">Total Earnings</TableHead>
+                            <TableHead className="text-center text-white">Money Owed</TableHead>
+                            <TableHead className="text-center text-white">Advance</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {sortedEmployeeAccountingData.map((employee) => (
                             <TableRow key={employee.key}>
-                              <TableCell className="font-medium">
+                              <TableCell className="font-medium text-white">
                                 <Button
                                   variant="link"
-                                  className="p-0 h-auto font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                  className="p-0 h-auto font-medium text-white hover:text-blue-400 hover:underline"
                                   onClick={() => {
                                     const employeeRecord = allEmployeeRecords.find(emp => emp.fullName === employee.name);
                                     if (employeeRecord) {
@@ -5169,50 +5307,50 @@ export default function AdminPanel() {
                                   {employee.name}
                                 </Button>
                               </TableCell>
-                              <TableCell className="text-center">{employee.totalHours.toFixed(1)}</TableCell>
-                              <TableCell className="text-center">{employee.shiftsWorked}</TableCell>
-                              <TableCell className="text-center text-blue-600 font-medium">
+                              <TableCell className="text-center text-white">{employee.totalHours.toFixed(1)}</TableCell>
+                              <TableCell className="text-center text-white">{employee.shiftsWorked}</TableCell>
+                              <TableCell className="text-center text-blue-400 font-medium">
                                 ${employee.totalCommission.toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-center text-green-600 font-medium">
+                              <TableCell className="text-center text-green-400 font-medium">
                                 ${((employee as any).totalCreditTips || 0).toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-center text-green-600 font-medium">
+                              <TableCell className="text-center text-green-400 font-medium">
                                 ${((employee as any).totalCashTips || 0).toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-center">${employee.totalEarnings.toFixed(2)}</TableCell>
-                              <TableCell className="text-center text-green-600 font-medium">
+                              <TableCell className="text-center text-white font-semibold">${employee.totalEarnings.toFixed(2)}</TableCell>
+                              <TableCell className="text-center text-yellow-400 font-medium">
                                 ${employee.totalMoneyOwed.toFixed(2)}
                               </TableCell>
-                              <TableCell className="text-center text-orange-600 font-bold">
+                              <TableCell className="text-center text-orange-400 font-bold">
                                 ${employee.advance.toFixed(2)}
                               </TableCell>
                             </TableRow>
                           ))}
-                          <TableRow className="bg-muted/50 font-bold">
-                            <TableCell>TOTALS</TableCell>
-                            <TableCell className="text-center">
+                          <TableRow className="bg-slate-700/30 font-bold border-t-2 border-white/20">
+                            <TableCell className="text-white font-bold">TOTALS</TableCell>
+                            <TableCell className="text-center text-white font-bold">
                               {employeeAccountingData.reduce((sum, emp) => sum + emp.totalHours, 0).toFixed(1)}
                             </TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center text-white font-bold">
                               {employeeAccountingData.reduce((sum, emp) => sum + emp.shiftsWorked, 0)}
                             </TableCell>
-                            <TableCell className="text-center text-blue-600">
+                            <TableCell className="text-center text-blue-400 font-bold">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalCommission, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center text-green-600">
+                            <TableCell className="text-center text-green-400 font-bold">
                               ${employeeAccountingData.reduce((sum, emp) => sum + ((emp as any).totalCreditTips || 0), 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center text-green-600">
+                            <TableCell className="text-center text-green-400 font-bold">
                               ${employeeAccountingData.reduce((sum, emp) => sum + ((emp as any).totalCashTips || 0), 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center text-white font-bold">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalEarnings, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center text-green-600">
+                            <TableCell className="text-center text-yellow-400 font-bold">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-center text-orange-600">
+                            <TableCell className="text-center text-orange-400 font-bold">
                               ${employeeAccountingData.reduce((sum, emp) => sum + emp.advance, 0).toFixed(2)}
                             </TableCell>
                           </TableRow>
@@ -5221,66 +5359,73 @@ export default function AdminPanel() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Card>
-                        <CardContent className="pt-6">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-green-100 p-3 rounded-full">
-                              <DollarSign className="h-6 w-6 text-green-700" />
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-500">Total Money Owed to Employees</p>
-                              <h3 className="text-2xl font-bold text-blue-800">
-                                ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
-                              </h3>
-                            </div>
+                      {/* Empty placeholders to push card to right */}
+                      <div></div>
+                      <div></div>
+                      
+                      <div className="border border-white/20 p-4 rounded-xl bg-slate-700/50 backdrop-blur-sm max-w-fit ml-auto">
+                        <div className="flex items-center gap-3">
+                          <img src={cashUserIcon} alt="Employee Accounting" className="h-6 w-6" />
+                          <div>
+                            <p className="text-sm text-slate-400">Total Money Owed to Employees</p>
+                            <h3 className="text-2xl font-bold text-white">
+                              ${employeeAccountingData.reduce((sum, emp) => sum + emp.totalMoneyOwed, 0).toFixed(2)}
+                            </h3>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
 
 
                     </div>
                   </div>
                 );
               })()}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
         
         <TabsContent value="hours-tracker">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    Weekly Hours Tracker
-                  </CardTitle>
-                  <CardDescription>
-                    Monitor employee weekly hours and receive alerts when approaching 40-hour limit
-                  </CardDescription>
-                </div>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="flex items-center gap-2 text-xl font-bold text-white mb-2">
+                  <img src={timeClockNineIcon} alt="Hours Tracker" className="h-5 w-5" />
+                  Weekly Hours Tracker
+                </h2>
+                <p className="text-slate-400">
+                  Monitor employee weekly hours and receive alerts when approaching 40-hour limit
+                </p>
+              </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setSelectedWeekOffset(Math.min(selectedWeekOffset + 1, 5))}
                     disabled={selectedWeekOffset >= 5}
-                    className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1 text-sm bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     ← Previous Week
                   </button>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-slate-400">
                     {selectedWeekOffset === 0 ? 'Current Week' : `${selectedWeekOffset} week${selectedWeekOffset > 1 ? 's' : ''} ago`}
                   </span>
                   <button
                     onClick={() => setSelectedWeekOffset(Math.max(selectedWeekOffset - 1, 0))}
                     disabled={selectedWeekOffset <= 0}
-                    className="px-3 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1 text-sm bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next Week →
                   </button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
+              
               {(() => {
                 // Calculate weekly hours for each employee
                 const weeklyHours: Record<string, { 
@@ -5353,103 +5498,97 @@ export default function AdminPanel() {
                   <div className="space-y-6">
                     {/* Alert Summary */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Card className="border-red-200 bg-red-50">
-                        <CardContent className="pt-4">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-red-100 p-2 rounded-full">
-                              <Clock className="h-4 w-4 text-red-600" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-red-800">Critical (38+ hours)</p>
-                              <p className="text-2xl font-bold text-red-900">{criticalEmployees.length}</p>
-                            </div>
+                      <div className="border border-white/20 p-4 rounded-xl bg-slate-700/50 backdrop-blur-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-red-100 p-2 rounded-full">
+                            <Clock className="h-4 w-4 text-red-600" />
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div>
+                            <p className="text-sm font-medium text-slate-400">Critical (38+ hours)</p>
+                            <p className="text-2xl font-bold text-white">{criticalEmployees.length}</p>
+                          </div>
+                        </div>
+                      </div>
                       
-                      <Card className="border-yellow-200 bg-yellow-50">
-                        <CardContent className="pt-4">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-yellow-100 p-2 rounded-full">
-                              <Clock className="h-4 w-4 text-yellow-600" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-yellow-800">Warning (30+ hours)</p>
-                              <p className="text-2xl font-bold text-yellow-900">{warningEmployees.length}</p>
-                            </div>
+                      <div className="border border-white/20 p-4 rounded-xl bg-slate-700/50 backdrop-blur-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-yellow-100 p-2 rounded-full">
+                            <Clock className="h-4 w-4 text-yellow-600" />
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div>
+                            <p className="text-sm font-medium text-slate-400">Warning (30+ hours)</p>
+                            <p className="text-2xl font-bold text-white">{warningEmployees.length}</p>
+                          </div>
+                        </div>
+                      </div>
                       
-                      <Card className="border-blue-300 bg-blue-100">
-                        <CardContent className="pt-4">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-blue-200 p-2 rounded-full">
-                              <Clock className="h-4 w-4 text-blue-800" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-blue-900">Total Employees</p>
-                              <p className="text-2xl font-bold text-blue-950">{weeklyData.length}</p>
-                            </div>
+                      <div className="border border-white/20 p-4 rounded-xl bg-slate-700/50 backdrop-blur-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-blue-200 p-2 rounded-full">
+                            <Clock className="h-4 w-4 text-blue-800" />
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div>
+                            <p className="text-sm font-medium text-slate-400">Total Employees</p>
+                            <p className="text-2xl font-bold text-white">{weeklyData.length}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Weekly Hours Table */}
-                    <div className="border rounded-lg">
+                    <div className="border border-white/20 rounded-xl bg-slate-700/50 backdrop-blur-sm p-4">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Employee</TableHead>
-                            <TableHead className="text-center">Sun</TableHead>
-                            <TableHead className="text-center">Mon</TableHead>
-                            <TableHead className="text-center">Tue</TableHead>
-                            <TableHead className="text-center">Wed</TableHead>
-                            <TableHead className="text-center">Thu</TableHead>
-                            <TableHead className="text-center">Fri</TableHead>
-                            <TableHead className="text-center">Sat</TableHead>
-                            <TableHead className="text-right">Total Hours</TableHead>
-                            <TableHead className="text-center">Status</TableHead>
+                            <TableHead className="text-white">Employee</TableHead>
+                            <TableHead className="text-center text-white">Sun</TableHead>
+                            <TableHead className="text-center text-white">Mon</TableHead>
+                            <TableHead className="text-center text-white">Tue</TableHead>
+                            <TableHead className="text-center text-white">Wed</TableHead>
+                            <TableHead className="text-center text-white">Thu</TableHead>
+                            <TableHead className="text-center text-white">Fri</TableHead>
+                            <TableHead className="text-center text-white">Sat</TableHead>
+                            <TableHead className="text-right text-white">Total Hours</TableHead>
+                            <TableHead className="text-center text-white">Status</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {weeklyData.length === 0 ? (
                             <TableRow>
-                              <TableCell colSpan={10} className="text-center py-8 text-gray-500">
+                              <TableCell colSpan={10} className="text-center py-8 text-slate-400">
                                 No employee hours recorded for this week yet
                               </TableCell>
                             </TableRow>
                           ) : (
                             weeklyData.map((empData) => (
                               <TableRow key={empData.employee.key} className={
-                                empData.status === 'critical' ? 'bg-red-50' :
-                                empData.status === 'warning' ? 'bg-yellow-50' : ''
+                                empData.status === 'critical' ? 'bg-red-900/20' :
+                                empData.status === 'warning' ? 'bg-yellow-900/20' : ''
                               }>
-                                <TableCell className="font-medium">{empData.employee.fullName}</TableCell>
-                                <TableCell className="text-center">{empData.weeklyBreakdown['Sun'] || '-'}</TableCell>
-                                <TableCell className="text-center">{empData.weeklyBreakdown['Mon'] || '-'}</TableCell>
-                                <TableCell className="text-center">{empData.weeklyBreakdown['Tue'] || '-'}</TableCell>
-                                <TableCell className="text-center">{empData.weeklyBreakdown['Wed'] || '-'}</TableCell>
-                                <TableCell className="text-center">{empData.weeklyBreakdown['Thu'] || '-'}</TableCell>
-                                <TableCell className="text-center">{empData.weeklyBreakdown['Fri'] || '-'}</TableCell>
-                                <TableCell className="text-center">{empData.weeklyBreakdown['Sat'] || '-'}</TableCell>
-                                <TableCell className="text-right font-bold">
+                                <TableCell className="font-medium text-white">{empData.employee.fullName}</TableCell>
+                                <TableCell className="text-center text-white">{empData.weeklyBreakdown['Sun'] || '-'}</TableCell>
+                                <TableCell className="text-center text-white">{empData.weeklyBreakdown['Mon'] || '-'}</TableCell>
+                                <TableCell className="text-center text-white">{empData.weeklyBreakdown['Tue'] || '-'}</TableCell>
+                                <TableCell className="text-center text-white">{empData.weeklyBreakdown['Wed'] || '-'}</TableCell>
+                                <TableCell className="text-center text-white">{empData.weeklyBreakdown['Thu'] || '-'}</TableCell>
+                                <TableCell className="text-center text-white">{empData.weeklyBreakdown['Fri'] || '-'}</TableCell>
+                                <TableCell className="text-center text-white">{empData.weeklyBreakdown['Sat'] || '-'}</TableCell>
+                                <TableCell className="text-right font-bold text-white">
                                   {empData.totalHours.toFixed(1)}
                                 </TableCell>
                                 <TableCell className="text-center">
                                   {empData.status === 'critical' && (
-                                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                                    <span className="inline-flex items-center rounded-full bg-red-900/30 border border-red-500/50 px-2.5 py-0.5 text-xs font-medium text-red-200">
                                       Critical
                                     </span>
                                   )}
                                   {empData.status === 'warning' && (
-                                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                                    <span className="inline-flex items-center rounded-full bg-yellow-900/30 border border-yellow-500/50 px-2.5 py-0.5 text-xs font-medium text-yellow-200">
                                       Warning
                                     </span>
                                   )}
                                   {empData.status === 'safe' && (
-                                    <span className="inline-flex items-center rounded-full bg-blue-200 px-2.5 py-0.5 text-xs font-medium text-blue-900">
+                                    <span className="inline-flex items-center rounded-full bg-green-900/30 border border-green-500/50 px-2.5 py-0.5 text-xs font-medium text-green-200">
                                       Safe
                                     </span>
                                   )}
@@ -5462,26 +5601,37 @@ export default function AdminPanel() {
                     </div>
 
                     {/* Weekly Period Info */}
-                    <div className="text-sm text-gray-600 text-center">
+                    <div className="text-sm text-slate-400 text-center">
                       Week of {selectedWeekStart.toLocaleDateString()} - {selectedWeekEnd.toLocaleDateString()}
-                      {selectedWeekOffset === 0 && <span className="ml-2 text-blue-600 font-medium">(Current Week)</span>}
+                      {selectedWeekOffset === 0 && <span className="ml-2 text-white font-medium">(Current Week)</span>}
                     </div>
                   </div>
                 );
               })()}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="incident-reports">
-          <Card>
-            <CardHeader>
-              <CardTitle>Incident Reports</CardTitle>
-              <CardDescription>
-                View all submitted incident reports from your locations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+              <div className="mb-6">
+                <h2 className="flex items-center gap-2 text-xl font-bold text-white mb-2">
+                  <img src={carRepairFireIcon} alt="Incident Reports" className="h-5 w-5" />
+                  Incident Reports
+                </h2>
+                <p className="text-slate-400">
+                  View all submitted incident reports from your locations
+                </p>
+              </div>
               {(() => {
                 const { data: incidentReports, isLoading: incidentReportsLoading } = useQuery({
                   queryKey: ["/api/incident-reports"],
@@ -5542,16 +5692,16 @@ export default function AdminPanel() {
                 if (!incidentReports || incidentReports.length === 0) {
                   return (
                     <div className="text-center py-8">
-                      <Activity className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No incident reports</h3>
-                      <p className="text-gray-500">No incident reports have been submitted yet.</p>
+                      <img src={carRepairFireIcon} alt="No Incident Reports" className="mx-auto h-12 w-12 opacity-50 mb-4" />
+                      <h3 className="text-lg font-medium text-white mb-2">No incident reports</h3>
+                      <p className="text-slate-400">No incident reports have been submitted yet.</p>
                     </div>
                   );
                 }
 
                 return (
                   <div className="space-y-4">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="border border-white/20 rounded-xl bg-slate-700/50 backdrop-blur-sm p-4">
                       <div className="flex items-center gap-3">
                         <img 
                           src={carRepairFireIcon} 
@@ -5559,23 +5709,23 @@ export default function AdminPanel() {
                           className="h-5 w-5"
                         />
                         <div>
-                          <h4 className="font-medium text-blue-900">Total Reports: {incidentReports.length}</h4>
-                          <p className="text-sm text-blue-700">All incident reports are stored here for your review</p>
+                          <h4 className="font-medium text-white">Total Reports: {incidentReports.length}</h4>
+                          <p className="text-sm text-slate-400">All incident reports are stored here for your review</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto border border-white/20 rounded-xl bg-slate-700/50 backdrop-blur-sm p-4">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Date/Time</TableHead>
-                            <TableHead>Customer</TableHead>
-                            <TableHead>Location</TableHead>
-                            <TableHead>Employee</TableHead>
-                            <TableHead>Vehicle</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead className="w-[100px] text-center">Actions</TableHead>
+                            <TableHead className="text-white">Date/Time</TableHead>
+                            <TableHead className="text-white">Customer</TableHead>
+                            <TableHead className="text-white">Location</TableHead>
+                            <TableHead className="text-white">Employee</TableHead>
+                            <TableHead className="text-white">Vehicle</TableHead>
+                            <TableHead className="text-white">Description</TableHead>
+                            <TableHead className="w-[100px] text-center text-white">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -5587,7 +5737,7 @@ export default function AdminPanel() {
                                 <TableCell>
                                   <div className="text-sm">
                                     <div className="font-medium">{report.incidentDate}</div>
-                                    <div className="text-gray-500">{report.incidentTime}</div>
+                                    <div className="text-slate-400">{report.incidentTime}</div>
                                   </div>
                                 </TableCell>
                                 <TableCell>
@@ -5597,13 +5747,13 @@ export default function AdminPanel() {
                                     phone={report.customerPhone}
                                   />
                                 </TableCell>
-                                <TableCell className="font-medium">{report.incidentLocation}</TableCell>
-                                <TableCell>{employee?.fullName || 'Unknown'}</TableCell>
+                                <TableCell className="font-medium text-white">{report.incidentLocation}</TableCell>
+                                <TableCell className="text-white">{employee?.fullName || 'Unknown'}</TableCell>
                                 <TableCell>
                                   <div className="text-sm">
                                     <div className="font-medium">{report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
-                                    <div className="text-gray-500">{report.vehicleColor}</div>
-                                    <div className="text-gray-500">{report.vehicleLicensePlate}</div>
+                                    <div className="text-slate-400">{report.vehicleColor}</div>
+                                    <div className="text-slate-400">{report.vehicleLicensePlate}</div>
                                   </div>
                                 </TableCell>
                                 <TableCell className="max-w-[300px]">
@@ -5636,7 +5786,7 @@ export default function AdminPanel() {
                                               <div className="space-y-3">
                                                 <div>
                                                   <Label className="text-base font-semibold text-gray-900">Customer Information</Label>
-                                                  <div className="mt-2 bg-gray-50 p-3 rounded-lg space-y-1">
+                                                  <div className="mt-2 bg-slate-700/30 p-3 rounded-lg space-y-1">
                                                     <div className="text-sm"><span className="font-medium">Name:</span> {report.customerName}</div>
                                                     <div className="text-sm"><span className="font-medium">Email:</span> {report.customerEmail}</div>
                                                     <div className="text-sm"><span className="font-medium">Phone:</span> {report.customerPhone}</div>
@@ -5647,7 +5797,7 @@ export default function AdminPanel() {
                                               <div className="space-y-3">
                                                 <div>
                                                   <Label className="text-base font-semibold text-gray-900">Incident Details</Label>
-                                                  <div className="mt-2 bg-gray-50 p-3 rounded-lg space-y-1">
+                                                  <div className="mt-2 bg-slate-700/30 p-3 rounded-lg space-y-1">
                                                     <div className="text-sm"><span className="font-medium">Date:</span> {report.incidentDate}</div>
                                                     <div className="text-sm"><span className="font-medium">Time:</span> {report.incidentTime}</div>
                                                     <div className="text-sm"><span className="font-medium">Location:</span> {report.incidentLocation}</div>
@@ -5660,7 +5810,7 @@ export default function AdminPanel() {
                                             {/* Vehicle Information */}
                                             <div>
                                               <Label className="text-base font-semibold text-gray-900">Vehicle Information</Label>
-                                              <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                              <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                                   <div className="text-sm"><span className="font-medium">Vehicle:</span> {report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
                                                   <div className="text-sm"><span className="font-medium">Color:</span> {report.vehicleColor}</div>
@@ -5673,14 +5823,14 @@ export default function AdminPanel() {
                                             <div className="grid grid-cols-1 gap-4">
                                               <div>
                                                 <Label className="text-base font-semibold text-gray-900">Incident Description</Label>
-                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                                <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                   <p className="text-sm leading-relaxed">{report.incidentDescription}</p>
                                                 </div>
                                               </div>
                                               
                                               <div>
                                                 <Label className="text-base font-semibold text-gray-900">Damage Description</Label>
-                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                                <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                   <p className="text-sm leading-relaxed">{report.damageDescription}</p>
                                                 </div>
                                               </div>
@@ -5690,7 +5840,7 @@ export default function AdminPanel() {
                                             {(report.witnessName || report.witnessPhone) && (
                                               <div>
                                                 <Label className="text-base font-semibold text-gray-900">Witness Information</Label>
-                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg space-y-1">
+                                                <div className="mt-2 bg-slate-700/30 p-3 rounded-lg space-y-1">
                                                   {report.witnessName && <div className="text-sm"><span className="font-medium">Name:</span> {report.witnessName}</div>}
                                                   {report.witnessPhone && <div className="text-sm"><span className="font-medium">Phone:</span> {report.witnessPhone}</div>}
                                                 </div>
@@ -5701,7 +5851,7 @@ export default function AdminPanel() {
                                             {report.additionalNotes && (
                                               <div>
                                                 <Label className="text-base font-semibold text-gray-900">Additional Notes</Label>
-                                                <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                                                <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                   <p className="text-sm leading-relaxed">{report.additionalNotes}</p>
                                                 </div>
                                               </div>
@@ -5735,7 +5885,7 @@ export default function AdminPanel() {
                                                   })}
                                                 </div>
                                               ) : (
-                                                <div className="mt-2 text-gray-500 italic">No photos attached to this incident report</div>
+                                                <div className="mt-2 text-slate-500 italic">No photos attached to this incident report</div>
                                               )}
                                               
                                               {/* Add Photo Button for existing reports */}
@@ -5805,7 +5955,7 @@ export default function AdminPanel() {
                                         {/* Footer with Save Button */}
                                         <div className="flex-shrink-0 border-t pt-3 sm:pt-4 mt-4 bg-white">
                                           <div className="flex justify-between items-center gap-3">
-                                            <div className="text-xs sm:text-sm text-gray-500">
+                                            <div className="text-xs sm:text-sm text-slate-500">
                                               Changes are saved automatically
                                             </div>
                                             <Button 
@@ -5842,20 +5992,31 @@ export default function AdminPanel() {
                   </div>
                 );
               })()}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Location Management Tab */}
         <TabsContent value="location-management">
-          <Card>
-            <CardHeader>
-              <CardTitle>Location Management</CardTitle>
-              <CardDescription>
-                Configure location rates and settings for each restaurant
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+              <div className="mb-6">
+                <h2 className="flex items-center gap-2 text-xl font-bold text-white mb-2">
+                  <img src={pinLocationIcon} alt="Location Management" className="h-5 w-5" />
+                  Location Management
+                </h2>
+                <p className="text-slate-400">
+                  Configure location rates and settings for each restaurant
+                </p>
+              </div>
               {(() => {
                 const { data: locations, isLoading: locationsLoading, refetch: refetchLocations } = useQuery({
                   queryKey: ["/api/locations"],
@@ -6006,24 +6167,15 @@ export default function AdminPanel() {
                 };
 
                 if (locationsLoading) {
-                  return <div className="text-center py-8">Loading locations...</div>;
+                  return <div className="text-center py-8 text-slate-400">Loading locations...</div>;
                 }
 
                 return (
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex-1 mr-4">
-                        <div className="flex items-center gap-3">
-                          <img 
-                            src={pinLocationIcon} 
-                            alt="Location" 
-                            className="w-5 h-5"
-                          />
-                          <div>
-                            <h4 className="font-medium text-blue-900">Total Locations: {locations?.length || 0}</h4>
-                            <p className="text-sm text-blue-700">Manage rates and settings for each restaurant location</p>
-                          </div>
-                        </div>
+                      <div className="flex-1 mr-4">
+                        <h4 className="font-medium text-white">Total Locations: {locations?.length || 0}</h4>
+                        <p className="text-sm text-slate-400">Manage rates and settings for each restaurant location</p>
                       </div>
                       <Button 
                         onClick={() => {
@@ -6031,7 +6183,7 @@ export default function AdminPanel() {
                           resetFileUpload();
                           setIsDialogOpen(true);
                         }}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20"
                       >
                         <img 
                           src={addCircleIcon} 
@@ -6042,34 +6194,34 @@ export default function AdminPanel() {
                       </Button>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto border border-white/20 rounded-xl bg-slate-700/50 backdrop-blur-sm p-4">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Location Name</TableHead>
-                            <TableHead className="text-center">Status</TableHead>
-                            <TableHead className="text-center">Curbside Rate</TableHead>
-                            <TableHead className="text-center">Turn-in Rate</TableHead>
-                            <TableHead className="text-center">Employee Commission</TableHead>
-                            <TableHead className="text-center">Actions</TableHead>
+                            <TableHead className="text-white">Location Name</TableHead>
+                            <TableHead className="text-center text-white">Status</TableHead>
+                            <TableHead className="text-center text-white">Curbside Rate</TableHead>
+                            <TableHead className="text-center text-white">Turn-in Rate</TableHead>
+                            <TableHead className="text-center text-white">Employee Commission</TableHead>
+                            <TableHead className="text-center text-white">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {locations?.map((location: any) => (
                             <TableRow key={location.id}>
-                              <TableCell className="font-medium">{location.name}</TableCell>
+                              <TableCell className="font-medium text-white">{location.name}</TableCell>
                               <TableCell className="text-center">
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                   location.active 
-                                    ? 'bg-blue-200 text-blue-900' 
-                                    : 'bg-red-100 text-red-800'
+                                    ? 'bg-blue-500/20 text-blue-300 border border-blue-400/30' 
+                                    : 'bg-red-500/20 text-red-300 border border-red-400/30'
                                 }`}>
                                   {location.active ? 'Active' : 'Inactive'}
                                 </span>
                               </TableCell>
-                              <TableCell className="text-center">${location.curbsideRate}</TableCell>
-                              <TableCell className="text-center">${location.turnInRate}</TableCell>
-                              <TableCell className="text-center">${location.employeeCommission}</TableCell>
+                              <TableCell className="text-center text-white">${location.curbsideRate}</TableCell>
+                              <TableCell className="text-center text-white">${location.turnInRate}</TableCell>
+                              <TableCell className="text-center text-white">${location.employeeCommission}</TableCell>
                               <TableCell className="text-center">
                                 <div className="flex gap-2 justify-center">
                                   <Button
@@ -6080,7 +6232,7 @@ export default function AdminPanel() {
                                       resetFileUpload();
                                       setIsDialogOpen(true);
                                     }}
-                                    className="p-2"
+                                    className="p-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20"
                                   >
                                     <img 
                                       src={contentPenIcon} 
@@ -6101,7 +6253,7 @@ export default function AdminPanel() {
                                         deleteLocationMutation.mutate(location.id);
                                       }
                                     }}
-                                    className="p-2"
+                                    className="p-2 bg-white/10 backdrop-blur-sm hover:bg-red-500/30 text-white hover:text-red-300 border border-white/20 hover:border-red-400/30"
                                   >
                                     <img 
                                       src={binIcon} 
@@ -6119,16 +6271,32 @@ export default function AdminPanel() {
 
                     {/* Location Form Dialog */}
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle>
-                            {editingLocation ? 'Edit Location' : 'Add New Location'}
-                          </DialogTitle>
-                          <DialogDescription>
-                            Configure the rates and settings for this location
-                          </DialogDescription>
-                        </DialogHeader>
+                      <DialogContent className="max-w-2xl w-full max-h-[85vh] p-0 bg-gradient-to-br from-slate-900/95 via-blue-900/90 to-indigo-900/95 backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden [&>button]:z-50 [&>button]:text-white [&>button]:hover:text-white">
+                        {/* Enhanced Glass morphism overlay */}
+                        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-lg pointer-events-none"></div>
+                        
+                        {/* Background Pattern */}
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20 rounded-lg pointer-events-none"></div>
+                        
+                        {/* Content with fixed header and footer */}
+                        <div className="relative z-10 flex flex-col h-full">
+                          {/* Fixed Header */}
+                          <div className="p-6 pb-0 flex-shrink-0">
+                            <DialogHeader>
+                              <DialogTitle className="text-white">
+                                {editingLocation ? 'Edit Location' : 'Add New Location'}
+                              </DialogTitle>
+                              <DialogDescription className="text-slate-400">
+                                Configure the rates and settings for this location
+                              </DialogDescription>
+                            </DialogHeader>
+                          </div>
+                          
+                          {/* Scrollable Content */}
+                          <div className="flex-1 overflow-y-auto px-6 py-4">
                         <form
+                          id="location-form"
                           onSubmit={async (e) => {
                             e.preventDefault();
                             const formData = new FormData(e.target as HTMLFormElement);
@@ -6141,7 +6309,6 @@ export default function AdminPanel() {
                               logoUrl: formData.get('logoUrl') || null,
                               address: formData.get('address') || null,
                               phone: formData.get('phone') || null,
-                              website: formData.get('website') || null,
                             };
                             await handleSubmit(locationData);
                             if (!selectedFile || uploadedImageUrl) {
@@ -6149,81 +6316,83 @@ export default function AdminPanel() {
                               resetFileUpload();
                             }
                           }}
-                          className="space-y-4"
+                          className="space-y-6"
                         >
-                          <div>
-                            <Label htmlFor="name">Location Name</Label>
-                            <input
-                              id="name"
-                              name="name"
-                              type="text"
-                              defaultValue={editingLocation?.name || ''}
-                              required
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="active">Status</Label>
-                            <Select name="active" defaultValue={editingLocation?.active ? 'true' : 'true'}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="true">Active</SelectItem>
-                                <SelectItem value="false">Inactive</SelectItem>
-                              </SelectContent>
-                            </Select>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <Label htmlFor="name" className="text-white">Location Name</Label>
+                              <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                defaultValue={editingLocation?.name || ''}
+                                required
+                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="active" className="text-white">Status</Label>
+                              <Select name="active" defaultValue={editingLocation?.active ? 'true' : 'true'}>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="true">Active</SelectItem>
+                                  <SelectItem value="false">Inactive</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <Label htmlFor="curbsideRate" className="text-white">Curbside Rate ($)</Label>
+                              <input
+                                id="curbsideRate"
+                                name="curbsideRate"
+                                type="number"
+                                step="0.01"
+                                defaultValue={editingLocation?.curbsideRate || 15}
+                                required
+                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                              />
+                            </div>
+
+                            <div>
+                              <Label htmlFor="turnInRate" className="text-white">Turn-in Rate ($)</Label>
+                              <input
+                                id="turnInRate"
+                                name="turnInRate"
+                                type="number"
+                                step="0.01"
+                                defaultValue={editingLocation?.turnInRate || 11}
+                                required
+                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                              />
+                            </div>
+
+                            <div className="md:col-span-2">
+                              <Label htmlFor="employeeCommission" className="text-white">Employee Commission ($)</Label>
+                              <input
+                                id="employeeCommission"
+                                name="employeeCommission"
+                                type="number"
+                                step="0.01"
+                                defaultValue={editingLocation?.employeeCommission || 4}
+                                required
+                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                              />
+                            </div>
                           </div>
 
                           <div>
-                            <Label htmlFor="curbsideRate">Curbside Rate ($)</Label>
-                            <input
-                              id="curbsideRate"
-                              name="curbsideRate"
-                              type="number"
-                              step="0.01"
-                              defaultValue={editingLocation?.curbsideRate || 15}
-                              required
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-
-                          <div>
-                            <Label htmlFor="turnInRate">Turn-in Rate ($)</Label>
-                            <input
-                              id="turnInRate"
-                              name="turnInRate"
-                              type="number"
-                              step="0.01"
-                              defaultValue={editingLocation?.turnInRate || 11}
-                              required
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-
-                          <div>
-                            <Label htmlFor="employeeCommission">Employee Commission ($)</Label>
-                            <input
-                              id="employeeCommission"
-                              name="employeeCommission"
-                              type="number"
-                              step="0.01"
-                              defaultValue={editingLocation?.employeeCommission || 4}
-                              required
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-
-                          <div>
-                            <Label htmlFor="logoFile">Logo Image</Label>
+                            <Label htmlFor="logoFile" className="text-white">Logo Image</Label>
                             <div className="space-y-2">
                               <input
                                 id="logoFile"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleFileChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
                               />
                               {(uploadedImageUrl || editingLocation?.logoUrl) && (
                                 <div className="mt-2">
@@ -6235,7 +6404,7 @@ export default function AdminPanel() {
                                 </div>
                               )}
                               {isUploading && (
-                                <p className="text-sm text-blue-600">Uploading image...</p>
+                                <p className="text-sm text-blue-400">Uploading image...</p>
                               )}
                             </div>
                             <input
@@ -6246,42 +6415,31 @@ export default function AdminPanel() {
                           </div>
 
                           <div>
-                            <Label htmlFor="address">Address</Label>
+                            <Label htmlFor="address" className="text-white">Address</Label>
                             <textarea
                               id="address"
                               name="address"
                               defaultValue={editingLocation?.address || ''}
                               placeholder="Full address including street, city, state, and zip"
                               rows={3}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
                             />
                           </div>
 
                           <div>
-                            <Label htmlFor="phone">Phone Number</Label>
+                            <Label htmlFor="phone" className="text-white">Phone Number</Label>
                             <input
                               id="phone"
                               name="phone"
                               type="tel"
                               defaultValue={editingLocation?.phone || ''}
                               placeholder="(555) 123-4567"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
                             />
                           </div>
 
-                          <div>
-                            <Label htmlFor="website">Website</Label>
-                            <input
-                              id="website"
-                              name="website"
-                              type="url"
-                              defaultValue={editingLocation?.website || ''}
-                              placeholder="https://restaurant-website.com"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-
-                          <DialogFooter>
+                          {/* Buttons Section */}
+                          <div className="flex gap-4 justify-end pt-4">
                             <Button
                               type="button"
                               variant="outline"
@@ -6289,26 +6447,34 @@ export default function AdminPanel() {
                                 setIsDialogOpen(false);
                                 resetFileUpload();
                               }}
+                              className="bg-slate-700/50 backdrop-blur-sm hover:bg-slate-600/50 text-white border border-slate-600/50"
                             >
                               Cancel
                             </Button>
                             <Button
                               type="submit"
                               disabled={createLocationMutation.isPending || updateLocationMutation.isPending}
+                              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20"
                             >
                               {editingLocation ? 'Update' : 'Create'} Location
                             </Button>
-                          </DialogFooter>
+                          </div>
+
                         </form>
+                          </div>
+                        </div>
                       </DialogContent>
                     </Dialog>
                   </div>
                 );
               })()}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
+
       </Tabs>
+          </div>
+        </div>
 
       {/* Employee Shift Breakdown Modal */}
       <Dialog open={showEmployeeShiftsModal} onOpenChange={setShowEmployeeShiftsModal}>
@@ -6325,7 +6491,7 @@ export default function AdminPanel() {
           
           {selectedEmployeeShifts && (
             <div className="space-y-4">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-slate-600">
                 Showing {selectedEmployeeShifts.shifts.length} shifts for {selectedAccountingMonth === 'all' ? 'all time' : `${selectedAccountingMonth}`}
               </div>
               
@@ -6365,7 +6531,7 @@ export default function AdminPanel() {
                     
                     {/* Totals Row */}
                     {selectedEmployeeShifts.shifts.length > 0 && (
-                      <TableRow className="bg-gray-50 font-bold border-t-2">
+                      <TableRow className="bg-slate-700/30 font-bold border-t-2">
                         <TableCell>TOTALS</TableCell>
                         <TableCell></TableCell>
                         <TableCell></TableCell>
@@ -6398,7 +6564,7 @@ export default function AdminPanel() {
               </div>
               
               {selectedEmployeeShifts.shifts.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-slate-500">
                   No shifts found for this employee in the selected time period.
                 </div>
               )}

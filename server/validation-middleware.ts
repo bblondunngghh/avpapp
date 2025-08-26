@@ -160,7 +160,9 @@ export function validateDateMiddleware(req: Request, res: Response, next: NextFu
 export function validateNumericFieldsMiddleware(req: Request, res: Response, next: NextFunction) {
   const numericFields = [
     'totalCars', 'creditCardCars', 'totalCashCollected', 'companyCashTurnIn',
-    'totalReceipts', 'totalJobHours', 'overShort'
+    'totalReceipts', 'totalJobHours', 'overShort', 'moneyOwed',
+    'cashCommission', 'creditCardCommission', 'receiptCommission',
+    'cashTips', 'creditCardTips', 'receiptTips'
   ];
 
   const errors: ValidationError[] = [];
@@ -174,7 +176,7 @@ export function validateNumericFieldsMiddleware(req: Request, res: Response, nex
           message: `${field} must be a valid number`,
           value: req.body[field]
         });
-      } else if (value < 0 && field !== 'overShort') {
+      } else if (value < 0 && !['overShort', 'moneyOwed'].includes(field)) {
         errors.push({
           field,
           message: `${field} cannot be negative`,

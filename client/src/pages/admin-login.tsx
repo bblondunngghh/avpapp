@@ -285,19 +285,19 @@ export default function AdminLogin() {
           variant="outline"
           size="sm"
           onClick={() => navigate("/")}
-          className="bg-white hover:bg-gray-100 flex items-center gap-1"
+          className="bg-gray-800/60 backdrop-blur-sm hover:bg-gray-700/60 text-gray-300 hover:text-white border-gray-700/50 flex items-center gap-1 transition-all duration-300"
         >
           <img src={houseIcon} alt="House" className="h-4 w-4" />
           Return to Home
         </Button>
       </div>
-      <Card className="w-full max-w-md mx-4">
-        <CardHeader className="text-center">
-          <div className="mx-auto bg-blue-100 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+      <Card className="w-full max-w-md mx-4 bg-gray-900/80 backdrop-blur-xl border-gray-800/50 shadow-2xl text-white">
+        <CardHeader className="text-center border-b border-gray-800/50">
+          <div className="mx-auto bg-gray-800/60 backdrop-blur-sm p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4 border border-gray-700/50">
             <img src={lockShieldIcon} alt="Lock Shield" className="h-7 w-7" />
           </div>
-          <CardTitle className="text-2xl">Admin Access</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl text-white font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Admin Access</CardTitle>
+          <CardDescription className="text-gray-300">
             Enter the admin password to access the administration panel
           </CardDescription>
         </CardHeader>
@@ -309,7 +309,7 @@ export default function AdminLogin() {
               {biometricSetup ? (
                 <Button 
                   onClick={authenticateWithBiometric}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full bg-gray-800/60 backdrop-blur-xl hover:bg-gray-700/60 text-gray-300 hover:text-white border border-gray-700/50 transition-all duration-300 shadow-lg"
                   disabled={isBiometricLoading}
                   size="lg"
                 >
@@ -326,7 +326,7 @@ export default function AdminLogin() {
                 <Button 
                   onClick={setupBiometric}
                   variant="outline" 
-                  className="w-full border-blue-200 text-blue-700 hover:bg-blue-50"
+                  className="w-full bg-gray-800/60 backdrop-blur-xl border-gray-700/50 text-gray-300 hover:bg-gray-700/60 hover:text-white transition-all duration-300 shadow-lg"
                   disabled={isBiometricLoading}
                 >
                   {isBiometricLoading ? (
@@ -342,10 +342,10 @@ export default function AdminLogin() {
               
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <Separator className="w-full" />
+                  <Separator className="w-full bg-gray-700/50" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-muted-foreground">
+                  <span className="bg-gray-900/80 px-2 text-gray-400">
                     Or continue with password
                   </span>
                 </div>
@@ -361,12 +361,13 @@ export default function AdminLogin() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-gray-300">Password</FormLabel>
                     <FormControl>
                       <Input 
                         type="password" 
                         placeholder="Enter admin password" 
                         autoComplete="current-password"
+                        className="bg-gray-800/60 backdrop-blur-sm border-gray-700/50 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         {...field} 
                       />
                     </FormControl>
@@ -377,7 +378,7 @@ export default function AdminLogin() {
               
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full bg-gray-800/60 backdrop-blur-xl hover:bg-gray-700/60 text-gray-300 hover:text-white border border-gray-700/50 transition-all duration-300 shadow-lg" 
                 disabled={isLoading}
               >
                 {isLoading ? "Authenticating..." : "Login with Password"}
@@ -386,7 +387,7 @@ export default function AdminLogin() {
           </Form>
         </CardContent>
         
-        <CardFooter className="text-center text-sm text-gray-500 border-t pt-4">
+        <CardFooter className="text-center text-sm text-gray-400 border-t border-gray-800/50 pt-4">
           <p className="w-full">
             This area is restricted to authorized personnel only.
           </p>

@@ -4,3 +4,24 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Local development files
+.claude/
+.config/
+.local/
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# OS files
+Thumbs.db
+
+# Build output
+build/

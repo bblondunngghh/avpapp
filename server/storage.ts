@@ -12,6 +12,9 @@ import {
   helpResponses, type HelpResponse, type InsertHelpResponse,
   coverCountReports, type CoverCountReport, type InsertCoverCountReport,
   pushSubscriptions, type PushSubscription, type InsertPushSubscription,
+  companyPayrollData, type CompanyPayrollData, type InsertCompanyPayrollData,
+  employeePayrollData, type EmployeePayrollData, type InsertEmployeePayrollData,
+  employeeShiftPayroll, type EmployeeShiftPayroll, type InsertEmployeeShiftPayroll,
   LOCATIONS
 } from "@shared/schema";
 import { db, withRetry } from "./db";
@@ -116,6 +119,21 @@ export interface IStorage {
   createPushSubscription(subscriptionData: InsertPushSubscription): Promise<PushSubscription>;
   updatePushSubscription(id: number, data: Partial<PushSubscription>): Promise<PushSubscription | undefined>;
   deletePushSubscription(endpoint: string): Promise<boolean>;
+  
+  // Company payroll data methods (custom tables)
+  getCompanyPayrollData(): Promise<CompanyPayrollData[]>;
+  getCompanyPayrollDataById(id: number): Promise<CompanyPayrollData | undefined>;
+  createCompanyPayrollData(data: InsertCompanyPayrollData): Promise<CompanyPayrollData>;
+  
+  // Employee payroll data methods (custom tables)
+  getEmployeePayrollData(): Promise<EmployeePayrollData[]>;
+  getEmployeePayrollDataByCompanyId(companyPayrollId: number): Promise<EmployeePayrollData[]>;
+  createEmployeePayrollData(data: InsertEmployeePayrollData): Promise<EmployeePayrollData>;
+  
+  // Employee shift payroll methods (separate employee records per shift)
+  getEmployeeShiftPayroll(): Promise<EmployeeShiftPayroll[]>;
+  getEmployeeShiftPayrollByReportId(shiftReportId: number): Promise<EmployeeShiftPayroll[]>;
+  createEmployeeShiftPayroll(data: InsertEmployeeShiftPayroll): Promise<EmployeeShiftPayroll>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -277,7 +295,7 @@ export class DatabaseStorage implements IStorage {
   // Location methods
   async getLocations(): Promise<Location[]> {
     try {
-      const results = await withRetry(() => db.select().from(locations));
+      const results = await withRetry(() => db.select().from(locations).orderBy(locations.id));
       return results;
     } catch (error) {
       console.error("Error fetching locations:", error);
@@ -1093,6 +1111,78 @@ export class DatabaseStorage implements IStorage {
       console.error("Error deleting push subscription:", error);
       return false;
     }
+  }
+  
+  // Company payroll data methods (custom tables)
+  async getCompanyPayrollData(): Promise<CompanyPayrollData[]> {
+    return withRetry(async () => {
+      const result = await db.select().from(companyPayrollData).orderBy(desc(companyPayrollData.createdAt));
+      return result;
+    });
+  }
+  
+  async getCompanyPayrollDataById(id: number): Promise<CompanyPayrollData | undefined> {
+    return withRetry(async () => {
+      const result = await db.select().from(companyPayrollData).where(eq(companyPayrollData.id, id));
+      return result[0];
+    });
+  }
+  
+  async createCompanyPayrollData(data: InsertCompanyPayrollData): Promise<CompanyPayrollData> {
+    return withRetry(async () => {
+      const result = await db.insert(companyPayrollData).values(data).returning();
+      return result[0];
+    });
+  }
+  
+  // Employee payroll data methods (custom tables)
+  async getEmployeePayrollData(): Promise<EmployeePayrollData[]> {
+    return withRetry(async () => {
+      const result = await db.select().from(employeePayrollData).orderBy(desc(employeePayrollData.createdAt));
+      return result;
+    });
+  }
+  
+  async getEmployeePayrollDataByCompanyId(companyPayrollId: number): Promise<EmployeePayrollData[]> {
+    return withRetry(async () => {
+      const result = await db
+        .select()
+        .from(employeePayrollData)
+        .where(eq(employeePayrollData.companyPayrollId, companyPayrollId));
+      return result;
+    });
+  }
+  
+  async createEmployeePayrollData(data: InsertEmployeePayrollData): Promise<EmployeePayrollData> {
+    return withRetry(async () => {
+      const result = await db.insert(employeePayrollData).values(data).returning();
+      return result[0];
+    });
+  }
+  
+  // Employee shift payroll methods (separate employee records per shift)
+  async getEmployeeShiftPayroll(): Promise<EmployeeShiftPayroll[]> {
+    return withRetry(async () => {
+      const result = await db.select().from(employeeShiftPayroll).orderBy(desc(employeeShiftPayroll.createdAt));
+      return result;
+    });
+  }
+  
+  async getEmployeeShiftPayrollByReportId(shiftReportId: number): Promise<EmployeeShiftPayroll[]> {
+    return withRetry(async () => {
+      const result = await db
+        .select()
+        .from(employeeShiftPayroll)
+        .where(eq(employeeShiftPayroll.shiftReportId, shiftReportId));
+      return result;
+    });
+  }
+  
+  async createEmployeeShiftPayroll(data: InsertEmployeeShiftPayroll): Promise<EmployeeShiftPayroll> {
+    return withRetry(async () => {
+      const result = await db.insert(employeeShiftPayroll).values(data).returning();
+      return result[0];
+    });
   }
 }
 

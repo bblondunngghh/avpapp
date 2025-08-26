@@ -25,6 +25,7 @@ import notesTasksIcon from "@assets/Notes-Tasks--Streamline-Ultimate_17502592566
 import accountingBillsIcon from "@assets/Accounting-Bills-1--Streamline-Ultimate_1750259340305.png";
 import houseIcon from "@assets/House-3--Streamline-Ultimate_1750259532490.png";
 import { InputMoney } from "@/components/ui/input-money";
+import { InputNumber } from "@/components/ui/input-number";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { SHIFT_OPTIONS, LOCATION_ID_MAP } from "@/lib/constants";
 import RestaurantIcon from "@/components/restaurant-icon";
@@ -230,7 +231,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const createMutation = useMutation({
     mutationFn: async (data: FormValues) => {
       try {
-        // First create the shift report
+        // Temporarily revert to old endpoint while fixing schema
         const response = await apiRequest('POST', '/api/shift-reports', data);
         const reportData = await response.json();
         
@@ -351,6 +352,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       totalReceiptSales: values.totalReceiptSales || 0,
       totalCashCollected: values.totalCashCollected || 0,
       companyCashTurnIn: values.companyCashTurnIn || 0,
+      // Add calculated commission and tips values to form data
+      cashCommission: cashCommission || 0,
+      creditCardCommission: creditCardCommission || 0,
+      receiptCommission: receiptCommission || 0,
+      cashTips: cashTips || 0,
+      creditCardTips: creditCardTips || 0,
+      receiptTips: receiptTips || 0,
+      moneyOwed: moneyOwed || 0,
       totalTurnIn: values.totalTurnIn || (values.totalCars * (() => {
         // Use hardcoded rates for original locations (IDs 1-4)
         if (values.locationId === 1) return 11; // Capital Grille
@@ -363,6 +372,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       })()),
       overShort: values.overShort || 0
     };
+    
+    console.log('Form data being sent:', formData);
+    console.log('Money owed value:', formData.moneyOwed);
     
     if (reportId) {
       updateMutation.mutate(formData);
@@ -383,7 +395,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           <Button 
             variant="outline" 
             onClick={handleBack} 
-            className="mb-4 p-2 h-10 w-10"
+            className="mb-4 p-2 h-10 w-10 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20"
           >
             <img src={houseIcon} alt="Home" className="w-5 h-5" />
           </Button>
@@ -490,105 +502,117 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const moneyOwed = expectedCompanyCashTurnIn < 0 ? Math.abs(expectedCompanyCashTurnIn) : 0;
   
   return (
-    <div className="form-section">
-      <div className="form-outer-container">
-        <Button 
-          variant="outline" 
-          onClick={handleBack} 
-          className="mb-4 p-2 h-10 w-10"
-        >
-          <img src={houseIcon} alt="Home" className="w-5 h-5" />
-        </Button>
-        
-        <div className="form-header-container">
-          <h1 className="report-title">Access Valet Parking Shift Report</h1>
+    <>
+      <div className="app-gradient-fixed"></div>
+      <div className="max-w-4xl mx-auto p-6 min-h-screen text-white relative">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="form-content-container">
+          <Button 
+            variant="outline" 
+            onClick={handleBack} 
+            className="mb-4 p-2 h-10 w-10 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20"
+          >
+            <img src={houseIcon} alt="Home" className="w-5 h-5" />
+          </Button>
           
-          {(() => {
-            const currentLocation = locations?.find((loc: any) => loc.id === form.watch('locationId'));
-            if (!currentLocation) {
+          <div className="form-header-container">
+            <h1 className="report-title">Access Valet Parking Shift Report</h1>
+            
+            {(() => {
+              const currentLocation = locations?.find((loc: any) => loc.id === form.watch('locationId'));
+              if (!currentLocation) {
+                return (
+                  <div className="form-header-content">
+                    <div className="restaurant-image relative">
+                      <div className="w-32 h-16 bg-white/10 backdrop-blur-sm border border-white/20 rounded flex items-center justify-center">
+                        <span className="text-gray-300 text-sm">No Logo</span>
+                      </div>
+                    </div>
+                    
+                    <div className="address">
+                      Loading location...
+                    </div>
+                  </div>
+                );
+              }
+              
+              // Get hardcoded image and address for original locations
+              const getLocationImage = (locationId: number) => {
+                switch (locationId) {
+                  case 1: // Capital Grille
+                    return capGrilleImage;
+                  case 2: // Bob's Steak and Chop House
+                    return bobsImage;
+                  case 3: // Truluck's
+                    return trulucksImage;
+                  case 4: // BOA Steakhouse
+                    return boaImage;
+                  default:
+                    return currentLocation.logoUrl || null;
+                }
+              };
+
+              const getLocationAddress = (locationId: number) => {
+                switch (locationId) {
+                  case 1: // Capital Grille
+                    return currentLocation.address || 'Address not available';
+                  case 2: // Bob's Steak and Chop House
+                    return currentLocation.address || 'Address not available';
+                  case 3: // Truluck's
+                    return currentLocation.address || 'Address not available';
+                  case 4: // BOA Steakhouse
+                    return currentLocation.address || 'Address not available';
+                  default:
+                    return currentLocation.address || 'Address not available';
+                }
+              };
+
+              const locationImage = getLocationImage(currentLocation.id);
+              const locationAddress = getLocationAddress(currentLocation.id);
+
               return (
                 <div className="form-header-content">
                   <div className="restaurant-image relative">
-                    <div className="w-32 h-16 bg-gray-200 rounded flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">No Logo</span>
-                    </div>
+                    {locationImage ? (
+                      <img 
+                        src={locationImage} 
+                        alt={currentLocation.name}
+                        className="w-full h-40 object-cover object-center rounded-lg shadow-lg border border-white/20"
+                      />
+                    ) : (
+                      <div className="w-32 h-16 bg-white/10 backdrop-blur-sm border border-white/20 rounded flex items-center justify-center">
+                        <span className="text-gray-300 text-sm">No Logo</span>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="address">
-                    Loading location...
+                    {currentLocation.name}<br />
+                    {locationAddress.split('\n').map((line, index) => (
+                      <span key={index}>
+                        {line}
+                        {index < locationAddress.split('\n').length - 1 && <br />}
+                      </span>
+                    ))}<br />
+                    <span className="text-sm text-gray-300 mt-1">
+                      Curbside Rate: ${(() => {
+                        // Use hardcoded rates for original locations (IDs 1-4)
+                        if (currentLocation.id === 1) return "15.00"; // Capital Grille
+                        if (currentLocation.id === 2) return "15.00"; // Bob's Steak
+                        if (currentLocation.id === 3) return "15.00"; // Truluck's
+                        if (currentLocation.id === 4) return "13.00"; // BOA Steakhouse
+                        
+                        // Use dynamic rates for new locations (ID 5+)
+                        return currentLocation.curbsideRate?.toFixed(2) || "15.00";
+                      })()} per car
+                    </span>
                   </div>
                 </div>
               );
-            }
-            
-            // Get hardcoded image and address for original locations
-            const getLocationImage = (locationId: number) => {
-              switch (locationId) {
-                case 1: // Capital Grille
-                  return capGrilleImage;
-                case 2: // Bob's Steak and Chop House
-                  return bobsImage;
-                case 3: // Truluck's
-                  return trulucksImage;
-                case 4: // BOA Steakhouse
-                  return boaImage;
-                default:
-                  return currentLocation.logoUrl || null;
-              }
-            };
-
-            const getLocationAddress = (locationId: number) => {
-              switch (locationId) {
-                case 1: // Capital Grille
-                  return currentLocation.address || 'Address not available';
-                case 2: // Bob's Steak and Chop House
-                  return currentLocation.address || 'Address not available';
-                case 3: // Truluck's
-                  return currentLocation.address || 'Address not available';
-                case 4: // BOA Steakhouse
-                  return currentLocation.address || 'Address not available';
-                default:
-                  return currentLocation.address || 'Address not available';
-              }
-            };
-
-            const locationImage = getLocationImage(currentLocation.id);
-            const locationAddress = getLocationAddress(currentLocation.id);
-
-            return (
-              <div className="form-header-content">
-                <div className="restaurant-image relative">
-                  {locationImage ? (
-                    <img 
-                      src={locationImage} 
-                      alt={currentLocation.name}
-                      className="w-full h-40 object-cover object-center rounded-lg shadow-lg border border-gray-100"
-                    />
-                  ) : (
-                    <div className="w-32 h-16 bg-gray-200 rounded flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">No Logo</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="address">
-                  {currentLocation.name}<br />
-                  {locationAddress.split('\n').map((line, index) => (
-                    <span key={index}>
-                      {line}
-                      {index < locationAddress.split('\n').length - 1 && <br />}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      </div>
-      <NetworkStatusBanner />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="form-card">
+            })()}
+          </div>
+          <NetworkStatusBanner />
+          <div className="form-card-shift-info">
             <h3 className="section-title uppercase font-bold flex items-center gap-2">
               <img src={calendarIcon} alt="Calendar" className="w-4 h-4" />
               SHIFT INFORMATION
@@ -600,7 +624,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Date</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Date</FormLabel>
                     <FormControl>
                       <Input 
                         type="date" 
@@ -618,7 +642,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="shift"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Shift</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Shift</FormLabel>
                     <Select 
                       onValueChange={field.onChange} 
                       value={field.value}
@@ -646,7 +670,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="manager"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Leader</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Shift Leader</FormLabel>
                     <Select 
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -691,12 +715,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="totalCars"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Cars Parked</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Cars Parked</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <InputNumber 
                         inputMode="numeric"
-                        min="0" 
                         className="paperform-input" 
                         {...field}
                         value={field.value === 0 ? '' : field.value}
@@ -706,7 +728,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <div className="flex justify-between text-xs text-gray-300 mt-1">
                       <span>
                         {(() => {
                           const locationId = form.watch("locationId");
@@ -758,12 +780,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="creditTransactions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Credit Card Transactions</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Credit Card Transactions</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <InputNumber 
                         inputMode="numeric"
-                        min="0" 
                         className="paperform-input" 
                         {...field}
                         value={field.value === 0 ? '' : field.value}
@@ -783,7 +803,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="totalCreditSales"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Credit Card Sales</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Total Credit Card Sales</FormLabel>
                     <FormControl>
                       <InputMoney 
                         inputMode="decimal"
@@ -796,7 +816,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <div className="flex justify-between text-xs text-gray-300 mt-1">
                       <span>Expected: ${(creditTransactions * finalPerCarPrice).toFixed(2)}</span>
                     </div>
                     <FormMessage />
@@ -809,12 +829,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="totalReceipts"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipts</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Total Receipts</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <InputNumber 
                         inputMode="numeric"
-                        min="0" 
                         className="paperform-input" 
                         {...field}
                         value={field.value === 0 ? '' : field.value}
@@ -834,7 +852,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="totalReceiptSales"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Receipt Sales</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Total Receipt Sales</FormLabel>
                     <FormControl>
                       <InputMoney 
                         inputMode="decimal"
@@ -847,7 +865,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <div className="flex justify-between text-xs text-gray-300 mt-1">
                       <span>Calculated at $18.00 per receipt</span>
                       <span>Expected: ${(totalReceipts * 18).toFixed(2)}</span>
                     </div>
@@ -861,7 +879,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="totalCashCollected"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Cash Collected</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Total Cash Collected</FormLabel>
                     <FormControl>
                       <InputMoney 
                         inputMode="decimal"
@@ -874,7 +892,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <div className="flex justify-between text-xs text-gray-300 mt-1">
                       <span>Expected: ${(cashCars * finalPerCarPrice).toFixed(2)}</span>
                     </div>
                     <FormMessage />
@@ -888,7 +906,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   name="companyCashTurnIn"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700 font-medium text-sm">Company Cash Turn-In</FormLabel>
+                      <FormLabel className="text-white font-medium text-sm">Company Cash Turn-In</FormLabel>
                       <FormControl>
                         <InputMoney 
                           className="paperform-input" 
@@ -900,7 +918,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           }}
                         />
                       </FormControl>
-                      <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <div className="flex justify-between text-xs text-gray-300 mt-1">
                         <span>Expected: ${expectedCompanyCashTurnIn.toFixed(2)}</span>
                       </div>
                       <FormMessage />
@@ -908,10 +926,10 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   )}
                 />
               ) : (
-                <div className="money-owed-display p-3 border rounded-md bg-blue-50 pt-[12px] pb-[12px] pl-[18px] pr-[18px] mt-[12px] mb-[12px]">
-                  <h3 className="text-gray-700 font-medium text-sm mb-1">Company Cash Turn-In</h3>
+                <div className="money-owed-display p-3 border border-white/20 rounded-md bg-white/10 backdrop-blur-sm pt-[12px] pb-[12px] pl-[18px] pr-[18px] mt-[12px] mb-[12px]">
+                  <h3 className="text-white font-medium text-sm mb-1">Company Cash Turn-In</h3>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600">No cash turn-in required</span>
+                    <span className="text-gray-300">No cash turn-in required</span>
                     <span className="text-red-500">Money Owed: ${Math.abs(expectedCompanyCashTurnIn).toFixed(2)}</span>
                   </div>
                   {/* Hidden input to ensure form submission has the value */}
@@ -934,7 +952,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
             
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
                   <div className="text-sm font-medium mb-2">Commission Breakdown</div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
@@ -949,12 +967,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <span>Receipt Commission:</span>
                       <span>${receiptCommission.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-white/30">
                       <span>Total Commission:</span>
                       <span>${totalCommission.toFixed(2)}</span>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-600 mt-2">
+                  <div className="text-xs text-gray-300 mt-2">
                     {(() => {
                       const locationId = form.watch("locationId");
                       let rate = 4;
@@ -989,7 +1007,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   </div>
                 </div>
                 
-                <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+                <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
                   <div className="text-sm font-medium mb-2">Tips Breakdown</div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
@@ -1004,12 +1022,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <span>Receipt Tips:</span>
                       <span>${receiptTips.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-300">
+                    <div className="flex justify-between text-sm font-bold pt-1 border-t border-white/30">
                       <span>Total Tips:</span>
                       <span>${totalTips.toFixed(2)}</span>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-600 mt-2">
+                  <div className="text-xs text-gray-300 mt-2">
                     {(() => {
                       const locationId = form.watch("locationId");
                       if (locationId === 4) {
@@ -1044,16 +1062,16 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 </div>
               </div>
               
-              <div className="flex justify-between bg-blue-100 p-4 rounded-md border border-blue-200 mt-[9px] mb-[9px] pt-[8px] pb-[8px]">
-                <div className="text-blue-800 text-[13px] font-semibold">Total Commission and Tips</div>
-                <div className="font-bold text-blue-800 text-[14px]">${totalCommissionAndTips.toFixed(2)}</div>
+              <div className="flex justify-between bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20 mt-[9px] mb-[9px] pt-[8px] pb-[8px]">
+                <div className="text-white text-[13px] font-semibold">Total Commission and Tips</div>
+                <div className="font-bold text-white text-[14px]">${totalCommissionAndTips.toFixed(2)}</div>
               </div>
               
-              <div className="flex justify-between bg-gray-100 p-4 rounded-md border border-gray-200 mt-[7px] mb-[7px] pt-[8px] pb-[8px]">
+              <div className="flex justify-between bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20 mt-[7px] mb-[7px] pt-[8px] pb-[8px]">
                 <div className="text-[14px] font-semibold">
                   {moneyOwed === 0 ? "Company Cash Turn-In" : "Money Owed"}
                 </div>
-                <div className="font-bold text-green-800 text-[14px]">
+                <div className="font-bold text-green-400 text-[14px]">
                   ${moneyOwed === 0 ? companyCashTurnIn.toFixed(2) : moneyOwed.toFixed(2)}
                 </div>
               </div>
@@ -1064,11 +1082,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
               )}
 
               {/* Total Bank Calculation (Cars x Turn-in Rate) */}
-              <div className="flex justify-between bg-blue-50 p-4 rounded-md border border-blue-200 mt-3 pt-[8px] pb-[8px]">
-                <div className="text-blue-800 text-[14px] font-semibold">
+              <div className="flex justify-between bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20 mt-3 pt-[8px] pb-[8px]">
+                <div className="text-white text-[14px] font-semibold">
                   Total Bank (Cars × Turn-in Rate)
                 </div>
-                <div className="font-bold text-blue-800 text-[14px]">
+                <div className="font-bold text-white text-[14px]">
                   ${(() => {
                     const selectedLocationId = form.watch('locationId');
                     // Get the turn-in rate based on location using hybrid system
@@ -1103,7 +1121,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="totalJobHours"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Total Job Hours</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Total Job Hours</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
@@ -1113,6 +1131,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         className="paperform-input" 
                         {...field} 
                         value={field.value === 0 ? '' : field.value}
+                        onWheel={(e) => e.currentTarget.blur()}
                         onChange={(e) => {
                           const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                           field.onChange(value);
@@ -1125,13 +1144,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 )}
               />
               
-              <div className="bg-blue-50 p-4 rounded-md border border-blue-200">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
                 <h4 className="font-medium mb-4">Employee Hours Distribution</h4>
                 
                 {form.watch("totalJobHours") > 0 ? (
                   <div className="space-y-5">
                     {/* Employee input section */}
-                    <div className="bg-white p-4 rounded-md border border-gray-200">
+                    <div className="space-y-4">
                       <div className="flex justify-between items-center mb-3">
                         <div className="text-sm font-medium">Employee Details</div>
                         <Button
@@ -1142,20 +1161,20 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                             const currentEmployees = form.watch('employees') || [];
                             form.setValue('employees', [...currentEmployees, { name: '', hours: 0 }]);
                           }}
-                          className="text-xs h-8"
+                          className="text-xs h-8 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20"
                         >
                           <Plus className="h-3.5 w-3.5 mr-1" /> Add Employee
                         </Button>
                       </div>
                       
-                      <div className="space-y-3">
+                      <div className="space-y-3 mb-6">
                         {(Array.isArray(form.watch('employees')) ? form.watch('employees') : []).map((employee, index) => {
                           const totalHours = Number(form.watch("totalJobHours") || 0);
                           const hoursPercent = totalHours > 0 ? employee.hours / totalHours : 0;
                           const hourPercentage = (hoursPercent * 100).toFixed(1);
                           
                           return (
-                            <div key={index} className="flex items-center gap-2 p-2 rounded bg-gray-50 border border-gray-100">
+                            <div key={index} className="flex items-center gap-2 p-2">
                               <div className="flex-1">
                                 <Select 
                                   value={employee.name || ''}
@@ -1168,8 +1187,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     form.setValue('employees', newEmployees);
                                   }}
                                 >
-                                  <SelectTrigger className="h-9 w-full text-sm">
-                                    <SelectValue placeholder="Select employee..." />
+                                  <SelectTrigger className="h-9 w-full text-sm bg-white/10 backdrop-blur-sm border-white/20 text-white">
+                                    <SelectValue placeholder="Select employee..." className="text-white" />
                                   </SelectTrigger>
                                   <SelectContent className="text-xs max-h-48 overflow-y-auto" position="popper" side="bottom" align="start">
                                     {employees
@@ -1189,8 +1208,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   inputMode="decimal"
                                   min="0" 
                                   step="0.01" 
-                                  className="h-9 text-center text-sm"
+                                  className="h-9 text-center text-sm bg-white/10 backdrop-blur-sm border-white/20 text-white"
                                   value={employee.hours === 0 ? '' : employee.hours}
+                                  onWheel={(e) => e.currentTarget.blur()}
                                   onChange={(e) => {
                                     const newEmployees = [...(form.watch('employees') || [])];
                                     const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
@@ -1219,14 +1239,14 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   }}
                                 />
                               </div>
-                              <div className="w-12 text-xs text-gray-500 text-center">
+                              <div className="w-12 text-xs text-gray-300 text-center">
                                 {hourPercentage}%
                               </div>
                               <Button 
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-gray-400 hover:text-red-500"
+                                className="h-8 w-8 text-gray-300 hover:text-red-400 bg-white/10 hover:bg-red-500/20 border border-white/20 rounded"
                                 onClick={() => {
                                   const newEmployees = [...(form.watch('employees') || [])];
                                   newEmployees.splice(index, 1);
@@ -1244,55 +1264,54 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         })}
                         
                         {(form.watch('employees') || []).length === 0 && (
-                          <div className="text-center text-sm text-gray-500 py-3 bg-gray-50 rounded-md">
+                          <div className="text-center text-sm text-gray-300 py-3 bg-white/5 backdrop-blur-sm rounded-md border border-white/10">
                             Add employees to distribute hours
                           </div>
                         )}
                       </div>
                     </div>
                     
-                    {/* Employee earnings calculation breakdown */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                    {/* Summary and Formula Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4 border-t border-white/20">
+                      <div className="space-y-2">
                         <div className="text-sm font-medium mb-3">Total Payroll Summary</div>
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Total Commission:</span>
+                            <span className="text-gray-300">Total Commission:</span>
                             <span>${(cashCommission + creditCardCommission + receiptCommission).toFixed(2)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Total Tips:</span>
+                            <span className="text-gray-300">Total Tips:</span>
                             <span>${(cashTips + creditCardTips + receiptTips).toFixed(2)}</span>
                           </div>
-                          <div className="flex justify-between text-sm border-t border-gray-100 pt-2 mt-2 font-medium">
+                          <div className="flex justify-between text-sm border-t border-white/20 pt-2 mt-2 font-medium">
                             <span>Total Earnings:</span>
                             <span>${(cashCommission + creditCardCommission + receiptCommission + cashTips + creditCardTips + receiptTips).toFixed(2)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Job Hours:</span>
+                            <span className="text-gray-300">Job Hours:</span>
                             <span>{form.watch("totalJobHours") || 0}</span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Money Owed to Employees:</span>
+                            <span className="text-gray-300">Money Owed to Employees:</span>
                             <span>${expectedCompanyCashTurnIn < 0 ? Math.abs(expectedCompanyCashTurnIn).toFixed(2) : '0.00'}</span>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                      <div className="space-y-2">
                         <div className="text-sm font-medium mb-3">Distribution Formula</div>
-                        <div className="space-y-1 text-xs text-gray-600">
+                        <div className="space-y-1 text-xs text-gray-300">
                           <div>• Commission is distributed based on percentage of total hours worked</div>
                           <div>• Tips are distributed based on percentage of total hours worked</div>
                           <div>• Money owed is distributed based on percentage of total hours worked</div>
-
                         </div>
                       </div>
                     </div>
                     
                     {/* Employee individual breakdowns */}
                     {(form.watch('employees') || []).length > 0 && (
-                      <div className="bg-white p-4 rounded-md border border-gray-200">
+                      <div className="py-4 border-t border-white/20">
                         <div className="text-sm font-medium mb-3">Employee Earnings Breakdown</div>
                         
                         <div className="space-y-4">
@@ -1352,28 +1371,28 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                             }
                             
                             return (
-                              <div key={index} className="border border-gray-100 rounded-md p-3 bg-gray-50">
-                                <div className="flex justify-between mb-2 pb-1 border-b border-gray-200">
-                                  <div className="font-medium text-sm text-sky-700">{employeeName}</div>
-                                  <div className="text-xs text-gray-600">{employee.hours} hours ({(hoursPercent * 100).toFixed(1)}%)</div>
+                              <div key={index} className="border border-white/10 rounded-md p-3 bg-white/5 backdrop-blur-sm">
+                                <div className="flex justify-between mb-2 pb-1 border-b border-white/10">
+                                  <div className="font-medium text-sm text-white">{employeeName}</div>
+                                  <div className="text-xs text-gray-300">{employee.hours} hours ({(hoursPercent * 100).toFixed(1)}%)</div>
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-x-8 gap-y-1">
                                   <div className="flex justify-between text-xs">
-                                    <span className="text-gray-600">Commission:</span>
-                                    <span>${employeeCommission.toFixed(2)}</span>
+                                    <span className="text-gray-300">Commission:</span>
+                                    <span className="text-white">${employeeCommission.toFixed(2)}</span>
                                   </div>
                                   <div className="flex justify-between text-xs">
-                                    <span className="text-gray-600">Tips:</span>
-                                    <span>${employeeTips.toFixed(2)}</span>
+                                    <span className="text-gray-300">Tips:</span>
+                                    <span className="text-white">${employeeTips.toFixed(2)}</span>
                                   </div>
                                   <div className="flex justify-between text-xs">
-                                    <span className="text-gray-600">Money Owed:</span>
-                                    <span>${employeeMoneyOwed.toFixed(2)}</span>
+                                    <span className="text-gray-300">Money Owed:</span>
+                                    <span className="text-white">${employeeMoneyOwed.toFixed(2)}</span>
                                   </div>
-                                  <div className="col-span-2 flex justify-between text-xs font-medium border-t border-gray-200 pt-1 mt-1">
-                                    <span>Total Earnings:</span>
-                                    <span>${totalEarnings.toFixed(2)}</span>
+                                  <div className="col-span-2 flex justify-between text-xs font-medium border-t border-white/10 pt-1 mt-1">
+                                    <span className="text-white">Total Earnings:</span>
+                                    <span className="text-white">${totalEarnings.toFixed(2)}</span>
                                   </div>
 
 
@@ -1399,8 +1418,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                     <div className="w-4 h-4 bg-red-600 rounded-full"></div>
                                   </div>
                                   <div className="space-y-2">
-                                    <h4 className="font-semibold text-blue-800">Tax Policy Update Notice</h4>
-                                    <div className="text-xs text-blue-700">
+                                    <h4 className="font-semibold text-white">Tax Policy Update Notice</h4>
+                                    <div className="text-xs text-gray-300">
                                       <p>
                                         After reviewing payroll data for the past few months, we have determined that the 22% tax payment is not expected to be required moving forward. However, please note that this could change if employees move into a higher tax bracket, potentially requiring us to reimplement the paid-in tax obligation. Any money owed will be contributed to your taxes and should cover your tax obligations, with any remaining balances redistributed back to you via direct deposit or check.
                                       </p>
@@ -1416,7 +1435,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     )}
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-600 py-4 text-center bg-white rounded-md border border-gray-200">
+                  <div className="text-sm text-gray-300 py-4 text-center bg-white/10 backdrop-blur-sm rounded-md border border-white/20">
                     Enter Total Job Hours above to begin distributing commission and tips to employees.
                   </div>
                 )}
@@ -1436,7 +1455,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium text-sm">Shift Notes</FormLabel>
+                    <FormLabel className="text-white font-medium text-sm">Shift Notes</FormLabel>
                     <FormControl>
                       <Textarea className="paperform-input h-32" {...field} />
                     </FormControl>
@@ -1449,7 +1468,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   control={form.control}
                   name="confirmationCheck"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 bg-blue-50">
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 bg-white/10 backdrop-blur-sm border border-white/20">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
@@ -1469,7 +1488,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
           
           <div className="py-8 flex justify-center">
-            <Button type="submit" disabled={isSubmitting} className="w-full max-w-md py-6 text-lg shadow-lg">
+            <Button type="submit" disabled={isSubmitting} className="w-full max-w-md py-6 text-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
               {isSubmitting ? (
                 <>
                   <span className="mr-2">Submitting...</span>
@@ -1489,6 +1508,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
           </div>
         </form>
       </Form>
-    </div>
+      </div>
+    </>
   );
 }

@@ -5,6 +5,10 @@ import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
 import { pushNotificationService } from "./push-notification-service";
+import { getLocationCode, locations } from "@shared/schema";
+import * as schema from "@shared/schema";
+import { db, withRetry } from "./db";
+import { eq } from "drizzle-orm";
 
 // Helper function to parse MM/DD/YYYY format to Date object
 function parseDateOfBirth(dateStr: string): Date | undefined {
@@ -40,6 +44,10 @@ import {
   insertPushSubscriptionSchema,
   insertLocationSchema,
   updateLocationSchema,
+  insertShiftSchema,
+  updateShiftSchema,
+  insertCustomShiftPresetSchema,
+  updateCustomShiftPresetSchema,
   ShiftReport,
   TicketDistribution,
   Employee,
@@ -49,7 +57,9 @@ import {
   HelpRequest,
   HelpResponse,
   Location,
-  PushSubscription
+  PushSubscription,
+  Shift,
+  CustomShiftPreset
 } from "@shared/schema";
 import { z } from "zod";
 import { 
@@ -576,8 +586,135 @@ export async function registerRoutes(app: Express): Promise<Server> {
     validateShiftReportMiddleware,
     async (req, res) => {
       try {
+        console.log('=== SHIFT REPORT REQUEST DEBUG ===');
+        console.log('Full request body:', JSON.stringify(req.body, null, 2));
+        console.log('Money owed value in request:', req.body.moneyOwed);
+        console.log('Type of moneyOwed:', typeof req.body.moneyOwed);
+        console.log('Raw employee data from form:', typeof req.body.employees, req.body.employees);
+        
+        // Fix employee data if it's an array, convert to proper JSON string
+        if (Array.isArray(req.body.employees)) {
+          req.body.employees = JSON.stringify(req.body.employees);
+          console.log('Converted employee array to JSON string:', req.body.employees);
+        }
+        
         const report = insertShiftReportSchema.parse(req.body);
         const createdReport = await storage.createShiftReport(report);
+        console.log('Created shift report with ID:', createdReport.id);
+        
+        // Process individual employee payroll records
+        try {
+          let employees = [];
+          
+          console.log('req.body.employees exists?', !!req.body.employees);
+          console.log('req.body.employees type:', typeof req.body.employees);
+          
+          // Handle various employee data formats
+          if (req.body.employees) {
+            console.log('Processing employee data...');
+            if (Array.isArray(req.body.employees)) {
+              console.log('Employee data is array');
+              employees = req.body.employees;
+            } else if (typeof req.body.employees === 'string') {
+              console.log('Employee data is string, attempting to parse...');
+              // Try to parse, handling double-encoding
+              let parsed = req.body.employees;
+              let attempts = 0;
+              while (typeof parsed === 'string' && attempts < 3) {
+                try {
+                  console.log(`Parse attempt ${attempts + 1}:`, parsed);
+                  parsed = JSON.parse(parsed);
+                  attempts++;
+                  console.log(`Parse result ${attempts}:`, typeof parsed, parsed);
+                } catch (e) {
+                  console.log(`Parse failed at attempt ${attempts + 1}:`, e.message);
+                  break;
+                }
+              }
+              if (Array.isArray(parsed)) {
+                employees = parsed;
+              } else if (parsed && typeof parsed === 'object') {
+                employees = [parsed]; // Single employee object
+              }
+            }
+          } else {
+            console.log('No employee data found in request body');
+          }
+          
+          console.log('Final processed employees:', employees);
+          console.log('Employee count:', employees.length);
+          
+          if (employees.length > 0) {
+            console.log('Processing employees for database insertion...');
+            const locationCode = getLocationCode(req.body.locationId);
+            console.log('Location code:', locationCode);
+            const totalJobHours = employees.reduce((sum, emp) => sum + (emp.hours || 0), 0);
+            console.log('Total job hours:', totalJobHours);
+            
+            for (let i = 0; i < employees.length; i++) {
+              const employee = employees[i];
+              console.log(`Processing employee ${i + 1}:`, employee);
+              
+              if (employee.name && employee.hours > 0) {
+                console.log(`Employee ${employee.name} has valid data, creating payroll record...`);
+                
+                // Calculate employee's percentage of total hours
+                const hoursPercentage = totalJobHours > 0 ? employee.hours / totalJobHours : 0;
+                console.log(`Employee ${employee.name} hours percentage: ${(hoursPercentage * 100).toFixed(2)}%`);
+                
+                // Log the commission and tips values from request body
+                console.log('Commission/Tips values from form:', {
+                  cashCommission: req.body.cashCommission,
+                  creditCardCommission: req.body.creditCardCommission,
+                  receiptCommission: req.body.receiptCommission,
+                  cashTips: req.body.cashTips,
+                  creditCardTips: req.body.creditCardTips,
+                  receiptTips: req.body.receiptTips
+                });
+                
+                // Calculate individual commission and tips based on hours percentage
+                console.log(`Employee ${i + 1} hours percentage:`, hoursPercentage);
+                console.log('Request body moneyOwed:', req.body.moneyOwed);
+                console.log('Calculated moneyOwed for employee:', (req.body.moneyOwed || 0) * hoursPercentage);
+                
+                const employeePayrollData = {
+                  shiftReportId: createdReport.id,
+                  location: locationCode,
+                  totalJobHours: totalJobHours,
+                  employeeName: employee.name,
+                  employeeHoursWorked: employee.hours,
+                  // Distribute commission based on hours percentage
+                  cashComm: (req.body.cashCommission || 0) * hoursPercentage,
+                  ccComm: (req.body.creditCardCommission || 0) * hoursPercentage,
+                  receiptComm: (req.body.receiptCommission || 0) * hoursPercentage,
+                  // Distribute tips based on hours percentage
+                  cashTips: (req.body.cashTips || 0) * hoursPercentage,
+                  ccTips: (req.body.creditCardTips || 0) * hoursPercentage,
+                  receiptTips: (req.body.receiptTips || 0) * hoursPercentage,
+                  // Distribute money owed based on hours percentage
+                  moneyOwed: (req.body.moneyOwed || 0) * hoursPercentage
+                };
+                
+                console.log('Final employeePayrollData object:', employeePayrollData);
+                try {
+                  const result = await storage.createEmployeeShiftPayroll(employeePayrollData);
+                  console.log('Successfully created employee payroll record:', result);
+                } catch (dbError) {
+                  console.error('Database error creating employee payroll record:', dbError);
+                }
+              } else {
+                console.log(`Skipping employee ${i + 1} - missing name or hours:`, { 
+                  name: employee.name, 
+                  hours: employee.hours 
+                });
+              }
+            }
+          } else {
+            console.log('No employees to process for database insertion');
+          }
+        } catch (error) {
+          console.error('Error processing employee payroll data:', error);
+        }
         
         // Sync cash payments from shift report to tax payment records
         await syncCashPaymentsToTaxRecords(createdReport);
@@ -1514,12 +1651,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
+  // Company Payroll Data Routes (Custom Tables)
+  
+  // Create company payroll data entry - TEMPORARY SIMPLE VERSION
+  apiRouter.post('/company-payroll-data', async (req, res) => {
+    try {
+      console.log('POST /company-payroll-data - Request Body received');
+      
+      // Temporary simple response for testing
+      res.status(201).json({ 
+        success: true, 
+        message: 'Custom API endpoint working',
+        id: 999,
+        receivedData: Object.keys(req.body)
+      });
+    } catch (error) {
+      console.error('Error in company payroll data:', error);
+      res.status(500).json({ message: 'Failed to create company payroll data', error: error.message });
+    }
+  });
+  
+  // Get all company payroll data
+  apiRouter.get('/company-payroll-data', async (req, res) => {
+    try {
+      const data = await storage.getCompanyPayrollData();
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch company payroll data' });
+    }
+  });
+
   // CSV Upload Routes
   apiRouter.post('/upload/employees', processEmployeeCSV);
   apiRouter.post('/upload/employee-payroll', processEmployeePayrollCSV);
   apiRouter.post('/upload/shift-reports', processShiftReportsCSV);
   apiRouter.post('/upload/ticket-distributions', processTicketDistributionsCSV);
   
+  // Special route to add employee_key column to training_acknowledgments table
+  apiRouter.get('/migrate-training-table', async (req, res) => {
+    try {
+      console.log('Adding employee_key column to training_acknowledgments table...');
+      
+      // Add the employee_key column
+      await db.execute(`ALTER TABLE training_acknowledgments ADD COLUMN IF NOT EXISTS employee_key TEXT`);
+      
+      console.log('Successfully added employee_key column');
+      
+      res.json({ 
+        message: 'Migration completed successfully',
+        details: 'Added employee_key column to training_acknowledgments table'
+      });
+    } catch (error) {
+      console.error('Error during migration:', error);
+      res.status(500).json({ message: 'Migration failed', error: String(error) });
+    }
+  });
+
+  // Special route to fix location IDs by updating names instead of IDs
+  apiRouter.get('/fix-location-ids', async (req, res) => {
+    try {
+      console.log('Fixing location data by correcting names...');
+      
+      // Get current locations
+      const currentLocations = await storage.getLocations();
+      console.log('Current locations:', currentLocations.map(l => ({ id: l.id, name: l.name })));
+      
+      // Update location names to match the expected IDs
+      // ID 2 should be "Bob's Steak & Chop House" (currently is Trulucks)
+      await db.update(locations)
+        .set({ name: "Bob's Steak & Chop House", address: "4300 Lemmon Ave, Dallas, TX 75219" })
+        .where(eq(locations.id, 2));
+      
+      // ID 3 should be "Truluck's" (currently is BOA)
+      await db.update(locations)
+        .set({ name: "Truluck's", address: "2401 McKinney Ave, Dallas, TX 75201" })
+        .where(eq(locations.id, 3));
+      
+      // ID 4 should be "BOA Steakhouse" (currently is Bobs)
+      await db.update(locations)
+        .set({ name: "BOA Steakhouse", address: "4322 Lemmon Ave, Dallas, TX 75219" })
+        .where(eq(locations.id, 4));
+      
+      const updatedLocations = await storage.getLocations();
+      console.log('Updated locations:', updatedLocations.map(l => ({ id: l.id, name: l.name })));
+      
+      res.json({ 
+        message: 'Location data fixed successfully',
+        before: currentLocations.map(l => ({ id: l.id, name: l.name })),
+        after: updatedLocations.map(l => ({ id: l.id, name: l.name }))
+      });
+    } catch (error) {
+      console.error('Error fixing location data:', error);
+      res.status(500).json({ message: 'Failed to fix location data', error: String(error) });
+    }
+  });
+
   // Special route to remove duplicate BOA Steakhouse reports
   apiRouter.get('/remove-boa-duplicates', async (req, res) => {
     try {
@@ -2538,6 +2764,533 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[EMAIL] Error sending test employee email:', error);
       res.status(500).json({ message: 'Failed to send test email' });
+    }
+  });
+
+  // Create shifts table migration route  
+  apiRouter.get('/migrate-shifts', async (req, res) => {
+    try {
+      // First check if table exists
+      try {
+        await withRetry(() => db.select().from(schema.shifts).limit(1));
+        return res.json({ success: true, message: 'Shifts table already exists and is accessible' });
+      } catch (checkError) {
+        // Table doesn't exist, create it
+        console.log('Creating shifts table...');
+        
+        await withRetry(() => db.execute(`
+          CREATE TABLE shifts (
+            id SERIAL PRIMARY KEY,
+            employee_id INTEGER NOT NULL REFERENCES employees(id),
+            location_id INTEGER NOT NULL REFERENCES locations(id),
+            shift_date TEXT NOT NULL,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            position TEXT NOT NULL CHECK (position IN ('valet', 'shift-leader')),
+            notes TEXT,
+            is_published BOOLEAN DEFAULT false NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+            updated_at TIMESTAMP
+          )
+        `));
+        
+        console.log('Shifts table created successfully');
+        res.json({ success: true, message: 'Shifts table created successfully' });
+      }
+    } catch (error) {
+      console.error('Error in migration:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to create shifts table', 
+        error: error.message 
+      });
+    }
+  });
+
+  // Create time off requests table migration route
+  apiRouter.get('/migrate-time-off-requests', async (req, res) => {
+    try {
+      // First check if table exists
+      try {
+        await withRetry(() => db.select().from(schema.timeOffRequests).limit(1));
+        return res.json({ success: true, message: 'Time off requests table already exists and is accessible' });
+      } catch (checkError) {
+        // Table doesn't exist, create it
+        console.log('Creating time_off_requests table...');
+        
+        await withRetry(() => db.execute(`
+          CREATE TABLE time_off_requests (
+            id SERIAL PRIMARY KEY,
+            employee_id INTEGER NOT NULL REFERENCES employees(id),
+            request_date TEXT NOT NULL,
+            reason TEXT,
+            status TEXT NOT NULL DEFAULT 'pending',
+            admin_notes TEXT,
+            reviewed_by INTEGER REFERENCES employees(id),
+            reviewed_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+            updated_at TIMESTAMP
+          )
+        `));
+        
+        console.log('Time off requests table created successfully');
+        res.json({ success: true, message: 'Time off requests table created successfully' });
+      }
+    } catch (error) {
+      console.error('Error in time off requests migration:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to create time off requests table', 
+        error: error.message 
+      });
+    }
+  });
+
+  // Test route for shifts API
+  apiRouter.get('/shifts/test', async (req, res) => {
+    try {
+      res.json({ message: 'Shifts API is working', timestamp: new Date().toISOString() });
+    } catch (error) {
+      res.status(500).json({ message: 'Test failed', error: error.message });
+    }
+  });
+
+  // Debug route to see all shifts with their published status
+  apiRouter.get('/shifts/debug', async (req, res) => {
+    try {
+      const allShifts = await withRetry(() => db.select().from(schema.shifts));
+      console.log('All shifts in database:', allShifts);
+      res.json(allShifts);
+    } catch (error) {
+      console.error('Error fetching all shifts:', error);
+      res.status(500).json({ message: 'Failed to fetch shifts', error: error.message });
+    }
+  });
+
+  // Public published shifts API (no authentication required)
+  apiRouter.get('/shifts/published', async (req, res) => {
+    try {
+      console.log('Fetching published shifts...');
+      const publishedShifts = await withRetry(() => 
+        db.select({
+          id: schema.shifts.id,
+          employeeId: schema.shifts.employeeId,
+          locationId: schema.shifts.locationId,
+          shiftDate: schema.shifts.shiftDate,
+          startTime: schema.shifts.startTime,
+          endTime: schema.shifts.endTime,
+          position: schema.shifts.position,
+          isPublished: schema.shifts.isPublished,
+          // Don't include notes or other sensitive data
+        }).from(schema.shifts).where(eq(schema.shifts.isPublished, true))
+      );
+      console.log('Found published shifts:', publishedShifts);
+      res.json(publishedShifts);
+    } catch (error) {
+      console.error('Error fetching published shifts:', error);
+      // If table doesn't exist, return empty array
+      if (error.code === '42P01') {
+        console.log('Shifts table does not exist, returning empty array');
+        res.json([]);
+      } else {
+        res.status(500).json({ message: 'Failed to fetch published shifts' });
+      }
+    }
+  });
+
+  // Shifts API routes
+  apiRouter.get('/shifts', async (req, res) => {
+    try {
+      const shifts = await withRetry(() => db.select().from(schema.shifts));
+      res.json(shifts);
+    } catch (error) {
+      console.error('Error fetching shifts:', error);
+      // If table doesn't exist, return empty array instead of error
+      if (error.code === '42P01') {
+        console.log('Shifts table does not exist yet, returning empty array');
+        res.json([]);
+      } else {
+        res.status(500).json({ message: 'Failed to fetch shifts' });
+      }
+    }
+  });
+
+  apiRouter.post('/shifts', async (req, res) => {
+    try {
+      console.log('Received shift data:', req.body);
+      const shiftData = insertShiftSchema.parse(req.body);
+      console.log('Parsed shift data:', shiftData);
+      
+      const [newShift] = await withRetry(() => 
+        db.insert(schema.shifts).values(shiftData).returning()
+      );
+      console.log('Created shift successfully:', newShift);
+      res.status(201).json(newShift);
+    } catch (error) {
+      console.error('Error creating shift:', error);
+      if (error instanceof z.ZodError) {
+        console.error('Validation errors:', error.errors);
+        res.status(400).json({ message: 'Invalid shift data', errors: error.errors });
+      } else {
+        res.status(500).json({ message: 'Failed to create shift', error: error.message });
+      }
+    }
+  });
+
+  apiRouter.put('/shifts/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const shiftData = updateShiftSchema.parse(req.body);
+      
+      const [updatedShift] = await withRetry(() =>
+        db.update(schema.shifts)
+          .set({ ...shiftData, updatedAt: new Date() })
+          .where(eq(schema.shifts.id, id))
+          .returning()
+      );
+
+      if (!updatedShift) {
+        return res.status(404).json({ message: 'Shift not found' });
+      }
+
+      res.json(updatedShift);
+    } catch (error) {
+      console.error('Error updating shift:', error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: 'Invalid shift data', errors: error.errors });
+      } else {
+        res.status(500).json({ message: 'Failed to update shift' });
+      }
+    }
+  });
+
+  apiRouter.delete('/shifts/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      const [deletedShift] = await withRetry(() =>
+        db.delete(schema.shifts)
+          .where(eq(schema.shifts.id, id))
+          .returning()
+      );
+
+      if (!deletedShift) {
+        return res.status(404).json({ message: 'Shift not found' });
+      }
+
+      res.json({ message: 'Shift deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting shift:', error);
+      res.status(500).json({ message: 'Failed to delete shift' });
+    }
+  });
+
+  // Publish shift endpoint
+  apiRouter.post('/shifts/:id/publish', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      console.log(`Publishing shift with ID: ${id}`);
+      
+      const [updatedShift] = await withRetry(() =>
+        db.update(schema.shifts)
+          .set({ 
+            isPublished: true,
+            updatedAt: new Date()
+          })
+          .where(eq(schema.shifts.id, id))
+          .returning()
+      );
+      
+      if (!updatedShift) {
+        return res.status(404).json({ message: 'Shift not found' });
+      }
+      
+      console.log(`Successfully published shift:`, updatedShift);
+      res.json({ 
+        message: 'Shift published successfully',
+        shift: updatedShift
+      });
+    } catch (error) {
+      console.error('Error publishing shift:', error);
+      res.status(500).json({ message: 'Failed to publish shift' });
+    }
+  });
+
+  // Custom Shift Presets API routes
+  apiRouter.get('/custom-shift-presets', async (req, res) => {
+    try {
+      const presets = await withRetry(() => db.select().from(schema.customShiftPresets));
+      res.json(presets);
+    } catch (error) {
+      console.error('Error fetching custom shift presets:', error);
+      // If table doesn't exist, return empty array
+      if (error.code === '42P01') {
+        console.log('Custom shift presets table does not exist yet, returning empty array');
+        res.json([]);
+      } else {
+        res.status(500).json({ message: 'Failed to fetch custom shift presets' });
+      }
+    }
+  });
+
+  apiRouter.post('/custom-shift-presets', async (req, res) => {
+    try {
+      const presetData = schema.insertCustomShiftPresetSchema.parse(req.body);
+      
+      const [newPreset] = await withRetry(() => 
+        db.insert(schema.customShiftPresets).values(presetData).returning()
+      );
+      res.status(201).json(newPreset);
+    } catch (error) {
+      console.error('Error creating custom shift preset:', error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: 'Invalid preset data', errors: error.errors });
+      } else {
+        res.status(500).json({ message: 'Failed to create preset', error: error.message });
+      }
+    }
+  });
+
+  apiRouter.put('/custom-shift-presets/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const presetData = schema.updateCustomShiftPresetSchema.parse(req.body);
+      
+      const [updatedPreset] = await withRetry(() =>
+        db.update(schema.customShiftPresets)
+          .set({ ...presetData, updatedAt: new Date() })
+          .where(eq(schema.customShiftPresets.id, id))
+          .returning()
+      );
+
+      if (!updatedPreset) {
+        return res.status(404).json({ message: 'Custom shift preset not found' });
+      }
+      
+      res.json(updatedPreset);
+    } catch (error) {
+      console.error('Error updating custom shift preset:', error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: 'Invalid preset data', errors: error.errors });
+      } else {
+        res.status(500).json({ message: 'Failed to update preset' });
+      }
+    }
+  });
+
+  apiRouter.delete('/custom-shift-presets/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      const [deletedPreset] = await withRetry(() =>
+        db.delete(schema.customShiftPresets)
+          .where(eq(schema.customShiftPresets.id, id))
+          .returning()
+      );
+
+      if (!deletedPreset) {
+        return res.status(404).json({ message: 'Custom shift preset not found' });
+      }
+      
+      res.json({ message: 'Custom shift preset deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting custom shift preset:', error);
+      res.status(500).json({ message: 'Failed to delete preset' });
+    }
+  });
+
+  // Time Off Requests API routes
+  apiRouter.get('/time-off-requests', async (req, res) => {
+    try {
+      const requests = await withRetry(() => db.select().from(schema.timeOffRequests));
+      res.json(requests);
+    } catch (error) {
+      console.error('Error fetching time off requests:', error);
+      res.status(500).json({ message: 'Failed to fetch time off requests' });
+    }
+  });
+
+  apiRouter.post('/time-off-requests', async (req, res) => {
+    try {
+      console.log('Received time off request data:', req.body);
+      const requestData = schema.insertTimeOffRequestSchema.parse(req.body);
+      console.log('Parsed time off request data:', requestData);
+      
+      const [newRequest] = await withRetry(() =>
+        db.insert(schema.timeOffRequests)
+          .values(requestData)
+          .returning()
+      );
+      
+      console.log('Created time off request:', newRequest);
+      res.status(201).json(newRequest);
+    } catch (error) {
+      console.error('Error creating time off request:', error);
+      res.status(500).json({ message: 'Failed to create time off request', error: error.message });
+    }
+  });
+
+  apiRouter.put('/time-off-requests/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Prepare the update data
+      const bodyData = { ...req.body };
+      
+      // Automatically set reviewedAt when status is approved or denied
+      if (bodyData.status === 'approved' || bodyData.status === 'denied') {
+        bodyData.reviewedAt = new Date();
+      }
+      
+      const requestData = schema.updateTimeOffRequestSchema.parse(bodyData);
+      
+      // Prepare the final update data
+      const updateData = { 
+        ...requestData, 
+        updatedAt: new Date() 
+      };
+      
+      // Set reviewedAt when status changes to approved/denied
+      if (requestData.status === 'approved' || requestData.status === 'denied') {
+        updateData.reviewedAt = new Date();
+      }
+      
+      const [updatedRequest] = await withRetry(() =>
+        db.update(schema.timeOffRequests)
+          .set(updateData)
+          .where(eq(schema.timeOffRequests.id, id))
+          .returning()
+      );
+      
+      if (!updatedRequest) {
+        return res.status(404).json({ message: 'Time off request not found' });
+      }
+      
+      res.json(updatedRequest);
+    } catch (error) {
+      console.error('Error updating time off request:', error);
+      res.status(500).json({ message: 'Failed to update time off request' });
+    }
+  });
+
+  apiRouter.delete('/time-off-requests/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      const [deletedRequest] = await withRetry(() =>
+        db.delete(schema.timeOffRequests)
+          .where(eq(schema.timeOffRequests.id, id))
+          .returning()
+      );
+      
+      if (!deletedRequest) {
+        return res.status(404).json({ message: 'Time off request not found' });
+      }
+      
+      res.json({ message: 'Time off request deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting time off request:', error);
+      res.status(500).json({ message: 'Failed to delete time off request' });
+    }
+  });
+
+  // Schedule Templates Routes
+  apiRouter.get('/schedule-templates', async (req, res) => {
+    try {
+      const templates = await withRetry(() =>
+        db.select().from(schema.scheduleTemplates).orderBy(schema.scheduleTemplates.createdAt)
+      );
+      
+      // Parse the shifts JSON string for each template
+      const templatesWithParsedShifts = templates.map(template => ({
+        ...template,
+        shifts: JSON.parse(template.shifts)
+      }));
+      
+      res.json(templatesWithParsedShifts);
+    } catch (error) {
+      console.error('Error fetching schedule templates:', error);
+      res.status(500).json({ message: 'Failed to fetch schedule templates' });
+    }
+  });
+
+  apiRouter.post('/schedule-templates', async (req, res) => {
+    try {
+      const templateData = schema.insertScheduleTemplateSchema.parse({
+        ...req.body,
+        shifts: JSON.stringify(req.body.shifts || [])
+      });
+      
+      const [newTemplate] = await withRetry(() =>
+        db.insert(schema.scheduleTemplates)
+          .values(templateData)
+          .returning()
+      );
+      
+      // Parse shifts for response
+      const templateWithParsedShifts = {
+        ...newTemplate,
+        shifts: JSON.parse(newTemplate.shifts)
+      };
+      
+      res.status(201).json(templateWithParsedShifts);
+    } catch (error) {
+      console.error('Error creating schedule template:', error);
+      res.status(500).json({ message: 'Failed to create schedule template', error: error.message });
+    }
+  });
+
+  apiRouter.put('/schedule-templates/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const templateData = schema.updateScheduleTemplateSchema.parse({
+        ...req.body,
+        shifts: JSON.stringify(req.body.shifts || [])
+      });
+      
+      const [updatedTemplate] = await withRetry(() =>
+        db.update(schema.scheduleTemplates)
+          .set({ ...templateData, updatedAt: new Date() })
+          .where(eq(schema.scheduleTemplates.id, id))
+          .returning()
+      );
+      
+      if (!updatedTemplate) {
+        return res.status(404).json({ message: 'Schedule template not found' });
+      }
+      
+      // Parse shifts for response
+      const templateWithParsedShifts = {
+        ...updatedTemplate,
+        shifts: JSON.parse(updatedTemplate.shifts)
+      };
+      
+      res.json(templateWithParsedShifts);
+    } catch (error) {
+      console.error('Error updating schedule template:', error);
+      res.status(500).json({ message: 'Failed to update schedule template' });
+    }
+  });
+
+  apiRouter.delete('/schedule-templates/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      const [deletedTemplate] = await withRetry(() =>
+        db.delete(schema.scheduleTemplates)
+          .where(eq(schema.scheduleTemplates.id, id))
+          .returning()
+      );
+      
+      if (!deletedTemplate) {
+        return res.status(404).json({ message: 'Schedule template not found' });
+      }
+      
+      res.json({ message: 'Schedule template deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting schedule template:', error);
+      res.status(500).json({ message: 'Failed to delete schedule template' });
     }
   });
 

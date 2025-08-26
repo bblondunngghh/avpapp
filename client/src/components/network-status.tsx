@@ -46,7 +46,7 @@ export function NetworkStatus() {
         <WifiOff className="w-4 h-4" />
         <span>Offline Mode</span>
         {pendingCount > 0 && (
-          <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">
+          <span className="bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs border border-red-500/30">
             {pendingCount} pending
           </span>
         )}
@@ -59,7 +59,7 @@ export function NetworkStatus() {
       <div className="flex items-center gap-2 text-orange-600 text-sm">
         <Clock className="w-4 h-4" />
         <span>Syncing reports...</span>
-        <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs">
+        <span className="bg-orange-500/20 text-orange-300 px-2 py-1 rounded text-xs border border-orange-500/30">
           {pendingCount} pending
         </span>
       </div>
@@ -96,7 +96,7 @@ export function NetworkStatusBanner() {
   // Always show a subtle status indicator
   if (isOnline && pendingCount === 0) {
     return (
-      <div className="w-full p-2 text-center text-xs bg-green-50 text-green-700 border-b border-green-100 rounded-lg mb-4">
+      <div className="w-full p-2 text-center text-xs bg-white/10 backdrop-blur-sm text-green-400 border border-white/20 rounded mb-4">
         <div className="flex items-center justify-center gap-2">
           <img src={wifiCheckIcon} alt="Connected" className="w-3 h-3" />
           <span>Connected - Reports will submit immediately</span>
@@ -108,9 +108,9 @@ export function NetworkStatusBanner() {
   return (
     <div className={`w-full p-2 text-center text-xs ${
       !isOnline 
-        ? 'bg-red-50 text-red-700 border-b border-red-100' 
-        : 'bg-orange-50 text-orange-700 border-b border-orange-100'
-    } rounded-lg mb-4`}>
+        ? 'bg-white/10 backdrop-blur-sm text-red-400 border border-white/20' 
+        : 'bg-white/10 backdrop-blur-sm text-orange-400 border border-white/20'
+    } rounded mb-4`}>
       {!isOnline ? (
         <div className="flex items-center justify-center gap-2">
           <img src={wifiQuestionIcon} alt="Offline" className="w-3 h-3" />
@@ -118,7 +118,7 @@ export function NetworkStatusBanner() {
             You're working offline. Reports will be saved locally and submitted when connection is restored.
           </span>
           {pendingCount > 0 && (
-            <span className="bg-red-100 text-red-800 px-2 py-1 rounded ml-2">
+            <span className="bg-red-500/20 text-red-300 px-2 py-1 rounded ml-2 border border-red-500/30">
               {pendingCount} reports waiting
             </span>
           )}

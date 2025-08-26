@@ -2,15 +2,16 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Car, ShieldAlert, Construction, FileText, ArrowRight, HelpCircle } from "lucide-react";
+import { Car, Construction, ArrowRight, HelpCircle } from "lucide-react";
 import shiftReportIcon from "@assets/Task-List-Add--Streamline-Ultimate.png";
 import constructionConeIcon from "@assets/Construction-Cone--Streamline-Ultimate.png";
 import carRepairIcon from "@assets/Car-Repair-Bottom-1--Streamline-Ultimate.png";
 import newspaperIcon from "@assets/Newspaper--Streamline-Ultimate.png";
 import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import roadSignTurnRightIcon from "@assets/Road-Sign-Turn-Right-1--Streamline-Ultimate.png";
-import newLogoImage from "@assets/AVPLOGO PROPER3_1750779399227.png";
-
+import calendarIcon from "@assets/Calendar-Date--Streamline-Ultimate_1750258792058.png";
+import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_1749313201026.png";
+import realreal from "../../../realreal.jpg";
 import LocationSelectorModal from "@/components/location-selector-modal";
 import { getVersionDisplay } from "@/config/version";
 
@@ -23,137 +24,224 @@ export default function Dashboard() {
   };
   
   return (
-    <div className="max-w-4xl mx-auto px-4 mt-8 md:mt-0 relative">
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 text-center mb-10 p-8 rounded-lg overflow-hidden shadow-lg">
-        {/* Blue dotted background pattern */}
-        <div className="absolute inset-0 bg-opacity-10 bg-white mix-blend-overlay" 
-          style={{ 
-            backgroundImage: "radial-gradient(circle at 25px 25px, rgba(255,255,255,0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255,255,255,0.15) 2%, transparent 0%)",
-            backgroundSize: "100px 100px" 
-          }}>
-        </div>
-        <div className="relative z-10">
-          <div className="flex flex-col items-center justify-center relative z-10">
-            <p className="text-blue-50 max-w-2xl mx-auto text-lg mb-4">
-              Welcome to the Access Valet Parking Management Portal.
-            </p>
-            <img 
-              src={newLogoImage} 
-              alt="Access Valet Parking Logo" 
-              className="w-72 h-auto object-contain mx-auto mb-4"
-              style={{ 
-                imageRendering: 'crisp-edges',
-                filter: 'contrast(1.1) saturate(1.05)',
-                maxWidth: '300px',
-                height: 'auto'
-              }}
-            />
-            <p className="text-blue-50 max-w-2xl mx-auto text-lg">
-              Please select from the following options.
-            </p>
+    <div className="max-w-4xl mx-auto px-4 mt-4 md:mt-0 relative">
+        {/* Enhanced Header Section with Glassmorphism */}
+        <div className="relative bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 text-center mb-12 p-8 rounded-3xl overflow-hidden shadow-2xl border border-white/20 backdrop-blur-xl">
+          {/* Enhanced Glass morphism overlay */}
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+          
+          {/* Enhanced pattern background */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9InN2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30" />
+          <div className="relative z-10">
+            <div className="flex flex-col items-center justify-center space-y-6">
+              {/* Professional Header */}
+              <div className="mb-6">
+                <div className="text-center">
+                  <h1 className="text-white text-3xl md:text-4xl font-bold tracking-wide">
+                    ACCESS VALET PARKING
+                  </h1>
+                  <p className="text-blue-100 text-sm md:text-base font-medium mt-1">
+                    Professional Management Portal
+                  </p>
+                </div>
+              </div>
+              
+              {/* Logo Section */}
+              <img
+                src={realreal}
+                alt="Access Valet Parking Logo"
+                className="w-full h-auto mx-auto block rounded-2xl"
+                style={{ 
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                  maxWidth: '800px'
+                }}
+              />
+              
+              <div className="text-center space-y-2">
+                <p className="text-blue-50 max-w-2xl mx-auto text-lg md:text-xl font-medium">
+                  Welcome to your comprehensive management dashboard
+                </p>
+                <p className="text-blue-200 max-w-2xl mx-auto text-base">
+                  Select from the professional tools below to manage operations efficiently
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Decorative Elements */}
+          <div className="absolute top-4 right-4 w-32 h-32 bg-gradient-to-r from-blue-400/10 to-indigo-400/10 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-4 left-4 w-24 h-24 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-xl"></div>
+          
+          {/* Version Badge */}
+          <div className="absolute bottom-4 right-6 z-20">
+            <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 border border-white/30">
+              <span className="text-xs text-white/90 font-semibold">
+                {getVersionDisplay()}
+              </span>
+            </div>
           </div>
         </div>
-        {/* Version display at very bottom right corner */}
-        <div className="absolute bottom-1 right-3 z-20">
-          <span className="text-xs text-white/80 font-medium uppercase" style={{ fontFamily: 'Fjalla One, sans-serif' }}>
-            {getVersionDisplay().replace('v', '')}
-          </span>
-        </div>
-      </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Enhanced Professional Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Submit Shift Report Card */}
-          <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-blue-500 bg-gradient-to-b from-white to-blue-50/30">
-            <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-                <img src={shiftReportIcon} alt="Task List Add" className="h-10 w-10" />
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+            {/* Glass morphism overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent"></div>
+            
+            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-blue-400/30">
+                <img src={shiftReportIcon} alt="Submit Report" className="h-12 w-12" />
               </div>
-              <h3 className="text-xl mb-3 text-blue-600">Submit Shift Report</h3>
-              <p className="text-gray-600 mb-6 flex-grow">
-                Create a new shift report with hourly distributions, financial summaries, and employee payroll information.
+              <h3 className="text-xl font-bold mb-4 text-white group-hover:text-blue-400 transition-colors">
+                Submit Shift Report
+              </h3>
+              <p className="text-gray-300 mb-6 flex-grow leading-relaxed text-sm">
+                Create comprehensive shift reports with financial summaries, employee payroll, and operational insights.
               </p>
-              <Button 
-                onClick={handleNewReport}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white group-hover:shadow-md"
-              >
-                Create Report <img src={roadSignTurnRightIcon} alt="Road Sign Turn Right" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={handleNewReport}
+                  className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
+                >
+                  Create Report 
+                  <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
           {/* Incident Report Card */}
-          <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-amber-500 bg-gradient-to-b from-white to-amber-50/30">
-            <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
-              <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-                <img src={carRepairIcon} alt="Car Repair" className="h-10 w-10" />
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/5"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-orange-900/20 to-transparent"></div>
+            
+            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+              <div className="bg-gradient-to-br from-orange-500 to-orange-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-orange-400/30">
+                <img src={carRepairIcon} alt="Incident Report" className="h-12 w-12" />
               </div>
-              <h3 className="text-xl mb-3 text-amber-600">Incident Report</h3>
-              <p className="text-gray-600 mb-6 flex-grow">
-                Report any accidents, incidents, or situations that require documentation and follow-up actions.
+              <h3 className="text-xl font-bold mb-4 text-white group-hover:text-orange-400 transition-colors">
+                Incident Report
+              </h3>
+              <p className="text-gray-300 mb-6 flex-grow leading-relaxed text-sm">
+                Document incidents, accidents, and situations requiring immediate attention and follow-up actions.
               </p>
-              <Button 
-                onClick={() => navigate("/incident-report")}
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white group-hover:shadow-md"
-              >
-                Report Incident <img src={roadSignTurnRightIcon} alt="Road Sign Turn Right" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => navigate("/incident-report")}
+                  className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
+                >
+                  Report Incident 
+                  <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Rules and Regulations Card */}
-          <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-teal-500 bg-gradient-to-b from-white to-teal-50/30">
-            <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
-              <div className="bg-gradient-to-br from-teal-500 to-teal-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-                <img src={constructionConeIcon} alt="Construction Cone" className="h-10 w-10" />
+          {/* Rules & Regulations Card */}
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-teal-600/5"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-teal-900/20 to-transparent"></div>
+            
+            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+              <div className="bg-gradient-to-br from-teal-500 to-teal-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-teal-400/30">
+                <img src={constructionConeIcon} alt="Rules" className="h-12 w-12" />
               </div>
-              <h3 className="text-xl mb-3 text-teal-600">Rules & Regulations</h3>
-              <p className="text-gray-600 mb-6 flex-grow">
-                View Access Valet Parking rules and regulations for proper procedures and standards.
+              <h3 className="text-xl font-bold mb-4 text-white group-hover:text-teal-400 transition-colors">
+                Rules & Regulations
+              </h3>
+              <p className="text-gray-300 mb-6 flex-grow leading-relaxed text-sm">
+                Access comprehensive guidelines, procedures, and standards for professional valet operations.
               </p>
-              <Button 
-                onClick={() => navigate("/regulations")}
-                className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white group-hover:shadow-md"
-              >
-                View Guidelines <img src={roadSignTurnRightIcon} alt="Road Sign Turn Right" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <div className="flex justify-center">
+                <Button onClick={() => navigate("/regulations")} className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold">
+                  View Guidelines 
+                  <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
           {/* Company Permits Card */}
-          <Card className="hover:shadow-xl transition-all duration-300 overflow-hidden group border-t-4 border-t-purple-500 bg-gradient-to-b from-white to-purple-50/30">
-            <CardContent className="pt-6 pb-8 px-5 flex flex-col items-center text-center h-full">
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-full mb-4 shadow-md transform group-hover:scale-110 transition-transform">
-                <img src={newspaperIcon} alt="Newspaper" className="h-10 w-10" />
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent"></div>
+            
+            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-purple-400/30">
+                <img src={newspaperIcon} alt="Permits" className="h-12 w-12" />
               </div>
-              <h3 className="text-xl mb-3 text-purple-600">Company Permits</h3>
-              <p className="text-gray-600 mb-6 flex-grow">
-                View all company permits, licenses, and official documentation for our operations.
+              <h3 className="text-xl font-bold mb-4 text-white group-hover:text-purple-400 transition-colors">
+                Company Permits
+              </h3>
+              <p className="text-gray-300 mb-6 flex-grow leading-relaxed text-sm">
+                View official permits, licenses, and regulatory documentation for business operations.
               </p>
-              <Button 
-                onClick={() => navigate("/permits")}
-                className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white group-hover:shadow-md"
-              >
-                View Permits <img src={roadSignTurnRightIcon} alt="Road Sign Turn Right" className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => navigate("/permits")}
+                  className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
+                >
+                  View Permits 
+                  <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
         
-      {/* Admin and Employee Login Links */}
-      <div className="text-center mt-8 pt-6 border-t border-gray-200 pb-24">
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <p className="text-gray-500 mb-3">View your hours, earnings and tax information:</p>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/employee-login")}
-            className="border-blue-200 text-blue-700 hover:text-blue-800 hover:bg-blue-50 flex items-center justify-center gap-2"
-          >
-            <img src={deliveryManIcon} alt="Delivery Man" className="h-5 w-5" />
-            Employee Login
-          </Button>
-
+        {/* Quick Access Section with Enhanced Glassmorphism */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl p-8 mt-12 border border-white/20 backdrop-blur-xl shadow-2xl">
+          {/* Enhanced Glass morphism overlay */}
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+          
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+          
+          <div className="relative z-10 text-center">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white mb-1">Quick Access</h2>
+              <p className="text-blue-200">Access your dashboards and management tools</p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => navigate("/employee-login")}
+                  className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 h-10 text-sm text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <img src={deliveryManIcon} alt="Employee" className="h-4 w-4 mr-2" />
+                  Employee Portal
+                </Button>
+              </div>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => navigate("/schedule")}
+                  className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 h-10 text-sm text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <img src={calendarIcon} alt="Schedule" className="h-4 w-4 mr-2" />
+                  View Schedule
+                </Button>
+              </div>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => navigate("/admin-login")}
+                  className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 h-10 text-sm text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <img src={lockShieldIcon} alt="Admin" className="h-4 w-4 mr-2" />
+                  Admin Login
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Decorative Elements */}
+          <div className="absolute top-4 right-4 w-32 h-32 bg-gradient-to-r from-blue-400/10 to-indigo-400/10 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-4 left-4 w-24 h-24 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-xl"></div>
         </div>
-      </div>
       
       {/* Location selection modal */}
       <LocationSelectorModal 
@@ -163,3 +251,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

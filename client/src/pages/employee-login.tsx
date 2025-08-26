@@ -90,22 +90,24 @@ export default function EmployeeLogin() {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-gray-900/80 backdrop-blur-xl border-gray-800/50 shadow-2xl text-white">
         <CardHeader className="text-center relative">
           <Button 
             variant="ghost" 
             size="icon" 
-            className="absolute left-2 top-2"
+            className="absolute left-2 top-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white"
             onClick={() => navigate("/")}
           >
             <img src={houseIcon} alt="House" className="h-5 w-5" />
           </Button>
           <div className="flex justify-center mb-2">
-            <img src={deliveryManIcon} alt="Employee" className="h-16 w-16" />
+            <div className="bg-white/10 backdrop-blur-sm p-3 rounded-full">
+              <img src={deliveryManIcon} alt="Employee" className="h-16 w-16" />
+            </div>
           </div>
-          <CardTitle className="text-2xl text-blue-700">Employee Login</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl text-white">Employee Login</CardTitle>
+          <CardDescription className="text-blue-200">
             Access your payroll information and timesheets
           </CardDescription>
         </CardHeader>
@@ -117,14 +119,14 @@ export default function EmployeeLogin() {
                 name="employeeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select Your Name</FormLabel>
+                    <FormLabel className="text-white">Select Your Name</FormLabel>
                     <Select 
                       onValueChange={field.onChange} 
                       value={field.value}
                       disabled={isLoading || employeesLoading}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
                           <SelectValue placeholder="Choose your name from the list..." />
                         </SelectTrigger>
                       </FormControl>
@@ -149,13 +151,14 @@ export default function EmployeeLogin() {
                 name="ssn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last 4 digits of SSN</FormLabel>
+                    <FormLabel className="text-white">Last 4 digits of SSN</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
                         placeholder="Enter last 4 digits"
                         maxLength={4}
+                        className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-blue-200"
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, ''); // Only allow digits
                           field.onChange(value);
@@ -170,7 +173,7 @@ export default function EmployeeLogin() {
               
               <Button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20"
                 disabled={isLoading || employeesLoading}
               >
                 {isLoading ? "Logging in..." : employeesLoading ? "Loading employees..." : "Login"}
