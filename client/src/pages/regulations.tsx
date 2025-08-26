@@ -14,7 +14,7 @@ import laptopDownloadIcon from "@assets/Laptop-Download--Streamline-Ultimate.png
 import SignatureCanvas from "react-signature-canvas";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
-import avpLogo from "../../../PROPER.png";
+import avpLogo from "@assets/PROPER.png";
 
 export default function Regulations() {
   const [, navigate] = useLocation();
