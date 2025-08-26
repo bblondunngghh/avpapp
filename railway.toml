@@ -5,8 +5,3 @@ builder = "NIXPACKS"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
-startCommand = "npm start"
-
-[env]
-NODE_ENV = "production"
-PORT = "${{RAILWAY_PUBLIC_PORT}}"

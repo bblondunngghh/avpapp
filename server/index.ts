@@ -101,12 +101,24 @@ app.use((req, res, next) => {
 
   // Serve the app on the configured port
   // this serves both the API and the client.
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  const host = process.env.NODE_ENV === "development" ? "127.0.0.1" : "0.0.0.0";
+  const port = parseInt(process.env.PORT || "3000"); // Railway uses PORT env var
   
-  server.listen(port, host, () => {
-    console.log(`[STARTUP] ✅ Server successfully started on ${host}:${port}`);
-    log(`serving on ${host}:${port}`);
+  console.log('[STARTUP] Environment variables:');
+  console.log('- NODE_ENV:', process.env.NODE_ENV);
+  console.log('- PORT:', process.env.PORT);
+  console.log('- All env vars:', Object.keys(process.env).filter(k => k.includes('PORT')));
+  console.log('- Final port:', port);
+  
+  server.on('error', (err) => {
+    console.error('[SERVER ERROR]', err);
+    if (err.code === 'EADDRINUSE') {
+      console.error(`[SERVER ERROR] Port ${port} is already in use`);
+    }
+  });
+
+  server.listen(port, () => {
+    console.log(`[STARTUP] ✅ Server successfully started on port ${port}`);
+    log(`serving on port ${port}`);
     
     // Add global error handlers to prevent crashes
     process.on('uncaughtException', (error) => {
