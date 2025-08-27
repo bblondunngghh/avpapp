@@ -1,12 +1,6 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
-
-// Configure Neon for serverless environment
-neonConfig.webSocketConstructor = ws;
-neonConfig.useSecureWebSocket = true;
-neonConfig.pipelineConnect = false;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -14,15 +8,12 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Enhanced connection configuration for production stability
+// Enhanced connection configuration for Railway PostgreSQL
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  max: 5, // Further reduced for serverless stability
-  idleTimeoutMillis: 30000, // Increase idle timeout
-  connectionTimeoutMillis: 10000, // Increase connection timeout
-  keepAlive: true,
-  maxUses: 7500, // Limit connection reuse
-  allowExitOnIdle: false,
+  max: 5,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
 });
 
 // Add connection error handling
@@ -38,7 +29,7 @@ pool.on('remove', (client) => {
   console.log('Database client removed');
 });
 
-export const db = drizzle({ client: pool, schema });
+export const db = drizzle(pool, { schema });
 
 // Database operation wrapper with retry logic
 export async function withRetry<T>(operation: () => Promise<T>, maxRetries = 2): Promise<T> {
