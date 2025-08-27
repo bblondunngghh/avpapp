@@ -41,13 +41,7 @@ export default function Header() {
   return (
     <header className="app-header fixed top-0 left-0 right-0 z-50">
       {/* Glassmorphism container */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 border-b border-white/20 backdrop-blur-xl shadow-2xl">
-        {/* Enhanced Glass morphism overlay */}
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border-b border-white/10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-        
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+      <div className="relative overflow-hidden backdrop-blur-xl bg-white/10 border-b border-white/30 shadow-2xl">
         
         {/* Navigation container with content */}
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-2 flex justify-end items-center" style={{height: '56px'}}>
@@ -63,14 +57,10 @@ export default function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
-              className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 backdrop-blur-xl border border-white/20 text-white shadow-2xl min-w-[280px] p-2 rounded-2xl"
+              className="relative overflow-hidden backdrop-blur-xl bg-white/10 border border-white/30 text-white shadow-2xl min-w-[280px] p-2 rounded-2xl"
               align="end"
               sideOffset={8}
             >
-              {/* Enhanced Glass morphism overlay for dropdown */}
-              <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
               
               {/* Dropdown content with z-index */}
               <div className="relative z-10">

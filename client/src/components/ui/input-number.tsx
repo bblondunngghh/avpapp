@@ -14,6 +14,8 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
       <div className="relative">
         <input
           type="number"
+          inputMode="numeric"
+          pattern="[0-9]*"
           className={cn(
             "flex h-10 w-full rounded-md border border-input bg-background pr-3 py-2 text-base focus-visible:outline-none focus-visible:border-white/40 focus-visible:shadow-[0_0_20px_rgba(59,130,246,0.5)] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
             className,

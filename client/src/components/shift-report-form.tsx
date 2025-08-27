@@ -669,9 +669,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-800/90 backdrop-blur-xl border-slate-600/50">
                         {SHIFT_OPTIONS.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
+                          <SelectItem key={option.value} value={option.value} className="text-white hover:bg-white/10 focus:bg-white/10 data-[highlighted]:bg-white/10 data-[highlighted]:text-white">
                             {option.label}
                           </SelectItem>
                         ))}
@@ -711,12 +711,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-800/90 backdrop-blur-xl border-slate-600/50">
                         {employees
                           .filter((emp: any) => emp.isActive && emp.isShiftLeader)
                           .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName))
                           .map((emp: any) => (
-                            <SelectItem key={emp.id} value={emp.key}>
+                            <SelectItem key={emp.id} value={emp.key} className="text-white hover:bg-white/10 focus:bg-white/10 data-[highlighted]:bg-white/10 data-[highlighted]:text-white">
                               {emp.fullName}
                             </SelectItem>
                           ))}
@@ -1180,12 +1180,12 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                                   <SelectTrigger className="h-9 w-full text-sm bg-white/10 backdrop-blur-sm border-white/20 text-white data-[placeholder]:text-gray-300">
                                     <SelectValue placeholder="Select employee..." />
                                   </SelectTrigger>
-                                  <SelectContent className="text-xs max-h-48 overflow-y-auto" position="popper" side="bottom" align="start">
+                                  <SelectContent className="text-xs max-h-48 overflow-y-auto bg-slate-800/90 backdrop-blur-xl border-slate-600/50" position="popper" side="bottom" align="start">
                                     {employees
                                       .filter((emp: any) => emp.isActive)
                                       .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName))
                                       .map((emp: any) => (
-                                        <SelectItem key={emp.id} value={emp.key} className="text-xs py-1">
+                                        <SelectItem key={emp.id} value={emp.key} className="text-xs py-1 text-white hover:bg-white/10 focus:bg-white/10 data-[highlighted]:bg-white/10 data-[highlighted]:text-white">
                                           {emp.fullName}
                                         </SelectItem>
                                       ))}
