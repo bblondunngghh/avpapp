@@ -40,17 +40,24 @@ export default function Header() {
   
   return (
     <header className="app-header">
-      <div className="relative w-full">
+      {/* Glassmorphism container */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 border-b border-white/20 backdrop-blur-xl shadow-2xl">
+        {/* Enhanced Glass morphism overlay */}
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border-b border-white/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
         
-        {/* Navigation container with hamburger menu for all devices */}
-        <div className="max-w-4xl mx-auto px-4 py-2 flex justify-end items-center relative z-20" style={{height: '56px'}}>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+        
+        {/* Navigation container with content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-2 flex justify-end items-center" style={{height: '56px'}}>
           {/* Hamburger menu for all devices - positioned at content edge */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="text-white -mr-1"
+                className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 -mr-1"
               >
                 <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
               </Button>
