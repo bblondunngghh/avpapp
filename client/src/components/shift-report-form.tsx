@@ -105,6 +105,32 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOnline, setIsOnline] = useState(NetworkMonitor.getStatus());
 
+  // Helper function to get location info by ID
+  const getLocationInfo = (locationId: number) => {
+    const location = locations?.find((loc: any) => loc.id === locationId);
+    if (!location) return { name: 'Unknown', turnInRate: 11, perCarPrice: 15 };
+    
+    const name = location.name.toLowerCase();
+    
+    // Determine rates based on location name
+    if (name.includes('capital grille')) {
+      return { name: location.name, turnInRate: 11, perCarPrice: 15 };
+    } else if (name.includes('bob')) {
+      return { name: location.name, turnInRate: 6, perCarPrice: 15 };
+    } else if (name.includes('truluck')) {
+      return { name: location.name, turnInRate: 8, perCarPrice: 15 };
+    } else if (name.includes('boa')) {
+      return { name: location.name, turnInRate: 7, perCarPrice: 13 };
+    } else {
+      // Use dynamic rates from database for new locations
+      return { 
+        name: location.name, 
+        turnInRate: location.turnInRate || 11, 
+        perCarPrice: location.perCarPrice || 15 
+      };
+    }
+  };
+
   // Initialize network monitoring
   useEffect(() => {
     NetworkMonitor.init();
@@ -360,16 +386,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
       creditCardTips: creditCardTips || 0,
       receiptTips: receiptTips || 0,
       moneyOwed: moneyOwed || 0,
-      totalTurnIn: values.totalTurnIn || (values.totalCars * (() => {
-        // Use hardcoded rates for original locations (IDs 1-4)
-        if (values.locationId === 1) return 11; // Capital Grille
-        if (values.locationId === 2) return 6;  // Bob's Steak
-        if (values.locationId === 3) return 8;  // Truluck's
-        if (values.locationId === 4) return 7;  // BOA Steakhouse
-        
-        // Use dynamic rates for new locations (ID 5+)
-        return locations?.find((loc: any) => loc.id === values.locationId)?.turnInRate || 11;
-      })()),
+      totalTurnIn: values.totalTurnIn || (values.totalCars * getLocationInfo(values.locationId).turnInRate),
       overShort: values.overShort || 0
     };
     
@@ -478,7 +495,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
   // For credit card tips: credit transactions * $15/$13 = theoretical revenue
   // If theoretical revenue > actual sales, the difference is tips (excess)
   // If actual sales > theoretical revenue, the difference is also tips (shortfall)
-  const perCarPrice = form.watch("locationId") === 4 ? 13 : 15; // BOA uses $13/car, others use $15/car
+  const perCarPrice = getLocationInfo(form.watch("locationId") || 1).perCarPrice;
   
   // For new locations (ID 5+), use dynamic curbside rate
   const finalPerCarPrice = currentLocationId >= 5 ? 
@@ -732,34 +749,13 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                       <span>
                         {(() => {
                           const locationId = form.watch("locationId");
-                          const currentLocation = locations?.find((loc: any) => loc.id === locationId);
+                          if (!locationId) return "Select a location";
                           
-                          // Use hardcoded rates for original locations
-                          if (locationId === 1) return "Capital Grille Rate: $11.00 per car";
-                          if (locationId === 2) return "Bob's Steak & Chop House Rate: $6.00 per car";
-                          if (locationId === 3) return "Truluck's Rate: $8.00 per car";
-                          if (locationId === 4) return "BOA Steakhouse Rate: $7.00 per car";
-                          
-                          // Use dynamic rates for new locations
-                          if (currentLocation) {
-                            return `${currentLocation.name} Rate: $${currentLocation.turnInRate?.toFixed(2) || '0.00'} per car`;
-                          }
-                          
-                          return "Rate: $0.00 per car";
+                          const locationInfo = getLocationInfo(locationId);
+                          return `${locationInfo.name} Rate: $${locationInfo.turnInRate.toFixed(2)} per car`;
                         })()}
                       </span>
-                      <span>Expected Turn-In: ${(totalCars * (() => {
-                        const locationId = form.watch("locationId");
-                        
-                        // Use hardcoded rates for original locations (IDs 1-4)
-                        if (locationId === 1) return 11; // Capital Grille
-                        if (locationId === 2) return 6;  // Bob's Steak
-                        if (locationId === 3) return 8;  // Truluck's
-                        if (locationId === 4) return 7;  // BOA Steakhouse
-                        
-                        // Use dynamic rates for new locations (ID 5+)
-                        return locations?.find((loc: any) => loc.id === locationId)?.turnInRate || 11;
-                      })()).toFixed(2)}</span>
+                      <span>Expected Turn-In: ${(totalCars * getLocationInfo(form.watch("locationId") || 1).turnInRate).toFixed(2)}</span>
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -975,26 +971,25 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <div className="text-xs text-gray-300 mt-2">
                     {(() => {
                       const locationId = form.watch("locationId");
-                      let rate = 4;
-                      let locationName = "";
+                      const locationInfo = getLocationInfo(locationId);
+                      const location = locations?.find((loc: any) => loc.id === locationId);
                       
-                      if (locationId === 1) {
+                      // Determine employee commission rate based on location name
+                      let rate = 4; // Default rate
+                      const name = locationInfo.name.toLowerCase();
+                      if (name.includes('capital grille')) {
                         rate = 4;
-                        locationName = " (Capital Grille rate)";
-                      } else if (locationId === 2) {
+                      } else if (name.includes('bob')) {
                         rate = 9;
-                        locationName = " (Bob's rate)";
-                      } else if (locationId === 3) {
+                      } else if (name.includes('truluck')) {
                         rate = 7;
-                        locationName = " (Truluck's rate)";
-                      } else if (locationId === 4) {
+                      } else if (name.includes('boa')) {
                         rate = 6;
-                        locationName = " (BOA Steakhouse rate)";
-                      } else if (locationId >= 5) {
-                        const location = locations?.find((loc: any) => loc.id === locationId);
+                      } else {
                         rate = location?.employeeCommission || 4;
-                        locationName = "";
                       }
+                      
+                      const locationName = ` (${locationInfo.name} rate)`;
                       
                       return (
                         <>
@@ -1030,7 +1025,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   <div className="text-xs text-gray-300 mt-2">
                     {(() => {
                       const locationId = form.watch("locationId");
-                      if (locationId === 4) {
+                      const locationInfo = getLocationInfo(locationId);
+                      const location = locations?.find((loc: any) => loc.id === locationId);
+                      
+                      // Check if this is BOA Steakhouse
+                      if (locationInfo.name.toLowerCase().includes('boa')) {
                         return (
                           <>
                             <div>• Cash: $13 per cash car - cash collected (BOA rate)</div>
@@ -1038,9 +1037,8 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                             <div>• Receipt: $3 per receipt</div>
                           </>
                         );
-                      } else if (locationId >= 5) {
-                        const location = locations?.find((loc: any) => loc.id === locationId);
-                        const rate = location?.curbsideRate || 15;
+                      } else {
+                        const rate = location?.curbsideRate || locationInfo.perCarPrice;
                         return (
                           <>
                             <div>• Cash: ${rate} per cash car - cash collected</div>
