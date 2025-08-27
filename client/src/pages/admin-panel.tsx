@@ -14,6 +14,7 @@ import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
 import viewSquareIcon from "@assets/View-Square--Streamline-Ultimate.png";
+import SquareReconciliation from "@/components/SquareReconciliation";
 
 // Component for compact customer info
 function CompactCustomerInfo({ name, email, phone }: { 
@@ -2101,6 +2102,7 @@ export default function AdminPanel() {
     { id: "employee-accounting", label: "Employee Accounting", icon: cashUserIcon },
     { id: "hours-tracker", label: "Hours Tracker", icon: timeClockNineIcon },
     { id: "incident-reports", label: "Incident Reports", icon: carRepairFireIcon },
+    { id: "square-reconciliation", label: "Square Reconciliation", icon: viewSquareIcon },
     { id: "location-management", label: "Location Management", icon: pinLocationIcon }
   ];
 
@@ -2171,7 +2173,7 @@ export default function AdminPanel() {
                     : 'text-slate-300 hover:text-white hover:bg-white/10 hover:backdrop-blur-sm'
                 }`}
               >
-                <img src={item.icon} alt={item.label} className="h-5 w-5 flex-shrink-0" />
+                <img src={item.icon} alt={item.label} className="h-5 w-5 min-h-[20px] min-w-[20px] flex-shrink-0 object-contain" />
                 <span className="text-sm whitespace-nowrap">{item.label}</span>
               </button>
             ))}
@@ -2199,7 +2201,7 @@ export default function AdminPanel() {
                     : 'text-slate-300 hover:text-white hover:bg-white/10 hover:backdrop-blur-sm'
                 }`}
               >
-                <img src={item.icon} alt={item.label} className="h-5 w-5 flex-shrink-0" />
+                <img src={item.icon} alt={item.label} className="h-5 w-5 min-h-[20px] min-w-[20px] flex-shrink-0 object-contain" />
                 <span className="text-sm whitespace-nowrap">{item.label}</span>
               </button>
             ))}
@@ -5994,6 +5996,11 @@ export default function AdminPanel() {
               })()}
             </div>
           </div>
+        </TabsContent>
+
+        {/* Square Reconciliation Tab */}
+        <TabsContent value="square-reconciliation">
+          <SquareReconciliation />
         </TabsContent>
 
         {/* Location Management Tab */}

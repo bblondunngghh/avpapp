@@ -147,9 +147,19 @@ input[type=number] {
     margin-top: 1.5rem !important;
   }
   
-  /* Fix header to account for safe areas on iPhone */
+  /* Fix header to account for safe areas on iPhone and iPad */
   .app-header {
     padding-top: max(env(safe-area-inset-top, 0), 20px) !important;
+  }
+  
+  /* iPad specific status bar fix */
+  body {
+    padding-top: env(safe-area-inset-top, 0) !important;
+  }
+  
+  /* Ensure app content starts below status bar */
+  #root {
+    padding-top: env(safe-area-inset-top, 0) !important;
   }
   
   /* Better spacing for cards */
@@ -182,6 +192,32 @@ input[type=number] {
 
 .animate-scale-in {
   animation: scale-in 1s ease-out forwards;
+}
+
+/* iPad specific optimizations */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* iPad status bar and navigation fixes */
+  body {
+    -webkit-text-size-adjust: 100% !important;
+  }
+  
+  /* Ensure proper spacing for iPad navigation */
+  .app-header {
+    position: fixed !important;
+    top: env(safe-area-inset-top, 0) !important;
+    z-index: 9999 !important;
+  }
+  
+  /* Fix main content positioning on iPad */
+  main {
+    margin-top: calc(56px + env(safe-area-inset-top, 0)) !important;
+    padding-top: 0 !important;
+  }
+  
+  /* Cards layout for iPad - ensure 4 columns */
+  .grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
 }
 
 /* Global heading styles and buttons with Poppins font */
