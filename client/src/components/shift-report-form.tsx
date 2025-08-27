@@ -1046,14 +1046,6 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                             <div>• Receipt: $3 per receipt</div>
                           </>
                         );
-                      } else {
-                        return (
-                          <>
-                            <div>• Cash: $15 per cash car - cash collected</div>
-                            <div>• Credit: $15 per transaction - credit sales</div>
-                            <div>• Receipt: $3 per receipt</div>
-                          </>
-                        );
                       }
                     })()}
                   </div>
