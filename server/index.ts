@@ -3,6 +3,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { BackupService } from "./backup";
+import { initializeSquareService } from "./square-service";
 import path from "path";
 import fs from "fs";
 
@@ -51,6 +52,10 @@ app.use((req, res, next) => {
 (async () => {
   try {
     console.log('[STARTUP] Starting server initialization...');
+    
+    // Initialize Square service
+    initializeSquareService();
+    
     const server = await registerRoutes(app);
 
   app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
@@ -118,20 +123,22 @@ app.use((req, res, next) => {
     }
   });
 
+  // Add global error handlers BEFORE starting the server
+  process.on('uncaughtException', (error) => {
+    console.error('[UNCAUGHT EXCEPTION] Server will continue running:', error.message);
+    console.error('[UNCAUGHT EXCEPTION] Stack:', error.stack);
+    // Don't exit the process - let it continue running
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('[UNHANDLED REJECTION] Server will continue running:', reason);
+    console.error('[UNHANDLED REJECTION] Promise:', promise);
+    // Don't exit the process - let it continue running
+  });
+
   server.listen(port, host, () => {
     console.log(`[STARTUP] ✅ Server successfully started on ${host}:${port}`);
     log(`serving on ${host}:${port}`);
-    
-    // Add global error handlers to prevent crashes
-    process.on('uncaughtException', (error) => {
-      console.error('[UNCAUGHT EXCEPTION] Server will continue running:', error.message);
-      // Don't exit the process - let it continue running
-    });
-
-    process.on('unhandledRejection', (reason, promise) => {
-      console.error('[UNHANDLED REJECTION] Server will continue running:', reason);
-      // Don't exit the process - let it continue running
-    });
     
     // Delayed startup of backup services to allow database connection to stabilize
     setTimeout(() => {
