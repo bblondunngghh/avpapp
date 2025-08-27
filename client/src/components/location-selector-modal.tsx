@@ -30,7 +30,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 text-white">
+      <DialogContent className="sm:max-w-md bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 text-white animate-scale-in">
         <DialogHeader className="text-center space-y-3 pb-2">
           <div className="mx-auto w-12 h-12 flex items-center justify-center">
             <img 

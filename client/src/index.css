@@ -1,5 +1,5 @@
-/* Import Open Sans font */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 /* Import global styles */
 @import './global.css';
@@ -61,12 +61,37 @@ input[type=number] {
     padding-bottom: 100px; /* Increased space for taller bottom navigation */
   }
   
-  /* Fix header positioning on mobile - ensure content doesn't appear under navigation */
+  /* Remove main padding since we already have mt-16 in the component */
   main {
     position: relative;
     z-index: 1;
-    padding-top: 72px; /* Extra space to clear header on iPhone */
-    padding-bottom: 100px; /* Increased space for taller bottom navigation */
+    padding-bottom: 2rem; /* Just bottom padding for content breathing room */
+  }
+  
+  /* Ensure buttons are properly sized for touch */
+  button, .button, [role="button"] {
+    min-height: 44px; /* iOS recommended touch target size */
+    min-width: 44px;
+  }
+  
+  /* Fix input sizes for iPhone */
+  input, select, textarea {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+    -webkit-appearance: none;
+    border-radius: 8px;
+  }
+  
+  /* Responsive text sizing */
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+  
+  /* Better modal sizing for iPhone */
+  [data-radix-dialog-content] {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    margin: 0 !important;
   }
   
   /* Fix for page headers appearing under navigation */
@@ -81,11 +106,89 @@ input[type=number] {
   }
 }
 
-/* Global heading styles and buttons with Open Sans font */
+/* iPhone specific optimizations */
+@media (max-width: 480px) {
+  /* Extra small iPhone screens */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Reduce gap sizes on small screens */
+  .gap-4 { gap: 0.75rem !important; }
+  .gap-6 { gap: 1rem !important; }
+  .gap-8 { gap: 1.25rem !important; }
+  
+  /* Adjust grid layouts for very small screens */
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Stack form elements vertically with proper spacing */
+  .md\\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Ensure text doesn't get too small */
+  .text-xs { font-size: 0.75rem !important; }
+  .text-sm { font-size: 0.875rem !important; }
+  
+  /* Better button padding */
+  .btn, button:not(.btn) {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  /* Improve form spacing on mobile */
+  .space-y-4 > * + * {
+    margin-top: 1rem !important;
+  }
+  
+  .space-y-6 > * + * {
+    margin-top: 1.5rem !important;
+  }
+  
+  /* Fix header to account for safe areas on iPhone */
+  .app-header {
+    padding-top: max(env(safe-area-inset-top, 0), 20px) !important;
+  }
+  
+  /* Better spacing for cards */
+  .card, [class*="card"] {
+    margin: 0.5rem !important;
+    padding: 1rem !important;
+  }
+  
+  /* Improve input field sizing */
+  input, select, textarea {
+    padding: 0.75rem !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Custom animations */
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 1s ease-out forwards;
+}
+
+/* Global heading styles and buttons with Poppins font */
 @layer base {
   h1, h2, h3, h4, h5, h6, button, .button, [role="button"] {
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    font-weight: 500; /* Medium weight for headings and buttons in Open Sans */
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500; /* Medium weight for headings and buttons in Poppins */
   }
 }
 
@@ -143,12 +246,12 @@ input[type=number] {
 
 .report-title {
   font-size: 1.5rem;
-  font-weight: 500; /* Medium weight for Open Sans */
+  font-weight: 500; /* Medium weight for Poppins */
   color: white;
   letter-spacing: 1px;
   margin-bottom: 1rem;
   text-align: center;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   text-transform: uppercase;
 }
 
@@ -194,8 +297,8 @@ input[type=number] {
 .address {
   text-align: center;
   font-size: 0.875rem;
-  font-weight: 400; /* Normal weight for Open Sans */
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 400; /* Normal weight for Poppins */
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   margin-bottom: 1rem;
   letter-spacing: 0.5px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -211,13 +314,13 @@ input[type=number] {
 
 .section-title {
   font-size: 1.25rem;
-  font-weight: 500; /* Medium weight for Open Sans */
+  font-weight: 500; /* Medium weight for Poppins */
   margin-bottom: 1.5rem;
   color: white;
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
   padding-bottom: 0.75rem;
   position: relative;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .section-title::after {
@@ -340,7 +443,7 @@ input[type="date"].paperform-input {
   @apply bg-gradient-to-r from-sky-600 to-teal-500 hover:from-sky-700 hover:to-teal-600 text-white py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
   position: relative;
   overflow: hidden;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-weight: 500;
 }
 
@@ -379,7 +482,7 @@ input[type="date"].paperform-input {
   --accent-foreground: 210 40% 98%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
-  --ring: 210 100% 50%;
+  --ring: 210 100% 35%;
   --radius: 0.75rem; /* Slightly more rounded */
   
   /* Chart colors */
@@ -419,7 +522,7 @@ input[type="date"].paperform-input {
   --accent-foreground: 213 31% 91%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 213 31% 91%;
-  --ring: 210 100% 50%;
+  --ring: 210 100% 35%;
   
   /* Chart colors - Slightly adjusted for dark mode */
   --chart-1: 243 75% 69%; /* Brighter Indigo */
@@ -442,13 +545,13 @@ input[type="date"].paperform-input {
 @layer base {
   * {
     @apply border-border;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-    font-weight: 400 !important; /* Normal weight for Open Sans */
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    font-weight: 400 !important; /* Normal weight for Poppins */
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight: 400; /* Normal weight, not bold */
     /* Prevent overscroll behavior */
     overscroll-behavior: none;
@@ -558,7 +661,7 @@ input[type="date"].paperform-input {
 
 .app-title {
   font-size: 22px;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-weight: 700; /* Full bold for stronger presence */
   letter-spacing: 0.5px; /* Tighter letter spacing for readability */
   text-shadow: 0 1px 3px rgba(0,0,0,0.15);

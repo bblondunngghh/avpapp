@@ -9,18 +9,17 @@ export interface InputNumberProps
 
 const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
   ({ className, error, ...props }, ref) => {
-    // Create a custom input layout with # symbol
+    // Create a custom number input layout
     return (
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white font-medium z-10">#</span>
         <input
           type="number"
           className={cn(
-            "flex h-10 w-full rounded-md border border-input bg-background pr-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+            "flex h-10 w-full rounded-md border border-input bg-background pr-3 py-2 text-base focus-visible:outline-none focus-visible:border-white/40 focus-visible:shadow-[0_0_20px_rgba(59,130,246,0.5)] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
             className,
             error && "border-destructive"
           )}
-          style={{ paddingLeft: '1.75rem' }}
+          style={{ paddingLeft: '0.75rem' }}
           ref={ref}
           min="0"
           onWheel={(e) => e.currentTarget.blur()}

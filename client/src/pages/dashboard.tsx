@@ -38,8 +38,8 @@ export default function Dashboard() {
               {/* Professional Header */}
               <div className="mb-6">
                 <div className="text-center">
-                  <h1 className="text-white text-3xl md:text-4xl font-bold tracking-wide">
-                    ACCESS VALET PARKING
+                  <h1 className="text-white text-3xl md:text-4xl font-bold tracking-wide animate-scale-in">
+                    Access Valet Parking
                   </h1>
                   <p className="text-blue-100 text-sm md:text-base font-medium mt-1">
                     Professional Management Portal
@@ -78,7 +78,7 @@ export default function Dashboard() {
         {/* Enhanced Professional Action Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Submit Shift Report Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.2s]">
             {/* Glass morphism overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent"></div>
@@ -106,7 +106,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Incident Report Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.4s]">
             <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/5"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-orange-900/20 to-transparent"></div>
             
@@ -133,7 +133,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Rules & Regulations Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.6s]">
             <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-teal-600/5"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-teal-900/20 to-transparent"></div>
             
@@ -157,7 +157,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Company Permits Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e]">
+          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.8s]">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent"></div>
             

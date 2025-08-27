@@ -367,7 +367,7 @@ export default function AdminLogin() {
                         type="password" 
                         placeholder="Enter admin password" 
                         autoComplete="current-password"
-                        className="bg-gray-800/60 backdrop-blur-sm border-gray-700/50 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-gray-800/60 backdrop-blur-sm border-gray-700/50 text-white placeholder:text-gray-400 focus:outline-none focus:border-white/40 focus:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
                         {...field} 
                       />
                     </FormControl>
