@@ -67,6 +67,17 @@ app.use((req, res, next) => {
     // Initialize Square service
     initializeSquareService();
     
+    // Add a simple test route to verify server is reachable
+    app.get('/test', (req, res) => {
+      console.log(`[TEST ROUTE] Accessed at ${new Date().toISOString()}`);
+      res.json({ 
+        message: 'Server is working!', 
+        timestamp: new Date().toISOString(),
+        port: process.env.PORT,
+        host: '0.0.0.0'
+      });
+    });
+    
     const server = await registerRoutes(app);
 
   app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
@@ -117,7 +128,7 @@ app.use((req, res, next) => {
 
   // Serve the app on the configured port
   // this serves both the API and the client.
-  const port = parseInt(process.env.PORT || "5000"); // Use Railway's PORT or fallback to 5000
+  const port = parseInt(process.env.PORT || "8080"); // Use Railway's PORT or fallback to 8080
   const host = '0.0.0.0'; // Listen on all interfaces for Railway
   
   console.log('[STARTUP] Environment variables:');
@@ -161,6 +172,8 @@ app.use((req, res, next) => {
 
   server.listen(port, host, () => {
     console.log(`[STARTUP] ✅ Server successfully started on ${host}:${port}`);
+    console.log(`[STARTUP] Server should be accessible at http://${host}:${port}`);
+    console.log(`[STARTUP] Railway should route public traffic to this server`);
     log(`serving on ${host}:${port}`);
     
     // Set up heartbeat to monitor server health
