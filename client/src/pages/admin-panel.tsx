@@ -14,7 +14,7 @@ import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
 import viewSquareIcon from "@assets/View-Square--Streamline-Ultimate.png";
-import SquareReconciliation from "@/components/SquareReconciliation";
+import SquareReconciliation from "@/components/SquareReconciliation.tsx";
 
 // Component for compact customer info
 function CompactCustomerInfo({ name, email, phone }: { 
