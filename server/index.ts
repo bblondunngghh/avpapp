@@ -24,6 +24,9 @@ app.use((req, res, next) => {
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
+  // Log all incoming requests for debugging
+  console.log(`[REQUEST] ${new Date().toISOString()} - ${req.method} ${req.path} from ${req.ip}`);
+
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
@@ -43,7 +46,15 @@ app.use((req, res, next) => {
       }
 
       log(logLine);
+    } else {
+      // Also log non-API requests for debugging
+      console.log(`[RESPONSE] ${req.method} ${path} ${res.statusCode} in ${duration}ms`);
     }
+  });
+
+  // Add error handler for this middleware
+  res.on('error', (err) => {
+    console.error(`[RESPONSE ERROR] ${req.method} ${path}:`, err.message);
   });
 
   next();
@@ -125,20 +136,45 @@ app.use((req, res, next) => {
 
   // Add global error handlers BEFORE starting the server
   process.on('uncaughtException', (error) => {
-    console.error('[UNCAUGHT EXCEPTION] Server will continue running:', error.message);
+    console.error('[UNCAUGHT EXCEPTION] Critical error occurred:', error.message);
     console.error('[UNCAUGHT EXCEPTION] Stack:', error.stack);
+    console.error('[UNCAUGHT EXCEPTION] Type:', error.name);
+    console.error('[UNCAUGHT EXCEPTION] Time:', new Date().toISOString());
     // Don't exit the process - let it continue running
   });
 
   process.on('unhandledRejection', (reason, promise) => {
-    console.error('[UNHANDLED REJECTION] Server will continue running:', reason);
+    console.error('[UNHANDLED REJECTION] Promise rejection detected:', reason);
     console.error('[UNHANDLED REJECTION] Promise:', promise);
+    console.error('[UNHANDLED REJECTION] Time:', new Date().toISOString());
     // Don't exit the process - let it continue running
+  });
+
+  // Add more detailed server error handling
+  process.on('SIGTERM', () => {
+    console.log('[SIGNAL] SIGTERM received - Server shutting down gracefully');
+  });
+
+  process.on('SIGINT', () => {
+    console.log('[SIGNAL] SIGINT received - Server shutting down gracefully');
   });
 
   server.listen(port, host, () => {
     console.log(`[STARTUP] ✅ Server successfully started on ${host}:${port}`);
     log(`serving on ${host}:${port}`);
+    
+    // Set up heartbeat to monitor server health
+    const startTime = Date.now();
+    const heartbeat = setInterval(() => {
+      const uptime = Math.floor((Date.now() - startTime) / 1000);
+      console.log(`[HEARTBEAT] Server alive for ${uptime} seconds at ${new Date().toISOString()}`);
+    }, 30000); // Log every 30 seconds
+    
+    // Add server close handler
+    server.on('close', () => {
+      console.log('[SERVER] HTTP server closed');
+      clearInterval(heartbeat);
+    });
     
     // Delayed startup of backup services to allow database connection to stabilize
     setTimeout(() => {
