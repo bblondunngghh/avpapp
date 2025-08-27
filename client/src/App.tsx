@@ -31,7 +31,6 @@ import Demo from "@/pages/demo";
 import NotificationsPage from "@/pages/notifications";
 import PublicSchedule from "@/pages/public-schedule";
 import Header from "@/components/layout/header";
-import BottomNavigation from "@/components/layout/bottom-navigation";
 // import { AssistanceCenterPopup } from "@/components/assistance-center-popup";
 import { notificationSoundService } from "@/lib/notification-sound";
 import avpLogo from "@assets/PROPER.png";
@@ -257,7 +256,6 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      {!isAdminPage && !isEmployeePage && !isDemoPage && <BottomNavigation />}
     </div>
   );
 }

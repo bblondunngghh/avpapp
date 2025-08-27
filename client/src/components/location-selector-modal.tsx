@@ -108,7 +108,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                       {getLocationIcon(location.name)}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-white">{location.name.toUpperCase()}</h3>
+                      <h3 className="text-lg font-bold text-white">{location.name}</h3>
                       <p className="text-gray-300 text-xs">Click to create report</p>
                     </div>
                     <div className="text-gray-400 hover:text-gray-300 transition-colors">

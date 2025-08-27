@@ -73,14 +73,6 @@ export default function Dashboard() {
           <div className="absolute top-4 right-4 w-32 h-32 bg-gradient-to-r from-blue-400/10 to-indigo-400/10 rounded-full blur-2xl"></div>
           <div className="absolute bottom-4 left-4 w-24 h-24 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-xl"></div>
           
-          {/* Version Badge */}
-          <div className="absolute bottom-4 right-6 z-20">
-            <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 border border-white/30">
-              <span className="text-xs text-white/90 font-semibold">
-                {getVersionDisplay()}
-              </span>
-            </div>
-          </div>
         </div>
       
         {/* Enhanced Professional Action Cards */}

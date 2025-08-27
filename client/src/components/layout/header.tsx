@@ -39,7 +39,7 @@ export default function Header() {
   };
   
   return (
-    <header className="app-header">
+    <header className="app-header fixed top-0 left-0 right-0 z-50">
       {/* Glassmorphism container */}
       <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 border-b border-white/20 backdrop-blur-xl shadow-2xl">
         {/* Enhanced Glass morphism overlay */}
@@ -63,49 +63,49 @@ export default function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
-              className="bg-gradient-to-br from-slate-900/90 via-blue-900/90 to-slate-900/90 backdrop-blur-xl border border-white/20 text-white shadow-2xl min-w-[280px] p-2"
+              className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 backdrop-blur-xl border border-white/20 text-white shadow-2xl min-w-[280px] p-2 rounded-2xl"
               align="end"
               sideOffset={8}
             >
-              <DropdownMenuItem 
-                className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
-                onClick={() => handleNavigation('/')}
-              >
-                <img src={dashboardIcon} alt="Dashboard" className="mr-3 h-5 w-5" />
-                Dashboard
-              </DropdownMenuItem>
-
-              <DropdownMenuItem 
-                className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
-                onClick={() => handleNavigation('/report-selection')}
-              >
-                <img src={newReportIcon} alt="New Report" className="mr-3 h-5 w-5" />
-                New Report
-              </DropdownMenuItem>
+              {/* Enhanced Glass morphism overlay for dropdown */}
+              <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
               
-              <DropdownMenuItem 
-                className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
-                onClick={() => handleNavigation('/schedule')}
-              >
-                <img src={calendarIcon} alt="Schedule" className="mr-3 h-5 w-5" />
-                View Schedule
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem 
-                className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
-                onClick={() => handleNavigation('/employee-login')}
-              >
-                <img src={employeeIcon} alt="Employee" className="mr-3 h-5 w-5" />
-                Employee Login
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem 
-                className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
-                onClick={() => handleNavigation('/admin-login')}
-              >
-                <img src={lockShieldIcon} alt="Admin" className="mr-3 h-5 w-5" />
-                Admin Login
-              </DropdownMenuItem>
+              {/* Dropdown content with z-index */}
+              <div className="relative z-10">
+                <DropdownMenuItem 
+                  className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
+                  onClick={() => handleNavigation('/')}
+                >
+                  <img src={dashboardIcon} alt="Dashboard" className="mr-3 h-5 w-5" />
+                  Dashboard
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem 
+                  className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
+                  onClick={() => handleNavigation('/schedule')}
+                >
+                  <img src={calendarIcon} alt="Schedule" className="mr-3 h-5 w-5" />
+                  View Schedule
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem 
+                  className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
+                  onClick={() => handleNavigation('/employee-login')}
+                >
+                  <img src={employeeIcon} alt="Employee" className="mr-3 h-5 w-5" />
+                  Employee Login
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem 
+                  className="text-white hover:bg-white/10 cursor-pointer px-4 py-3 text-base"
+                  onClick={() => handleNavigation('/admin-login')}
+                >
+                  <img src={lockShieldIcon} alt="Admin" className="mr-3 h-5 w-5" />
+                  Admin Login
+                </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
