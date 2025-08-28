@@ -214,9 +214,39 @@ input[type=number] {
     padding-top: 0 !important;
   }
   
-  /* Cards layout for iPad - ensure 4 columns */
-  .grid-cols-1.sm\\:grid-cols-2.md\\:grid-cols-4 {
-    grid-template-columns: repeat(4, 1fr) !important;
+  /* Fix admin panel sidebar icons on iPad */
+  .admin-panel img {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  
+  /* Force sidebar icon visibility on iPad */
+  .admin-panel .relative.z-10 img {
+    min-width: 16px !important;
+    min-height: 16px !important;
+    max-width: 28px !important;
+    max-height: 28px !important;
+    object-fit: contain !important;
+  }
+  
+  /* Fix reports page viewport overflow on iPad */
+  .admin-panel .flex-1.w-full {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Ensure tables don't overflow viewport on iPad */
+  .admin-panel .overflow-x-auto {
+    max-width: calc(100vw - 280px) !important; /* Account for sidebar width */
+  }
+  
+  /* Fix main content area width on iPad */
+  .admin-panel .flex-1.flex.flex-col.min-h-screen {
+    max-width: calc(100vw - 256px) !important; /* Account for sidebar */
+    overflow-x: hidden !important;
   }
 }
 
@@ -660,12 +690,12 @@ input[type="date"].paperform-input {
 /* App Header styles with Enhanced Glassmorphism */
 .app-header {
   @apply text-white shadow-2xl fixed w-full;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  padding-top: env(safe-area-inset-top, 0);
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 99999 !important;
+  padding-top: env(safe-area-inset-top, 0) !important;
 }
 
 .app-header-content {

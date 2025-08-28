@@ -76,7 +76,7 @@ export default function Dashboard() {
         </div>
       
         {/* Enhanced Professional Action Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Submit Shift Report Card */}
           <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.2s]">
             {/* Enhanced Glass morphism overlay */}
