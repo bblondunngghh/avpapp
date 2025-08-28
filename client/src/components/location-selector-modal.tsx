@@ -107,13 +107,10 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               return (
                 <div 
                   key={location.id}
-                  className="relative bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer rounded-xl overflow-hidden"
+                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer rounded-xl"
                   onClick={() => handleLocationSelect(location.id)}
                 >
-                  {/* Glassmorphism overlay for location cards */}
-                  <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg"></div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
-                  <div className="flex items-center space-x-3 py-4 px-4 relative z-10">
+                  <div className="flex items-center space-x-3 py-4 px-4">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-600/80 to-indigo-700/80 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm">
                       {getLocationIcon(location.name)}
                     </div>
