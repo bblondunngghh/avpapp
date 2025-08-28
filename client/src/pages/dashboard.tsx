@@ -78,12 +78,12 @@ export default function Dashboard() {
         {/* Enhanced Professional Action Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Submit Shift Report Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.2s]">
-            {/* Glass morphism overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.2s]">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
             
-            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+            <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-blue-500 to-blue-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-blue-400/30">
                 <img src={shiftReportIcon} alt="Submit Report" className="h-12 w-12" />
               </div>
@@ -102,15 +102,15 @@ export default function Dashboard() {
                   <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Incident Report Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.4s]">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/5"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-orange-900/20 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.4s]">
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
             
-            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+            <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-orange-500 to-orange-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-orange-400/30">
                 <img src={carRepairIcon} alt="Incident Report" className="h-12 w-12" />
               </div>
@@ -129,15 +129,15 @@ export default function Dashboard() {
                   <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Rules & Regulations Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.6s]">
-            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-teal-600/5"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-teal-900/20 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.6s]">
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
             
-            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+            <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-teal-500 to-teal-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-teal-400/30">
                 <img src={constructionConeIcon} alt="Rules" className="h-12 w-12" />
               </div>
@@ -153,15 +153,15 @@ export default function Dashboard() {
                   <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Company Permits Card */}
-          <Card className="group relative overflow-hidden bg-[#2a2a2a] border border-[#3a3a3a] shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-[#2e2e2e] animate-scale-in [animation-delay:0.8s]">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.8s]">
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
             
-            <CardContent className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
+            <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-purple-500 to-purple-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-purple-400/30">
                 <img src={newspaperIcon} alt="Permits" className="h-12 w-12" />
               </div>
@@ -180,8 +180,8 @@ export default function Dashboard() {
                   <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
         
         {/* Quick Access Section with Enhanced Glassmorphism */}
