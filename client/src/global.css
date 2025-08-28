@@ -58,12 +58,26 @@
     margin-right: 0 !important;
   }
   
-  /* More specific override for iPad grid layout */
-  @media screen and (min-width: 768px) and (max-width: 1024px) {
-    .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
-      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-      display: grid !important;
-    }
+  /* Ultra-specific iPad override - target the exact grid structure */
+  .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    display: grid !important;
+  }
+  
+  /* Even more specific - target any grid with responsive classes on iPad */
+  [class*="grid-cols-1"][class*="sm:grid-cols-2"][class*="lg:grid-cols-4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    display: grid !important;
+  }
+  
+  /* Force override Tailwind's sm: responsive classes on iPad */
+  .grid[class*="sm:grid-cols-2"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+  
+  /* Target landing page grid specifically by parent container */
+  .max-w-4xl .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
   
   /* Individual cards - force maximum width usage */
