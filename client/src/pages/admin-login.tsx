@@ -279,7 +279,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] auth-container fixed inset-0 overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-[80vh] auth-container">
       <div className="flex w-full max-w-md justify-end mb-4 px-4">
         <Button 
           variant="outline"
