@@ -51,7 +51,7 @@ export default function Header() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 -mr-1"
+                className="text-white hover:bg-white/10 transition-all duration-300 -mr-1"
               >
                 <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
               </Button>
