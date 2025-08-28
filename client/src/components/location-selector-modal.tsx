@@ -30,8 +30,15 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 text-white animate-scale-in">
-        <DialogHeader className="text-center space-y-3 pb-2">
+      <DialogContent className="sm:max-w-md bg-white/5 backdrop-blur-xl border border-white/20 text-white animate-scale-in shadow-2xl overflow-hidden">
+        {/* Enhanced Glass morphism overlay */}
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+        
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30" />
+        
+        <DialogHeader className="text-center space-y-3 pb-2 relative z-10">
           <div className="mx-auto w-12 h-12 flex items-center justify-center">
             <img 
               src="/assets/pin-location-icon.png" 
@@ -45,16 +52,16 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 gap-3 mt-4 px-1">
+        <div className="grid grid-cols-1 gap-3 mt-4 px-1 relative z-10">
           {isLoading ? (
-            <Card className="bg-slate-700/50 border border-slate-600/50 shadow-xl">
-              <CardContent className="text-center py-8">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl rounded-lg">
+              <div className="text-center py-8">
                 <div className="animate-pulse flex flex-col items-center space-y-3">
-                  <div className="w-12 h-12 bg-slate-600/50 rounded-full"></div>
+                  <div className="w-12 h-12 bg-white/10 rounded-full"></div>
                   <div className="text-gray-300 font-medium">Loading locations...</div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : (
             locations?.filter((location: any) => location.active)?.map((location: any) => {
               const getLocationIcon = (locationName: string) => {
@@ -98,12 +105,15 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               };
 
               return (
-                <Card 
+                <div 
                   key={location.id}
-                  className="bg-slate-700/50 border border-slate-600/50 shadow-xl hover:bg-slate-600/50 transition-all duration-300 cursor-pointer hover:border-slate-500/60 hover:shadow-2xl"
+                  className="relative bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/10 transition-all duration-300 cursor-pointer hover:border-white/30 hover:shadow-2xl rounded-lg overflow-hidden"
                   onClick={() => handleLocationSelect(location.id)}
                 >
-                  <CardContent className="flex items-center space-x-3 py-4 px-4">
+                  {/* Glassmorphism overlay for location cards */}
+                  <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+                  <div className="flex items-center space-x-3 py-4 px-4 relative z-10">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-600/80 to-indigo-700/80 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm">
                       {getLocationIcon(location.name)}
                     </div>
@@ -116,20 +126,20 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               );
             }) || (
-              <Card className="bg-slate-700/50 border border-slate-600/50 shadow-xl">
-                <CardContent className="text-center py-8">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl rounded-lg">
+                <div className="text-center py-8">
                   <div className="flex flex-col items-center space-y-3">
-                    <div className="w-12 h-12 bg-slate-600/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
                       <Building2 className="h-6 w-6 text-gray-400" />
                     </div>
                     <div className="text-gray-300 font-medium">No locations available</div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )
           )}
         </div>
