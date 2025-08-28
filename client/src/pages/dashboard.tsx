@@ -34,13 +34,7 @@ export default function Dashboard() {
   return (
     <div className="max-w-4xl mx-auto px-4 mt-4 md:mt-0 relative">
         {/* Enhanced Header Section with Glassmorphism */}
-        <div className="relative bg-white/5 backdrop-blur-xl text-center mb-8 p-8 rounded-3xl overflow-hidden shadow-2xl border border-white/20">
-          {/* Enhanced Glass morphism overlay */}
-          <div className="absolute inset-0 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
-          
-          {/* Enhanced pattern background */}
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9InN2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30" />
+        <div className="relative bg-slate-800/50 backdrop-blur-xl text-center mb-8 p-8 rounded-3xl overflow-hidden shadow-xl border border-slate-600/50 text-white">
           <div className="relative z-10">
             <div className="flex flex-col items-center justify-center space-y-3">
               {/* Professional Header */}
@@ -86,10 +80,7 @@ export default function Dashboard() {
         {/* Enhanced Professional Action Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Submit Shift Report Card */}
-          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.2s]">
-            {/* Enhanced Glass morphism overlay */}
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-slate-800/60 animate-scale-in [animation-delay:0.2s] text-white">
             
             <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-blue-500 to-blue-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-blue-400/30">
@@ -114,9 +105,7 @@ export default function Dashboard() {
           </div>
 
           {/* Incident Report Card */}
-          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.4s]">
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-slate-800/60 animate-scale-in [animation-delay:0.4s] text-white">
             
             <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-orange-500 to-orange-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-orange-400/30">
@@ -141,9 +130,7 @@ export default function Dashboard() {
           </div>
 
           {/* Rules & Regulations Card */}
-          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.6s]">
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-slate-800/60 animate-scale-in [animation-delay:0.6s] text-white">
             
             <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-teal-500 to-teal-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-teal-400/30">
@@ -165,9 +152,7 @@ export default function Dashboard() {
           </div>
 
           {/* Company Permits Card */}
-          <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.8s]">
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+          <div className="group relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-slate-800/60 animate-scale-in [animation-delay:0.8s] text-white">
             
             <div className="relative z-10 pt-8 pb-8 px-6 flex flex-col items-center text-center h-full">
               <div className="bg-gradient-to-br from-purple-500 to-purple-700 p-5 rounded-2xl mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 border border-purple-400/30">
@@ -193,10 +178,7 @@ export default function Dashboard() {
         </div>
         
         {/* Quick Access Section with Enhanced Glassmorphism */}
-        <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl p-8 mt-8 border border-white/20 shadow-2xl">
-          {/* Enhanced Glass morphism overlay */}
-          <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-2xl p-8 mt-8 border border-slate-600/50 shadow-xl text-white">
           
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>

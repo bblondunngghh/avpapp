@@ -90,7 +90,7 @@ export default function EmployeeLogin() {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 fixed inset-0 overflow-hidden">
       <Card className="w-full max-w-md bg-gray-900/80 backdrop-blur-xl border-gray-800/50 shadow-2xl text-white">
         <CardHeader className="text-center relative">
           <Button 
