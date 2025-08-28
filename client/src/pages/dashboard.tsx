@@ -34,7 +34,7 @@ export default function Dashboard() {
   return (
     <div className="max-w-4xl mx-auto px-4 mt-4 md:mt-0 relative">
         {/* Enhanced Header Section with Glassmorphism */}
-        <div className="relative bg-white/5 backdrop-blur-xl text-center mb-12 p-8 rounded-3xl overflow-hidden shadow-2xl border border-white/20">
+        <div className="relative bg-white/5 backdrop-blur-xl text-center mb-8 p-8 rounded-3xl overflow-hidden shadow-2xl border border-white/20">
           {/* Enhanced Glass morphism overlay */}
           <div className="absolute inset-0 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
@@ -84,7 +84,7 @@ export default function Dashboard() {
         </div>
       
         {/* Enhanced Professional Action Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Submit Shift Report Card */}
           <div className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl hover:bg-white/10 animate-scale-in [animation-delay:0.2s]">
             {/* Enhanced Glass morphism overlay */}
@@ -193,7 +193,7 @@ export default function Dashboard() {
         </div>
         
         {/* Quick Access Section with Enhanced Glassmorphism */}
-        <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl p-8 mt-12 border border-white/20 shadow-2xl">
+        <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl p-8 mt-8 border border-white/20 shadow-2xl">
           {/* Enhanced Glass morphism overlay */}
           <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
