@@ -2132,7 +2132,7 @@ export default function AdminPanel() {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 lg:static lg:inset-0`}>
           {/* Enhanced glassmorphism background */}
-          <div className="relative h-full overflow-hidden bg-gradient-to-b from-slate-900/80 via-blue-900/80 to-indigo-900/80 border-r border-white/20 backdrop-blur-xl shadow-2xl">
+          <div className="relative h-full overflow-hidden bg-white/5 backdrop-blur-xl border-r border-white/20 shadow-2xl">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -2253,7 +2253,7 @@ export default function AdminPanel() {
 
         
         <TabsContent value="reports">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -2354,7 +2354,7 @@ export default function AdminPanel() {
         </TabsContent>
         
         <TabsContent value="reports">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -2664,7 +2664,7 @@ export default function AdminPanel() {
         </TabsContent>
         
         <TabsContent value="reports">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -2907,7 +2907,7 @@ export default function AdminPanel() {
         </TabsContent>
         
         <TabsContent value="locations">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -3136,7 +3136,7 @@ export default function AdminPanel() {
                     })}
                   </div>
                   {/* Detailed Performance Table */}
-                  <div className="mt-6 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+                  <div className="mt-6 relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
                     {/* Glass morphism overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
                     
@@ -3218,7 +3218,7 @@ export default function AdminPanel() {
                   </div>
                   
                   {/* Monthly Sales Analysis Section */}
-                  <div className="mt-10 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+                  <div className="mt-10 relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
                     {/* Glass morphism overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
                     
@@ -3322,7 +3322,7 @@ export default function AdminPanel() {
                   </div>
                   
                   {/* Monthly Sales Table Card */}
-                  <div className="mt-6 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+                  <div className="mt-6 relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
                     {/* Glass morphism overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
                     
@@ -3463,7 +3463,7 @@ export default function AdminPanel() {
         </TabsContent>
         
         <TabsContent value="tickets">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
             {/* Glass morphism overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
             
@@ -3513,7 +3513,7 @@ export default function AdminPanel() {
                         z-index: 9998 !important;
                       }
                     `}</style>
-                    <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md max-h-[85vh] overflow-y-auto bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl z-50">
+                    <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md max-h-[85vh] overflow-y-auto bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl z-50">
                     {/* Enhanced Glass morphism overlay - reports style */}
                     <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -3994,7 +3994,7 @@ export default function AdminPanel() {
         
         {/* Employee Management Tab */}
         <TabsContent value="manage-employees">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -4875,7 +4875,7 @@ export default function AdminPanel() {
         </TabsContent>
 
         <TabsContent value="employee-accounting">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -5371,7 +5371,7 @@ export default function AdminPanel() {
         </TabsContent>
         
         <TabsContent value="hours-tracker">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -5599,7 +5599,7 @@ export default function AdminPanel() {
         </TabsContent>
 
         <TabsContent value="incident-reports">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -5989,7 +5989,7 @@ export default function AdminPanel() {
 
         {/* Location Management Tab */}
         <TabsContent value="location-management">
-          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+          <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
