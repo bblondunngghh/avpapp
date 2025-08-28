@@ -11,7 +11,7 @@ import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import roadSignTurnRightIcon from "@assets/Road-Sign-Turn-Right-1--Streamline-Ultimate.png";
 import calendarIcon from "@assets/Calendar-Date--Streamline-Ultimate_1750258792058.png";
 import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_1749313201026.png";
-import carImage from "@assets/car2.jpg";
+import carImage from "@assets/car3.jpg";
 import LocationSelectorModal from "@/components/location-selector-modal";
 import { getVersionDisplay } from "@/config/version";
 
@@ -47,7 +47,7 @@ export default function Dashboard() {
               <div className="mb-3">
                 <div className="text-center">
                   <h1 className="text-white text-3xl md:text-4xl font-bold tracking-wide animate-scale-in">
-                    Access Valet Parking
+                    ACCESS VALET PARKING
                   </h1>
                   <p className="text-blue-100 text-sm md:text-base font-medium mt-1">
                     Professional Management Portal
