@@ -248,11 +248,26 @@ input[type=number] {
   
   /* Force sidebar icon visibility on iPad */
   .admin-panel .relative.z-10 img {
-    min-width: 16px !important;
-    min-height: 16px !important;
-    max-width: 28px !important;
-    max-height: 28px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
     object-fit: contain !important;
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Specific targeting for sidebar navigation icons */
+  .admin-panel .flex.items-center.gap-3 img {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
   }
   
   /* Fix reports page viewport overflow on iPad - allow full width for cards */
@@ -278,6 +293,27 @@ input[type=number] {
   .admin-panel .relative.overflow-hidden.bg-gradient-to-r {
     width: 100% !important;
     max-width: none !important;
+  }
+  
+  /* Admin panel header iPad positioning fix */
+  .admin-panel-header {
+    position: fixed !important;
+    top: 0 !important;
+    z-index: 99999 !important;
+    min-height: calc(70px + env(safe-area-inset-top, 20px)) !important;
+  }
+  
+  .admin-panel-header .relative.z-10 {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+  }
+  
+  /* Adjust content padding on iPad for admin panel */
+  .admin-panel .pt-20 {
+    padding-top: calc(90px + env(safe-area-inset-top, 20px)) !important;
   }
 }
 
