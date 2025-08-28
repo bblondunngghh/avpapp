@@ -195,7 +195,7 @@ input[type=number] {
 }
 
 /* iPad specific optimizations */
-@media screen and (min-width: 768px) and (max-width: 1024px) {
+@media screen and (min-width: 768px) and (max-width: 1279px) {
   /* iPad status bar and navigation fixes */
   body {
     -webkit-text-size-adjust: 100% !important;
@@ -324,8 +324,8 @@ input[type=number] {
     padding-top: calc(100px + env(safe-area-inset-top, 20px)) !important;
   }
   
-  /* Ensure admin panel header is always visible on iPad */
-  @media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* Ensure admin panel header is always visible on iPad and tablets */
+  @media screen and (min-width: 768px) and (max-width: 1279px) {
     .admin-panel-header {
       background: rgba(255, 255, 255, 0.1) !important;
       backdrop-filter: blur(12px) !important;
