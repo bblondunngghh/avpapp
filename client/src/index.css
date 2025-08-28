@@ -261,12 +261,22 @@ input[type=number] {
   }
   
   /* Fix admin panel sidebar icons on iPad */
-  .admin-panel img {
+  .admin-panel img:not(.hamburger-icon) {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
     width: auto !important;
     height: auto !important;
+  }
+  
+  /* Keep hamburger icon at correct size */
+  .admin-panel .hamburger-icon {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    min-width: 1.25rem !important;
+    min-height: 1.25rem !important;
+    max-width: 1.25rem !important;
+    max-height: 1.25rem !important;
   }
   
   /* Force sidebar icon visibility on iPad */

@@ -2230,7 +2230,7 @@ export default function AdminPanel() {
               onClick={() => setSidebarOpen(true)}
               className="p-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
+              <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5 hamburger-icon" />
             </button>
           </div>
           
