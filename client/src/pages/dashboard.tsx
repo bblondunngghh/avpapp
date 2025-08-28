@@ -11,7 +11,7 @@ import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import roadSignTurnRightIcon from "@assets/Road-Sign-Turn-Right-1--Streamline-Ultimate.png";
 import calendarIcon from "@assets/Calendar-Date--Streamline-Ultimate_1750258792058.png";
 import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_1749313201026.png";
-import realreal from "../../../realreal.jpg";
+import carImage from "@assets/car.jpg";
 import LocationSelectorModal from "@/components/location-selector-modal";
 import { getVersionDisplay } from "@/config/version";
 
@@ -42,9 +42,9 @@ export default function Dashboard() {
           {/* Enhanced pattern background */}
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9InN2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30" />
           <div className="relative z-10">
-            <div className="flex flex-col items-center justify-center space-y-6">
+            <div className="flex flex-col items-center justify-center space-y-3">
               {/* Professional Header */}
-              <div className="mb-6">
+              <div className="mb-3">
                 <div className="text-center">
                   <h1 className="text-white text-3xl md:text-4xl font-bold tracking-wide animate-scale-in">
                     Access Valet Parking
@@ -57,7 +57,7 @@ export default function Dashboard() {
               
               {/* Logo Section */}
               <img
-                src={realreal}
+                src={carImage}
                 alt="Access Valet Parking Logo"
                 className="w-full h-auto mx-auto block rounded-2xl"
                 style={{ 
