@@ -27,6 +27,36 @@
   background: url('/dkbackground.jpg') center center / cover no-repeat;
 }
 
+/* iPad-specific width optimizations for landing page and shift reports */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* Landing page - reduce side margins and expand card width */
+  .max-w-4xl.mx-auto {
+    max-width: 95% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Shift reports page - expand container width */
+  .container.mx-auto {
+    max-width: 95% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Landing page cards - reduce gap and expand to fill space */
+  .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+    gap: 1.5rem !important; /* Reduce from 2rem default */
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  /* Individual cards - ensure they fill available space */
+  .grid > div.group.relative {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
 .app-gradient-radial {
   background: url('/dkbackground.jpg') center center / cover no-repeat;
 }
