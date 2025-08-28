@@ -221,61 +221,67 @@ export default function ReportCard({
   
   return (
     <>
-      <Card className={`report-card mb-4 animate-fade-in border-l-4 ${borderColor} ${bgColor}`}>
-        <CardContent className="p-0">
+      <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl mb-4 animate-fade-in">
+        {/* Enhanced Glass morphism overlay */}
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+        
+        {/* Content with z-index */}
+        <div className="relative z-10">
           <div className="flex justify-between items-start">
             <div className="p-4">
               <h4 
-                className={`${textColor} cursor-pointer hover:underline font-medium`} 
+                className="text-white cursor-pointer hover:underline font-medium hover:text-blue-300 transition-colors" 
                 onClick={() => setDetailsOpen(true)}
               >
                 {location}
               </h4>
-              <p className="text-sm text-gray-600">{formattedDate} - {shift} Shift</p>
+              <p className="text-sm text-slate-300">{formattedDate} - {shift} Shift</p>
               <div className="mt-2 flex flex-wrap items-center gap-4">
-                <div className="text-sm">
+                <div className="text-sm text-slate-300">
                   <span>Cars: </span>
-                  <span>{totalCars}</span>
+                  <span className="text-white font-medium">{totalCars}</span>
                 </div>
-                <div className="text-sm">
+                <div className="text-sm text-slate-300">
                   <span>Cash: </span>
-                  <span>{formatCurrency(totalCashCollected)}</span>
+                  <span className="text-green-300 font-medium">{formatCurrency(totalCashCollected)}</span>
                 </div>
-                <div className="text-sm">
+                <div className="text-sm text-slate-300">
                   <span>Credit: </span>
-                  <span>{formatCurrency(totalCreditSales)}</span>
+                  <span className="text-purple-300 font-medium">{formatCurrency(totalCreditSales)}</span>
                 </div>
-                <div className="text-sm">
+                <div className="text-sm text-slate-300">
                   <span>Total: </span>
-                  <span>{formatCurrency(totalTurnIn)}</span>
+                  <span className="text-blue-300 font-medium">{formatCurrency(totalTurnIn)}</span>
                 </div>
               </div>
             </div>
             
             <div className="flex gap-1 p-2">
               <Button
-                variant="ghost"
                 size="icon"
                 onClick={handleEdit}
-                className="h-8 w-8 text-gray-500 hover:text-secondary"
+                className="h-8 w-8 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-slate-300 hover:text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <Edit className="h-4 w-4" />
                 <span className="sr-only">Edit</span>
               </Button>
               
               <Button
-                variant="ghost"
                 size="icon"
                 onClick={() => setShowPasswordDialog(true)}
-                className="h-8 w-8 text-gray-500 hover:text-destructive"
+                className="h-8 w-8 bg-white/10 backdrop-blur-sm hover:bg-red-500/20 text-slate-300 hover:text-red-300 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">Delete</span>
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Detailed Report Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>

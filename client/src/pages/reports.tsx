@@ -82,52 +82,77 @@ export default function Reports() {
   if (!isAuthorized) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="p-8 rounded-lg border shadow-lg bg-white max-w-lg w-full text-center">
-          <LockKeyhole size={48} className="mx-auto mb-4 text-red-500" />
-          <h2 className="text-2xl font-semibold mb-2">Access Restricted</h2>
-          <p className="text-gray-600 mb-6">
-            The Reports page is only accessible through the Admin Panel.
-            Please log in as an administrator to view this content.
-          </p>
-          <Button 
-            onClick={() => navigate("/")}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            Return to Home
-          </Button>
+        <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-8 max-w-lg w-full text-center">
+          {/* Enhanced Glass morphism overlay */}
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+          
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+          
+          <div className="relative z-10">
+            <LockKeyhole size={48} className="mx-auto mb-4 text-red-400" />
+            <h2 className="text-2xl font-semibold mb-2 text-white">Access Restricted</h2>
+            <p className="text-slate-300 mb-6">
+              The Reports page is only accessible through the Admin Panel.
+              Please log in as an administrator to view this content.
+            </p>
+            <Button 
+              onClick={() => navigate("/")}
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Return to Home
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
   
   return (
-    <div>
+    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-6">
+      {/* Enhanced Glass morphism overlay */}
+      <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+      
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+      
+      {/* Content with z-index */}
+      <div className="relative z-10">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <Button 
-            variant="outline" 
             onClick={() => navigate("/admin")}
-            className="flex items-center gap-1"
+            className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-1"
           >
             <img src={houseIcon} alt="House" className="h-4 w-4" />
             Back to Admin Panel
           </Button>
-          <h2 className="text-2xl font-normal text-primary">All Reports</h2>
+          <h2 className="text-2xl font-normal text-white">All Reports</h2>
         </div>
         <Button
           onClick={handleNewReport}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
+          className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
         >
           <Plus className="mr-1 h-4 w-4" /> New Report
         </Button>
       </div>
       
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-3">Filter Reports</h3>
+      <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl mb-6">
+        {/* Enhanced Glass morphism overlay */}
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+        
+        {/* Content with z-index */}
+        <div className="relative z-10 pt-6 p-6">
+          <h3 className="text-lg font-medium mb-3 text-white">Filter Reports</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="locationFilter">
+              <label className="block text-sm font-medium text-slate-300 mb-1" htmlFor="locationFilter">
                 Location
               </label>
               <Select
@@ -149,7 +174,7 @@ export default function Reports() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="dateFilter">
+              <label className="block text-sm font-medium text-slate-300 mb-1" htmlFor="dateFilter">
                 Date
               </label>
               <div className="relative">
@@ -175,8 +200,7 @@ export default function Reports() {
             
             <div className="flex items-end">
               <Button
-                className="w-full"
-                variant={locationFilter || dateFilter ? "default" : "outline"}
+                className="w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                 onClick={() => {
                   if (locationFilter || dateFilter) {
                     setLocationFilter("");
@@ -189,15 +213,22 @@ export default function Reports() {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
       
       {isLoading ? (
         // Loading state
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Card key={i} className="mb-4">
-              <CardContent className="p-4">
+            <div key={i} className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl mb-4">
+              {/* Enhanced Glass morphism overlay */}
+              <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+              
+              {/* Background Pattern */}
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+              
+              <div className="relative z-10 p-4">
                 <div className="flex justify-between">
                   <div>
                     <Skeleton className="h-5 w-40 mb-2" />
@@ -212,8 +243,8 @@ export default function Reports() {
                     <Skeleton className="h-8 w-8 rounded-md" />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       ) : filteredReports.length > 0 ? (
@@ -243,36 +274,43 @@ export default function Reports() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <Card className="mt-6">
-              <CardContent className="p-4">
+            <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl mt-6">
+              {/* Enhanced Glass morphism overlay */}
+              <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+              
+              {/* Background Pattern */}
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+              
+              <div className="relative z-10 p-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-slate-300">
                     Showing {startIndex + 1}-{Math.min(endIndex, filteredReports.length)} of {filteredReports.length} reports
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button
-                      variant="outline"
                       size="sm"
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
+                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                     >
                       Previous
                     </Button>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-slate-300">
                       Page {currentPage} of {totalPages}
                     </span>
                     <Button
-                      variant="outline"
                       size="sm"
                       onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
+                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                     >
                       Next
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
           
           {/* Summary Totals Table */}
@@ -292,66 +330,81 @@ export default function Reports() {
             });
 
             return (
-              <Card className="mt-6 bg-blue-50 border-blue-200">
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-4 text-blue-800">
+              <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl mt-6">
+                {/* Enhanced Glass morphism overlay */}
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+                
+                <div className="relative z-10 p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-white">
                     Summary Totals {(locationFilter || dateFilter) && (
-                      <span className="text-sm font-normal text-blue-600">
+                      <span className="text-sm font-normal text-slate-300">
                         (Filtered Results)
                       </span>
                     )}
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white p-4 rounded-md border border-blue-100">
-                      <div className="text-sm font-medium text-gray-600">Total Cars Parked</div>
-                      <div className="text-2xl font-bold text-blue-600">{totals.totalCars.toLocaleString()}</div>
+                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                      <div className="text-sm font-medium text-slate-300">Total Cars Parked</div>
+                      <div className="text-2xl font-bold text-blue-300">{totals.totalCars.toLocaleString()}</div>
                     </div>
-                    <div className="bg-white p-4 rounded-md border border-blue-100">
-                      <div className="text-sm font-medium text-gray-600">Total Cash Sales</div>
-                      <div className="text-2xl font-bold text-green-600">${totals.totalCash.toLocaleString()}</div>
+                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                      <div className="text-sm font-medium text-slate-300">Total Cash Sales</div>
+                      <div className="text-2xl font-bold text-green-300">${totals.totalCash.toLocaleString()}</div>
                     </div>
-                    <div className="bg-white p-4 rounded-md border border-blue-100">
-                      <div className="text-sm font-medium text-gray-600">Total Credit Sales</div>
-                      <div className="text-2xl font-bold text-purple-600">${totals.totalCredit.toLocaleString()}</div>
+                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                      <div className="text-sm font-medium text-slate-300">Total Credit Sales</div>
+                      <div className="text-2xl font-bold text-purple-300">${totals.totalCredit.toLocaleString()}</div>
                     </div>
-                    <div className="bg-white p-4 rounded-md border border-blue-100">
-                      <div className="text-sm font-medium text-gray-600">Total Turn-In</div>
-                      <div className="text-2xl font-bold text-orange-600">${totals.totalTurnIn.toLocaleString()}</div>
+                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                      <div className="text-sm font-medium text-slate-300">Total Turn-In</div>
+                      <div className="text-2xl font-bold text-orange-300">${totals.totalTurnIn.toLocaleString()}</div>
                     </div>
                   </div>
-                  <div className="mt-4 text-xs text-blue-600">
+                  <div className="mt-4 text-xs text-slate-300">
                     Showing totals for {filteredReports.length} report(s)
                     {locationFilter && ` • Location: ${LOCATIONS.find(l => l.id.toString() === locationFilter)?.name}`}
                     {dateFilter && ` • Date: ${formatDateInCentral(parseDateInCentral(dateFilter), 'M/d/yyyy')}`}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })()}
         </div>
       ) : (
         // No reports state
-        <Card>
-          <CardContent className="text-center py-8">
-            <p className="text-gray-500 mb-4">
+        <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl">
+          {/* Enhanced Glass morphism overlay */}
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+          
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+          
+          <div className="relative z-10 text-center py-8 px-6">
+            <p className="text-slate-300 mb-4">
               {locationFilter || dateFilter
                 ? "No reports match your filter criteria"
                 : "No reports found"}
             </p>
             <Button 
               onClick={handleNewReport} 
-              className="bg-blue-500 hover:bg-blue-600 text-white"
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Create a New Report
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
       
       <LocationSelectorModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+      </div>
     </div>
   );
 }
