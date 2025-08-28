@@ -206,15 +206,15 @@ input[type=number] {
     position: fixed !important;
     top: 0 !important;
     z-index: 99999 !important;
-    /* Cover the entire iPadOS status bar area */
-    padding-top: max(env(safe-area-inset-top, 0), 44px) !important;
+    /* Cover the entire iPadOS status bar area with extra space */
+    padding-top: max(env(safe-area-inset-top, 0), 60px) !important;
     margin-top: calc(-1 * env(safe-area-inset-top, 0)) !important;
-    height: calc(56px + env(safe-area-inset-top, 44px)) !important;
+    height: calc(56px + env(safe-area-inset-top, 60px)) !important;
   }
   
   /* Fix main content positioning on iPad - account for extended header */
   main {
-    margin-top: calc(56px + max(env(safe-area-inset-top, 0), 44px)) !important;
+    margin-top: calc(56px + max(env(safe-area-inset-top, 0), 60px)) !important;
     padding-top: 0 !important;
   }
   
@@ -226,7 +226,7 @@ input[type=number] {
   
   /* Adjust header content positioning */
   .app-header .relative.z-10 {
-    padding-top: env(safe-area-inset-top, 20px) !important;
+    padding-top: max(env(safe-area-inset-top, 0), 30px) !important;
   }
   
   /* Fix admin panel sidebar icons on iPad */
@@ -718,7 +718,7 @@ input[type="date"].paperform-input {
   left: 0 !important;
   right: 0 !important;
   z-index: 99999 !important;
-  padding-top: env(safe-area-inset-top, 20px) !important;
+  padding-top: max(env(safe-area-inset-top, 0), 30px) !important;
   /* Extend header to cover iPadOS status bar */
   margin-top: calc(-1 * env(safe-area-inset-top, 0)) !important;
 }
