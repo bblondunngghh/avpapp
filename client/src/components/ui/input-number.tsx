@@ -13,7 +13,7 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
     return (
       <div className="relative">
         <input
-          type="number"
+          type="tel"
           inputMode="numeric"
           pattern="[0-9]*"
           className={cn(

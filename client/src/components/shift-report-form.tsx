@@ -1114,8 +1114,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormLabel className="text-white font-medium text-sm">Total Job Hours</FormLabel>
                     <FormControl>
                       <Input 
-                        type="number" 
+                        type="tel" 
                         inputMode="decimal"
+                        pattern="[0-9]*\.?[0-9]*"
                         min="0" 
                         step="0.01" 
                         className="paperform-input" 
@@ -1194,8 +1195,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               </div>
                               <div className="w-20">
                                 <Input 
-                                  type="number" 
+                                  type="tel" 
                                   inputMode="decimal"
+                                  pattern="[0-9]*\.?[0-9]*"
                                   min="0" 
                                   step="0.01" 
                                   className="h-9 text-center text-sm bg-white/10 backdrop-blur-sm border-white/20 text-white"
