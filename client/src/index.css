@@ -245,7 +245,7 @@ input[type=number] {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('/background.jpg') center center / cover no-repeat;
+  background: url('/dkbackground.jpg') center center / cover no-repeat;
   z-index: -1;
 }
 

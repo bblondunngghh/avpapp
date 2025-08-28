@@ -2,11 +2,11 @@
 
 /* Global background class with JPG image */
 .app-gradient-bg {
-  background: url('/background.jpg') center center / cover no-repeat;
+  background: url('/dkbackground.jpg') center center / cover no-repeat;
   /* Fallback for older browsers */
-  background: url('/background.jpg') center center / cover no-repeat;
+  background: url('/dkbackground.jpg') center center / cover no-repeat;
   /* Using JPG background image */
-  background-image: url('/background.jpg');
+  background-image: url('/dkbackground.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -16,17 +16,17 @@
 .app-gradient-fixed {
   position: fixed;
   inset: 0;
-  background: url('/background.jpg') center center / cover no-repeat;
+  background: url('/dkbackground.jpg') center center / cover no-repeat;
   z-index: -10;
 }
 
 /* Alternative background directions */
 .app-gradient-br {
-  background: url('/background.jpg') center center / cover no-repeat;
+  background: url('/dkbackground.jpg') center center / cover no-repeat;
 }
 
 .app-gradient-radial {
-  background: url('/background.jpg') center center / cover no-repeat;
+  background: url('/dkbackground.jpg') center center / cover no-repeat;
 }
 
 /* Ensure min height for pages */
