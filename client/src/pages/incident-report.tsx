@@ -272,12 +272,12 @@ export default function IncidentReport() {
                             <SelectTrigger className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
                               <SelectValue placeholder="Select Location" />
                             </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="capital-grille">The Capital Grille</SelectItem>
-                              <SelectItem value="bobs-steak">Bob's Steak and Chop House</SelectItem>
-                              <SelectItem value="trulucks">Truluck's</SelectItem>
-                              <SelectItem value="boa-steakhouse">BOA Steakhouse</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
+                            <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                              <SelectItem value="capital-grille" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">The Capital Grille</SelectItem>
+                              <SelectItem value="bobs-steak" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Bob's Steak and Chop House</SelectItem>
+                              <SelectItem value="trulucks" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Truluck's</SelectItem>
+                              <SelectItem value="boa-steakhouse" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">BOA Steakhouse</SelectItem>
+                              <SelectItem value="other" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Other</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -300,9 +300,9 @@ export default function IncidentReport() {
                             <SelectTrigger className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
                               <SelectValue placeholder="Select Employee" />
                             </SelectTrigger>
-                            <SelectContent className="z-50">
+                            <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm z-50">
                               {employees.map((employee) => (
-                                <SelectItem key={employee.id} value={employee.id.toString()}>
+                                <SelectItem key={employee.id} value={employee.id.toString()} className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">
                                   {employee.fullName}
                                 </SelectItem>
                               ))}

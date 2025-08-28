@@ -130,12 +130,12 @@ export default function EmployeeLogin() {
                           <SelectValue placeholder="Choose your name from the list..." />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
                         {employees
                           .filter((emp: any) => emp.isActive)
                           .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName))
                           .map((emp: any) => (
-                            <SelectItem key={emp.id} value={emp.id.toString()}>
+                            <SelectItem key={emp.id} value={emp.id.toString()} className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">
                               {emp.fullName}
                             </SelectItem>
                           ))}
