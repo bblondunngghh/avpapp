@@ -2131,7 +2131,7 @@ export default function AdminPanel() {
         {/* Sidebar */}
         <div className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } xl:translate-x-0 xl:static xl:inset-0`}>
+        } lg:translate-x-0 lg:static lg:inset-0`}>
           {/* Enhanced glassmorphism background */}
           <div className="relative h-full overflow-hidden bg-white/5 backdrop-blur-xl border-r border-white/20 shadow-2xl">
             {/* Enhanced Glass morphism overlay */}
@@ -2152,7 +2152,7 @@ export default function AdminPanel() {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(false)}
-              className="xl:hidden text-slate-400 hover:text-white"
+              className="lg:hidden text-slate-400 hover:text-white"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -2214,48 +2214,28 @@ export default function AdminPanel() {
           </div>
         </div>
         
-        {/* Sidebar overlay for mobile and tablet */}
+        {/* Sidebar overlay for mobile */}
         {sidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 xl:hidden" 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" 
             onClick={() => setSidebarOpen(false)}
           />
         )}
         
         {/* Main content */}
         <div className="flex-1 flex flex-col min-h-screen">
-          {/* Mobile header with iPad positioning fix - show on tablet/iPad too */}
-          <div className="xl:hidden admin-panel-header fixed top-0 left-0 right-0 z-50">
-            {/* Enhanced glassmorphism container */}
-            <div className="relative overflow-hidden backdrop-blur-xl bg-white/10 border-b border-white/30 shadow-2xl">
-              {/* Enhanced Glass morphism overlay */}
-              <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-              
-              {/* Background Pattern */}
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
-              
-              {/* Content with z-index */}
-              <div className="relative z-10 px-4 py-3 flex items-center justify-between" style={{height: '60px'}}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSidebarOpen(true)}
-                  className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
-                </Button>
-                <div className="flex items-center gap-3">
-                  <img src={monitorHeartNotesIcon} alt="Monitor Heart" className="h-6 w-6" />
-                  <h1 className="text-lg font-bold text-white">Admin Panel</h1>
-                </div>
-                <div className="w-10"></div> {/* Spacer for balance */}
-              </div>
-            </div>
+          {/* Mobile hamburger button */}
+          <div className="lg:hidden p-4 border-b border-white/20">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <img src={hamburgerMenuIcon} alt="Menu" className="h-5 w-5" />
+            </button>
           </div>
           
-          {/* Content area with top padding for fixed header */}
-          <div className="flex-1 w-full h-full p-6 overflow-auto max-w-none lg:pt-6 pt-20">
+          {/* Content area */}
+          <div className="flex-1 w-full h-full p-6 overflow-auto max-w-none">
             <Tabs value={activeTab} className="w-full max-w-none">
               {/* Hide TabsList since we have sidebar navigation */}
               <TabsList className="hidden">
