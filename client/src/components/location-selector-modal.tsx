@@ -111,7 +111,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                   onClick={() => handleLocationSelect(location.id)}
                 >
                   <div className="flex items-center space-x-3 py-4 px-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600/80 to-indigo-700/80 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center">
                       {getLocationIcon(location.name)}
                     </div>
                     <div className="flex-1">
@@ -130,7 +130,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg rounded-xl">
                 <div className="text-center py-8">
                   <div className="flex flex-col items-center space-y-3">
-                    <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center">
                       <Building2 className="h-6 w-6 text-gray-400" />
                     </div>
                     <div className="text-gray-300 font-medium">No locations available</div>
