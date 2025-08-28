@@ -49,12 +49,21 @@
   
   /* Landing page cards - force 4 columns on iPad with minimal gaps */
   .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
-    grid-template-columns: repeat(4, 1fr) !important; /* Force 4 columns on iPad */
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important; /* Force 4 equal columns on iPad */
     gap: 0.5rem !important; /* Even smaller gap for tight fit */
     padding-left: 0 !important;
     padding-right: 0 !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
+  }
+  
+  /* More specific override for iPad grid layout */
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    .grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      display: grid !important;
+    }
   }
   
   /* Individual cards - force maximum width usage */
