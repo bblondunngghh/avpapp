@@ -3994,22 +3994,6 @@ export default function AdminPanel() {
         
         {/* Employee Management Tab */}
         <TabsContent value="manage-employees">
-          {/* TEST CARD - Using Reports Section Styling */}
-          <div className="mb-6 relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
-            {/* Enhanced Glass morphism overlay */}
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-            
-            {/* Background Pattern */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
-            
-            {/* Content with z-index */}
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold text-white mb-2">TEST CARD - REPORTS STYLE</h3>
-              <p className="text-slate-400">This test card now uses the EXACT same styling as the reports section. It should have the blue gradient background with glass effects.</p>
-            </div>
-          </div>
-          
           <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
             {/* Enhanced Glass morphism overlay */}
             <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
