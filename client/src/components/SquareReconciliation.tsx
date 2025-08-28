@@ -3,7 +3,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, AlertTriangle, CheckCircle, DollarSign, CreditCard } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -129,7 +128,7 @@ export default function SquareReconciliation() {
   const reconciliationResult = reconciliationMutation.data as ReconciliationResult | undefined;
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
       {/* Glass morphism overlay */}
       <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -138,17 +137,17 @@ export default function SquareReconciliation() {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
       
       <div className="relative z-10">
-        <CardHeader className="pb-4">
-          <div className="flex items-center space-x-2">
+        <div className="mb-6">
+          <div className="flex items-center space-x-2 mb-2">
             <CreditCard className="h-6 w-6 text-blue-400" />
-            <CardTitle className="text-xl font-bold text-white">Square Revenue Reconciliation</CardTitle>
+            <h2 className="text-xl font-bold text-white">Square Revenue Reconciliation</h2>
           </div>
-          <CardDescription className="text-slate-400">
+          <p className="text-slate-400">
             Compare Square POS data with shift reports to identify discrepancies
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
 
-        <CardContent className="space-y-6">
+        <div className="space-y-6">
           {/* Selection Controls */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -163,9 +162,9 @@ export default function SquareReconciliation() {
                 <SelectTrigger className="bg-white/10 backdrop-blur-sm text-white border-white/20">
                   <SelectValue placeholder="Choose a shift report" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
                   {shiftReports?.map((report: ShiftReport) => (
-                    <SelectItem key={report.id} value={report.id.toString()}>
+                    <SelectItem key={report.id} value={report.id.toString()} className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">
                       {report.date} - {report.shift} ({report.manager})
                     </SelectItem>
                   ))}
@@ -321,7 +320,7 @@ export default function SquareReconciliation() {
               </div>
             </div>
           )}
-        </CardContent>
+        </div>
       </div>
     </div>
   );

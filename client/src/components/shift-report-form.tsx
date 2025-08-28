@@ -559,9 +559,9 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   case 1: // Capital Grille
                     return capGrilleImage;
                   case 2: // Bob's Steak and Chop House
-                    return bobsImage;
-                  case 3: // Truluck's
                     return trulucksImage;
+                  case 3: // Truluck's
+                    return bobsImage;
                   case 4: // BOA Steakhouse
                     return boaImage;
                   default:

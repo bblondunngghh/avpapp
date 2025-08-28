@@ -1515,6 +1515,7 @@ export default function Contracts() {
               onLocationChange={setSelectedLocation}
             />
           )}
+          </div>
         </div>
       </div>
       </div>

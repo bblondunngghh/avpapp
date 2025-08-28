@@ -122,12 +122,12 @@ function FaultDeterminationSection({ report }: { report: any }) {
               updateIncidentMutation.mutate({ faultStatus: value || null });
             }}
           >
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="mt-1 bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
               <SelectValue placeholder="Select Status" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="at-fault">At Fault</SelectItem>
-              <SelectItem value="not-at-fault">Not at Fault</SelectItem>
+            <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+              <SelectItem value="at-fault" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">At Fault</SelectItem>
+              <SelectItem value="not-at-fault" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Not at Fault</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -160,12 +160,12 @@ function FaultDeterminationSection({ report }: { report: any }) {
                 updateIncidentMutation.mutate({ repairStatus: value || null });
               }}
             >
-              <SelectTrigger className="mt-1">
+              <SelectTrigger className="mt-1 bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
                 <SelectValue placeholder="Select Status" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+              <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                <SelectItem value="pending" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Pending</SelectItem>
+                <SelectItem value="completed" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Completed</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -192,13 +192,13 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
             setShowSaveButton(value !== (report.repairStatus || ''));
           }}
         >
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="w-[140px] bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="not_set">Not Set</SelectItem>
+          <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+            <SelectItem value="pending" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Pending</SelectItem>
+            <SelectItem value="completed" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Completed</SelectItem>
+            <SelectItem value="not_set" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Not Set</SelectItem>
           </SelectContent>
         </Select>
         
@@ -230,7 +230,7 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
       
       {showPasswordPrompt && (
         <div className="bg-slate-700/30 border border-gray-200 rounded-lg p-3">
-          <p className="text-sm text-gray-800 mb-3">Enter password to delete incident report:</p>
+          <p className="text-sm text-white mb-3">Enter password to delete incident report:</p>
           <input
             type="password"
             value={deletePassword}
@@ -290,7 +290,7 @@ function RepairStatusDropdown({ report, updateMutation, deleteMutation }: { repo
       
       {showDeleteConfirm && (
         <div className="bg-slate-700/30 border border-gray-200 rounded-lg p-3">
-          <p className="text-sm text-gray-800 mb-3">Delete this incident report?</p>
+          <p className="text-sm text-white mb-3">Delete this incident report?</p>
           <div className="flex gap-2">
             <Button
               variant="destructive"
@@ -2253,16 +2253,17 @@ export default function AdminPanel() {
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
             
-            <Card className="relative z-10 bg-transparent border-0 shadow-none">
-            <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <CardTitle className="flex items-center gap-2 text-white">
+                <h2 className="flex items-center gap-2 text-white text-xl font-bold mb-2">
                   <img src={analyticsBoardBarsIcon} alt="Reports" className="h-5 w-5" />
                   Reports
-                </CardTitle>
-                <CardDescription className="text-slate-400">
+                </h2>
+                <p className="text-slate-400">
                   Sales performance trends across the year
-                </CardDescription>
+                </p>
               </div>
               <div className="flex flex-wrap items-end gap-4">
                 <div className="space-y-2">
@@ -2303,8 +2304,8 @@ export default function AdminPanel() {
                   Clear Filters
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent>
+                </div>
+              </div>
               {isLoading ? (
                 <div className="text-center py-8 text-slate-400">Loading statistics data...</div>
               ) : reports.length === 0 ? (
@@ -2315,23 +2316,23 @@ export default function AdminPanel() {
                 <div className="space-y-8">
                   {/* Report Summary Stats Cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg text-center">
                       <h3 className="text-blue-400 font-medium text-sm mb-1">Total Reports</h3>
                       <p className="text-2xl font-bold text-white">{reports.length}</p>
                     </div>
-                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg text-center">
                       <h3 className="text-blue-400 font-medium text-sm mb-1">Total Cars</h3>
                       <p className="text-2xl font-bold text-white">
                         {reports.reduce((sum, report) => sum + report.totalCars, 0)}
                       </p>
                     </div>
-                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg text-center">
                       <h3 className="text-purple-400 font-medium text-sm mb-1">Total Sales</h3>
                       <p className="text-2xl font-bold text-white">
                         ${reports.reduce((sum, report) => sum + (report.totalCreditSales || 0) + (report.totalReceiptSales || 0), 0).toFixed(2)}
                       </p>
                     </div>
-                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg">
+                    <div className="bg-slate-700/50 backdrop-blur-sm border border-slate-600/50 p-4 rounded-lg text-center">
                       <h3 className="text-amber-400 font-medium text-sm mb-1">Busiest Day</h3>
                       <p className="text-2xl font-bold text-white">
                         {dailyCarVolume.reduce((max, day) => max.cars > day.cars ? max : day, { name: '', cars: 0 }).name}
@@ -2340,8 +2341,7 @@ export default function AdminPanel() {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
           </div>
         </TabsContent>
         
@@ -2354,19 +2354,19 @@ export default function AdminPanel() {
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
             
-            <Card className="relative z-10 bg-transparent border-0 shadow-none">
-            <CardHeader className="space-y-4">
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <div className="space-y-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <img src={analyticsBoardBarsIcon} alt="Reports" className="h-5 w-5" />
+                  <h2 className="text-white text-xl font-bold mb-2">
                     Shift Reports - {getCurrentMonthName()}
-                  </CardTitle>
-                  <CardDescription className="text-slate-400">
+                  </h2>
+                  <p className="text-slate-400">
                     View shift reports for the selected month
-                  </CardDescription>
+                  </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 justify-end sm:justify-start">
                   <Button 
                     size="sm" 
                     onClick={exportReportsToCSV}
@@ -2407,26 +2407,26 @@ export default function AdminPanel() {
               </div>
               
               {/* Month Navigation and Location Filter Controls */}
-              <div className="space-y-3 bg-slate-700/50 backdrop-blur-sm p-3 rounded-lg border border-slate-600/50">
+              <div className="space-y-4 p-3">
                 {/* Month Navigation */}
                 <div className="flex items-center justify-center gap-4">
                   <Button
                     size="sm"
                     onClick={goToPreviousMonth}
-                    className="flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="w-40 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <ChevronLeft className="h-4 w-4" />
                     Previous Month
                   </Button>
                   
-                  <div className="text-sm font-medium text-center min-w-[150px] text-white">
+                  <div className="text-lg font-medium text-center min-w-[150px] text-white">
                     {getCurrentMonthName()}
                   </div>
                   
                   <Button
                     size="sm"
                     onClick={goToNextMonth}
-                    className="flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="w-40 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     Next Month
                     <ChevronRight className="h-4 w-4" />
@@ -2434,25 +2434,23 @@ export default function AdminPanel() {
                 </div>
                 
                 {/* Location Filter */}
-                <div className="flex items-center justify-center gap-2">
-                  <Label htmlFor="location-filter" className="text-sm font-medium text-slate-300">Filter by Location:</Label>
+                <div className="flex justify-center">
                   <Select value={selectedReportsLocation} onValueChange={setSelectedReportsLocation}>
-                    <SelectTrigger className="w-[200px]" id="location-filter">
+                    <SelectTrigger className="w-[200px] bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20" id="location-filter">
                       <SelectValue placeholder="Select location" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Locations</SelectItem>
+                    <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                      <SelectItem value="all" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">All Locations</SelectItem>
                       {locations && locations.map((location: any) => (
-                        <SelectItem key={location.id} value={location.id.toString()}>
+                        <SelectItem key={location.id} value={location.id.toString()} className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">
                           {location.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
               {isLoading ? (
                 <div className="text-center py-8">Loading reports...</div>
               ) : (() => {
@@ -2628,7 +2626,7 @@ export default function AdminPanel() {
                         
                         if (filteredReports.length > 0) {
                           return (
-                            <TableRow className="bg-slate-700/30 font-semibold border-t-2">
+                            <TableRow className="font-semibold border-t-2">
                               <TableCell className="font-bold text-white">TOTAL</TableCell>
                               <TableCell className="text-white"></TableCell>
                               <TableCell className="text-white"></TableCell>
@@ -2650,8 +2648,8 @@ export default function AdminPanel() {
                     </div>
                   );
                 })()}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
           </div>
         </TabsContent>
         
@@ -2664,15 +2662,13 @@ export default function AdminPanel() {
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
             
-            <Card className="relative z-10 bg-transparent border-0 shadow-none">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <img src={analyticsBoardBarsIcon} alt="Reports" className="h-5 w-5" />
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+              <h2 className="text-white text-xl font-bold mb-2">
                 Summary Report
-              </CardTitle>
-              <CardDescription className="text-slate-400">Monthly totals and statistics</CardDescription>
-            </CardHeader>
-            <CardContent>
+              </h2>
+              <p className="text-slate-400">Monthly totals and statistics</p>
+              </div>
               {/* Summary Totals Table */}
               {!isLoading && reports.length > 0 && (() => {
                 // Filter reports based on date range
@@ -2729,19 +2725,19 @@ export default function AdminPanel() {
                       )}
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50 text-center">
                         <div className="text-sm font-medium text-slate-400">Total Cars Parked</div>
                         <div className="text-2xl font-bold text-blue-400">{totals.totalCars.toLocaleString()}</div>
                       </div>
-                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50 text-center">
                         <div className="text-sm font-medium text-slate-400">Total Cash Sales</div>
                         <div className="text-2xl font-bold text-blue-400">${totals.totalCash.toLocaleString()}</div>
                       </div>
-                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50 text-center">
                         <div className="text-sm font-medium text-slate-400">Total Credit Sales</div>
                         <div className="text-2xl font-bold text-purple-400">${totals.totalCredit.toLocaleString()}</div>
                       </div>
-                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50">
+                      <div className="bg-slate-700/50 backdrop-blur-sm p-3 rounded-md border border-slate-600/50 text-center">
                         <div className="text-sm font-medium text-slate-400">Total Turn-In</div>
                         <div className="text-2xl font-bold text-orange-400">${totals.totalTurnIn.toLocaleString()}</div>
                       </div>
@@ -2752,40 +2748,49 @@ export default function AdminPanel() {
                   </div>
                 ) : null;
               })()}
-            </CardContent>
-          </Card>
+            </div>
           </div>
         </TabsContent>
 
         <TabsContent value="payroll">
-          <Card>
-            <CardHeader className="flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <CardTitle>Employee Payroll Summary</CardTitle>
-                  <CardDescription>
-                    View financial summary for all employees
-                  </CardDescription>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={exportEmployeesToCSV}
-                    className="flex items-center gap-1"
-                  >
-                    <FileDown className="h-4 w-4" />
-                    Export CSV
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={exportEmployeesToPDF}
-                    className="flex items-center gap-1"
-                  >
-                    <Download className="h-4 w-4" />
-                    Export PDF
-                  </Button>
+          <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-6">
+            {/* Enhanced Glass morphism overlay */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Content with z-index */}
+            <div className="relative z-10">
+              <div className="mb-6">
+                <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h2 className="text-xl font-bold text-white mb-2">Employee Payroll Summary</h2>
+                    <p className="text-slate-400">
+                      View financial summary for all employees
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={exportEmployeesToCSV}
+                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-1"
+                    >
+                      <FileDown className="h-4 w-4" />
+                      Export CSV
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={exportEmployeesToPDF}
+                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-1"
+                    >
+                      <Download className="h-4 w-4" />
+                      Export PDF
+                    </Button>
                 </div>
               </div>
               
@@ -2796,23 +2801,23 @@ export default function AdminPanel() {
                     value={selectedMonth || "all"}
                     onValueChange={(value) => setSelectedMonth(value === "all" ? null : value)}
                   >
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-[200px] bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
                       <SelectValue placeholder="All Months" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Months</SelectItem>
-                      <SelectItem value="2025-01">January 2025</SelectItem>
-                      <SelectItem value="2025-02">February 2025</SelectItem>
-                      <SelectItem value="2025-03">March 2025</SelectItem>
-                      <SelectItem value="2025-04">April 2025</SelectItem>
-                      <SelectItem value="2025-05">May 2025</SelectItem>
-                      <SelectItem value="2025-06">June 2025</SelectItem>
-                      <SelectItem value="2025-07">July 2025</SelectItem>
-                      <SelectItem value="2025-08">August 2025</SelectItem>
-                      <SelectItem value="2025-09">September 2025</SelectItem>
-                      <SelectItem value="2025-10">October 2025</SelectItem>
-                      <SelectItem value="2025-11">November 2025</SelectItem>
-                      <SelectItem value="2025-12">December 2025</SelectItem>
+                    <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                      <SelectItem value="all" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">All Months</SelectItem>
+                      <SelectItem value="2025-01" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">January 2025</SelectItem>
+                      <SelectItem value="2025-02" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">February 2025</SelectItem>
+                      <SelectItem value="2025-03" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">March 2025</SelectItem>
+                      <SelectItem value="2025-04" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">April 2025</SelectItem>
+                      <SelectItem value="2025-05" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">May 2025</SelectItem>
+                      <SelectItem value="2025-06" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">June 2025</SelectItem>
+                      <SelectItem value="2025-07" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">July 2025</SelectItem>
+                      <SelectItem value="2025-08" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">August 2025</SelectItem>
+                      <SelectItem value="2025-09" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">September 2025</SelectItem>
+                      <SelectItem value="2025-10" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">October 2025</SelectItem>
+                      <SelectItem value="2025-11" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">November 2025</SelectItem>
+                      <SelectItem value="2025-12" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">December 2025</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -2827,8 +2832,7 @@ export default function AdminPanel() {
                   Clear Filter
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent>
+              </div>
               {isLoading ? (
                 <div className="text-center py-8">Loading employee data...</div>
               ) : employeeAccountingData.length === 0 ? (
@@ -2894,8 +2898,9 @@ export default function AdminPanel() {
                   </Table>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+          </div>
         </TabsContent>
         
         <TabsContent value="locations">
@@ -2907,17 +2912,18 @@ export default function AdminPanel() {
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
             
-            <Card className="relative z-10 bg-transparent border-0 shadow-none">
-            <CardHeader className="flex flex-col gap-4">
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <h2 className="flex items-center gap-2 text-white text-xl font-bold mb-2">
                     <img src={pinLocationIcon} alt="Performance" className="h-5 w-5" />
                     Location Performance
-                  </CardTitle>
-                  <CardDescription className="text-slate-400">
+                  </h2>
+                  <p className="text-slate-400">
                     View performance metrics for all locations
-                  </CardDescription>
+                  </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button 
@@ -3012,23 +3018,23 @@ export default function AdminPanel() {
                     value={selectedMonth || "all"}
                     onValueChange={(value) => setSelectedMonth(value === "all" ? null : value)}
                   >
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-[200px] bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
                       <SelectValue placeholder="All Months" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Months</SelectItem>
-                      <SelectItem value="2025-01">January 2025</SelectItem>
-                      <SelectItem value="2025-02">February 2025</SelectItem>
-                      <SelectItem value="2025-03">March 2025</SelectItem>
-                      <SelectItem value="2025-04">April 2025</SelectItem>
-                      <SelectItem value="2025-05">May 2025</SelectItem>
-                      <SelectItem value="2025-06">June 2025</SelectItem>
-                      <SelectItem value="2025-07">July 2025</SelectItem>
-                      <SelectItem value="2025-08">August 2025</SelectItem>
-                      <SelectItem value="2025-09">September 2025</SelectItem>
-                      <SelectItem value="2025-10">October 2025</SelectItem>
-                      <SelectItem value="2025-11">November 2025</SelectItem>
-                      <SelectItem value="2025-12">December 2025</SelectItem>
+                    <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                      <SelectItem value="all" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">All Months</SelectItem>
+                      <SelectItem value="2025-01" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">January 2025</SelectItem>
+                      <SelectItem value="2025-02" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">February 2025</SelectItem>
+                      <SelectItem value="2025-03" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">March 2025</SelectItem>
+                      <SelectItem value="2025-04" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">April 2025</SelectItem>
+                      <SelectItem value="2025-05" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">May 2025</SelectItem>
+                      <SelectItem value="2025-06" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">June 2025</SelectItem>
+                      <SelectItem value="2025-07" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">July 2025</SelectItem>
+                      <SelectItem value="2025-08" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">August 2025</SelectItem>
+                      <SelectItem value="2025-09" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">September 2025</SelectItem>
+                      <SelectItem value="2025-10" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">October 2025</SelectItem>
+                      <SelectItem value="2025-11" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">November 2025</SelectItem>
+                      <SelectItem value="2025-12" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">December 2025</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -3043,8 +3049,8 @@ export default function AdminPanel() {
                   Clear Filter
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent>
+                </div>
+              </div>
               {isLoading ? (
                 <div className="text-center py-8">Loading location data...</div>
               ) : locationStats.length === 0 ? (
@@ -3182,7 +3188,7 @@ export default function AdminPanel() {
                           );
                         })}
                         {/* Total Row */}
-                        <TableRow className="bg-slate-700/30 font-semibold border-t-2 border-white/20">
+                        <TableRow className="font-semibold border-t-2 border-white/20">
                           <TableCell className="text-white font-bold">TOTAL</TableCell>
                           <TableCell className="text-right text-white font-bold">
                             {locationStats.reduce((sum, loc) => sum + loc.totalCars, 0)}
@@ -3228,13 +3234,13 @@ export default function AdminPanel() {
                           value={selectedLocation?.toString() || "0"}
                           onValueChange={(value) => setSelectedLocation(value === "0" ? null : parseInt(value))}
                         >
-                          <SelectTrigger className="w-[200px]">
+                          <SelectTrigger className="w-[200px] bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
                             <SelectValue placeholder="All Locations" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="0">All Locations</SelectItem>
+                          <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                            <SelectItem value="0" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">All Locations</SelectItem>
                             {LOCATIONS.map((location) => (
-                              <SelectItem key={location.id} value={location.id.toString()}>
+                              <SelectItem key={location.id} value={location.id.toString()} className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">
                                 {location.name}
                               </SelectItem>
                             ))}
@@ -3449,8 +3455,7 @@ export default function AdminPanel() {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
           </div>
         </TabsContent>
         
@@ -3460,18 +3465,18 @@ export default function AdminPanel() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
             
             {/* Content with z-index */}
-            <div className="relative z-10">
-          <Card className="bg-transparent border-0 shadow-none">
-            <CardHeader className="flex flex-col gap-4">
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <h2 className="flex items-center gap-2 text-white text-xl font-bold mb-2">
                     <img src={tagsAddIcon} alt="Tickets" className="h-5 w-5" />
                     Ticket Distribution Tracking
-                  </CardTitle>
-                  <CardDescription className="text-slate-400">
+                  </h2>
+                  <p className="text-slate-400">
                     Manage and track ticket allocations across locations
-                  </CardDescription>
+                  </p>
                 </div>
                 <Dialog open={isAddDistributionOpen} onOpenChange={setIsAddDistributionOpen}>
                   <DialogTrigger asChild>
@@ -3535,9 +3540,9 @@ export default function AdminPanel() {
                           <SelectTrigger className="bg-slate-700/50 border-white/20 text-white backdrop-blur-sm">
                             <SelectValue placeholder="Select a location" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
                             {LOCATIONS.map(location => (
-                              <SelectItem key={location.id} value={location.id.toString()}>
+                              <SelectItem key={location.id} value={location.id.toString()} className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">
                                 {location.name}
                               </SelectItem>
                             ))}
@@ -3646,7 +3651,7 @@ export default function AdminPanel() {
                   </>
                 </Dialog>
               </div>
-            </CardHeader>
+            </div>
             
             {/* Add Tickets Modal */}
             <Dialog open={isAddTicketsOpen} onOpenChange={setIsAddTicketsOpen}>
@@ -3782,8 +3787,8 @@ export default function AdminPanel() {
                 </div>
               </>
             </Dialog>
-            
-            <CardContent>
+                </div>
+              </div>
               {isLoadingDistributions ? (
                 <div className="text-center py-8">Loading ticket data...</div>
               ) : ticketDistributions.length === 0 ? (
@@ -3978,10 +3983,7 @@ export default function AdminPanel() {
                   </Table>
                 </div>
               )}
-            </CardContent>
-          </Card>
             </div>
-          </div>
         </TabsContent>
         
         {/* Employee Management Tab */}
@@ -3998,7 +4000,10 @@ export default function AdminPanel() {
             <div className="relative z-10">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Employee Management</h2>
+                <h2 className="flex items-center gap-2 text-xl font-bold text-white mb-2">
+                  <img src={deliveryManIcon} alt="Employee Management" className="h-5 w-5" />
+                  Employee Management
+                </h2>
                 <p className="text-slate-400">
                   Add, edit and manage employees for shift leader selection and payroll calculations
                 </p>
@@ -4246,24 +4251,24 @@ export default function AdminPanel() {
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="key">Employee Key (lowercase)</Label>
+                        <Label htmlFor="key" className="text-white font-medium">Employee Key (lowercase)</Label>
                         <input 
                           id="key"
                           type="text"
                           placeholder="e.g., john"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.key}
                           onChange={(e) => setNewEmployee({...newEmployee, key: e.target.value.toLowerCase()})}
                         />
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="fullName">Full Name</Label>
+                        <Label htmlFor="fullName" className="text-white font-medium">Full Name</Label>
                         <input 
                           id="fullName"
                           type="text"
                           placeholder="e.g., John Smith"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.fullName}
                           onChange={(e) => setNewEmployee({...newEmployee, fullName: e.target.value})}
                         />
@@ -4310,13 +4315,13 @@ export default function AdminPanel() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="phone">Phone (optional)</Label>
+                        <Label htmlFor="phone" className="text-white font-medium">Phone (optional)</Label>
                         <input 
                           id="phone"
                           type="text"
                           placeholder="e.g., 555-123-4567"
                           maxLength={12}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.phone}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4330,12 +4335,12 @@ export default function AdminPanel() {
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="email">Email (optional)</Label>
+                        <Label htmlFor="email" className="text-white font-medium">Email (optional)</Label>
                         <input 
                           id="email"
                           type="email"
                           placeholder="e.g., john@example.com"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.email}
                           onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
                         />
@@ -4344,24 +4349,24 @@ export default function AdminPanel() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="driversLicense">Driver's License Number</Label>
+                        <Label htmlFor="driversLicense" className="text-white font-medium">Driver's License Number</Label>
                         <input 
                           id="driversLicense"
                           type="text"
                           placeholder="e.g., D1234567890"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.driversLicenseNumber}
                           onChange={(e) => setNewEmployee({...newEmployee, driversLicenseNumber: e.target.value})}
                         />
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                        <Label htmlFor="dateOfBirth" className="text-white font-medium">Date of Birth</Label>
                         <input 
                           id="dateOfBirth"
                           type="text"
                           placeholder="MM/DD/YYYY"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.dateOfBirth}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4376,21 +4381,21 @@ export default function AdminPanel() {
                     </div>
                     
                     <div className="grid gap-2">
-                      <Label htmlFor="hireDate">Hire Date</Label>
+                      <Label htmlFor="hireDate" className="text-white font-medium">Hire Date</Label>
                       <input 
                         id="hireDate"
                         type="date"
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                         value={newEmployee.hireDate}
                         onChange={(e) => setNewEmployee({...newEmployee, hireDate: e.target.value})}
                       />
                     </div>
                     
                     <div className="grid gap-2">
-                      <Label htmlFor="notes">Notes (optional)</Label>
+                      <Label htmlFor="notes" className="text-white font-medium">Notes (optional)</Label>
                       <textarea 
                         id="notes"
-                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex min-h-[80px] w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                         placeholder="Any additional information about this employee"
                         value={newEmployee.notes}
                         onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
@@ -4508,24 +4513,24 @@ export default function AdminPanel() {
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-key">Employee Key (lowercase)</Label>
+                        <Label htmlFor="edit-key" className="text-white font-medium">Employee Key (lowercase)</Label>
                         <input 
                           id="edit-key"
                           type="text"
                           placeholder="e.g., john"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.key}
                           onChange={(e) => setNewEmployee({...newEmployee, key: e.target.value.toLowerCase()})}
                         />
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-fullName">Full Name</Label>
+                        <Label htmlFor="edit-fullName" className="text-white font-medium">Full Name</Label>
                         <input 
                           id="edit-fullName"
                           type="text"
                           placeholder="e.g., John Smith"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.fullName}
                           onChange={(e) => setNewEmployee({...newEmployee, fullName: e.target.value})}
                         />
@@ -4600,13 +4605,13 @@ export default function AdminPanel() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-phone">Phone (optional)</Label>
+                        <Label htmlFor="edit-phone" className="text-white font-medium">Phone (optional)</Label>
                         <input 
                           id="edit-phone"
                           type="text"
                           placeholder="e.g., 555-123-4567"
                           maxLength={12}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.phone}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4620,12 +4625,12 @@ export default function AdminPanel() {
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-email">Email (optional)</Label>
+                        <Label htmlFor="edit-email" className="text-white font-medium">Email (optional)</Label>
                         <input 
                           id="edit-email"
                           type="email"
                           placeholder="e.g., john@example.com"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.email}
                           onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
                         />
@@ -4640,7 +4645,7 @@ export default function AdminPanel() {
                           type="text"
                           placeholder="e.g., 1234"
                           maxLength={4}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.ssn || ''}
                           onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4658,7 +4663,7 @@ export default function AdminPanel() {
                           type="text"
                           placeholder="e.g., 123-45-6789"
                           maxLength={11}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.fullSsn || ''}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4674,24 +4679,24 @@ export default function AdminPanel() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-driversLicense">Driver's License Number</Label>
+                        <Label htmlFor="edit-driversLicense" className="text-white font-medium">Driver's License Number</Label>
                         <input 
                           id="edit-driversLicense"
                           type="text"
                           placeholder="e.g., D1234567890"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.driversLicenseNumber || ''}
                           onChange={(e) => setNewEmployee({...newEmployee, driversLicenseNumber: e.target.value})}
                         />
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-dateOfBirth">Date of Birth</Label>
+                        <Label htmlFor="edit-dateOfBirth" className="text-white font-medium">Date of Birth</Label>
                         <input 
                           id="edit-dateOfBirth"
                           type="text"
                           placeholder="MM/DD/YYYY"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.dateOfBirth || ''}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4706,21 +4711,21 @@ export default function AdminPanel() {
                     </div>
                     
                     <div className="grid gap-2">
-                      <Label htmlFor="edit-hireDate">Hire Date</Label>
+                      <Label htmlFor="edit-hireDate" className="text-white font-medium">Hire Date</Label>
                       <input 
                         id="edit-hireDate"
                         type="date"
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                         value={newEmployee.hireDate}
                         onChange={(e) => setNewEmployee({...newEmployee, hireDate: e.target.value})}
                       />
                     </div>
                     
                     <div className="grid gap-2">
-                      <Label htmlFor="edit-notes">Notes (optional)</Label>
+                      <Label htmlFor="edit-notes" className="text-white font-medium">Notes (optional)</Label>
                       <textarea 
                         id="edit-notes"
-                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex min-h-[80px] w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                         placeholder="Any additional information about this employee"
                         value={newEmployee.notes}
                         onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
@@ -4752,7 +4757,7 @@ export default function AdminPanel() {
                           id="edit-motorVehicleRecords"
                           type="file"
                           accept=".pdf,.jpg,.jpeg,.png"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file && editingEmployeeId) {
@@ -4890,23 +4895,23 @@ export default function AdminPanel() {
                 <div className="space-y-2">
                   <label htmlFor="accounting-month-select" className="text-sm font-medium text-white">Filter by Month</label>
                   <Select value={selectedAccountingMonth} onValueChange={setSelectedAccountingMonth}>
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger className="w-48 bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
                       <SelectValue placeholder="Select a month" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Time</SelectItem>
-                      <SelectItem value="2025-01">January 2025</SelectItem>
-                      <SelectItem value="2025-02">February 2025</SelectItem>
-                      <SelectItem value="2025-03">March 2025</SelectItem>
-                      <SelectItem value="2025-04">April 2025</SelectItem>
-                      <SelectItem value="2025-05">May 2025</SelectItem>
-                      <SelectItem value="2025-06">June 2025</SelectItem>
-                      <SelectItem value="2025-07">July 2025</SelectItem>
-                      <SelectItem value="2025-08">August 2025</SelectItem>
-                      <SelectItem value="2025-09">September 2025</SelectItem>
-                      <SelectItem value="2025-10">October 2025</SelectItem>
-                      <SelectItem value="2025-11">November 2025</SelectItem>
-                      <SelectItem value="2025-12">December 2025</SelectItem>
+                    <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                      <SelectItem value="all" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">All Time</SelectItem>
+                      <SelectItem value="2025-01" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">January 2025</SelectItem>
+                      <SelectItem value="2025-02" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">February 2025</SelectItem>
+                      <SelectItem value="2025-03" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">March 2025</SelectItem>
+                      <SelectItem value="2025-04" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">April 2025</SelectItem>
+                      <SelectItem value="2025-05" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">May 2025</SelectItem>
+                      <SelectItem value="2025-06" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">June 2025</SelectItem>
+                      <SelectItem value="2025-07" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">July 2025</SelectItem>
+                      <SelectItem value="2025-08" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">August 2025</SelectItem>
+                      <SelectItem value="2025-09" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">September 2025</SelectItem>
+                      <SelectItem value="2025-10" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">October 2025</SelectItem>
+                      <SelectItem value="2025-11" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">November 2025</SelectItem>
+                      <SelectItem value="2025-12" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">December 2025</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -5305,7 +5310,7 @@ export default function AdminPanel() {
                               </TableCell>
                             </TableRow>
                           ))}
-                          <TableRow className="bg-slate-700/30 font-bold border-t-2 border-white/20">
+                          <TableRow className="font-bold border-t-2 border-white/20">
                             <TableCell className="text-white font-bold">TOTALS</TableCell>
                             <TableCell className="text-center text-white font-bold">
                               {employeeAccountingData.reduce((sum, emp) => sum + emp.totalHours, 0).toFixed(1)}
@@ -5763,7 +5768,7 @@ export default function AdminPanel() {
                                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                               <div className="space-y-3">
                                                 <div>
-                                                  <Label className="text-base font-semibold text-gray-900">Customer Information</Label>
+                                                  <Label className="text-base font-semibold text-white">Customer Information</Label>
                                                   <div className="mt-2 bg-slate-700/30 p-3 rounded-lg space-y-1">
                                                     <div className="text-sm"><span className="font-medium">Name:</span> {report.customerName}</div>
                                                     <div className="text-sm"><span className="font-medium">Email:</span> {report.customerEmail}</div>
@@ -5774,7 +5779,7 @@ export default function AdminPanel() {
                                               
                                               <div className="space-y-3">
                                                 <div>
-                                                  <Label className="text-base font-semibold text-gray-900">Incident Details</Label>
+                                                  <Label className="text-base font-semibold text-white">Incident Details</Label>
                                                   <div className="mt-2 bg-slate-700/30 p-3 rounded-lg space-y-1">
                                                     <div className="text-sm"><span className="font-medium">Date:</span> {report.incidentDate}</div>
                                                     <div className="text-sm"><span className="font-medium">Time:</span> {report.incidentTime}</div>
@@ -5787,7 +5792,7 @@ export default function AdminPanel() {
                                             
                                             {/* Vehicle Information */}
                                             <div>
-                                              <Label className="text-base font-semibold text-gray-900">Vehicle Information</Label>
+                                              <Label className="text-base font-semibold text-white">Vehicle Information</Label>
                                               <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                                   <div className="text-sm"><span className="font-medium">Vehicle:</span> {report.vehicleYear} {report.vehicleMake} {report.vehicleModel}</div>
@@ -5800,14 +5805,14 @@ export default function AdminPanel() {
                                             {/* Descriptions */}
                                             <div className="grid grid-cols-1 gap-4">
                                               <div>
-                                                <Label className="text-base font-semibold text-gray-900">Incident Description</Label>
+                                                <Label className="text-base font-semibold text-white">Incident Description</Label>
                                                 <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                   <p className="text-sm leading-relaxed">{report.incidentDescription}</p>
                                                 </div>
                                               </div>
                                               
                                               <div>
-                                                <Label className="text-base font-semibold text-gray-900">Damage Description</Label>
+                                                <Label className="text-base font-semibold text-white">Damage Description</Label>
                                                 <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                   <p className="text-sm leading-relaxed">{report.damageDescription}</p>
                                                 </div>
@@ -5817,7 +5822,7 @@ export default function AdminPanel() {
                                             {/* Witness Information */}
                                             {(report.witnessName || report.witnessPhone) && (
                                               <div>
-                                                <Label className="text-base font-semibold text-gray-900">Witness Information</Label>
+                                                <Label className="text-base font-semibold text-white">Witness Information</Label>
                                                 <div className="mt-2 bg-slate-700/30 p-3 rounded-lg space-y-1">
                                                   {report.witnessName && <div className="text-sm"><span className="font-medium">Name:</span> {report.witnessName}</div>}
                                                   {report.witnessPhone && <div className="text-sm"><span className="font-medium">Phone:</span> {report.witnessPhone}</div>}
@@ -5828,7 +5833,7 @@ export default function AdminPanel() {
                                             {/* Additional Notes */}
                                             {report.additionalNotes && (
                                               <div>
-                                                <Label className="text-base font-semibold text-gray-900">Additional Notes</Label>
+                                                <Label className="text-base font-semibold text-white">Additional Notes</Label>
                                                 <div className="mt-2 bg-slate-700/30 p-3 rounded-lg">
                                                   <p className="text-sm leading-relaxed">{report.additionalNotes}</p>
                                                 </div>
@@ -5837,7 +5842,7 @@ export default function AdminPanel() {
                                             
                                             {/* Photos */}
                                             <div>
-                                              <Label className="text-base font-semibold text-gray-900">Photos ({Math.max(report.photoUrls?.length || 0, report.photoData?.length || 0)})</Label>
+                                              <Label className="text-base font-semibold text-white">Photos ({Math.max(report.photoUrls?.length || 0, report.photoData?.length || 0)})</Label>
                                               {((report.photoUrls && report.photoUrls.length > 0) || (report.photoData && report.photoData.length > 0)) ? (
                                                 <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                                                   {(report.photoUrls || []).map((url: string, index: number) => {
@@ -5922,7 +5927,7 @@ export default function AdminPanel() {
                                           
                                             {/* Fault Determination Section */}
                                             <div className="mb-8">
-                                              <Label className="text-base font-semibold text-gray-900">Fault Determination & Status</Label>
+                                              <Label className="text-base font-semibold text-white">Fault Determination & Status</Label>
                                               <div className="mt-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
                                                 <FaultDeterminationSection report={report} />
                                               </div>
@@ -6317,12 +6322,12 @@ export default function AdminPanel() {
                             <div>
                               <Label htmlFor="active" className="text-white">Status</Label>
                               <Select name="active" defaultValue={editingLocation?.active ? 'true' : 'true'}>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
                                   <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="true">Active</SelectItem>
-                                  <SelectItem value="false">Inactive</SelectItem>
+                                <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                                  <SelectItem value="true" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Active</SelectItem>
+                                  <SelectItem value="false" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Inactive</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -6514,7 +6519,7 @@ export default function AdminPanel() {
                     
                     {/* Totals Row */}
                     {selectedEmployeeShifts.shifts.length > 0 && (
-                      <TableRow className="bg-slate-700/30 font-bold border-t-2">
+                      <TableRow className="font-bold border-t-2">
                         <TableCell>TOTALS</TableCell>
                         <TableCell></TableCell>
                         <TableCell></TableCell>

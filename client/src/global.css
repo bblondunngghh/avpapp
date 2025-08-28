@@ -162,3 +162,154 @@
 .dark-text-muted {
   color: rgb(156, 163, 175);
 }
+
+/* Dropdown styling fixes for admin panel theme */
+/* Fix Radix UI Select component styling */
+[data-radix-select-content] {
+  background-color: rgb(30, 41, 59) !important; /* slate-800 */
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+
+[data-radix-select-item] {
+  background-color: transparent !important;
+  color: white !important;
+  cursor: pointer !important;
+}
+
+[data-radix-select-item]:hover,
+[data-radix-select-item][data-highlighted] {
+  background-color: rgba(59, 130, 246, 0.3) !important; /* blue highlight instead of white */
+  color: white !important;
+}
+
+[data-radix-select-item]:focus,
+[data-radix-select-item][data-state="checked"] {
+  background-color: rgba(59, 130, 246, 0.5) !important; /* darker blue for selected */
+  color: white !important;
+}
+
+/* Additional specificity for highlighted items */
+[data-radix-select-item][data-highlighted="true"] {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+  color: white !important;
+}
+
+/* Force override any white backgrounds on select items */
+[data-radix-select-item][style*="background-color"] {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+[data-radix-select-item]:not([data-highlighted]):not([data-state="checked"]) {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+/* Fix Select trigger styling */
+[data-radix-select-trigger] {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(4px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+
+[data-radix-select-trigger]:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-radix-select-trigger]:focus {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5) !important;
+}
+
+/* Fix Select value text */
+[data-radix-select-value] {
+  color: white !important;
+}
+
+/* Ultra-specific overrides to force dropdown styling */
+/* Targeting the exact selectors used by shadcn/ui and Radix */
+.admin-panel [data-radix-select-content][data-side],
+[data-radix-select-content][data-side] {
+  background-color: rgb(30, 41, 59) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.admin-panel [data-radix-select-item][data-radix-collection-item],
+[data-radix-select-item][data-radix-collection-item] {
+  background-color: transparent !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+.admin-panel [data-radix-select-item][data-radix-collection-item]:hover,
+.admin-panel [data-radix-select-item][data-radix-collection-item][data-highlighted],
+[data-radix-select-item][data-radix-collection-item]:hover,
+[data-radix-select-item][data-radix-collection-item][data-highlighted] {
+  background-color: rgb(59, 130, 246) !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+.admin-panel [data-radix-select-item][data-radix-collection-item][data-state="checked"],
+[data-radix-select-item][data-radix-collection-item][data-state="checked"] {
+  background-color: rgb(37, 99, 235) !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+/* Override any Tailwind/shadcn classes that might be interfering */
+.bg-white,
+.bg-background,
+[data-radix-select-item].bg-white {
+  background-color: transparent !important;
+}
+
+[data-radix-select-item].bg-white:hover,
+[data-radix-select-item].bg-white[data-highlighted] {
+  background-color: rgb(59, 130, 246) !important;
+}
+
+/* Force text colors to override any conflicting styles */
+[data-radix-select-item] * {
+  color: inherit !important;
+}
+
+/* Force glassmorphism styling for summary stats cards */
+.summary-stats-card {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.summary-stats-card:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Force the overlay layers */
+.summary-stats-card .absolute:first-child {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 1rem !important;
+}
+
+/* Specific fix for reports section location dropdown */
+.admin-panel [data-radix-select-content] [data-radix-select-item]:hover,
+.admin-panel [data-radix-select-content] [data-radix-select-item][data-highlighted],
+[data-radix-select-content] [data-radix-select-item]:hover,
+[data-radix-select-content] [data-radix-select-item][data-highlighted] {
+  background-color: rgb(59, 130, 246) !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+/* Even more specific targeting for the exact dropdown */
+[data-radix-select-content] [data-radix-select-item]:hover,
+[data-radix-select-content] [data-radix-select-item][data-highlighted] {
+  background-color: rgb(59, 130, 246) !important;
+  color: rgb(255, 255, 255) !important;
+}
