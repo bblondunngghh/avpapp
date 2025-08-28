@@ -568,7 +568,7 @@ export default function EmployeeDashboard() {
           </CardContent>
         </Card>
         
-        <Card className={`bg-white/10 backdrop-blur-sm border ${paySummary.totalMoneyOwed > 0 ? 'border-green-400/50' : 'border-white/20'}`}>
+        <Card className="bg-white/10 backdrop-blur-sm border border-white/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
               <div className={`p-3 rounded-full ${paySummary.totalMoneyOwed > 0 ? 'bg-green-500/20' : 'bg-gray-500/20'}`}>
