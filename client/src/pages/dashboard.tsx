@@ -11,7 +11,7 @@ import deliveryManIcon from "@assets/Delivery-Man--Streamline-Ultimate.png";
 import roadSignTurnRightIcon from "@assets/Road-Sign-Turn-Right-1--Streamline-Ultimate.png";
 import calendarIcon from "@assets/Calendar-Date--Streamline-Ultimate_1750258792058.png";
 import lockShieldIcon from "@assets/Lock-Shield--Streamline-Ultimate_1749313201026.png";
-import carImage from "@assets/car.jpg";
+import carImage from "@assets/car2.jpg";
 import LocationSelectorModal from "@/components/location-selector-modal";
 import { getVersionDisplay } from "@/config/version";
 
