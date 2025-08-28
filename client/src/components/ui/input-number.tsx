@@ -13,7 +13,7 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
     return (
       <div className="relative">
         <input
-          type="tel"
+          type="number"
           inputMode="numeric"
           pattern="[0-9]*"
           className={cn(
@@ -25,6 +25,11 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
           ref={ref}
           min="0"
           onWheel={(e) => e.currentTarget.blur()}
+          onFocus={(e) => {
+            // Force number pad on iPad
+            e.currentTarget.setAttribute('inputMode', 'numeric');
+            e.currentTarget.setAttribute('pattern', '[0-9]*');
+          }}
           {...props}
         />
       </div>

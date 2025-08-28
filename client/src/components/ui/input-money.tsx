@@ -14,7 +14,7 @@ const InputMoney = React.forwardRef<HTMLInputElement, InputMoneyProps>(
       <div className="relative">
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-400 font-medium z-10">$</span>
         <input
-          type="tel"
+          type="number"
           inputMode="decimal"
           pattern="[0-9]*\.?[0-9]*"
           className={cn(

@@ -51,33 +51,42 @@
   .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
     display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important; /* Force 4 equal columns on iPad */
-    gap: 0.25rem !important; /* Reduced gap for closer spacing */
+    gap: 0.125rem !important; /* Much smaller gap - very close together */
     padding-left: 0 !important;
     padding-right: 0 !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
+    width: 100% !important; /* Use full container width */
   }
   
   /* Ultra-specific iPad override - target the exact grid structure */
   .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     display: grid !important;
+    gap: 0.125rem !important;
+    width: 100% !important;
   }
   
   /* Even more specific - target any grid with responsive classes on iPad */
   [class*="grid-cols-1"][class*="sm:grid-cols-2"][class*="lg:grid-cols-4"] {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     display: grid !important;
+    gap: 0.125rem !important;
+    width: 100% !important;
   }
   
   /* Force override Tailwind's sm: responsive classes on iPad */
   .grid[class*="sm:grid-cols-2"] {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.125rem !important;
+    width: 100% !important;
   }
   
   /* Target landing page grid specifically by parent container */
   .max-w-4xl .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.125rem !important;
+    width: 100% !important;
   }
   
   /* Individual cards - force maximum width usage */
@@ -85,6 +94,7 @@
     min-width: 0 !important;
     width: 100% !important;
     flex: 1 !important;
+    max-width: none !important; /* Remove any max-width restrictions */
   }
   
   /* Override any px-4 or padding classes on iPad - BUT NOT header */

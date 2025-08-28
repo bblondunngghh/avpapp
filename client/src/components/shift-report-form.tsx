@@ -745,7 +745,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-300 mt-1">
+                    <div className="flex flex-col text-xs text-gray-300 mt-1 text-right">
                       <span>
                         {(() => {
                           const locationId = form.watch("locationId");
@@ -812,7 +812,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-300 mt-1">
+                    <div className="flex justify-end text-xs text-gray-300 mt-1">
                       <span>Expected: <span className="text-green-400">${(creditTransactions * finalPerCarPrice).toFixed(2)}</span></span>
                     </div>
                     <FormMessage />
@@ -861,9 +861,11 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-300 mt-1">
-                      <span>Calculated at $18.00 per receipt</span>
-                      <span>Expected: <span className="text-green-400">${(totalReceipts * 18).toFixed(2)}</span></span>
+                    <div className="flex justify-end text-xs text-gray-300 mt-1">
+                      <div className="text-right">
+                        <div>Calculated at $18.00 per receipt</div>
+                        <div>Expected: <span className="text-green-400">${(totalReceipts * 18).toFixed(2)}</span></div>
+                      </div>
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -888,7 +890,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                         }}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-xs text-gray-300 mt-1">
+                    <div className="flex justify-end text-xs text-gray-300 mt-1">
                       <span>Expected: <span className="text-green-400">${(cashCars * finalPerCarPrice).toFixed(2)}</span></span>
                     </div>
                     <FormMessage />
@@ -914,7 +916,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                           }}
                         />
                       </FormControl>
-                      <div className="flex justify-between text-xs text-gray-300 mt-1">
+                      <div className="flex justify-end text-xs text-gray-300 mt-1">
                         <span>Expected: <span className="text-green-400">${expectedCompanyCashTurnIn.toFixed(2)}</span></span>
                       </div>
                       <FormMessage />
@@ -922,7 +924,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                   )}
                 />
               ) : (
-                <div className="money-owed-display p-3 border border-white/20 rounded-md bg-white/10 backdrop-blur-sm pt-[12px] pb-[12px] pl-[18px] pr-[18px] mt-[12px] mb-[12px]">
+                <div className="money-owed-display p-3 border border-white/20 rounded-md bg-white/10 backdrop-blur-sm pt-[12px] pb-[12px] pl-[18px] pr-[18px] mt-[12px] mb-[12px] text-right">
                   <h3 className="text-white font-medium text-sm mb-1">Company Cash Turn-In</h3>
                   <div className="space-y-1 text-sm">
                     <div className="text-gray-300">No cash turn-in required</div>
@@ -1114,7 +1116,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                     <FormLabel className="text-white font-medium text-sm">Total Job Hours</FormLabel>
                     <FormControl>
                       <Input 
-                        type="tel" 
+                        type="number" 
                         inputMode="decimal"
                         pattern="[0-9]*\.?[0-9]*"
                         min="0" 
@@ -1195,7 +1197,7 @@ export default function ShiftReportForm({ reportId }: ShiftReportFormProps) {
                               </div>
                               <div className="w-20">
                                 <Input 
-                                  type="tel" 
+                                  type="number" 
                                   inputMode="decimal"
                                   pattern="[0-9]*\.?[0-9]*"
                                   min="0" 

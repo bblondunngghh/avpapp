@@ -315,6 +315,17 @@ input[type=number] {
   .admin-panel .pt-20 {
     padding-top: calc(90px + env(safe-area-inset-top, 20px)) !important;
   }
+  
+  /* Force numeric keypad on iPad */
+  input[type="number"][inputmode="numeric"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+  
+  input[type="number"][inputmode="decimal"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
 }
 
 /* Global heading styles and buttons with Poppins font */
