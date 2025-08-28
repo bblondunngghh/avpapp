@@ -262,7 +262,9 @@ function Router() {
 
 function SplashScreen() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50" style={{background: "url('/dkbackground.jpg') center center / cover no-repeat"}}>
+    <>
+      <div className="app-gradient-fixed"></div>
+      <div className="fixed inset-0 bg-white/5 backdrop-blur-xl flex items-center justify-center z-50">
       <div className="text-center">
         {/* Logo with animation */}
         <div className="mb-8 animate-pulse">
@@ -296,7 +298,8 @@ function SplashScreen() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

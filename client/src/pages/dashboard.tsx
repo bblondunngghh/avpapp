@@ -26,7 +26,7 @@ export default function Dashboard() {
   return (
     <div className="max-w-4xl mx-auto px-4 mt-4 md:mt-0 relative">
         {/* Enhanced Header Section with Glassmorphism */}
-        <div className="relative text-center mb-12 p-8 rounded-3xl overflow-hidden shadow-2xl border border-white/20 backdrop-blur-xl" style={{background: "url('/dkbackground.jpg') center center / cover no-repeat"}}>
+        <div className="relative bg-white/5 backdrop-blur-xl text-center mb-12 p-8 rounded-3xl overflow-hidden shadow-2xl border border-white/20">
           {/* Enhanced Glass morphism overlay */}
           <div className="absolute inset-0 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
@@ -185,7 +185,7 @@ export default function Dashboard() {
         </div>
         
         {/* Quick Access Section with Enhanced Glassmorphism */}
-        <div className="relative overflow-hidden rounded-2xl p-8 mt-12 border border-white/20 backdrop-blur-xl shadow-2xl" style={{background: "url('/dkbackground.jpg') center center / cover no-repeat"}}>
+        <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl p-8 mt-12 border border-white/20 shadow-2xl">
           {/* Enhanced Glass morphism overlay */}
           <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
