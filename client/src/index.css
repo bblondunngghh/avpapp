@@ -116,10 +116,10 @@ input[type=number] {
     overflow-x: hidden !important;
   }
   
-  /* Fix viewport container spacing */
+  /* Fix viewport container spacing - minimal margins */
   .container, [class*="container"] {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
     width: 100% !important;
@@ -135,22 +135,42 @@ input[type=number] {
     overflow-x: hidden !important;
   }
   
-  /* Landing page and shift report page fixes */
+  /* Landing page and shift report page fixes - minimal side margins */
   .form-section {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
     margin: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
   }
   
   .form-outer-container {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    width: calc(100% - 1rem) !important;
-    max-width: calc(100% - 1rem) !important;
+    margin-left: 0.25rem !important;
+    margin-right: 0.25rem !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    width: calc(100% - 0.5rem) !important;
+    max-width: calc(100% - 0.5rem) !important;
+  }
+  
+  /* Admin panel cards - fill viewport width with minimal margins */
+  .admin-panel .relative.overflow-hidden {
+    margin-left: 0.25rem !important;
+    margin-right: 0.25rem !important;
+    padding: 1rem !important;
+    width: calc(100% - 0.5rem) !important;
+    max-width: calc(100% - 0.5rem) !important;
+  }
+  
+  /* All glassmorphism cards - minimal side spacing */
+  [class*="bg-gradient-to-r"].rounded-2xl,
+  [class*="bg-white/5"].rounded-2xl,
+  .form-card,
+  .form-card-shift-info {
+    margin-left: 0.25rem !important;
+    margin-right: 0.25rem !important;
+    width: calc(100% - 0.5rem) !important;
+    max-width: calc(100% - 0.5rem) !important;
   }
   
   /* Fix employee section tab overflow */
@@ -197,10 +217,26 @@ input[type=number] {
     display: none !important;
   }
   
-  /* Extra small iPhone screens */
+  /* Extra small iPhone screens - minimal side spacing */
   .container {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+  
+  /* Page level containers - fill viewport width */
+  main, [role="main"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Flex containers - remove extra spacing */
+  .flex-1, [class*="flex-1"] {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
   
   /* Reduce gap sizes on small screens */

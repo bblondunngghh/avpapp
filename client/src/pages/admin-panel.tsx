@@ -2366,7 +2366,7 @@ export default function AdminPanel() {
                     View shift reports for the selected month
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2 justify-end sm:justify-start">
+                <div className="flex flex-wrap gap-2 justify-end md:justify-end">
                   <Button 
                     size="sm" 
                     onClick={exportReportsToCSV}
