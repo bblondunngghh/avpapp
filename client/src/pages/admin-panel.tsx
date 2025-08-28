@@ -13,7 +13,7 @@ import addCircleIcon from "@assets/Add-Circle--Streamline-Ultimate.png";
 import binIcon from "@assets/Bin-1--Streamline-Ultimate.png";
 import contentPenIcon from "@assets/Content-Pen-3--Streamline-Ultimate.png";
 import carRepairFireIcon from "@assets/Car-Repair-Fire-1--Streamline-Ultimate.png";
-import viewSquareIcon from "@assets/View-Square--Streamline-Ultimate.png";
+import squareIcon from "@assets/Credit-Card-Visa--Streamline-Ultimate.png";
 import SquareReconciliation from "@/components/SquareReconciliation.tsx";
 
 // Component for compact customer info
@@ -2103,7 +2103,7 @@ export default function AdminPanel() {
     { id: "employee-accounting", label: "Employee Accounting", icon: cashUserIcon },
     { id: "hours-tracker", label: "Hours Tracker", icon: timeClockNineIcon },
     { id: "incident-reports", label: "Incident Reports", icon: carRepairFireIcon },
-    { id: "square-reconciliation", label: "Square Reconciliation", icon: viewSquareIcon },
+    { id: "square-reconciliation", label: "Square Reconciliation", icon: squareIcon },
     { id: "location-management", label: "Location Management", icon: pinLocationIcon }
   ];
 
@@ -4222,7 +4222,7 @@ export default function AdminPanel() {
                     })}
                     
                     {/* Total employees row */}
-                    <TableRow className="bg-muted/50">
+                    <TableRow>
                       <TableCell colSpan={2} className="font-medium">
                         Total Employees: {employeeRecords.length}
                       </TableCell>

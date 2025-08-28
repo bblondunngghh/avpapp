@@ -4,9 +4,10 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, AlertTriangle, CheckCircle, DollarSign, CreditCard } from "lucide-react";
+import { Loader2, AlertTriangle, CheckCircle, DollarSign } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { ShiftReport } from "@shared/schema";
+import squareIcon from "@/assets/Credit-Card-Visa--Streamline-Ultimate.png";
 
 interface SquareDailySales {
   date: string;
@@ -139,7 +140,7 @@ export default function SquareReconciliation() {
       <div className="relative z-10">
         <div className="mb-6">
           <div className="flex items-center space-x-2 mb-2">
-            <CreditCard className="h-6 w-6 text-blue-400" />
+            <img src={squareIcon} alt="Square" className="h-6 w-6" />
             <h2 className="text-xl font-bold text-white">Square Revenue Reconciliation</h2>
           </div>
           <p className="text-slate-400">
@@ -188,7 +189,7 @@ export default function SquareReconciliation() {
             <Button
               onClick={() => createTestPaymentMutation.mutate({ amount: 2000, tipAmount: 300 })}
               disabled={createTestPaymentMutation.isPending}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
             >
               {createTestPaymentMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Test Payment ($20 + $3 tip)
@@ -197,7 +198,7 @@ export default function SquareReconciliation() {
             <Button
               onClick={() => selectedDate && refetchSquareData()}
               disabled={!selectedDate || squareDataLoading}
-              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20"
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
             >
               {squareDataLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Fetch Square Data
@@ -206,7 +207,7 @@ export default function SquareReconciliation() {
             <Button
               onClick={handleReconcile}
               disabled={!selectedShiftReport || !selectedDate || reconciliationMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
             >
               {reconciliationMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Reconcile

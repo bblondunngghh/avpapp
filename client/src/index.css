@@ -108,10 +108,99 @@ input[type=number] {
 
 /* iPhone specific optimizations */
 @media (max-width: 480px) {
+  /* Remove extra horizontal spacing on iPhone */
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Fix viewport container spacing */
+  .container, [class*="container"] {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Fix main app container */
+  #root {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Landing page and shift report page fixes */
+  .form-section {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .form-outer-container {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    width: calc(100% - 1rem) !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+  
+  /* Fix employee section tab overflow */
+  .employee-tabs, [role="tablist"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .employee-tabs::-webkit-scrollbar, [role="tablist"]::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  /* Employee tabs individual tab styling */
+  .employee-tabs [role="tab"], [role="tablist"] [role="tab"] {
+    flex-shrink: 0 !important;
+    min-width: fit-content !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Fix tabs container wrapper */
+  [data-radix-tabs-root] {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+  
+  [data-radix-tabs-list] {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+  
+  [data-radix-tabs-list]::-webkit-scrollbar {
+    display: none !important;
+  }
+  
   /* Extra small iPhone screens */
   .container {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
   
   /* Reduce gap sizes on small screens */
