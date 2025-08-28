@@ -303,9 +303,11 @@ input[type=number] {
     right: 0 !important;
     z-index: 9999 !important;
     width: 100vw !important;
-    min-height: calc(70px + env(safe-area-inset-top, 20px)) !important;
+    min-height: calc(80px + env(safe-area-inset-top, 20px)) !important;
     display: block !important;
     visibility: visible !important;
+    /* Add temporary debugging background */
+    background: rgba(255, 0, 0, 0.3) !important;
   }
   
   .admin-panel-header .relative.z-10 {
@@ -319,7 +321,7 @@ input[type=number] {
   
   /* Adjust content padding on iPad for admin panel */
   .admin-panel .pt-20 {
-    padding-top: calc(90px + env(safe-area-inset-top, 20px)) !important;
+    padding-top: calc(100px + env(safe-area-inset-top, 20px)) !important;
   }
   
   /* Ensure admin panel header is always visible on iPad */
@@ -330,6 +332,29 @@ input[type=number] {
       -webkit-backdrop-filter: blur(12px) !important;
       border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Ensure hamburger button is visible and clickable */
+    .admin-panel-header button {
+      position: relative !important;
+      z-index: 10000 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-width: 44px !important;
+      min-height: 44px !important;
+      background: rgba(255, 255, 255, 0.2) !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      border-radius: 8px !important;
+    }
+    
+    /* Ensure hamburger icon is visible */
+    .admin-panel-header button img {
+      width: 20px !important;
+      height: 20px !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      display: block !important;
     }
   }
 
