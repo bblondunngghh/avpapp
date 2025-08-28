@@ -5,6 +5,7 @@ import { BackupService } from "./backup";
 import { smsService } from "./sms-service";
 import { emailService } from "./email-service";
 import { pushNotificationService } from "./push-notification-service";
+import { getSquareService } from "./square-service";
 import { getLocationCode, locations } from "@shared/schema";
 import * as schema from "@shared/schema";
 import { db, withRetry } from "./db";
@@ -1365,6 +1366,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Database health check failed:', error);
       res.status(503).json({ status: 'disconnected', error: 'Database connection unavailable' });
+    }
+  });
+
+  // Square Integration Routes
+  // Get daily sales data from Square for reconciliation
+  apiRouter.get('/square/daily-sales/:date', async (req, res) => {
+    try {
+      const squareService = getSquareService();
+      if (!squareService) {
+        return res.status(503).json({ 
+          error: 'Square integration not configured. Please add SQUARE_ACCESS_TOKEN and SQUARE_LOCATION_ID to environment variables.' 
+        });
+      }
+
+      const { date } = req.params;
+      
+      // Validate date format (YYYY-MM-DD)
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return res.status(400).json({ error: 'Invalid date format. Use YYYY-MM-DD.' });
+      }
+
+      const dailySales = await squareService.getDailySales(date);
+      res.json(dailySales);
+    } catch (error) {
+      console.error('[SQUARE] Error fetching daily sales:', error);
+      res.status(500).json({ error: 'Failed to fetch Square sales data', details: error.message });
+    }
+  });
+
+  // Reconcile Square data with shift report
+  apiRouter.post('/square/reconcile', async (req, res) => {
+    try {
+      const squareService = getSquareService();
+      if (!squareService) {
+        return res.status(503).json({ 
+          error: 'Square integration not configured. Please add SQUARE_ACCESS_TOKEN and SQUARE_LOCATION_ID to environment variables.' 
+        });
+      }
+
+      const { shiftReportId, date } = req.body;
+      
+      if (!shiftReportId || !date) {
+        return res.status(400).json({ error: 'Missing required fields: shiftReportId and date' });
+      }
+
+      // Get shift report from database
+      const shiftReport = await storage.getShiftReport(shiftReportId);
+      if (!shiftReport) {
+        return res.status(404).json({ error: 'Shift report not found' });
+      }
+
+      // Perform reconciliation
+      const reconciliation = await squareService.reconcileWithShiftReport(shiftReport, date);
+      res.json(reconciliation);
+    } catch (error) {
+      console.error('[SQUARE] Error during reconciliation:', error);
+      res.status(500).json({ error: 'Failed to reconcile Square data', details: error.message });
+    }
+  });
+
+  // Get Square transaction details
+  apiRouter.get('/square/transaction/:paymentId', async (req, res) => {
+    try {
+      const squareService = getSquareService();
+      if (!squareService) {
+        return res.status(503).json({ 
+          error: 'Square integration not configured. Please add SQUARE_ACCESS_TOKEN and SQUARE_LOCATION_ID to environment variables.' 
+        });
+      }
+
+      const { paymentId } = req.params;
+      const transaction = await squareService.getTransactionDetails(paymentId);
+      
+      if (!transaction) {
+        return res.status(404).json({ error: 'Transaction not found' });
+      }
+
+      res.json(transaction);
+    } catch (error) {
+      console.error('[SQUARE] Error fetching transaction details:', error);
+      res.status(500).json({ error: 'Failed to fetch transaction details', details: error.message });
+    }
+  });
+
+  // Create test Square payment (sandbox only)
+  apiRouter.post('/square/create-test-payment', async (req, res) => {
+    try {
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(403).json({ error: 'Test payments only available in sandbox mode' });
+      }
+
+      const squareService = getSquareService();
+      if (!squareService) {
+        return res.status(503).json({ 
+          error: 'Square integration not configured. Please add SQUARE_ACCESS_TOKEN and SQUARE_LOCATION_ID to environment variables.' 
+        });
+      }
+
+      console.log('[SQUARE API] Received test payment request:', req.body);
+      const { amount = 2000, tipAmount = 300 } = req.body; // Default $20 + $3 tip
+
+      const testPayment = await squareService.createTestPayment(amount, tipAmount);
+      console.log('[SQUARE API] Test payment response:', testPayment);
+      
+      // Convert BigInt values to numbers for JSON serialization
+      const jsonSafePayment = JSON.parse(JSON.stringify(testPayment, (key, value) =>
+        typeof value === 'bigint' ? Number(value) : value
+      ));
+      
+      res.json({
+        success: true,
+        payment: jsonSafePayment,
+        message: 'Test payment created successfully'
+      });
+    } catch (error) {
+      console.error('[SQUARE API] Route error creating test payment:', error);
+      console.error('[SQUARE API] Route error stack:', error.stack);
+      res.status(500).json({ error: 'Failed to create test payment', details: error.message });
     }
   });
 

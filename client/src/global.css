@@ -1,29 +1,32 @@
 /* Global styles for AVApp */
 
-/* Global gradient background class */
+/* Global background class with JPG image */
 .app-gradient-bg {
-  background: linear-gradient(to right, #2a2a2a, #1e3a8a, #312e81);
+  background: url('/background.jpg') center center / cover no-repeat;
   /* Fallback for older browsers */
-  background: linear-gradient(to right, rgb(42, 42, 42), rgb(30, 58, 138), rgb(49, 46, 129));
-  /* Using the exact gradient from admin-login page */
-  background-image: linear-gradient(to right, #2a2a2a, rgb(30, 58, 138), rgb(49, 46, 129));
+  background: url('/background.jpg') center center / cover no-repeat;
+  /* Using JPG background image */
+  background-image: url('/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-/* Fixed gradient background that covers the entire viewport */
+/* Fixed background image that covers the entire viewport */
 .app-gradient-fixed {
   position: fixed;
   inset: 0;
-  background: linear-gradient(to right, #2a2a2a, rgb(30, 58, 138), rgb(49, 46, 129));
+  background: url('/background.jpg') center center / cover no-repeat;
   z-index: -10;
 }
 
-/* Alternative gradient directions */
+/* Alternative background directions */
 .app-gradient-br {
-  background: linear-gradient(to bottom right, #2a2a2a, rgb(30, 58, 138), rgb(49, 46, 129));
+  background: url('/background.jpg') center center / cover no-repeat;
 }
 
 .app-gradient-radial {
-  background: radial-gradient(circle at center, #2a2a2a, rgb(30, 58, 138), rgb(49, 46, 129));
+  background: url('/background.jpg') center center / cover no-repeat;
 }
 
 /* Ensure min height for pages */

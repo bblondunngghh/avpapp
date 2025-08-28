@@ -245,7 +245,7 @@ input[type=number] {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+  background: url('/background.jpg') center center / cover no-repeat;
   z-index: -1;
 }
 
