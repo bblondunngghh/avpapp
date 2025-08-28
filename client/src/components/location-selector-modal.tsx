@@ -54,7 +54,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
         
         <div className="grid grid-cols-1 gap-3 mt-4 px-1 relative z-10">
           {isLoading ? (
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl rounded-lg">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg rounded-xl">
               <div className="text-center py-8">
                 <div className="animate-pulse flex flex-col items-center space-y-3">
                   <div className="w-12 h-12 bg-white/10 rounded-full"></div>
@@ -107,7 +107,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
               return (
                 <div 
                   key={location.id}
-                  className="relative bg-white/5 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/10 transition-all duration-300 cursor-pointer hover:border-white/30 hover:shadow-2xl rounded-lg overflow-hidden"
+                  className="relative bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer rounded-xl overflow-hidden"
                   onClick={() => handleLocationSelect(location.id)}
                 >
                   {/* Glassmorphism overlay for location cards */}
@@ -130,7 +130,7 @@ export default function LocationSelectorModal({ isOpen, onClose }: LocationSelec
                 </div>
               );
             }) || (
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl rounded-lg">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg rounded-xl">
                 <div className="text-center py-8">
                   <div className="flex flex-col items-center space-y-3">
                     <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
