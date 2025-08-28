@@ -51,7 +51,7 @@
   .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
     display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important; /* Force 4 equal columns on iPad */
-    gap: 0.5rem !important; /* Even smaller gap for tight fit */
+    gap: 0.25rem !important; /* Reduced gap for closer spacing */
     padding-left: 0 !important;
     padding-right: 0 !important;
     margin-left: 0 !important;
