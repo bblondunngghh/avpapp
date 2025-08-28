@@ -2143,7 +2143,7 @@ export default function AdminPanel() {
             
             {/* Content with z-index */}
             <div className="relative z-10 h-full flex flex-col">
-          <div className="flex items-center justify-between p-3 border-b border-white/20">
+          <div className="flex items-center justify-between p-3 border-b border-white/20" style={{ paddingTop: 'calc(0.75rem + env(safe-area-inset-top, 20px))' }}>
             <div className="flex items-center gap-2">
               <img src={monitorHeartNotesIcon} alt="Monitor Heart" className="h-7 w-7" />
               <h1 className="text-lg font-bold text-white">Admin Panel</h1>
@@ -2181,7 +2181,7 @@ export default function AdminPanel() {
           </div>
           
           {/* Action Items */}
-          <div className="p-3 space-y-1 border-t border-white/20">
+          <div className="p-3 space-y-1">
             <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Actions</div>
             {actionItems.map((item) => (
               <button
@@ -2225,7 +2225,7 @@ export default function AdminPanel() {
         {/* Main content */}
         <div className="flex-1 flex flex-col min-h-screen">
           {/* Mobile hamburger button */}
-          <div className="lg:hidden p-4 border-b border-white/20">
+          <div className="lg:hidden p-4 border-b border-white/20" style={{ paddingTop: 'calc(1rem + env(safe-area-inset-top, 20px))' }}>
             <button
               onClick={() => setSidebarOpen(true)}
               className="p-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
