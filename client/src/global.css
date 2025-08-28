@@ -29,27 +29,28 @@
 
 /* iPad-specific width optimizations for landing page and shift reports */
 @media screen and (min-width: 768px) and (max-width: 1024px) {
-  /* Landing page - maximize viewport usage */
-  .max-w-4xl.mx-auto {
-    max-width: 98% !important;
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+  /* Landing page - maximize viewport usage even more aggressively */
+  .max-w-4xl.mx-auto:not(.app-header *) {
+    max-width: 99.5% !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
   
-  /* Shift reports page - maximize viewport usage */
-  .container.mx-auto {
-    max-width: 98% !important;
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+  /* Shift reports page - maximize viewport usage even more aggressively */
+  .container.mx-auto:not(.app-header *) {
+    max-width: 99.5% !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
   
-  /* Landing page cards - minimize gaps and maximize card width */
+  /* Landing page cards - force 4 columns on iPad with minimal gaps */
   .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4 {
-    gap: 1rem !important; /* Reduce gap significantly */
+    grid-template-columns: repeat(4, 1fr) !important; /* Force 4 columns on iPad */
+    gap: 0.5rem !important; /* Even smaller gap for tight fit */
     padding-left: 0 !important;
     padding-right: 0 !important;
     margin-left: 0 !important;
@@ -63,10 +64,16 @@
     flex: 1 !important;
   }
   
-  /* Override any px-4 or padding classes on iPad */
-  .px-4 {
+  /* Override any px-4 or padding classes on iPad - BUT NOT header */
+  .px-4:not(.app-header *):not(.app-header) {
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
+  }
+  
+  /* Keep header hamburger icon positioning unchanged */
+  .app-header .px-4 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
   
   /* Ensure shift report forms use full width */

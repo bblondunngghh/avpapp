@@ -23,6 +23,14 @@ export default function Dashboard() {
     setIsModalOpen(true);
   };
   
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+  
   return (
     <div className="max-w-4xl mx-auto px-4 mt-4 md:mt-0 relative">
         {/* Enhanced Header Section with Glassmorphism */}
@@ -122,7 +130,7 @@ export default function Dashboard() {
               </p>
               <div className="flex justify-center">
                 <Button 
-                  onClick={() => navigate("/incident-report")}
+                  onClick={() => handleNavigation("/incident-report")}
                   className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
                 >
                   Report Incident 
@@ -148,7 +156,7 @@ export default function Dashboard() {
                 Access comprehensive guidelines, procedures, and standards for professional valet operations.
               </p>
               <div className="flex justify-center">
-                <Button onClick={() => navigate("/regulations")} className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold">
+                <Button onClick={() => handleNavigation("/regulations")} className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold">
                   View Guidelines 
                   <img src={roadSignTurnRightIcon} alt="Arrow" className="ml-2 h-4 w-4 transition-transform" />
                 </Button>
@@ -173,7 +181,7 @@ export default function Dashboard() {
               </p>
               <div className="flex justify-center">
                 <Button 
-                  onClick={() => navigate("/permits")}
+                  onClick={() => handleNavigation("/permits")}
                   className="w-40 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl py-3 font-semibold"
                 >
                   View Permits 

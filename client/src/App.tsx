@@ -306,6 +306,12 @@ function SplashScreen() {
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [location] = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location]);
 
   useEffect(() => {
     // Check if device is mobile
