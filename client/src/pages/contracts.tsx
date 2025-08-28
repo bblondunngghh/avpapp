@@ -1171,29 +1171,46 @@ export default function Contracts() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl max-w-4xl mx-auto px-4 py-8">
+      {/* Enhanced Glass morphism overlay */}
+      <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+      
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+      
+      {/* Content with z-index */}
+      <div className="relative z-10">
       <div className="flex items-center mb-6">
         <Button 
-          variant="ghost" 
           onClick={() => navigate("/admin")} 
-          className="p-0 h-10 w-10 rounded-full bg-white shadow-sm hover:shadow-md mr-4"
+          className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 p-0 h-10 w-10 rounded-full mr-4"
         >
           <img src={houseIcon} alt="Back to Admin" className="h-5 w-5" />
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">Document Generator</h1>
+        <h1 className="text-3xl font-bold text-white">Document Generator</h1>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Document Generator</CardTitle>
-          <p className="text-sm text-gray-600">
-            Generate customized documents for valet parking services.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
+      <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl">
+        {/* Enhanced Glass morphism overlay */}
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+        
+        {/* Content with z-index */}
+        <div className="relative z-10 p-6">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold text-white mb-2">Document Generator</h2>
+            <p className="text-sm text-slate-300">
+              Generate customized documents for valet parking services.
+            </p>
+          </div>
+          <div className="space-y-6">
           {/* Document Type Selection */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Document Type</h3>
+            <h3 className="text-lg font-semibold text-white">Document Type</h3>
             <Select value={documentType} onValueChange={(value: any) => setDocumentType(value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select document type" />
@@ -1210,10 +1227,10 @@ export default function Contracts() {
             <>
               {/* Business Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Business Information</h3>
+            <h3 className="text-lg font-semibold text-white">Business Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="businessName">Business Name *</Label>
+                <Label htmlFor="businessName" className="text-slate-300">Business Name *</Label>
                 <Input
                   id="businessName"
                   value={contractData.businessName}
@@ -1222,7 +1239,7 @@ export default function Contracts() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="businessEntityType">Business Entity Type</Label>
+                <Label htmlFor="businessEntityType" className="text-slate-300">Business Entity Type</Label>
                 <Select value={contractData.businessEntityType} onValueChange={(value) => handleInputChange('businessEntityType', value)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -1239,7 +1256,7 @@ export default function Contracts() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contactName">Contact Name *</Label>
+                <Label htmlFor="contactName" className="text-slate-300">Contact Name *</Label>
                 <Input
                   id="contactName"
                   value={contractData.contactName}
@@ -1248,7 +1265,7 @@ export default function Contracts() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contactTitle">Contact Title</Label>
+                <Label htmlFor="contactTitle" className="text-slate-300">Contact Title</Label>
                 <Input
                   id="contactTitle"
                   value={contractData.contactTitle}
@@ -1259,7 +1276,7 @@ export default function Contracts() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="businessAddress">Business Address *</Label>
+              <Label htmlFor="businessAddress" className="text-slate-300">Business Address *</Label>
               <Input
                 id="businessAddress"
                 value={contractData.businessAddress}
@@ -1270,7 +1287,7 @@ export default function Contracts() {
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="businessCity">City</Label>
+                <Label htmlFor="businessCity" className="text-slate-300">City</Label>
                 <Input
                   id="businessCity"
                   value={contractData.businessCity}
@@ -1279,7 +1296,7 @@ export default function Contracts() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="businessState">State</Label>
+                <Label htmlFor="businessState" className="text-slate-300">State</Label>
                 <Select value={contractData.businessState} onValueChange={(value) => handleInputChange('businessState', value)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -1293,7 +1310,7 @@ export default function Contracts() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="businessZip">ZIP Code</Label>
+                <Label htmlFor="businessZip" className="text-slate-300">ZIP Code</Label>
                 <Input
                   id="businessZip"
                   value={contractData.businessZip}
@@ -1306,10 +1323,10 @@ export default function Contracts() {
 
           {/* Contract Terms */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Contract Terms</h3>
+            <h3 className="text-lg font-semibold text-white">Contract Terms</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="startDate">Start Date</Label>
+                <Label htmlFor="startDate" className="text-slate-300">Start Date</Label>
                 <Input
                   id="startDate"
                   type="date"
@@ -1319,7 +1336,7 @@ export default function Contracts() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="endDate">End Date</Label>
+                <Label htmlFor="endDate" className="text-slate-300">End Date</Label>
                 <div className="flex gap-2">
                   <Input
                     id="endDate"
@@ -1329,9 +1346,8 @@ export default function Contracts() {
                   />
                   <Button
                     type="button"
-                    variant="outline"
                     onClick={generateEndDate}
-                    className="whitespace-nowrap"
+                    className="whitespace-nowrap bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     Auto
                   </Button>
@@ -1342,10 +1358,10 @@ export default function Contracts() {
 
           {/* Financial Terms */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Financial Terms</h3>
+            <h3 className="text-lg font-semibold text-white">Financial Terms</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="parkingRate">Parking Rate ($)</Label>
+                <Label htmlFor="parkingRate" className="text-slate-300">Parking Rate ($)</Label>
                 <Input
                   id="parkingRate"
                   type="number"
@@ -1356,7 +1372,7 @@ export default function Contracts() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="managementFee">Monthly Management Fee ($)</Label>
+                <Label htmlFor="managementFee" className="text-slate-300">Monthly Management Fee ($)</Label>
                 <Input
                   id="managementFee"
                   type="number"
@@ -1367,7 +1383,7 @@ export default function Contracts() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paymentTerms">Payment Terms (days)</Label>
+                <Label htmlFor="paymentTerms" className="text-slate-300">Payment Terms (days)</Label>
                 <Select value={contractData.paymentTerms} onValueChange={(value) => handleInputChange('paymentTerms', value)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -1384,7 +1400,7 @@ export default function Contracts() {
 
           {/* Operational Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Operational Details</h3>
+            <h3 className="text-lg font-semibold text-white">Operational Details</h3>
 
             
             <div className="space-y-4">
@@ -1398,7 +1414,7 @@ export default function Contracts() {
                         checked={contractData.daySchedules[day.id]?.enabled || false}
                         onCheckedChange={() => handleDayToggle(day.id)}
                       />
-                      <Label htmlFor={day.id} className="text-sm font-medium">{day.label}</Label>
+                      <Label htmlFor={day.id} className="text-sm font-medium text-slate-300">{day.label}</Label>
                     </div>
                     
                     {contractData.daySchedules[day.id]?.enabled && (
@@ -1428,9 +1444,9 @@ export default function Contracts() {
 
           {/* Contract Termination */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Contract Termination</h3>
+            <h3 className="text-lg font-semibold text-white">Contract Termination</h3>
             <div className="space-y-2">
-              <Label htmlFor="terminationNotice">Notice Period for Termination</Label>
+              <Label htmlFor="terminationNotice" className="text-slate-300">Notice Period for Termination</Label>
               <Select value={contractData.terminationNotice} onValueChange={(value) => handleInputChange('terminationNotice', value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -1449,9 +1465,9 @@ export default function Contracts() {
 
           {/* Special Terms */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Additional Terms</h3>
+            <h3 className="text-lg font-semibold text-white">Additional Terms</h3>
             <div className="space-y-2">
-              <Label htmlFor="specialTerms">Special Terms (Optional)</Label>
+              <Label htmlFor="specialTerms" className="text-slate-300">Special Terms (Optional)</Label>
               <Textarea
                 id="specialTerms"
                 value={contractData.specialTerms}
@@ -1467,7 +1483,7 @@ export default function Contracts() {
             <Button
               onClick={generateContract}
               disabled={isGenerating}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
             >
               {isGenerating ? 'Generating Contract...' : 'Generate Contract'}
             </Button>
@@ -1499,8 +1515,9 @@ export default function Contracts() {
               onLocationChange={setSelectedLocation}
             />
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      </div>
     </div>
   );
 }
@@ -1534,13 +1551,13 @@ function AnnualRenewalForm({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-900">Annual Renewal Application</h3>
-        <p className="text-sm text-gray-600">Edit expiration dates and upload supporting documents</p>
+        <h3 className="text-lg font-semibold text-white">Annual Renewal Application</h3>
+        <p className="text-sm text-slate-300">Edit expiration dates and upload supporting documents</p>
       </div>
 
       {/* Location Selection */}
-      <div className="space-y-4 bg-green-50 p-4 rounded-lg border-2 border-green-200">
-        <h4 className="text-md font-semibold text-green-700">Select Location</h4>
+      <div className="space-y-4 bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
+        <h4 className="text-md font-semibold text-green-300">Select Location</h4>
         <Select value={selectedLocation} onValueChange={onLocationChange}>
           <SelectTrigger>
             <SelectValue placeholder="Choose restaurant location" />
@@ -1554,12 +1571,12 @@ function AnnualRenewalForm({
         </Select>
       </div>
 
-      <div className="space-y-4 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
-        <h4 className="text-md font-semibold text-blue-700">Update Expiration Dates</h4>
+      <div className="space-y-4 bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
+        <h4 className="text-md font-semibold text-blue-300">Update Expiration Dates</h4>
         
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="businessInsuranceExpiration">Business Insurance Expiration Date</Label>
+            <Label htmlFor="businessInsuranceExpiration" className="text-slate-300">Business Insurance Expiration Date</Label>
             <Input
               id="businessInsuranceExpiration"
               type="date"
@@ -1571,7 +1588,7 @@ function AnnualRenewalForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="valetPermitExpiration">Valet Operator Permit Expiration</Label>
+            <Label htmlFor="valetPermitExpiration" className="text-slate-300">Valet Operator Permit Expiration</Label>
             <Input
               id="valetPermitExpiration"
               type="date"
@@ -1583,7 +1600,7 @@ function AnnualRenewalForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="valetInsuranceExpiration">Valet Operator Insurance Expiration</Label>
+            <Label htmlFor="valetInsuranceExpiration" className="text-slate-300">Valet Operator Insurance Expiration</Label>
             <Input
               id="valetInsuranceExpiration"
               type="date"
@@ -1598,10 +1615,10 @@ function AnnualRenewalForm({
 
       {/* Bob's Specific Resolution Date Field */}
       {selectedLocation === 'bobs' && (
-        <div className="space-y-4 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
-          <h4 className="text-md font-semibold text-blue-700">Resolution of Authority Date</h4>
+        <div className="space-y-4 bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
+          <h4 className="text-md font-semibold text-blue-300">Resolution of Authority Date</h4>
           <div className="space-y-2">
-            <Label htmlFor="resolutionDate">Resolution Date (for page 5)</Label>
+            <Label htmlFor="resolutionDate" className="text-slate-300">Resolution Date (for page 5)</Label>
             <Input
               id="resolutionDate"
               type="date"
@@ -1615,9 +1632,9 @@ function AnnualRenewalForm({
       )}
 
       {/* Document Upload Section */}
-      <div className="space-y-4 bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-        <h4 className="text-md font-semibold text-gray-700">Supporting Documents</h4>
-        <p className="text-sm text-gray-600">Upload supporting documents to include with the renewal application.</p>
+      <div className="space-y-4 bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
+        <h4 className="text-md font-semibold text-slate-300">Supporting Documents</h4>
+        <p className="text-sm text-slate-300">Upload supporting documents to include with the renewal application.</p>
         
         {documentUploads?.map((doc) => (
           <div key={doc.category} className="border rounded-lg p-4 bg-white">
@@ -1651,7 +1668,7 @@ function AnnualRenewalForm({
         <Button 
           onClick={onGenerate} 
           disabled={isGenerating || !selectedLocation}
-          className="w-full"
+          className="w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
           size="lg"
         >
           {isGenerating ? 'Generating...' : `Generate ${selectedLocation ? selectedLocation.charAt(0).toUpperCase() + selectedLocation.slice(1).replace('-', ' ') : 'Annual Renewal'} PDF`}
@@ -1775,8 +1792,8 @@ function TemporaryValetForm({
     <>
       {/* Location Selection */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Location Template</h3>
-        <p className="text-sm text-gray-600">Select a location to auto-fill all company and zone details. Only event date/time needs to be specified.</p>
+        <h3 className="text-lg font-semibold text-white">Location Template</h3>
+        <p className="text-sm text-slate-300">Select a location to auto-fill all company and zone details. Only event date/time needs to be specified.</p>
         <Select value={selectedLocation} onValueChange={(value) => handleLocationPreset(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select location template" />
@@ -1792,11 +1809,11 @@ function TemporaryValetForm({
 
       {/* Event Time and Date - Only Essential Fields */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Event Details</h3>
-        <p className="text-sm text-gray-600">Specify when you need the temporary valet zone.</p>
+        <h3 className="text-lg font-semibold text-white">Event Details</h3>
+        <p className="text-sm text-slate-300">Specify when you need the temporary valet zone.</p>
         
         <div className="space-y-2">
-          <Label htmlFor="eventDescription">Event Description</Label>
+          <Label htmlFor="eventDescription" className="text-slate-300">Event Description</Label>
           <Input
             id="eventDescription"
             value={data.eventDescription}
@@ -1808,7 +1825,7 @@ function TemporaryValetForm({
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="eventDates">Event Date(s)</Label>
+            <Label htmlFor="eventDates" className="text-slate-300">Event Date(s)</Label>
             <Input
               id="eventDates"
               value={data.eventDates}
@@ -1817,7 +1834,7 @@ function TemporaryValetForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fromTime">From Time</Label>
+            <Label htmlFor="fromTime" className="text-slate-300">From Time</Label>
             <Input
               id="fromTime"
               type="time"
@@ -1826,7 +1843,7 @@ function TemporaryValetForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="toTime">To Time</Label>
+            <Label htmlFor="toTime" className="text-slate-300">To Time</Label>
             <Input
               id="toTime"
               type="time"
@@ -1862,12 +1879,12 @@ function TemporaryValetForm({
 
       {/* Certificate of Insurance Upload - For All Locations */}
       {selectedLocation && (
-        <div className="space-y-4 bg-green-50 p-4 rounded-lg border-2 border-green-200">
-          <h3 className="text-lg font-semibold text-green-700">Certificate of Insurance - Valet Operator</h3>
-          <p className="text-sm text-green-600">Upload certificate of insurance document for temporary permit application.</p>
+        <div className="space-y-4 bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
+          <h3 className="text-lg font-semibold text-green-300">Certificate of Insurance - Valet Operator</h3>
+          <p className="text-sm text-slate-300">Upload certificate of insurance document for temporary permit application.</p>
           
           <div className="space-y-2">
-            <Label htmlFor="certificateOfInsurance">Certificate of Insurance - Valet Operator</Label>
+            <Label htmlFor="certificateOfInsurance" className="text-slate-300">Certificate of Insurance - Valet Operator</Label>
             <Input
               id="certificateOfInsurance"
               type="file"
@@ -1895,7 +1912,7 @@ function TemporaryValetForm({
         <Button 
           onClick={onGenerate} 
           disabled={isGenerating}
-          className="w-full"
+          className="w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
           size="lg"
         >
           {isGenerating ? 'Generating...' : 'Generate Temporary Valet Zone PDF'}
