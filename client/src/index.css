@@ -206,27 +206,35 @@ input[type=number] {
     position: fixed !important;
     top: 0 !important;
     z-index: 99999 !important;
-    /* Cover the entire iPadOS status bar area with extra space */
-    padding-top: max(env(safe-area-inset-top, 0), 60px) !important;
-    margin-top: calc(-1 * env(safe-area-inset-top, 0)) !important;
-    height: calc(56px + env(safe-area-inset-top, 60px)) !important;
+    /* Ensure header covers full area including status bar */
+    min-height: calc(80px + env(safe-area-inset-top, 20px)) !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
   }
   
   /* Fix main content positioning on iPad - account for extended header */
   main {
-    margin-top: calc(56px + max(env(safe-area-inset-top, 0), 60px)) !important;
+    margin-top: calc(80px + env(safe-area-inset-top, 20px)) !important;
     padding-top: 0 !important;
   }
   
-  /* Ensure glassmorphism background covers iPadOS status bar */
+  /* Ensure glassmorphism background covers full header area */
   .app-header > div {
     height: 100% !important;
-    padding-top: 0 !important;
+    min-height: inherit !important;
   }
   
-  /* Adjust header content positioning */
-  .app-header .relative.z-10 {
-    padding-top: max(env(safe-area-inset-top, 0), 30px) !important;
+  /* Position hamburger menu properly within expanded header */
+  .app-header .max-w-4xl.mx-auto {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 64rem !important;
+    height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
   }
   
   /* Fix admin panel sidebar icons on iPad */
@@ -718,9 +726,11 @@ input[type="date"].paperform-input {
   left: 0 !important;
   right: 0 !important;
   z-index: 99999 !important;
-  padding-top: max(env(safe-area-inset-top, 0), 30px) !important;
-  /* Extend header to cover iPadOS status bar */
-  margin-top: calc(-1 * env(safe-area-inset-top, 0)) !important;
+  /* Start from the very top without padding initially */
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  /* Set total height to include both status bar and nav content */
+  min-height: calc(56px + env(safe-area-inset-top, 20px)) !important;
 }
 
 .app-header-content {
