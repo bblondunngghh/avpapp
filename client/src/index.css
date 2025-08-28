@@ -247,21 +247,29 @@ input[type=number] {
     object-fit: contain !important;
   }
   
-  /* Fix reports page viewport overflow on iPad */
+  /* Fix reports page viewport overflow on iPad - allow full width for cards */
   .admin-panel .flex-1.w-full {
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: none !important;
+    overflow-x: visible !important;
   }
   
-  /* Ensure tables don't overflow viewport on iPad */
-  .admin-panel .overflow-x-auto {
-    max-width: calc(100vw - 280px) !important; /* Account for sidebar width */
+  /* Only restrict tables, not cards */
+  .admin-panel .overflow-x-auto table {
+    max-width: calc(100vw - 320px) !important; /* Account for sidebar width */
   }
   
-  /* Fix main content area width on iPad */
+  /* Fix main content area width on iPad - allow full content width */
   .admin-panel .flex-1.flex.flex-col.min-h-screen {
-    max-width: calc(100vw - 256px) !important; /* Account for sidebar */
-    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: none !important;
+    overflow-x: visible !important;
+  }
+  
+  /* Ensure admin panel cards use full available width */
+  .admin-panel .relative.overflow-hidden.bg-gradient-to-r {
+    width: 100% !important;
+    max-width: none !important;
   }
 }
 
