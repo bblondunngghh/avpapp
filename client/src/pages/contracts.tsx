@@ -1171,54 +1171,50 @@ export default function Contracts() {
   };
 
   return (
-    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl max-w-4xl mx-auto px-4 py-8">
-      {/* Enhanced Glass morphism overlay */}
-      <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-      
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl max-w-4xl mx-auto px-4 py-8">
+      {/* Glass morphism overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
       
       {/* Content with z-index */}
       <div className="relative z-10">
       <div className="flex items-center mb-6">
         <Button 
           onClick={() => navigate("/admin")} 
-          className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 p-0 h-10 w-10 rounded-full mr-4"
+          className="bg-slate-700/50 border border-slate-600/50 hover:bg-slate-600/50 text-white transition-all duration-200 p-0 h-10 w-10 rounded-full mr-4"
         >
           <img src={houseIcon} alt="Back to Admin" className="h-5 w-5" />
         </Button>
         <h1 className="text-3xl font-bold text-white">Document Generator</h1>
       </div>
 
-      <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl">
-        {/* Enhanced Glass morphism overlay */}
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-        
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
-        
-        {/* Content with z-index */}
-        <div className="relative z-10 p-6">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-white mb-2">Document Generator</h2>
-            <p className="text-sm text-slate-300">
-              Generate customized documents for valet parking services.
-            </p>
+      <div className="space-y-6">
+          <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl mb-6">
+            {/* Glass morphism overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
+            
+            <div className="relative z-10 p-6">
+              <h2 className="text-xl font-bold text-white mb-2">Document Generator</h2>
+              <p className="text-sm text-slate-300">
+                Generate customized documents for valet parking services.
+              </p>
+            </div>
           </div>
-          <div className="space-y-6">
-          {/* Document Type Selection */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Document Type</h3>
+          <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl">
+            {/* Glass morphism overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
+            
+            <div className="relative z-10 p-6 space-y-6">
+              {/* Document Type Selection */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white">Document Type</h3>
             <Select value={documentType} onValueChange={(value: any) => setDocumentType(value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select document type" />
+              <SelectTrigger className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50">
+                <SelectValue placeholder="Select document type" className="text-white" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="contract">Service Contract</SelectItem>
-                <SelectItem value="temporary-valet">Temporary Valet Zone Application</SelectItem>
-                <SelectItem value="annual-renewal">Annual Renewal</SelectItem>
+              <SelectContent className="bg-slate-800 border-slate-600/50 text-white">
+                <SelectItem value="contract" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Service Contract</SelectItem>
+                <SelectItem value="temporary-valet" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Temporary Valet Zone Application</SelectItem>
+                <SelectItem value="annual-renewal" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Annual Renewal</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1236,22 +1232,23 @@ export default function Contracts() {
                   value={contractData.businessName}
                   onChange={(e) => handleInputChange('businessName', e.target.value)}
                   placeholder="e.g., Parker Jazz INC"
+                  className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50 focus:bg-slate-600/50"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="businessEntityType" className="text-slate-300">Business Entity Type</Label>
                 <Select value={contractData.businessEntityType} onValueChange={(value) => handleInputChange('businessEntityType', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
+                  <SelectTrigger className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50">
+                    <SelectValue className="text-white" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="corporation">Corporation</SelectItem>
-                    <SelectItem value="limited liability company">Limited Liability Company (LLC)</SelectItem>
-                    <SelectItem value="partnership">Partnership</SelectItem>
-                    <SelectItem value="limited partnership">Limited Partnership</SelectItem>
-                    <SelectItem value="sole proprietorship">Sole Proprietorship</SelectItem>
-                    <SelectItem value="professional corporation">Professional Corporation</SelectItem>
-                    <SelectItem value="nonprofit corporation">Nonprofit Corporation</SelectItem>
+                  <SelectContent className="bg-slate-800 border-slate-600/50 text-white">
+                    <SelectItem value="corporation" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Corporation</SelectItem>
+                    <SelectItem value="limited liability company" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Limited Liability Company (LLC)</SelectItem>
+                    <SelectItem value="partnership" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Partnership</SelectItem>
+                    <SelectItem value="limited partnership" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Limited Partnership</SelectItem>
+                    <SelectItem value="sole proprietorship" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Sole Proprietorship</SelectItem>
+                    <SelectItem value="professional corporation" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Professional Corporation</SelectItem>
+                    <SelectItem value="nonprofit corporation" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Nonprofit Corporation</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1262,6 +1259,7 @@ export default function Contracts() {
                   value={contractData.contactName}
                   onChange={(e) => handleInputChange('contactName', e.target.value)}
                   placeholder="Primary contact person"
+                  className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50 focus:bg-slate-600/50"
                 />
               </div>
               <div className="space-y-2">
@@ -1271,6 +1269,7 @@ export default function Contracts() {
                   value={contractData.contactTitle}
                   onChange={(e) => handleInputChange('contactTitle', e.target.value)}
                   placeholder="e.g., Manager, Owner"
+                  className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50 focus:bg-slate-600/50"
                 />
               </div>
             </div>
@@ -1282,6 +1281,7 @@ export default function Contracts() {
                 value={contractData.businessAddress}
                 onChange={(e) => handleInputChange('businessAddress', e.target.value)}
                 placeholder="Street address"
+                className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50 focus:bg-slate-600/50"
               />
             </div>
             
@@ -1293,19 +1293,20 @@ export default function Contracts() {
                   value={contractData.businessCity}
                   onChange={(e) => handleInputChange('businessCity', e.target.value)}
                   placeholder="Austin"
+                  className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50 focus:bg-slate-600/50"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="businessState" className="text-slate-300">State</Label>
                 <Select value={contractData.businessState} onValueChange={(value) => handleInputChange('businessState', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
+                  <SelectTrigger className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50">
+                    <SelectValue className="text-white" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="TX">Texas</SelectItem>
-                    <SelectItem value="CA">California</SelectItem>
-                    <SelectItem value="NY">New York</SelectItem>
-                    <SelectItem value="FL">Florida</SelectItem>
+                  <SelectContent className="bg-slate-800 border-slate-600/50 text-white">
+                    <SelectItem value="TX" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Texas</SelectItem>
+                    <SelectItem value="CA" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">California</SelectItem>
+                    <SelectItem value="NY" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">New York</SelectItem>
+                    <SelectItem value="FL" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">Florida</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1316,6 +1317,7 @@ export default function Contracts() {
                   value={contractData.businessZip}
                   onChange={(e) => handleInputChange('businessZip', e.target.value)}
                   placeholder="78746"
+                  className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50 focus:bg-slate-600/50"
                 />
               </div>
             </div>
@@ -1515,9 +1517,9 @@ export default function Contracts() {
               onLocationChange={setSelectedLocation}
             />
           )}
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

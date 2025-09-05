@@ -22,7 +22,7 @@ import {
   DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog";
-import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info, Settings, CheckCircle, XCircle } from "lucide-react";
+import { AlertCircle, Calendar, DollarSign, FileText, LogOut, UserCircle, Info, Settings, CheckCircle, XCircle, Clock, Receipt } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import watchTimeIcon from "@assets/Watch-Time-1--Streamline-Ultimate.png";
 import accountingBillStackIcon from "@assets/Accounting-Bill-Stack-Dollar--Streamline-Ultimate.png";
@@ -50,6 +50,13 @@ export default function EmployeeDashboard() {
   const [timeOffDate, setTimeOffDate] = useState("");
   const [timeOffReason, setTimeOffReason] = useState("");
   const [isSubmittingTimeOff, setIsSubmittingTimeOff] = useState(false);
+
+  // Calculate minimum date for time-off requests (15 days from now)
+  const getMinimumTimeOffDate = () => {
+    const fifteenDaysFromNow = new Date();
+    fifteenDaysFromNow.setDate(new Date().getDate() + 15);
+    return fifteenDaysFromNow.toISOString().split('T')[0];
+  };
 
   const employeeId = localStorage.getItem("employee_id");
   const employeeName = localStorage.getItem("employee_name");
@@ -248,6 +255,20 @@ export default function EmployeeDashboard() {
       toast({
         title: "Invalid date",
         description: "Cannot request time off for past dates",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if the date is within 15 days of today
+    const fifteenDaysFromNow = new Date();
+    fifteenDaysFromNow.setDate(today.getDate() + 15);
+    fifteenDaysFromNow.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < fifteenDaysFromNow) {
+      toast({
+        title: "Advance notice required",
+        description: "Time off requests must be submitted at least 15 days in advance",
         variant: "destructive",
       });
       return;
@@ -540,8 +561,10 @@ export default function EmployeeDashboard() {
         )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-white/10 backdrop-blur-sm border border-white/20">
-          <CardContent className="pt-6">
+        <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+          
+          {/* Content with z-index */}
+          <div className="relative z-10 p-6">
             <div className="flex items-center gap-3">
               <div className="bg-blue-500/20 p-3 rounded-full">
                 <img src={watchTimeIcon} alt="Watch Time" className="h-6 w-6" />
@@ -551,11 +574,13 @@ export default function EmployeeDashboard() {
                 <h3 className="text-2xl font-bold text-white">{paySummary.totalHours.toFixed(1)}</h3>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
         
-        <Card className="bg-white/10 backdrop-blur-sm border border-white/20">
-          <CardContent className="pt-6">
+        <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+          
+          {/* Content with z-index */}
+          <div className="relative z-10 p-6">
             <div className="flex items-center gap-3">
               <div className="bg-green-500/20 p-3 rounded-full">
                 <img src={accountingBillStackIcon} alt="Accounting Bill Stack" className="h-6 w-6" />
@@ -565,11 +590,13 @@ export default function EmployeeDashboard() {
                 <h3 className="text-2xl font-bold text-white">${paySummary.totalEarnings.toFixed(2)}</h3>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
         
-        <Card className="bg-white/10 backdrop-blur-sm border border-white/20">
-          <CardContent className="pt-6">
+        <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+          
+          {/* Content with z-index */}
+          <div className="relative z-10 p-6">
             <div className="flex items-start gap-3">
               <div className={`p-3 rounded-full ${paySummary.totalMoneyOwed > 0 ? 'bg-green-500/20' : 'bg-gray-500/20'}`}>
                 <img src={cashUserIcon} alt="Cash User" className="h-6 w-6" />
@@ -586,11 +613,13 @@ export default function EmployeeDashboard() {
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
         
-        <Card className={`bg-white/10 backdrop-blur-sm border ${paySummary.totalAdditionalTaxPayments > 0 ? 'border-blue-400/50' : 'border-white/20'}`}>
-          <CardContent className="pt-6">
+        <div className={`relative overflow-hidden bg-slate-800/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl ${paySummary.totalAdditionalTaxPayments > 0 ? 'border border-blue-400/50' : 'border border-slate-600/50'}`}>
+          
+          {/* Content with z-index */}
+          <div className="relative z-10 p-6">
             <div className="flex items-start gap-3">
               <div className="bg-blue-500/20 p-3 rounded-full">
                 <img src={taskListCashIcon} alt="Task List Cash" className="h-6 w-6" />
@@ -603,30 +632,30 @@ export default function EmployeeDashboard() {
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-end gap-4 border border-white/20 p-4 rounded-md bg-white/10 backdrop-blur-sm mb-6">
+      <div className="flex flex-wrap items-end gap-4 bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl p-6 mb-6">
         <div className="space-y-2">
           <label htmlFor="month-select" className="text-sm font-medium text-white">Filter by Month</label>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-48 bg-white/10 backdrop-blur-sm border-white/20 text-white">
               <SelectValue placeholder="Select a month" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2025-01">January 2025</SelectItem>
-              <SelectItem value="2025-02">February 2025</SelectItem>
-              <SelectItem value="2025-03">March 2025</SelectItem>
-              <SelectItem value="2025-04">April 2025</SelectItem>
-              <SelectItem value="2025-05">May 2025</SelectItem>
-              <SelectItem value="2025-06">June 2025</SelectItem>
-              <SelectItem value="2025-07">July 2025</SelectItem>
-              <SelectItem value="2025-08">August 2025</SelectItem>
-              <SelectItem value="2025-09">September 2025</SelectItem>
-              <SelectItem value="2025-10">October 2025</SelectItem>
-              <SelectItem value="2025-11">November 2025</SelectItem>
-              <SelectItem value="2025-12">December 2025</SelectItem>
+            <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm" position="popper" side="bottom">
+              <SelectItem value="2025-01" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">January 2025</SelectItem>
+              <SelectItem value="2025-02" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">February 2025</SelectItem>
+              <SelectItem value="2025-03" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">March 2025</SelectItem>
+              <SelectItem value="2025-04" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">April 2025</SelectItem>
+              <SelectItem value="2025-05" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">May 2025</SelectItem>
+              <SelectItem value="2025-06" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">June 2025</SelectItem>
+              <SelectItem value="2025-07" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">July 2025</SelectItem>
+              <SelectItem value="2025-08" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">August 2025</SelectItem>
+              <SelectItem value="2025-09" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">September 2025</SelectItem>
+              <SelectItem value="2025-10" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">October 2025</SelectItem>
+              <SelectItem value="2025-11" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">November 2025</SelectItem>
+              <SelectItem value="2025-12" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">December 2025</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -644,38 +673,38 @@ export default function EmployeeDashboard() {
       </div>
 
       <Tabs defaultValue="schedule">
-        <TabsList className="mb-6 bg-white/10 backdrop-blur-sm border-white/20">
-          <TabsTrigger value="schedule" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-white/20">
+        <TabsList className="w-full mb-6 bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl">
+          <TabsTrigger value="schedule" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-slate-700/80">
             <Calendar className="h-4 w-4 mr-2" />
             My Schedule
           </TabsTrigger>
-          <TabsTrigger value="earnings" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-white/20">
-            <img src={accountingBillStackIcon} alt="Earnings" className="h-4 w-4 mr-2" />
+          <TabsTrigger value="earnings" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-slate-700/80">
+            <DollarSign className="h-4 w-4 mr-2" />
             Earnings Summary
           </TabsTrigger>
-          <TabsTrigger value="details" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-white/20">
-            <img src={taskListCashIcon} alt="Shift Details" className="h-4 w-4 mr-2" />
+          <TabsTrigger value="details" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-slate-700/80">
+            <Receipt className="h-4 w-4 mr-2" />
             Shift Details
           </TabsTrigger>
-          <TabsTrigger value="timeoff" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-white/20">
-            <Calendar className="h-4 w-4 mr-2" />
+          <TabsTrigger value="timeoff" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-slate-700/80">
+            <Clock className="h-4 w-4 mr-2" />
             Request Time Off
           </TabsTrigger>
-          <TabsTrigger value="settings" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-white/20">
-            <img src={serverSettingsIcon} alt="Settings" className="h-4 w-4 mr-2" />
+          <TabsTrigger value="settings" className="text-gray-300 data-[state=active]:text-white data-[state=active]:bg-slate-700/80">
+            <Settings className="h-4 w-4 mr-2" />
             Settings
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="schedule">
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">My Upcoming Schedule</CardTitle>
-              <CardDescription className="text-gray-300">
-                View your upcoming scheduled shifts
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+            
+            {/* Content with z-index */}
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-white mb-2">My Upcoming Schedule</h2>
+                <p className="text-gray-300">View your upcoming scheduled shifts</p>
+              </div>
               {isLoadingSchedule ? (
                 <div className="text-center py-8 text-gray-300">Loading your schedule...</div>
               ) : upcomingShifts.length === 0 ? (
@@ -770,19 +799,19 @@ export default function EmployeeDashboard() {
                   })}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
         
         <TabsContent value="earnings">
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Earnings Summary</CardTitle>
-              <CardDescription className="text-gray-300">
-                Your earnings breakdown for the selected date range
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+            
+            {/* Content with z-index */}
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-white mb-2">Earnings Summary</h2>
+                <p className="text-gray-300">Your earnings breakdown for the selected date range</p>
+              </div>
               {isLoading ? (
                 <div className="text-center py-8">Loading your data...</div>
               ) : paySummary.shifts.length === 0 ? (
@@ -838,21 +867,22 @@ export default function EmployeeDashboard() {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
         
         <TabsContent value="timeoff">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Request Time Off Card */}
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Request Time Off</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Submit a request for time off that requires manager approval
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+              <div className="relative z-10 p-6">
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-white mb-2">Request Time Off</h2>
+                  <p className="text-gray-300">
+                    Submit a request for time off that requires manager approval. Requests must be submitted at least 15 days in advance.
+                  </p>
+                </div>
+                <div className="space-y-4">
                 <div>
                   <Label htmlFor="timeoff-date" className="text-sm font-medium text-gray-300">
                     Date Requested Off
@@ -862,10 +892,13 @@ export default function EmployeeDashboard() {
                     type="date"
                     value={timeOffDate}
                     onChange={(e) => setTimeOffDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]} // Prevent past dates
+                    min={getMinimumTimeOffDate()} // Require 15 days advance notice
                     className="bg-white/10 backdrop-blur-sm border-white/20 text-white"
                     disabled={isSubmittingTimeOff}
                   />
+                  <p className="text-xs text-gray-400 mt-1">
+                    Minimum 15 days advance notice required
+                  </p>
                 </div>
                 
                 <div>
@@ -890,18 +923,19 @@ export default function EmployeeDashboard() {
                 >
                   {isSubmittingTimeOff ? "Submitting..." : "Submit Request"}
                 </Button>
-              </CardContent>
-            </Card>
+                </div>
+              </div>
+            </div>
 
             {/* My Time Off Requests Card */}
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">My Time Off Requests</CardTitle>
-                <CardDescription className="text-gray-300">
-                  View your submitted requests and their status
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+            <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+              <div className="relative z-10 p-6">
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-white mb-2">My Time Off Requests</h2>
+                  <p className="text-gray-300">
+                    View your submitted requests and their status
+                  </p>
+                </div>
                 {myTimeOffRequests.length === 0 ? (
                   <div className="text-center py-8">
                     <Calendar className="h-8 w-8 text-gray-400 mx-auto mb-2" />
@@ -975,20 +1009,20 @@ export default function EmployeeDashboard() {
                       })}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </TabsContent>
         
         <TabsContent value="details">
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Shift Details</CardTitle>
-              <CardDescription className="text-gray-300">
-                View your individual shift details and earnings
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-white mb-2">Shift Details</h2>
+                <p className="text-gray-300">
+                  View your individual shift details and earnings
+                </p>
+              </div>
               {isLoading ? (
                 <div className="text-center py-8 text-gray-300">Loading your data...</div>
               ) : paySummary.shifts.length === 0 ? (
@@ -1057,22 +1091,22 @@ export default function EmployeeDashboard() {
                   </Table>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="settings">
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Settings className="h-5 w-5 text-gray-300" />
-                Account Settings
-              </CardTitle>
-              <CardDescription className="text-gray-300">
-                Manage your account preferences and login credentials
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+            <div className="relative z-10 p-6">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-gray-300" />
+                  Account Settings
+                </h2>
+                <p className="text-gray-300">
+                  Manage your account preferences and login credentials
+                </p>
+              </div>
               {/* Training Status Section */}
               <div className="space-y-4">
                 <div>
@@ -1112,7 +1146,7 @@ export default function EmployeeDashboard() {
                 </div>
               </div>
 
-              <Separator />
+              <Separator className="my-8" />
 
               <div className="space-y-4">
                 <div>
@@ -1149,7 +1183,7 @@ export default function EmployeeDashboard() {
                 </div>
               </div>
 
-              <Separator />
+              <Separator className="my-8" />
 
               <div className="space-y-4">
                 <div>
@@ -1233,8 +1267,8 @@ export default function EmployeeDashboard() {
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
       </div>

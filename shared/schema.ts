@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, doublePrecision, numeric } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, doublePrecision, numeric, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -52,6 +52,16 @@ export const employees = pgTable("employees", {
   totalEarnings: doublePrecision("total_earnings"),
   moneyOwed: doublePrecision("money_owed"),
   taxesOwed: doublePrecision("taxes_owed"),
+  availability: json("availability").$type<{
+    sunday: boolean;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+    notes: string;
+  }>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at"),
 });
@@ -84,6 +94,16 @@ export const insertEmployeeSchema = createInsertSchema(employees)
     totalEarnings: z.number().optional(),
     moneyOwed: z.number().optional(),
     taxesOwed: z.number().optional(),
+    availability: z.object({
+      sunday: z.boolean(),
+      monday: z.boolean(),
+      tuesday: z.boolean(),
+      wednesday: z.boolean(),
+      thursday: z.boolean(),
+      friday: z.boolean(),
+      saturday: z.boolean(),
+      notes: z.string(),
+    }).optional(),
   });
 
 export const updateEmployeeSchema = createInsertSchema(employees)
@@ -106,6 +126,16 @@ export const updateEmployeeSchema = createInsertSchema(employees)
     driversLicenseNumber: z.string().optional(),
     dateOfBirth: z.string().optional(),
     motorVehicleRecordsPath: z.string().optional(),
+    availability: z.object({
+      sunday: z.boolean(),
+      monday: z.boolean(),
+      tuesday: z.boolean(),
+      wednesday: z.boolean(),
+      thursday: z.boolean(),
+      friday: z.boolean(),
+      saturday: z.boolean(),
+      notes: z.string(),
+    }).optional(),
   })
   .partial();
 
@@ -141,6 +171,8 @@ export const locations = pgTable("locations", {
   curbsideRate: doublePrecision("curbside_rate").notNull().default(15), // Rate charged to customer per car
   turnInRate: doublePrecision("turn_in_rate").notNull().default(11), // Amount turned in to company per car
   employeeCommission: doublePrecision("employee_commission").notNull().default(4), // Commission paid to employees per car
+  receiptRate: doublePrecision("receipt_rate").notNull().default(15), // Rate charged for receipt transactions
+  receiptCommission: doublePrecision("receipt_commission").notNull().default(4), // Commission paid to employees per receipt
   logoUrl: text("logo_url"), // URL or path to location's logo image
   address: text("address"), // Full address of the location
   phone: text("phone"), // Location phone number
@@ -155,6 +187,8 @@ export const insertLocationSchema = createInsertSchema(locations).pick({
   curbsideRate: true,
   turnInRate: true,
   employeeCommission: true,
+  receiptRate: true,
+  receiptCommission: true,
   logoUrl: true,
   address: true,
   phone: true,
@@ -169,6 +203,8 @@ export const updateLocationSchema = createInsertSchema(locations).pick({
   curbsideRate: true,
   turnInRate: true,
   employeeCommission: true,
+  receiptRate: true,
+  receiptCommission: true,
   logoUrl: true,
   address: true,
   phone: true,

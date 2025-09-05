@@ -110,45 +110,39 @@ export default function Reports() {
   }
   
   return (
-    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-6">
-      {/* Enhanced Glass morphism overlay */}
-      <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-      
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl">
+      {/* Glass morphism overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl"></div>
       
       {/* Content with z-index */}
-      <div className="relative z-10">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-4">
-          <Button 
-            onClick={() => navigate("/admin")}
-            className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-1"
+      <div className="relative z-10 p-6">
+      <div className="mb-6">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <Button 
+              onClick={() => navigate("/admin")}
+              className="bg-slate-700/50 border border-slate-600/50 hover:bg-slate-600/50 text-white transition-all duration-200 flex items-center gap-2 mb-3"
+            >
+              <img src={houseIcon} alt="House" className="h-4 w-4" />
+              Back to Admin Panel
+            </Button>
+            <h2 className="text-2xl font-normal text-white">All Reports</h2>
+          </div>
+          <Button
+            onClick={handleNewReport}
+            className="bg-slate-700/50 border border-slate-600/50 hover:bg-slate-600/50 text-white transition-all duration-200 flex items-center gap-2"
           >
-            <img src={houseIcon} alt="House" className="h-4 w-4" />
-            Back to Admin Panel
+            <Plus className="h-4 w-4" /> New Report
           </Button>
-          <h2 className="text-2xl font-normal text-white">All Reports</h2>
         </div>
-        <Button
-          onClick={handleNewReport}
-          className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
-        >
-          <Plus className="mr-1 h-4 w-4" /> New Report
-        </Button>
       </div>
       
-      <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl mb-6">
-        {/* Enhanced Glass morphism overlay */}
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-        
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+      <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl mb-6">
+        {/* Glass morphism overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
         
         {/* Content with z-index */}
-        <div className="relative z-10 pt-6 p-6">
+        <div className="relative z-10 p-6">
           <h3 className="text-lg font-medium mb-3 text-white">Filter Reports</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -159,13 +153,13 @@ export default function Reports() {
                 value={locationFilter}
                 onValueChange={setLocationFilter}
               >
-                <SelectTrigger id="locationFilter">
-                  <SelectValue placeholder="All Locations" />
+                <SelectTrigger id="locationFilter" className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50">
+                  <SelectValue placeholder="All Locations" className="text-white" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Locations</SelectItem>
+                <SelectContent className="bg-slate-800 border-slate-600/50 text-white">
+                  <SelectItem value="all" className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">All Locations</SelectItem>
                   {LOCATIONS.map(location => (
-                    <SelectItem key={location.id} value={location.id.toString()}>
+                    <SelectItem key={location.id} value={location.id.toString()} className="hover:bg-slate-700/50 focus:bg-slate-700/50 text-white">
                       {location.name}
                     </SelectItem>
                   ))}
@@ -183,12 +177,13 @@ export default function Reports() {
                   type="date"
                   value={dateFilter}
                   onChange={e => setDateFilter(e.target.value)}
+                  className="bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50 focus:bg-slate-600/50"
                 />
                 {dateFilter && (
                   <Button
                     variant="ghost" 
                     size="icon"
-                    className="absolute right-0 top-0 h-full"
+                    className="absolute right-0 top-0 h-full text-slate-300 hover:text-white hover:bg-slate-600/50"
                     onClick={() => setDateFilter("")}
                   >
                     <span className="sr-only">Clear date</span>
@@ -200,7 +195,7 @@ export default function Reports() {
             
             <div className="flex items-end">
               <Button
-                className="w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="w-full bg-slate-700/50 hover:bg-slate-600/50 text-white border border-slate-600/50 transition-all duration-200"
                 onClick={() => {
                   if (locationFilter || dateFilter) {
                     setLocationFilter("");
@@ -220,13 +215,9 @@ export default function Reports() {
         // Loading state
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl mb-4">
-              {/* Enhanced Glass morphism overlay */}
-              <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-              
-              {/* Background Pattern */}
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            <div key={i} className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl mb-4">
+              {/* Glass morphism overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
               
               <div className="relative z-10 p-4">
                 <div className="flex justify-between">
@@ -274,13 +265,9 @@ export default function Reports() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="relative overflow-hidden bg-gradient-to-r from-slate-900/80 via-blue-900/80 to-indigo-900/80 rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl mt-6">
-              {/* Enhanced Glass morphism overlay */}
-              <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-              
-              {/* Background Pattern */}
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl mt-6">
+              {/* Glass morphism overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
               
               <div className="relative z-10 p-4">
                 <div className="flex items-center justify-between">
@@ -330,13 +317,9 @@ export default function Reports() {
             });
 
             return (
-              <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl mt-6">
-                {/* Enhanced Glass morphism overlay */}
-                <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                
-                {/* Background Pattern */}
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+              <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl mt-6">
+                {/* Glass morphism overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
                 
                 <div className="relative z-10 p-6">
                   <h3 className="text-lg font-semibold mb-4 text-white">
@@ -347,19 +330,19 @@ export default function Reports() {
                     )}
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                    <div className="bg-slate-700/50 p-4 rounded-lg border border-slate-600/50">
                       <div className="text-sm font-medium text-slate-300">Total Cars Parked</div>
                       <div className="text-2xl font-bold text-blue-300">{totals.totalCars.toLocaleString()}</div>
                     </div>
-                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                    <div className="bg-slate-700/50 p-4 rounded-lg border border-slate-600/50">
                       <div className="text-sm font-medium text-slate-300">Total Cash Sales</div>
                       <div className="text-2xl font-bold text-green-300">${totals.totalCash.toLocaleString()}</div>
                     </div>
-                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                    <div className="bg-slate-700/50 p-4 rounded-lg border border-slate-600/50">
                       <div className="text-sm font-medium text-slate-300">Total Credit Sales</div>
                       <div className="text-2xl font-bold text-purple-300">${totals.totalCredit.toLocaleString()}</div>
                     </div>
-                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-md border border-white/20">
+                    <div className="bg-slate-700/50 p-4 rounded-lg border border-slate-600/50">
                       <div className="text-sm font-medium text-slate-300">Total Turn-In</div>
                       <div className="text-2xl font-bold text-orange-300">${totals.totalTurnIn.toLocaleString()}</div>
                     </div>
@@ -376,13 +359,9 @@ export default function Reports() {
         </div>
       ) : (
         // No reports state
-        <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl">
-          {/* Enhanced Glass morphism overlay */}
-          <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-          
-          {/* Background Pattern */}
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+        <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl">
+          {/* Glass morphism overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
           
           <div className="relative z-10 text-center py-8 px-6">
             <p className="text-slate-300 mb-4">

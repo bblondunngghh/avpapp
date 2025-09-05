@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -219,6 +219,10 @@ export default function PublicSchedule() {
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isCreatingPreset, setIsCreatingPreset] = useState(false);
   const [presetName, setPresetName] = useState("");
+  const [selectedEmployeeForContact, setSelectedEmployeeForContact] = useState<any>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [selectedEmployeeForAvailability, setSelectedEmployeeForAvailability] = useState<any>(null);
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
 
   // Admin password
   const ADMIN_PASSWORD = "cg2023";
@@ -364,6 +368,9 @@ export default function PublicSchedule() {
     staleTime: 0,
     refetchOnMount: true,
   });
+
+  // Get availability data directly from selected employee object
+  const employeeAvailability = selectedEmployeeForAvailability?.availability || null;
 
   // Create/Update shift mutation - must be declared before any conditional returns
   const shiftMutation = useMutation({
@@ -973,7 +980,19 @@ export default function PublicSchedule() {
                             </span>
                           </div>
                           <div className="min-w-0">
-                            <div className="font-medium text-white truncate">
+                            <div 
+                              className="font-medium text-white truncate cursor-pointer hover:text-blue-300 transition-colors"
+                              onClick={() => {
+                                if (isAdminMode) {
+                                  setSelectedEmployeeForAvailability(employee);
+                                  setIsAvailabilityModalOpen(true);
+                                } else {
+                                  setSelectedEmployeeForContact(employee);
+                                  setIsContactModalOpen(true);
+                                }
+                              }}
+                              title={isAdminMode ? "Click to view availability" : "Click to view contact information"}
+                            >
                               {employee.fullName}
                             </div>
                             <div className="text-xs text-gray-400">
@@ -1241,6 +1260,156 @@ export default function PublicSchedule() {
           </p>
         </div>
       </div>
+      
+      {/* Employee Contact Information Modal */}
+      {isContactModalOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setIsContactModalOpen(false)}
+          ></div>
+          
+          {/* Modal Content */}
+          <div className="relative bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl text-white max-w-md w-full mx-4 rounded-lg overflow-hidden">
+            {/* Glass morphism overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
+            
+            <div className="relative z-10 p-6">
+              <div className="mb-4">
+                <h2 className="text-white text-xl font-semibold">
+                  {selectedEmployeeForContact?.fullName || 'Employee Contact'}
+                </h2>
+                <p className="text-gray-300 text-sm">
+                  Employee contact information
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Phone Number */}
+                <div>
+                  <Label className="text-gray-300 font-medium">Phone Number</Label>
+                  <div className="bg-slate-700/50 border border-slate-600/50 rounded-md px-3 py-2 text-white mt-1">
+                    {selectedEmployeeForContact?.phone || 'Not provided'}
+                  </div>
+                </div>
+                
+                {/* Email Address */}
+                <div>
+                  <Label className="text-gray-300 font-medium">Email Address</Label>
+                  <div className="bg-slate-700/50 border border-slate-600/50 rounded-md px-3 py-2 text-white mt-1">
+                    {selectedEmployeeForContact?.email || 'Not provided'}
+                  </div>
+                </div>
+                
+                
+                <div className="flex justify-end pt-4">
+                  <Button
+                    onClick={() => setIsContactModalOpen(false)}
+                    className="bg-blue-600/60 hover:bg-blue-700/60 text-white border-blue-500/50"
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Employee Availability Modal (Admin Only) */}
+      {isAvailabilityModalOpen && isAdminMode && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setIsAvailabilityModalOpen(false)}
+          ></div>
+          
+          {/* Modal Content */}
+          <div className="relative bg-slate-800/50 backdrop-blur-xl border border-slate-600/50 shadow-xl text-white max-w-md w-full mx-4 rounded-lg overflow-hidden max-h-[80vh] overflow-y-auto">
+            {/* Glass morphism overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
+            
+            <div className="relative z-10 p-4">
+              <div className="mb-4">
+                <h2 className="text-white text-lg font-semibold">
+                  {selectedEmployeeForAvailability?.fullName || 'Employee'} - Availability
+                </h2>
+                <p className="text-gray-300 text-xs">
+                  Weekly availability schedule
+                </p>
+              </div>
+              
+              <div>
+                {!employeeAvailability ? (
+                  <div className="text-center py-4">
+                    <Calendar className="h-5 w-5 text-gray-400 mx-auto mb-1" />
+                    <p className="text-gray-400 text-xs">No availability set</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {/* Compact grid layout */}
+                    <div className="grid grid-cols-7 gap-2">
+                      {[
+                        { key: 'sunday', label: 'Sun' },
+                        { key: 'monday', label: 'Mon' },
+                        { key: 'tuesday', label: 'Tue' },
+                        { key: 'wednesday', label: 'Wed' },
+                        { key: 'thursday', label: 'Thu' },
+                        { key: 'friday', label: 'Fri' },
+                        { key: 'saturday', label: 'Sat' }
+                      ].map((day) => {
+                        const isAvailable = employeeAvailability[day.key];
+                        return (
+                          <div key={day.key} className="flex flex-col items-center">
+                            <div className="text-xs text-gray-300 mb-2">{day.label}</div>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium mx-auto ${
+                              isAvailable 
+                                ? 'bg-green-500/20 text-green-400 border border-green-500/50' 
+                                : 'bg-red-500/20 text-red-400 border border-red-500/50'
+                            }`}>
+                              {isAvailable ? '✓' : '✗'}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Legend */}
+                    <div className="flex justify-center gap-4 text-xs">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+                        <span className="text-gray-300">Available</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                        <span className="text-gray-300">Not available</span>
+                      </div>
+                    </div>
+                    
+                    {employeeAvailability.notes && (
+                      <div className="bg-slate-700/30 border border-slate-600/30 rounded p-2">
+                        <div className="text-xs text-gray-300 mb-1">Notes:</div>
+                        <p className="text-xs text-white">{employeeAvailability.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <div className="flex justify-end pt-3 mt-3 border-t border-slate-600/50">
+                  <Button
+                    onClick={() => setIsAvailabilityModalOpen(false)}
+                    className="bg-blue-600/60 hover:bg-blue-700/60 text-white border-blue-500/50 text-sm px-4 py-1.5"
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Admin Login Modal */}
       <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>

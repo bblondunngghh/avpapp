@@ -337,6 +337,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { 
   Select,
@@ -796,7 +797,17 @@ export default function AdminPanel() {
     fullSsn: '',
     driversLicenseNumber: '',
     dateOfBirth: '',
-    motorVehicleRecordsPath: ''
+    motorVehicleRecordsPath: '',
+    availability: {
+      sunday: false,
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false,
+      notes: ''
+    }
   });
 
   // Check if admin is authenticated
@@ -3298,18 +3309,41 @@ export default function AdminPanel() {
                             bottom: 30,
                           }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis
-                            label={{ value: 'Sales ($)', angle: -90, position: 'insideLeft' }}
-                            tickFormatter={(value) => `$${value}`}
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                          <XAxis 
+                            dataKey="name" 
+                            stroke="rgba(255,255,255,0.7)"
+                            fontSize={12}
                           />
-                          <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Sales']} />
-                          <Legend />
+                          <YAxis
+                            label={{ 
+                              value: 'Sales ($)', 
+                              angle: -90, 
+                              position: 'insideLeft',
+                              style: { textAnchor: 'middle', fill: 'rgba(255,255,255,0.7)' }
+                            }}
+                            tickFormatter={(value) => `$${value}`}
+                            stroke="rgba(255,255,255,0.7)"
+                            fontSize={12}
+                          />
+                          <Tooltip 
+                            formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Sales']}
+                            contentStyle={{ 
+                              backgroundColor: 'rgba(51, 65, 85, 0.9)', 
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              borderRadius: '8px',
+                              color: 'white',
+                              backdropFilter: 'blur(12px)'
+                            }}
+                            cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
+                          />
+                          <Legend 
+                            wrapperStyle={{ color: 'rgba(255,255,255,0.8)' }}
+                          />
                           <Bar 
                             dataKey="sales" 
                             name="Total Sales ($)" 
-                            fill="#4f46e5" 
+                            fill="#3B82F6" 
                             radius={[4, 4, 0, 0]}
                             barSize={30}
                           />
@@ -3798,9 +3832,9 @@ export default function AdminPanel() {
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
-                    <TableCaption>Ticket distribution and usage tracking across all locations.</TableCaption>
+                    <TableCaption className="text-slate-400">Ticket distribution and usage tracking across all locations.</TableCaption>
                     <TableHeader>
-                      <TableRow>
+                      <TableRow className="border-white/20">
                         <TableHead className="text-white">Batch Number</TableHead>
                         <TableHead className="text-white">Location</TableHead>
                         <TableHead className="text-right text-white">Allocated</TableHead>
@@ -3821,29 +3855,29 @@ export default function AdminPanel() {
                           : '0.0';
                         
                         // Calculate color based on usage percentage
-                        let usageColor = "text-green-600";
+                        let usageColor = "text-green-400";
                         if (parseFloat(usagePercent) >= 90) {
-                          usageColor = "text-red-600 font-semibold";
+                          usageColor = "text-red-400 font-semibold";
                         } else if (parseFloat(usagePercent) >= 75) {
-                          usageColor = "text-orange-500";
+                          usageColor = "text-orange-400";
                         } else if (parseFloat(usagePercent) >= 50) {
-                          usageColor = "text-yellow-600";
+                          usageColor = "text-yellow-400";
                         }
                         
                         return (
-                          <TableRow key={distribution.id}>
-                            <TableCell className="font-medium">{distribution.batchNumber}</TableCell>
+                          <TableRow key={distribution.id} className="border-white/20 hover:bg-white/10">
+                            <TableCell className="font-medium text-white">{distribution.batchNumber}</TableCell>
                             <TableCell className="text-white">{location?.name || 'Unknown'}</TableCell>
-                            <TableCell className="text-right">{distribution.allocatedTickets}</TableCell>
-                            <TableCell className="text-right">{distribution.usedTickets}</TableCell>
-                            <TableCell className="text-right font-medium">{remaining}</TableCell>
+                            <TableCell className="text-right text-white">{distribution.allocatedTickets}</TableCell>
+                            <TableCell className="text-right text-white">{distribution.usedTickets}</TableCell>
+                            <TableCell className="text-right font-medium text-white">{remaining}</TableCell>
                             <TableCell className={`text-right ${usageColor}`}>
                               {usagePercent}%
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right text-white">
                               {new Date(distribution.createdAt).toLocaleDateString()}
                             </TableCell>
-                            <TableCell className="max-w-[200px] truncate">
+                            <TableCell className="max-w-[200px] truncate text-white">
                               {distribution.notes || '-'}
                             </TableCell>
                             <TableCell className="text-right">
@@ -4173,9 +4207,21 @@ export default function AdminPanel() {
                                   fullSsn: employee.fullSsn || '',
                           driversLicenseNumber: employee.driversLicenseNumber || '',
                           dateOfBirth: employee.dateOfBirth ? new Date(employee.dateOfBirth).toISOString().split('T')[0] : '',
-                          motorVehicleRecordsPath: employee.motorVehicleRecordsPath || ''
+                          motorVehicleRecordsPath: employee.motorVehicleRecordsPath || '',
+                          availability: employee.availability || {
+                            sunday: false,
+                            monday: false,
+                            tuesday: false,
+                            wednesday: false,
+                            thursday: false,
+                            friday: false,
+                            saturday: false,
+                            notes: ''
+                          }
                                 };
                                 console.log('Setting form data:', employeeData);
+                                console.log('Employee availability from API:', employee.availability);
+                                console.log('Final availability data:', employeeData.availability);
                                 setNewEmployee(employeeData);
                                 // Set editing ID
                                 setEditingEmployeeId(employee.id);
@@ -4240,10 +4286,30 @@ export default function AdminPanel() {
               
               {/* Add Employee Dialog */}
               <Dialog open={isAddEmployeeOpen} onOpenChange={setIsAddEmployeeOpen}>
-                <DialogContent>
+                <>
+                  <style>{`
+                    .add-employee-dialog-content {
+                      position: fixed !important;
+                      top: 50% !important;
+                      left: 50% !important;
+                      transform: translate(-50%, -50%) !important;
+                      max-height: 85vh !important;
+                      overflow-y: auto !important;
+                      z-index: 9999 !important;
+                      margin: 0 !important;
+                      width: auto !important;
+                      max-width: 500px !important;
+                    }
+                  `}</style>
+                  <DialogContent className="add-employee-dialog-content relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl [&>button]:z-50 [&>button]:text-white [&>button]:hover:text-white">
+                    {/* Glass morphism overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl pointer-events-none"></div>
+                    
+                    {/* Content with z-index */}
+                    <div className="relative z-10">
                   <DialogHeader>
-                    <DialogTitle>Add New Employee</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-white">Add New Employee</DialogTitle>
+                    <DialogDescription className="text-slate-400">
                       Add a new employee to the system. They will appear in shift leader selection and payroll calculations.
                     </DialogDescription>
                   </DialogHeader>
@@ -4256,7 +4322,7 @@ export default function AdminPanel() {
                           id="key"
                           type="text"
                           placeholder="e.g., john"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.key}
                           onChange={(e) => setNewEmployee({...newEmployee, key: e.target.value.toLowerCase()})}
                         />
@@ -4268,7 +4334,7 @@ export default function AdminPanel() {
                           id="fullName"
                           type="text"
                           placeholder="e.g., John Smith"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.fullName}
                           onChange={(e) => setNewEmployee({...newEmployee, fullName: e.target.value})}
                         />
@@ -4277,38 +4343,34 @@ export default function AdminPanel() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label>Status</Label>
+                        <Label className="text-white font-medium">Status</Label>
                         <div className="flex items-center space-x-2">
-                          <input 
-                            type="checkbox"
+                          <Checkbox
                             id="isActive"
                             checked={newEmployee.isActive}
-                            onChange={(e) => {
-                              console.log('Active checkbox clicked:', e.target.checked);
-                              setNewEmployee({...newEmployee, isActive: e.target.checked});
+                            onCheckedChange={(checked) => {
+                              console.log('Active checkbox clicked:', checked);
+                              setNewEmployee({...newEmployee, isActive: checked === true});
                             }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                            style={{ accentColor: '#2563eb' }}
+                            className="border-white/30 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                           />
-                          <Label htmlFor="isActive" className="text-sm font-normal cursor-pointer">Active</Label>
+                          <Label htmlFor="isActive" className="text-sm font-normal cursor-pointer text-white">Active</Label>
                         </div>
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label>Role</Label>
+                        <Label className="text-white font-medium">Role</Label>
                         <div className="flex items-center space-x-2">
-                          <input 
-                            type="checkbox"
+                          <Checkbox
                             id="isShiftLeader"
                             checked={newEmployee.isShiftLeader}
-                            onChange={(e) => {
-                              console.log('Shift Leader checkbox clicked:', e.target.checked);
-                              setNewEmployee({...newEmployee, isShiftLeader: e.target.checked});
+                            onCheckedChange={(checked) => {
+                              console.log('Shift Leader checkbox clicked:', checked);
+                              setNewEmployee({...newEmployee, isShiftLeader: checked === true});
                             }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                            style={{ accentColor: '#2563eb' }}
+                            className="border-white/30 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                           />
-                          <Label htmlFor="isShiftLeader" className="text-sm font-normal cursor-pointer">Shift Leader</Label>
+                          <Label htmlFor="isShiftLeader" className="text-sm font-normal cursor-pointer text-white">Shift Leader</Label>
                         </div>
                       </div>
                     </div>
@@ -4321,7 +4383,7 @@ export default function AdminPanel() {
                           type="text"
                           placeholder="e.g., 555-123-4567"
                           maxLength={12}
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.phone}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4340,7 +4402,7 @@ export default function AdminPanel() {
                           id="email"
                           type="email"
                           placeholder="e.g., john@example.com"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.email}
                           onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
                         />
@@ -4354,7 +4416,7 @@ export default function AdminPanel() {
                           id="driversLicense"
                           type="text"
                           placeholder="e.g., D1234567890"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.driversLicenseNumber}
                           onChange={(e) => setNewEmployee({...newEmployee, driversLicenseNumber: e.target.value})}
                         />
@@ -4366,7 +4428,7 @@ export default function AdminPanel() {
                           id="dateOfBirth"
                           type="text"
                           placeholder="MM/DD/YYYY"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.dateOfBirth}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4385,7 +4447,7 @@ export default function AdminPanel() {
                       <input 
                         id="hireDate"
                         type="date"
-                        className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         value={newEmployee.hireDate}
                         onChange={(e) => setNewEmployee({...newEmployee, hireDate: e.target.value})}
                       />
@@ -4395,11 +4457,66 @@ export default function AdminPanel() {
                       <Label htmlFor="notes" className="text-white font-medium">Notes (optional)</Label>
                       <textarea 
                         id="notes"
-                        className="flex min-h-[80px] w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex min-h-[80px] w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         placeholder="Any additional information about this employee"
                         value={newEmployee.notes}
                         onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
                       />
+                    </div>
+                    
+                    {/* Availability Section */}
+                    <div className="space-y-4 border-t border-white/20 pt-4">
+                      <div>
+                        <Label className="text-white font-medium text-lg">Weekly Availability</Label>
+                        <p className="text-slate-400 text-sm">Select the days this employee is available to work</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-7 gap-2">
+                        {[
+                          { key: 'sunday', label: 'Sun' },
+                          { key: 'monday', label: 'Mon' },
+                          { key: 'tuesday', label: 'Tue' },
+                          { key: 'wednesday', label: 'Wed' },
+                          { key: 'thursday', label: 'Thu' },
+                          { key: 'friday', label: 'Fri' },
+                          { key: 'saturday', label: 'Sat' }
+                        ].map(day => (
+                          <div key={day.key} className="flex flex-col items-center space-y-2">
+                            <Label className="text-white text-xs">{day.label}</Label>
+                            <Checkbox
+                              checked={newEmployee.availability[day.key]}
+                              onCheckedChange={(checked) => {
+                                setNewEmployee({
+                                  ...newEmployee,
+                                  availability: {
+                                    ...newEmployee.availability,
+                                    [day.key]: checked === true
+                                  }
+                                });
+                              }}
+                              className="border-white/30 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="add-availability-notes" className="text-white font-medium">Availability Notes</Label>
+                        <textarea 
+                          id="add-availability-notes"
+                          placeholder="Additional notes about this employee's availability..."
+                          rows={3}
+                          className="flex w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                          value={newEmployee.availability.notes}
+                          onChange={(e) => setNewEmployee({
+                            ...newEmployee,
+                            availability: {
+                              ...newEmployee.availability,
+                              notes: e.target.value
+                            }
+                          })}
+                        />
+                      </div>
                     </div>
                   </div>
                   
@@ -4415,6 +4532,9 @@ export default function AdminPanel() {
                           }
                           
                           console.log("Submitting employee data:", newEmployee);
+                          
+                          console.log('Adding new employee with availability:', newEmployee.availability);
+                          console.log('Full new employee data being sent:', newEmployee);
                           
                           const response = await fetch('/api/employees', {
                             method: 'POST',
@@ -4471,11 +4591,14 @@ export default function AdminPanel() {
                           alert("Failed to add employee. Please check the console for details.");
                         }
                       }}
+                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       Add Employee
                     </Button>
                   </DialogFooter>
-                </DialogContent>
+                    </div>
+                  </DialogContent>
+                </>
               </Dialog>
               
               {/* Edit Employee Dialog */}
@@ -4497,15 +4620,64 @@ export default function AdminPanel() {
                     fullSsn: '',
                     driversLicenseNumber: '',
                     dateOfBirth: '',
-                    motorVehicleRecordsPath: ''
+                    motorVehicleRecordsPath: '',
+                    availability: {
+                      sunday: false,
+                      monday: false,
+                      tuesday: false,
+                      wednesday: false,
+                      thursday: false,
+                      friday: false,
+                      saturday: false,
+                      notes: ''
+                    }
                   });
                   setEditingEmployeeId(null);
                 }
               }}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <>
+                  <style>{`
+                    .edit-employee-dialog-content {
+                      position: fixed !important;
+                      top: 50% !important;
+                      left: 50% !important;
+                      transform: translate(-50%, -50%) !important;
+                      max-height: 85vh !important;
+                      z-index: 9999 !important;
+                      margin: 0 !important;
+                      width: auto !important;
+                      max-width: 800px !important;
+                      overflow: hidden !important;
+                    }
+                    .edit-employee-scroll-container {
+                      max-height: calc(85vh - 40px);
+                      overflow-y: auto;
+                      padding-right: 16px;
+                    }
+                    .edit-employee-scroll-container::-webkit-scrollbar {
+                      width: 6px;
+                    }
+                    .edit-employee-scroll-container::-webkit-scrollbar-track {
+                      background: rgba(255, 255, 255, 0.1);
+                      border-radius: 3px;
+                    }
+                    .edit-employee-scroll-container::-webkit-scrollbar-thumb {
+                      background: rgba(255, 255, 255, 0.3);
+                      border-radius: 3px;
+                    }
+                    .edit-employee-scroll-container::-webkit-scrollbar-thumb:hover {
+                      background: rgba(255, 255, 255, 0.5);
+                    }
+                  `}</style>
+                  <DialogContent className="edit-employee-dialog-content relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-0 [&>button]:z-50 [&>button]:text-white [&>button]:hover:text-white">
+                    {/* Glass morphism overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl pointer-events-none"></div>
+                    
+                    {/* Content with z-index and internal scroll */}
+                    <div className="relative z-10 edit-employee-scroll-container p-6">
                   <DialogHeader>
-                    <DialogTitle>Edit Employee</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-white">Edit Employee</DialogTitle>
+                    <DialogDescription className="text-slate-400">
                       Update employee information.
                     </DialogDescription>
                   </DialogHeader>
@@ -4518,7 +4690,7 @@ export default function AdminPanel() {
                           id="edit-key"
                           type="text"
                           placeholder="e.g., john"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.key}
                           onChange={(e) => setNewEmployee({...newEmployee, key: e.target.value.toLowerCase()})}
                         />
@@ -4530,7 +4702,7 @@ export default function AdminPanel() {
                           id="edit-fullName"
                           type="text"
                           placeholder="e.g., John Smith"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.fullName}
                           onChange={(e) => setNewEmployee({...newEmployee, fullName: e.target.value})}
                         />
@@ -4539,66 +4711,34 @@ export default function AdminPanel() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label>Status</Label>
+                        <Label className="text-white font-medium">Status</Label>
                         <div className="flex items-center space-x-2">
-                          <input 
-                            type="checkbox"
+                          <Checkbox
                             id="edit-isActive"
                             checked={newEmployee.isActive}
-                            onChange={(e) => {
-                              console.log('Edit Active checkbox clicked:', e.target.checked);
-                              setNewEmployee({...newEmployee, isActive: e.target.checked});
+                            onCheckedChange={(checked) => {
+                              console.log('Edit Active checkbox clicked:', checked);
+                              setNewEmployee({...newEmployee, isActive: checked === true});
                             }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                            style={{ accentColor: '#2563eb' }}
+                            className="border-white/30 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                           />
-                          <Label htmlFor="edit-isActive" className="text-sm font-normal cursor-pointer">Active</Label>
+                          <Label htmlFor="edit-isActive" className="text-sm font-normal cursor-pointer text-white">Active</Label>
                         </div>
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label>Role</Label>
+                        <Label className="text-white font-medium">Role</Label>
                         <div className="flex items-center space-x-2">
-                          <div 
-                            className="relative inline-flex items-center cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              console.log('Custom checkbox clicked - current state:', newEmployee.isShiftLeader);
-                              const newValue = !newEmployee.isShiftLeader;
-                              console.log('Setting isShiftLeader to:', newValue);
-                              setNewEmployee(prev => ({
-                                ...prev,
-                                isShiftLeader: newValue
-                              }));
+                          <Checkbox
+                            id="edit-isShiftLeader"
+                            checked={newEmployee.isShiftLeader}
+                            onCheckedChange={(checked) => {
+                              console.log('Edit Shift Leader checkbox clicked:', checked);
+                              setNewEmployee({...newEmployee, isShiftLeader: checked === true});
                             }}
-                          >
-                            <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                              newEmployee.isShiftLeader 
-                                ? 'bg-blue-600 border-blue-600' 
-                                : 'bg-white border-gray-300 hover:border-gray-400'
-                            }`}>
-                              {newEmployee.isShiftLeader && (
-                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
-                              )}
-                            </div>
-                          </div>
-                          <Label 
-                            className="text-sm font-normal cursor-pointer select-none"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              console.log('Label clicked - current state:', newEmployee.isShiftLeader);
-                              const newValue = !newEmployee.isShiftLeader;
-                              console.log('Setting isShiftLeader to:', newValue);
-                              setNewEmployee(prev => ({
-                                ...prev,
-                                isShiftLeader: newValue
-                              }));
-                            }}
-                          >
-                            Shift Leader
-                          </Label>
+                            className="border-white/30 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                          />
+                          <Label htmlFor="edit-isShiftLeader" className="text-sm font-normal cursor-pointer text-white">Shift Leader</Label>
                         </div>
                       </div>
                     </div>
@@ -4611,7 +4751,7 @@ export default function AdminPanel() {
                           type="text"
                           placeholder="e.g., 555-123-4567"
                           maxLength={12}
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.phone}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4630,7 +4770,7 @@ export default function AdminPanel() {
                           id="edit-email"
                           type="email"
                           placeholder="e.g., john@example.com"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.email}
                           onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
                         />
@@ -4639,13 +4779,13 @@ export default function AdminPanel() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-ssn">Last 4 digits of SSN</Label>
+                        <Label htmlFor="edit-ssn" className="text-white font-medium">Last 4 digits of SSN</Label>
                         <input 
                           id="edit-ssn"
                           type="text"
                           placeholder="e.g., 1234"
                           maxLength={4}
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.ssn || ''}
                           onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4657,13 +4797,13 @@ export default function AdminPanel() {
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="edit-fullSsn">Full SSN (optional)</Label>
+                        <Label htmlFor="edit-fullSsn" className="text-white font-medium">Full SSN (optional)</Label>
                         <input 
                           id="edit-fullSsn"
                           type="text"
                           placeholder="e.g., 123-45-6789"
                           maxLength={11}
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.fullSsn || ''}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4684,7 +4824,7 @@ export default function AdminPanel() {
                           id="edit-driversLicense"
                           type="text"
                           placeholder="e.g., D1234567890"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.driversLicenseNumber || ''}
                           onChange={(e) => setNewEmployee({...newEmployee, driversLicenseNumber: e.target.value})}
                         />
@@ -4696,7 +4836,7 @@ export default function AdminPanel() {
                           id="edit-dateOfBirth"
                           type="text"
                           placeholder="MM/DD/YYYY"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={newEmployee.dateOfBirth || ''}
                           onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, ''); // Only allow digits
@@ -4715,7 +4855,7 @@ export default function AdminPanel() {
                       <input 
                         id="edit-hireDate"
                         type="date"
-                        className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         value={newEmployee.hireDate}
                         onChange={(e) => setNewEmployee({...newEmployee, hireDate: e.target.value})}
                       />
@@ -4725,7 +4865,7 @@ export default function AdminPanel() {
                       <Label htmlFor="edit-notes" className="text-white font-medium">Notes (optional)</Label>
                       <textarea 
                         id="edit-notes"
-                        className="flex min-h-[80px] w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex min-h-[80px] w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         placeholder="Any additional information about this employee"
                         value={newEmployee.notes}
                         onChange={(e) => setNewEmployee({...newEmployee, notes: e.target.value})}
@@ -4734,7 +4874,7 @@ export default function AdminPanel() {
                     
                     {/* Motor Vehicle Records Upload */}
                     <div className="grid gap-2">
-                      <Label htmlFor="edit-motorVehicleRecords">Motor Vehicle Records (optional)</Label>
+                      <Label htmlFor="edit-motorVehicleRecords" className="text-white font-medium">Motor Vehicle Records (optional)</Label>
                       <div className="space-y-2">
                         {newEmployee.motorVehicleRecordsPath ? (
                           <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
@@ -4757,7 +4897,7 @@ export default function AdminPanel() {
                           id="edit-motorVehicleRecords"
                           type="file"
                           accept=".pdf,.jpg,.jpeg,.png"
-                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file && editingEmployeeId) {
@@ -4791,24 +4931,24 @@ export default function AdminPanel() {
                     
                     {/* Training Status Display */}
                     <div className="grid gap-2">
-                      <Label>Safety Training Status</Label>
-                      <div className="flex items-center space-x-2 p-3 rounded-lg border">
+                      <Label className="text-white font-medium">Safety Training Status</Label>
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm">
                         {hasCompletedTraining(newEmployee.fullName) ? (
                           <>
-                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <CheckCircle className="h-5 w-5 text-green-400" />
                             <div className="flex-1">
-                              <div className="text-sm font-medium text-green-700">Training Completed</div>
-                              <div className="text-xs text-slate-500">
+                              <div className="text-sm font-medium text-green-300">Training Completed</div>
+                              <div className="text-xs text-slate-400">
                                 Completed on {getTrainingCompletionDate(newEmployee.fullName)}
                               </div>
                             </div>
                           </>
                         ) : (
                           <>
-                            <AlertCircle className="h-5 w-5 text-amber-600" />
+                            <AlertCircle className="h-5 w-5 text-amber-400" />
                             <div className="flex-1">
-                              <div className="text-sm font-medium text-amber-700">Training Required</div>
-                              <div className="text-xs text-slate-500">
+                              <div className="text-sm font-medium text-amber-300">Training Required</div>
+                              <div className="text-xs text-slate-400">
                                 Employee must complete safety training before accessing dashboard
                               </div>
                             </div>
@@ -4816,11 +4956,67 @@ export default function AdminPanel() {
                         )}
                       </div>
                     </div>
+                    
+                    {/* Availability Section */}
+                    <div className="space-y-4 border-t border-white/20 pt-4">
+                      <div>
+                        <Label className="text-white font-medium text-lg">Weekly Availability</Label>
+                        <p className="text-slate-400 text-sm">Select the days this employee is available to work</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-7 gap-2">
+                        {[
+                          { key: 'sunday', label: 'Sun' },
+                          { key: 'monday', label: 'Mon' },
+                          { key: 'tuesday', label: 'Tue' },
+                          { key: 'wednesday', label: 'Wed' },
+                          { key: 'thursday', label: 'Thu' },
+                          { key: 'friday', label: 'Fri' },
+                          { key: 'saturday', label: 'Sat' }
+                        ].map(day => (
+                          <div key={day.key} className="flex flex-col items-center space-y-2">
+                            <Label className="text-white text-xs">{day.label}</Label>
+                            <Checkbox
+                              checked={newEmployee.availability[day.key]}
+                              onCheckedChange={(checked) => {
+                                setNewEmployee({
+                                  ...newEmployee,
+                                  availability: {
+                                    ...newEmployee.availability,
+                                    [day.key]: checked === true
+                                  }
+                                });
+                              }}
+                              className="border-white/30 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-availability-notes" className="text-white font-medium">Availability Notes</Label>
+                        <textarea 
+                          id="edit-availability-notes"
+                          placeholder="Additional notes about this employee's availability..."
+                          rows={3}
+                          className="flex w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-sm px-3 py-2 text-sm text-white placeholder:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                          value={newEmployee.availability.notes}
+                          onChange={(e) => setNewEmployee({
+                            ...newEmployee,
+                            availability: {
+                              ...newEmployee.availability,
+                              notes: e.target.value
+                            }
+                          })}
+                        />
+                      </div>
+                    </div>
                   </div>
                   
                   <DialogFooter>
                     <Button 
-                      type="submit" 
+                      type="submit"
+                      className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
                       onClick={async () => {
                         try {
                           // Validate required fields
@@ -4828,6 +5024,9 @@ export default function AdminPanel() {
                             alert("Employee key and full name are required.");
                             return;
                           }
+                          
+                          console.log('Sending employee update with availability:', newEmployee.availability);
+                          console.log('Full employee data being sent:', newEmployee);
                           
                           const response = await fetch(`/api/employees/${editingEmployeeId}`, {
                             method: 'PUT',
@@ -4864,7 +5063,9 @@ export default function AdminPanel() {
                       Update Employee
                     </Button>
                   </DialogFooter>
-                </DialogContent>
+                    </div>
+                  </DialogContent>
+                </>
               </Dialog>
             </div>
           </div>
@@ -6259,30 +6460,63 @@ export default function AdminPanel() {
 
                     {/* Location Form Dialog */}
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <DialogContent className="max-w-2xl w-full max-h-[85vh] p-0 bg-gradient-to-br from-slate-900/95 via-blue-900/90 to-indigo-900/95 backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden [&>button]:z-50 [&>button]:text-white [&>button]:hover:text-white">
-                        {/* Enhanced Glass morphism overlay */}
-                        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg pointer-events-none"></div>
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-lg pointer-events-none"></div>
-                        
-                        {/* Background Pattern */}
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20 rounded-lg pointer-events-none"></div>
-                        
-                        {/* Content with fixed header and footer */}
-                        <div className="relative z-10 flex flex-col h-full">
-                          {/* Fixed Header */}
-                          <div className="p-6 pb-0 flex-shrink-0">
+                      <>
+                        <style>{`
+                          .add-location-dialog-content {
+                            position: fixed !important;
+                            top: 50% !important;
+                            left: 50% !important;
+                            transform: translate(-50%, -50%) !important;
+                            max-height: 85vh !important;
+                            z-index: 9999 !important;
+                            margin: 0 !important;
+                            width: auto !important;
+                            max-width: 700px !important;
+                            overflow: hidden !important;
+                          }
+                          .add-location-scroll-container {
+                            max-height: calc(85vh - 40px);
+                            overflow-y: auto;
+                            overflow-x: hidden;
+                            padding-right: 16px;
+                          }
+                          .add-location-scroll-container::-webkit-scrollbar {
+                            width: 6px;
+                          }
+                          .add-location-scroll-container::-webkit-scrollbar-track {
+                            background: rgba(255, 255, 255, 0.1);
+                            border-radius: 3px;
+                          }
+                          .add-location-scroll-container::-webkit-scrollbar-thumb {
+                            background: rgba(255, 255, 255, 0.3);
+                            border-radius: 3px;
+                          }
+                          .add-location-scroll-container::-webkit-scrollbar-thumb:hover {
+                            background: rgba(255, 255, 255, 0.5);
+                          }
+                          /* Fix dropdown z-index for location modal */
+                          [data-radix-select-content] {
+                            z-index: 99999 !important;
+                          }
+                          [data-radix-popper-content-wrapper] {
+                            z-index: 99999 !important;
+                          }
+                        `}</style>
+                        <DialogContent className="add-location-dialog-content relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 backdrop-blur-xl shadow-2xl p-0 [&>button]:z-50 [&>button]:text-white [&>button]:hover:text-white">
+                          {/* Glass morphism overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-xl pointer-events-none"></div>
+                          
+                          {/* Content with z-index and internal scroll */}
+                          <div className="relative z-10 add-location-scroll-container p-6">
                             <DialogHeader>
-                              <DialogTitle className="text-white">
+                              <DialogTitle className="text-blue-400 text-xl font-bold">
                                 {editingLocation ? 'Edit Location' : 'Add New Location'}
                               </DialogTitle>
                               <DialogDescription className="text-slate-400">
                                 Configure the rates and settings for this location
                               </DialogDescription>
                             </DialogHeader>
-                          </div>
                           
-                          {/* Scrollable Content */}
-                          <div className="flex-1 overflow-y-auto px-6 py-4">
                         <form
                           id="location-form"
                           onSubmit={async (e) => {
@@ -6306,69 +6540,117 @@ export default function AdminPanel() {
                           }}
                           className="space-y-6"
                         >
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Basic Information Section */}
+                          <div className="space-y-4">
                             <div>
-                              <Label htmlFor="name" className="text-white">Location Name</Label>
-                              <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                defaultValue={editingLocation?.name || ''}
-                                required
-                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
-                              />
+                              <h3 className="text-lg font-semibold text-white mb-4">Location Information</h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                  <Label htmlFor="name" className="text-white">Location Name</Label>
+                                  <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    defaultValue={editingLocation?.name || ''}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                                  />
+                                </div>
+                                
+                                <div>
+                                  <Label htmlFor="active" className="text-white">Status</Label>
+                                  <Select name="active" defaultValue={editingLocation?.active ? 'true' : 'true'}>
+                                    <SelectTrigger className="bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
+                                      <SelectItem value="true" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Active</SelectItem>
+                                      <SelectItem value="false" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Inactive</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
                             </div>
-                            
-                            <div>
-                              <Label htmlFor="active" className="text-white">Status</Label>
-                              <Select name="active" defaultValue={editingLocation?.active ? 'true' : 'true'}>
-                                <SelectTrigger className="bg-white/10 border-white/20 text-white backdrop-blur-sm hover:bg-white/20">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-800 border-white/20 text-white backdrop-blur-sm">
-                                  <SelectItem value="true" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Active</SelectItem>
-                                  <SelectItem value="false" className="text-white bg-transparent hover:!bg-blue-500 focus:!bg-blue-600 cursor-pointer">Inactive</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
+                          </div>
 
-                            <div>
-                              <Label htmlFor="curbsideRate" className="text-white">Curbside Rate ($)</Label>
-                              <input
-                                id="curbsideRate"
-                                name="curbsideRate"
-                                type="number"
-                                step="0.01"
-                                defaultValue={editingLocation?.curbsideRate || 15}
-                                required
-                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
-                              />
-                            </div>
+                          {/* Curbside Valet Settings Section */}
+                          <div className="space-y-4">
+                            <div className="border-t border-white/20 pt-4">
+                              <h3 className="text-lg font-semibold text-white mb-4">Curbside Valet Settings</h3>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                  <Label htmlFor="curbsideRate" className="text-white">Curbside Rate ($)</Label>
+                                  <input
+                                    id="curbsideRate"
+                                    name="curbsideRate"
+                                    type="number"
+                                    step="0.01"
+                                    defaultValue={editingLocation?.curbsideRate || 15}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                                  />
+                                </div>
 
-                            <div>
-                              <Label htmlFor="turnInRate" className="text-white">Turn-in Rate ($)</Label>
-                              <input
-                                id="turnInRate"
-                                name="turnInRate"
-                                type="number"
-                                step="0.01"
-                                defaultValue={editingLocation?.turnInRate || 11}
-                                required
-                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
-                              />
-                            </div>
+                                <div>
+                                  <Label htmlFor="turnInRate" className="text-white">Turn-in Rate ($)</Label>
+                                  <input
+                                    id="turnInRate"
+                                    name="turnInRate"
+                                    type="number"
+                                    step="0.01"
+                                    defaultValue={editingLocation?.turnInRate || 11}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                                  />
+                                </div>
 
-                            <div className="md:col-span-2">
-                              <Label htmlFor="employeeCommission" className="text-white">Employee Commission ($)</Label>
-                              <input
-                                id="employeeCommission"
-                                name="employeeCommission"
-                                type="number"
-                                step="0.01"
-                                defaultValue={editingLocation?.employeeCommission || 4}
-                                required
-                                className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
-                              />
+                                <div>
+                                  <Label htmlFor="employeeCommission" className="text-white">Employee Commission ($)</Label>
+                                  <input
+                                    id="employeeCommission"
+                                    name="employeeCommission"
+                                    type="number"
+                                    step="0.01"
+                                    defaultValue={editingLocation?.employeeCommission || 4}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Receipt Settings Section */}
+                          <div className="space-y-4">
+                            <div className="border-t border-white/20 pt-4">
+                              <h3 className="text-lg font-semibold text-white mb-4">Receipt Transaction Settings</h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                  <Label htmlFor="receiptRate" className="text-white">Receipt Rate ($)</Label>
+                                  <input
+                                    id="receiptRate"
+                                    name="receiptRate"
+                                    type="number"
+                                    step="0.01"
+                                    defaultValue={editingLocation?.receiptRate || 15}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                                  />
+                                </div>
+
+                                <div>
+                                  <Label htmlFor="receiptCommission" className="text-white">Receipt Commission ($)</Label>
+                                  <input
+                                    id="receiptCommission"
+                                    name="receiptCommission"
+                                    type="number"
+                                    step="0.01"
+                                    defaultValue={editingLocation?.receiptCommission || 4}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-600/50 bg-slate-700/50 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
 
@@ -6442,7 +6724,7 @@ export default function AdminPanel() {
                             <Button
                               type="submit"
                               disabled={createLocationMutation.isPending || updateLocationMutation.isPending}
-                              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20"
+                              className="bg-blue-600 hover:bg-blue-700 text-white border border-blue-600"
                             >
                               {editingLocation ? 'Update' : 'Create'} Location
                             </Button>
@@ -6450,8 +6732,8 @@ export default function AdminPanel() {
 
                         </form>
                           </div>
-                        </div>
-                      </DialogContent>
+                        </DialogContent>
+                      </>
                     </Dialog>
                   </div>
                 );

@@ -221,13 +221,9 @@ export default function ReportCard({
   
   return (
     <>
-      <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl mb-4 animate-fade-in">
-        {/* Enhanced Glass morphism overlay */}
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-        
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+      <div className="relative overflow-hidden bg-slate-800/50 backdrop-blur-xl rounded-lg border border-slate-600/50 shadow-xl mb-4">
+        {/* Glass morphism overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-slate-900/5 rounded-lg"></div>
         
         {/* Content with z-index */}
         <div className="relative z-10">
@@ -264,7 +260,7 @@ export default function ReportCard({
               <Button
                 size="icon"
                 onClick={handleEdit}
-                className="h-8 w-8 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-slate-300 hover:text-white border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="h-8 w-8 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white border border-slate-600/50 transition-all duration-200"
               >
                 <Edit className="h-4 w-4" />
                 <span className="sr-only">Edit</span>
@@ -273,7 +269,7 @@ export default function ReportCard({
               <Button
                 size="icon"
                 onClick={() => setShowPasswordDialog(true)}
-                className="h-8 w-8 bg-white/10 backdrop-blur-sm hover:bg-red-500/20 text-slate-300 hover:text-red-300 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="h-8 w-8 bg-slate-700/50 hover:bg-red-600/50 text-slate-300 hover:text-red-300 border border-slate-600/50 transition-all duration-200"
               >
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">Delete</span>
@@ -285,15 +281,15 @@ export default function ReportCard({
 
       {/* Detailed Report Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl bg-slate-800/90 border-slate-600/50 text-white">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <span className={`${textColor} font-normal`}>{location}</span>
-              <Badge variant="outline" className={`${textColor} bg-gray-50 font-normal`}>
+              <span className="text-white font-normal">{location}</span>
+              <Badge variant="outline" className="bg-slate-700/50 border-slate-600/50 text-white font-normal">
                 {shift} Shift
               </Badge>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-slate-300">
               Detailed shift report from {formattedDate}
             </DialogDescription>
           </DialogHeader>
@@ -301,7 +297,7 @@ export default function ReportCard({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
             {/* Basic Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Shift Information</h3>
+              <h3 className="text-lg font-medium text-white">Shift Information</h3>
               
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
@@ -362,7 +358,7 @@ export default function ReportCard({
             
             {/* Financial Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Financial Summary</h3>
+              <h3 className="text-lg font-medium text-white">Financial Summary</h3>
               
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
@@ -409,21 +405,21 @@ export default function ReportCard({
           
           {/* Employee Information */}
           {parsedEmployees.length > 0 && (
-            <div className="space-y-4 mt-2 pt-6 border-t">
-              <h3 className="text-lg font-medium">Employee Information</h3>
+            <div className="space-y-4 mt-2 pt-6 border-t border-slate-600/50">
+              <h3 className="text-lg font-medium text-white">Employee Information</h3>
               
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm text-white">
                   <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2 px-2">Name</th>
-                      <th className="text-right py-2 px-2">Hours</th>
-                      <th className="text-right py-2 px-2">Commission</th>
-                      <th className="text-right py-2 px-2">Tips</th>
-                      <th className="text-right py-2 px-2">Total Earned</th>
-                      <th className="text-right py-2 px-2">Tax Due</th>
-                      <th className="text-right py-2 px-2">Tax Paid</th>
-                      <th className="text-right py-2 px-2">Balance</th>
+                    <tr className="border-b border-slate-600/50">
+                      <th className="text-left py-2 px-2 text-slate-300">Name</th>
+                      <th className="text-right py-2 px-2 text-slate-300">Hours</th>
+                      <th className="text-right py-2 px-2 text-slate-300">Commission</th>
+                      <th className="text-right py-2 px-2 text-slate-300">Tips</th>
+                      <th className="text-right py-2 px-2 text-slate-300">Total Earned</th>
+                      <th className="text-right py-2 px-2 text-slate-300">Tax Due</th>
+                      <th className="text-right py-2 px-2 text-slate-300">Tax Paid</th>
+                      <th className="text-right py-2 px-2 text-slate-300">Balance</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -462,7 +458,7 @@ export default function ReportCard({
                       const balance = taxPaid - taxDue; // Negative means tax owed, positive means overpaid
                       
                       return (
-                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
+                        <tr key={index} className={index % 2 === 0 ? 'bg-slate-700/30' : ''}>
                           <td className="py-2 px-2">{fullName}</td>
                           <td className="text-right py-2 px-2">{employee.hours}</td>
                           <td className="text-right py-2 px-2">{formatCurrency(commission)}</td>
@@ -512,7 +508,7 @@ export default function ReportCard({
           )}
           
           {/* Other Details */}
-          <div className="space-y-2 pt-2 border-t">
+          <div className="space-y-2 pt-2 border-t border-slate-600/50">
             <div className="flex items-start gap-2">
               <User className="h-4 w-4 text-muted-foreground mt-0.5" />
               <div>
@@ -543,10 +539,10 @@ export default function ReportCard({
 
       {/* Password Protection Dialog for Delete */}
       <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-slate-800/90 border-slate-600/50 text-white">
           <DialogHeader>
-            <DialogTitle>Delete Confirmation Required</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Delete Confirmation Required</DialogTitle>
+            <DialogDescription className="text-slate-300">
               Enter the password to delete this shift report for {location} on {formattedDate}.
             </DialogDescription>
           </DialogHeader>
